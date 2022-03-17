@@ -1,12 +1,14 @@
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/infrastructure/weight.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  ScannerListener().barcodeListener();
+  scannerListener.barcodeListener();
+  weightListener.initWeighingScale();
   WidgetsFlutterBinding.ensureInitialized();
   Future<SharedPreferences> store = SharedPreferences.getInstance();
   storage = await store;

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
+import 'package:eazyweigh/infrastructure/weight.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,11 +34,13 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
   void initState() {
     super.initState();
     scannerListener.addListener(listenToScanner);
+    weightListener.addListener(listenToWeighingScale);
   }
 
   @override
   void dispose() {
     scannerListener.removeListener(listenToScanner);
+    weightListener.removeListener(listenToWeighingScale);
     super.dispose();
   }
 
@@ -72,6 +75,10 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
         default:
       }
     }
+  }
+
+  dynamic listenToWeighingScale(String data) {
+    print(data);
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
