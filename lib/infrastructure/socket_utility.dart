@@ -36,7 +36,7 @@ class WebSocketUtility {
         },
       );
     } catch (ex) {
-      print(ex);
+      //TODO logging service
     }
   }
 
@@ -61,7 +61,6 @@ class WebSocketUtility {
 
   _onReceptionOfMessageFromServer(message) {
     _isConnected = true;
-    print(listeners);
     for (var listener in listeners) {
       listener(message);
     }

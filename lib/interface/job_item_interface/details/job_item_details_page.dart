@@ -85,7 +85,7 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
         currentWeight = double.parse(data);
       });
     } catch (e) {
-      print(e);
+      //TODO logging service
     }
   }
 

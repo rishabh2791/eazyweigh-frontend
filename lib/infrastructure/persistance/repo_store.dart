@@ -1,1 +1,53 @@
-class RepoStore {}
+import 'package:eazyweigh/infrastructure/persistance/address_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/auth_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/bom_item_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/bom_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/company_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/factory_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/job_assignment_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/job_item_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/job_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/material_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/over_issue_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/scanned_data_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/shift_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/shift_schedule_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/terminal_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/under_issue_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/unit_of_measurement_conversion_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/unit_of_measurement_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_company_access_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_factory_access_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_role_access.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_role_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_terminal_access.dart';
+
+RepoStore repoStore = RepoStore();
+
+class RepoStore {
+  final addressRepo = AddressRepo();
+  final authRepo = AuthRepo();
+  final bomRepo = BOMRepo();
+  final bomItemRepo = BOMItemRepo();
+  final companyRepo = CompanyRepo();
+  final factoryRepo = FactoryRepo();
+  final jobRepo = JobRepo();
+  final jobItemRepo = JobItemRepo();
+  final jobAssignmentRepo = JobAssignmentRepo();
+  final materialRepo = MaterialRepo();
+  final overIssueRepo = OverIssueRepo();
+  final scannedDataRepo = ScannedDataRepo();
+  final shiftRepo = ShiftRepo();
+  final shiftScheduleRepo = ShiftScheduleRepo();
+  final terminalRepo = TerminalRepo();
+  final underIssueRepo = UnderIssueRepo();
+  final uomRepo = UnitOfMeasurementRepo();
+  final uomConversionRepo = UnitOfMeasurementConversionRepo();
+  final userRepo = UserRepo();
+  final userRoleRepo = UserRoleRepo();
+  final userRoleAccessRepo = UserRoleAccessRepo();
+  final userCompanyAccessRepo = UserCompanyAccessRepo();
+  final userFactoryAccessRepo = UserFactoryAccessRepo();
+  final userTerminalAccessRepo = UserTerminalAccessRepo();
+}

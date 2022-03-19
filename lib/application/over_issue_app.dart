@@ -11,12 +11,6 @@ class OverIssueApp implements OverIssueAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> overIssues) async {
-    return overIssueRepository.createMultiple(overIssues);
-  }
-
-  @override
   Future<Map<String, dynamic>> list(String jobID) async {
     return overIssueRepository.list(jobID);
   }
@@ -26,12 +20,22 @@ class OverIssueApp implements OverIssueAppInterface {
       String id, Map<String, dynamic> update) async {
     return overIssueRepository.update(id, update);
   }
+
+  @override
+  Future<Map<String, dynamic>> approve(String id) async {
+    return overIssueRepository.approve(id);
+  }
+
+  @override
+  Future<Map<String, dynamic>> reject(String id) async {
+    return overIssueRepository.reject(id);
+  }
 }
 
 abstract class OverIssueAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> overIssue);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> overIssues);
   Future<Map<String, dynamic>> list(String jobID);
   Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update);
+  Future<Map<String, dynamic>> approve(String id);
+  Future<Map<String, dynamic>> reject(String id);
 }

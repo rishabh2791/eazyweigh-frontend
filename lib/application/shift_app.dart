@@ -13,12 +13,6 @@ class ShiftApp implements ShiftAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> shifts) async {
-    return shiftRepository.createMultiple(shifts);
-  }
-
-  @override
   Future<Map<String, dynamic>> get(String id) async {
     return shiftRepository.get(id);
   }
@@ -31,8 +25,6 @@ class ShiftApp implements ShiftAppInterface {
 
 abstract class ShiftAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> shift);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> shifts);
   Future<Map<String, dynamic>> get(String id);
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
 }
