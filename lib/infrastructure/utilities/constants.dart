@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 String baseURL = "";
@@ -11,3 +13,7 @@ const bodyTextColor = Color(0xFF8B8B8D);
 const formHintTextColor = Color(0xFFF17A7E);
 const formLabelTextColor = Color(0xFFF17A7E);
 const menuItemColor = Color(0xFF41B853);
+
+const WEBSOCKET_SERVER_HOST = '172.20.10.5';
+const WEBSOCKET_PORT = 8000;
+const WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';

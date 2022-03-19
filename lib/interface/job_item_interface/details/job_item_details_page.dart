@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
-import 'package:eazyweigh/infrastructure/weight.dart';
+import 'package:eazyweigh/infrastructure/socket_utility.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,6 +24,7 @@ class JobItemDetailsPage extends StatefulWidget {
 
 class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
   double currentWeight = 200.5;
+  double taredWeight = 0;
   bool isVerified = false;
   bool isMaterialScanned = false;
   String back = '{"action":"back"}';
@@ -34,13 +35,13 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
   void initState() {
     super.initState();
     scannerListener.addListener(listenToScanner);
-    weightListener.addListener(listenToWeighingScale);
+    socketUtility.addListener(listenToWeighingScale);
   }
 
   @override
   void dispose() {
     scannerListener.removeListener(listenToScanner);
-    weightListener.removeListener(listenToWeighingScale);
+    socketUtility.removeListener(listenToWeighingScale);
     super.dispose();
   }
 
@@ -69,6 +70,7 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
           break;
         case "tare":
           setState(() {
+            taredWeight = currentWeight;
             currentWeight = 0;
           });
           break;
@@ -78,7 +80,13 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
   }
 
   dynamic listenToWeighingScale(String data) {
-    print(data);
+    try {
+      setState(() {
+        currentWeight = double.parse(data);
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {

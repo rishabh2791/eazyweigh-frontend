@@ -18,17 +18,11 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on SocketException {
-      responseJSON["Status"] = false;
-      responseJSON["Message"] = "Unable to Reach Host Server.";
-      responseJSON["Payload"] = "";
+      //TODO complete this code
     } on FormatException {
-      responseJSON["Status"] = false;
-      responseJSON["Message"] = "Format Exception";
-      responseJSON["Payload"] = "";
+      //TODO complete this code
     } on HttpException {
-      responseJSON["Status"] = false;
-      responseJSON["Message"] = "Something Wrong Happened.";
-      responseJSON["Payload"] = "";
+      //TODO complete this code
     }
     return responseJSON;
   }
@@ -48,9 +42,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      responseJSON["Status"] = false;
-      responseJSON["Message"] = Exception().toString();
-      responseJSON["Payload"] = "";
+      //TODO complete this code
     }
     return responseJSON;
   }
@@ -70,9 +62,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      responseJSON["Status"] = false;
-      responseJSON["Message"] = Exception().toString();
-      responseJSON["Payload"] = "";
+      //TODO complete this code
     }
     return responseJSON;
   }
@@ -92,9 +82,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      responseJSON["Status"] = false;
-      responseJSON["Message"] = Exception().toString();
-      responseJSON["Payload"] = "";
+      //TODO complete this code
     }
     return responseJSON;
   }
