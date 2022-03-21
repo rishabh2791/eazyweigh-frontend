@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void refreshToken(int delay) async {
-  var token;
+  String token;
   var timeOut = defaultTimeOut;
   bool loggedIn = false;
   Map<String, String> headers = {};
