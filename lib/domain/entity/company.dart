@@ -1,7 +1,7 @@
 import 'package:eazyweigh/domain/entity/user.dart';
 
 class Company {
-  final int id;
+  final String id;
   final String name;
   final bool active;
   final DateTime createdAt;

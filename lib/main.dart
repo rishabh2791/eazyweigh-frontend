@@ -2,7 +2,7 @@ import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/socket_utility.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
-import 'package:eazyweigh/interface/job_interface/list/job_list_page.dart';
+import 'package:eazyweigh/interface/auth_interface/login_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       navigatorKey: navigationService.navigatorKey,
-      home: const JobListPage(),
+      home: const LoginWidget(),
     );
   }
 }

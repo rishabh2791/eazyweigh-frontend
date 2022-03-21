@@ -1,9 +1,8 @@
 import 'package:eazyweigh/domain/entity/address.dart';
-import 'package:eazyweigh/domain/entity/company.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
 class Factory {
-  final Company company;
+  final String companyID;
   final Address address;
   final User createdBy;
   final DateTime createdAt;
@@ -12,7 +11,7 @@ class Factory {
 
   Factory({
     required this.address,
-    required this.company,
+    required this.companyID,
     required this.createdAt,
     required this.createdBy,
     required this.updatedAt,
@@ -22,7 +21,7 @@ class Factory {
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "address": address.toJSON(),
-      "company": company.toJSON(),
+      "company_id": companyID,
       "created_at": createdAt,
       "created_by": createdBy.toJSON(),
       "updated_at": updatedAt,
@@ -33,7 +32,7 @@ class Factory {
   factory Factory.fromJSON(Map<String, dynamic> jsonObject) {
     Factory fact = Factory(
       address: Address.fromJSON(jsonObject["address"]),
-      company: Company.fromJSON(jsonObject["company"]),
+      companyID: jsonObject["company_id"],
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
