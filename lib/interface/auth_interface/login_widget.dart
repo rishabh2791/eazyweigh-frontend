@@ -96,7 +96,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           scannerListener.removeListener(listenToScanner);
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) => const JobListPage(),
+              builder: (BuildContext context) => HomePage(username: username),
             ),
           );
         } else {

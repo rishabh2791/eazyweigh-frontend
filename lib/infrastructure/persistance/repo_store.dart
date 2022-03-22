@@ -17,7 +17,9 @@ import 'package:eazyweigh/infrastructure/persistance/under_issue_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/unit_of_measurement_conversion_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/unit_of_measurement_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_company_access_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_company_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_factory_access_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/user_factory_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_role_access.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_role_repo.dart';
@@ -50,4 +52,6 @@ class RepoStore {
   final userCompanyAccessRepo = UserCompanyAccessRepo();
   final userFactoryAccessRepo = UserFactoryAccessRepo();
   final userTerminalAccessRepo = UserTerminalAccessRepo();
+  final userCompanyRepo = UserCompanyRepo();
+  final userFactoryRepo = UserFactoryRepo();
 }

@@ -128,6 +128,7 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                               isMenuCollapsed = true;
                             }).then((value) {
                               refreshToken(0);
+                              menuItemSelected = "Home";
                               Navigator.pushReplacement(
                                 context,
                                 CupertinoPageRoute(

@@ -1,6 +1,10 @@
+import 'package:eazyweigh/interface/address_interface/create/create_widget.dart';
+import 'package:eazyweigh/interface/address_interface/list/list_widget.dart';
+import 'package:eazyweigh/interface/address_interface/update/update_widget.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddressWidget extends StatefulWidget {
@@ -25,7 +29,12 @@ class _AddressWidgetState extends State<AddressWidget> {
                 children: [
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const AddressCreateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.create,
                     label: "Create",
@@ -34,7 +43,12 @@ class _AddressWidgetState extends State<AddressWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const AddressListWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.get_app,
                     label: "Details",
@@ -43,7 +57,12 @@ class _AddressWidgetState extends State<AddressWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const AddressUpdateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.list,
                     label: "List",

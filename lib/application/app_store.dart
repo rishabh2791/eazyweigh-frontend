@@ -18,7 +18,9 @@ import 'package:eazyweigh/application/unit_of_measure_app.dart';
 import 'package:eazyweigh/application/unit_of_measure_conversion_app.dart';
 import 'package:eazyweigh/application/user_app.dart';
 import 'package:eazyweigh/application/user_company_access_app.dart';
+import 'package:eazyweigh/application/user_company_app.dart';
 import 'package:eazyweigh/application/user_factory_access_app.dart';
+import 'package:eazyweigh/application/user_factory_app.dart';
 import 'package:eazyweigh/application/user_role_access_app.dart';
 import 'package:eazyweigh/application/user_role_app.dart';
 import 'package:eazyweigh/application/user_terminal_access_app.dart';
@@ -62,4 +64,8 @@ class AppStore {
       userTerminalAccessRepository: repoStore.userTerminalAccessRepo);
   final userRoleAccessApp =
       UserRoleAccessApp(userRoleAccessRepository: repoStore.userRoleAccessRepo);
+  final userCompanyApp =
+      UserCompanyApp(userCompanyRepository: repoStore.userCompanyRepo);
+  final userFactoryApp =
+      UserFactoryApp(userFactoryRepository: repoStore.userFactoryRepo);
 }

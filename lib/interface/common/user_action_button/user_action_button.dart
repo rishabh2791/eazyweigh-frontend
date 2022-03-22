@@ -1,3 +1,4 @@
+import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:flutter/material.dart';
@@ -31,19 +32,20 @@ class _UserActionButtonState extends State<UserActionButton> {
     "activate": "update",
     "deactivate": "update",
   };
-  //TODO implement access checks
 
   @override
   void initState() {
-    // TODO: implement initState
+    scannerListener.addListener(listenToScanner);
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    scannerListener.removeListener(listenToScanner);
     super.dispose();
   }
+
+  dynamic listenToScanner(String data) {}
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +67,8 @@ class _UserActionButtonState extends State<UserActionButton> {
                 return const LoadingWidget();
               },
             );
-            Future.delayed(const Duration(seconds: 5)).then((value) {
-              Navigator.of(context, rootNavigator: true).pop('dialog');
-            });
             //TODO User authorization check
+            widget.callback();
           },
           // onTap: widget.callback,
           child: Padding(

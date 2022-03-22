@@ -9,6 +9,7 @@ class Address {
   final String zip;
   final String country;
   final bool headOffice;
+  final String companyID;
   final DateTime createdAt;
   final User createdBy;
   final DateTime updatedAt;
@@ -24,6 +25,7 @@ class Address {
     required this.line1,
     required this.line2,
     required this.state,
+    required this.companyID,
     required this.updatedAt,
     required this.updatedBy,
     required this.zip,
@@ -40,6 +42,7 @@ class Address {
       "line1": line1,
       "line2": line2,
       "state": state,
+      "company_id": companyID,
       "updated_at": updatedAt,
       "updated_by": updatedBy.toJSON(),
       "zip": zip,
@@ -57,6 +60,7 @@ class Address {
       line1: jsonObject["line1"],
       line2: jsonObject["line2"],
       state: jsonObject["state"],
+      companyID: jsonObject["company_id"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       zip: jsonObject["zip"],
