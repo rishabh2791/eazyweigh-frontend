@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
+import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
+import 'package:eazyweigh/interface/job_interface/list/job_list_page.dart';
 import 'package:eazyweigh/interface/middlewares/refresh_token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +49,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     handleLogin(buildContext, scannerData["username"], scannerData["password"]);
   }
 
-  void handleLogin(BuildContext ctx, String username, password) async {
+  void handleLogin(BuildContext ctx, String username, String password) async {
     String errors = "";
     bool usernameValid = true;
     bool passwordValid = true;
@@ -70,17 +72,18 @@ class _LoginWidgetState extends State<LoginWidget> {
         },
       );
       Map<String, String> loginDetails = {
-        "username": usernameController.text,
-        "password": passwordController.text
+        "username": username,
+        "password": password
       };
       await appStore.authApp.login(loginDetails).then((response) async {
         Navigator.of(ctx, rootNavigator: true).pop('dialog');
         if (response["status"]) {
           showDialog(
-              context: ctx,
-              builder: (BuildContext context) {
-                return const LoadingWidget();
-              });
+            context: ctx,
+            builder: (BuildContext context) {
+              return const LoadingWidget();
+            },
+          );
           var payload = response["payload"];
           await storage!.setString("username", payload["Username"]);
           await storage!.setString("access_token", payload["AccessToken"]);
@@ -90,11 +93,10 @@ class _LoginWidgetState extends State<LoginWidget> {
           isLoggedIn = true;
           refreshToken(payload["ATDuration"]);
 
-          Navigator.of(context).pushReplacement(
+          scannerListener.removeListener(listenToScanner);
+          navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) => HomePage(
-                username: username,
-              ),
+              builder: (BuildContext context) => const JobListPage(),
             ),
           );
         } else {

@@ -80,12 +80,19 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
   }
 
   dynamic listenToWeighingScale(String data) {
+    Map<String, dynamic> scannerData = jsonDecode(data
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
     try {
       setState(() {
-        currentWeight = double.parse(data);
+        currentWeight = double.parse(scannerData["data"].toString());
       });
     } catch (e) {
       //TODO logging service
+      print(e);
     }
   }
 

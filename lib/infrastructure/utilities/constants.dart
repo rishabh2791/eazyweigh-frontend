@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-String baseURL = "http://172.30.223.34:8000/";
+String baseURL = "http://10.19.0.64:8000/";
 const primaryColor = Color(0xFF2F2FA2);
 const backgroundColor = Color(0xFF161B40);
 const foregroundColor = Color(0xFFF9FAF4);
@@ -29,8 +29,8 @@ const int defaultTimeOut = 7 * 24 * 60 * 60;
 
 const int listPageSize = 25;
 
-const WEBSOCKET_SERVER_HOST = '172.20.10.5';
-const WEBSOCKET_PORT = 8000;
+const WEBSOCKET_SERVER_HOST = '10.19.0.64';
+const WEBSOCKET_PORT = 8010;
 const WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';
 
 const Map<String, List<String>> menuItems = {
