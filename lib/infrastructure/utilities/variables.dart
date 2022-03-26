@@ -34,6 +34,8 @@ bool isLoadingServerData = false;
 SharedPreferences? storage;
 bool isMenuCollapsed = true;
 String menuItemSelected = "Home";
+String companyID = "";
+String factoryID = "";
 
 Map<String, dynamic> menuWidgetMapping = {
   "Home": HomePage(username: currentUser.username),

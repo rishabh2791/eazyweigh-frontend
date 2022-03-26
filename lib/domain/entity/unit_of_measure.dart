@@ -22,6 +22,11 @@ class UnitOfMeasure {
     required this.updatedBy,
   });
 
+  @override
+  String toString() {
+    return code;
+  }
+
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "code": code,

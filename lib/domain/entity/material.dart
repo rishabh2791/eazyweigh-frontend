@@ -1,20 +1,20 @@
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
-class Material {
-  final String id;
-  final String code;
-  final String description;
-  final String type;
-  final String factoryID;
-  final String barCode;
-  final UnitOfMeasure uom;
-  final DateTime createdAt;
-  final User createdBy;
-  final DateTime updatedAt;
-  final User updatedBy;
+class Mat {
+  final String id; //done
+  final String code; //done
+  final String description; //done
+  final String type; //done
+  final String factoryID; //done
+  final String barCode; //
+  final UnitOfMeasure uom; //
+  final DateTime createdAt; //
+  final User createdBy; //
+  final DateTime updatedAt; //
+  final User updatedBy; //
 
-  Material({
+  Mat({
     required this.barCode,
     required this.code,
     required this.createdAt,
@@ -32,8 +32,8 @@ class Material {
     return <String, dynamic>{};
   }
 
-  factory Material.fromJSON(Map<String, dynamic> jsonObject) {
-    Material material = Material(
+  factory Mat.fromJSON(Map<String, dynamic> jsonObject) {
+    Mat material = Mat(
       barCode: jsonObject["bar_code"],
       code: jsonObject["code"],
       createdAt: DateTime.parse(jsonObject["created_at"]),
@@ -42,9 +42,9 @@ class Material {
       factoryID: jsonObject["factory_id"],
       id: jsonObject["id"],
       type: jsonObject["type"],
-      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
-      updatedBy: User.fromJSON(jsonObject["updated_at"]),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return material;
   }

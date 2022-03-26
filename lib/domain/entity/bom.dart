@@ -4,7 +4,8 @@ import 'package:eazyweigh/domain/entity/user.dart';
 
 class BOM {
   final String id;
-  final Material material;
+  final String factoryID;
+  final Mat material;
   final int revision;
   final UnitOfMeasure uom;
   final double unitSize;
@@ -23,6 +24,7 @@ class BOM {
     required this.uom,
     required this.updatedAt,
     required this.updatedBy,
+    required this.factoryID,
   });
 
   Map<String, dynamic> toJSON() {
@@ -30,6 +32,7 @@ class BOM {
       "created_at": createdAt,
       "created_by": createdBy,
       "id": id,
+      "factory_id": factoryID,
       "revision": revision,
       "material": material.toJSON(),
       "unit_size": unitSize,
@@ -44,7 +47,8 @@ class BOM {
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_at"]),
       id: jsonObject["id"],
-      material: Material.fromJSON(jsonObject["material"]),
+      factoryID: jsonObject["factory_id"],
+      material: Mat.fromJSON(jsonObject["material"]),
       revision: jsonObject["revision"],
       unitSize: jsonObject["unit_size"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),

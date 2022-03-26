@@ -20,11 +20,11 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on SocketException {
-      //TODO complete this code
+      responseJSON = {"error": "Socket Exception"};
     } on FormatException {
-      //TODO complete this code
+      responseJSON = {"error": "Format Exception"};
     } on HttpException {
-      //TODO complete this code
+      responseJSON = {"error": "HTTP Exception"};
     }
     return responseJSON;
   }
@@ -44,7 +44,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      //TODO complete this code
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
@@ -64,7 +64,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      //TODO complete this code
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
@@ -84,7 +84,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      //TODO complete this code
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
@@ -102,7 +102,7 @@ class NetworkAPIProvider {
         responseJSON = json.decode(response.body.toString());
       });
     } on Exception {
-      //TODO complete this code
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }

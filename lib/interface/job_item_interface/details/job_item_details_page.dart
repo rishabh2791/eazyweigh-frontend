@@ -23,7 +23,7 @@ class JobItemDetailsPage extends StatefulWidget {
 }
 
 class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
-  double currentWeight = 200.5;
+  double currentWeight = 0;
   double taredWeight = 0;
   bool isVerified = false;
   bool isMaterialScanned = false;
@@ -88,7 +88,8 @@ class _JobItemDetailsPageState extends State<JobItemDetailsPage> {
         .replaceAll("-", "_"));
     try {
       setState(() {
-        currentWeight = double.parse(scannerData["data"].toString());
+        currentWeight =
+            double.parse((scannerData["data"]).toString()) - taredWeight;
       });
     } catch (e) {
       //TODO logging service

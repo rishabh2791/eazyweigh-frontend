@@ -5,7 +5,7 @@ import 'package:eazyweigh/domain/entity/user.dart';
 class Job {
   final String id;
   final String jobCode;
-  final Material material;
+  final Mat material;
   final double quantity;
   final UnitOfMeasure uom;
   final bool processing;
@@ -48,7 +48,7 @@ class Job {
       createdBy: User.fromJSON(jsonObject["created_at"]),
       id: jsonObject["id"],
       jobCode: jsonObject["job_code"],
-      material: Material.fromJSON(jsonObject["material"]),
+      material: Mat.fromJSON(jsonObject["material"]),
       processing: jsonObject["processing"],
       quantity: jsonObject["quantity"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),

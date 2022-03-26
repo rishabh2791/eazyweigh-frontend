@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-String baseURL = "http://172.30.211.237:8000/";
+String baseURL = "http://172.29.216.77:8000/";
 const primaryColor = Color(0xFF2F2FA2);
 const backgroundColor = Color(0xFF161B40);
 const foregroundColor = Color(0xFFF9FAF4);
@@ -46,12 +46,6 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
-  "BOM Items": [
-    "Create",
-    "Details",
-    "List",
-    "Update",
-  ],
   "Company": [
     "Create",
     "Details",
@@ -70,17 +64,17 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
-  "Job Assignment": [
-    "Create",
-    "Details",
-    "List",
-    "Update",
-  ],
-  "Job Item": [
-    "Create",
-    "Details",
-    "Update",
-  ],
+  // "Job Assignment": [
+  //   "Create",
+  //   "Details",
+  //   "List",
+  //   "Update",
+  // ],
+  // "Job Item Assignment": [
+  //   "Create",
+  //   "Details",
+  //   "Update",
+  // ],
   "Material": [
     "Create",
     "Details",
@@ -139,8 +133,13 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
-  "User Company Access": [],
-  "User Factory Access": [],
-  "User Role Access": [],
-  "User Terminal Access": [],
+  "User Access": [
+    "Create",
+    "Details",
+    "List",
+    "Update",
+  ],
+  // "User Factory Access": [],
+  // "User Role Access": [],
+  // "User Terminal Access": [],
 };

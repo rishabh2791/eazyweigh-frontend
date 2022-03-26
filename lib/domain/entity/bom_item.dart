@@ -5,7 +5,7 @@ import 'package:eazyweigh/domain/entity/user.dart';
 class BomItem {
   final String id;
   final String bomID;
-  final Material material;
+  final Mat material;
   final double quantity;
   final double tolerance;
   final bool overIssue;
@@ -54,7 +54,7 @@ class BomItem {
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
-      material: Material.fromJSON(jsonObject["material"]),
+      material: Mat.fromJSON(jsonObject["material"]),
       overIssue: jsonObject["over_issue"],
       quantity: jsonObject["quantity"],
       tolerance: jsonObject["tolerance"],

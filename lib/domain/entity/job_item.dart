@@ -5,7 +5,7 @@ import 'package:eazyweigh/domain/entity/user.dart';
 class JobItem {
   final String id;
   final String jobID;
-  final Material material;
+  final Mat material;
   final UnitOfMeasure uom;
   final double requiredWeight;
   final double upperBound;
@@ -66,7 +66,7 @@ class JobItem {
       id: jsonObject["id"],
       jobID: jsonObject["job_id"],
       lowerBound: jsonObject["lower_bound"],
-      material: Material.fromJSON(jsonObject["material"]),
+      material: Mat.fromJSON(jsonObject["material"]),
       overIssue: jsonObject["over_issue"],
       requiredWeight: jsonObject["required_weight"],
       underIssue: jsonObject["under_issue"],

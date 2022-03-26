@@ -138,72 +138,49 @@ class _AddressCreateWidgetState extends State<AddressCreateWidget> {
                               return loader(context);
                             },
                           );
-                          Map<String, dynamic> userCondition = {
-                            "user_username": currentUser.username
+                          Map<String, dynamic> address = {
+                            "line1": line1,
+                            "line2": line2,
+                            "city": city,
+                            "state": state,
+                            "zip": zip,
+                            "country": country,
+                            "company_id": companyID,
                           };
-                          await appStore.userCompanyApp
-                              .get(userCondition)
-                              .then((response) async {
-                            if (response["status"]) {
-                              String companyID =
-                                  response["payload"][0]["company_id"];
 
-                              Map<String, dynamic> address = {
-                                "line1": line1,
-                                "line2": line2,
-                                "city": city,
-                                "state": state,
-                                "zip": zip,
-                                "country": country,
-                                "company_id": companyID,
-                              };
-
-                              await appStore.addressApp
-                                  .create(address)
-                                  .then((response) async {
-                                if (response["status"]) {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const CustomDialog(
-                                        message: "Address Created.",
-                                        title: "Info",
-                                      );
-                                    },
-                                  );
-                                  line1Controller.text = "";
-                                  line2Controller.text = "";
-                                  cityController.text = "";
-                                  stateController.text = "";
-                                  zipController.text = "";
-                                  countryController.text = "";
-                                } else {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: response["message"],
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                }
-                              });
-                            } else {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialog(
-                                    message: response["message"],
-                                    title: "Errors",
-                                  );
-                                },
-                              );
-                            }
-                          });
+                          await appStore.addressApp.create(address).then(
+                            (response) async {
+                              if (response["status"]) {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const CustomDialog(
+                                      message: "Address Created.",
+                                      title: "Info",
+                                    );
+                                  },
+                                );
+                                line1Controller.text = "";
+                                line2Controller.text = "";
+                                cityController.text = "";
+                                stateController.text = "";
+                                zipController.text = "";
+                                countryController.text = "";
+                              } else {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialog(
+                                      message: response["message"],
+                                      title: "Errors",
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          );
                         }
                       },
                       child: checkButton(),

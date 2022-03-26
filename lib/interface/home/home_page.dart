@@ -29,24 +29,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<dynamic> getUserDetails() async {
-    await appStore.userApp.getUser(widget.username).then((response) {
+    await appStore.userApp.getUser(widget.username).then((response) async {
       if (response["status"] && response.containsKey("payload")) {
         currentUser = User.fromJSON(response["payload"]);
-        if (currentUser.userRole.role == "Weigher") {
-          Navigator.of(context).pushAndRemoveUntil(
-            CupertinoPageRoute(
-              builder: (BuildContext context) => const JobListPage(),
-            ),
-            (route) => false,
-          );
-        } else {
-          Navigator.of(context).pushAndRemoveUntil(
-            CupertinoPageRoute(
-              builder: (BuildContext context) => const GeneralHomeWidget(),
-            ),
-            (route) => false,
-          );
-        }
+        Map<String, dynamic> userCondition = {
+          "user_username": currentUser.username
+        };
+        await appStore.userCompanyApp.get(userCondition).then((value) async {
+          companyID = value["payload"][0]["company_id"];
+          if (currentUser.userRole.role == "Weigher") {
+            Navigator.of(context).pushAndRemoveUntil(
+              CupertinoPageRoute(
+                builder: (BuildContext context) => const JobListPage(),
+              ),
+              (route) => false,
+            );
+          } else {
+            Navigator.of(context).pushAndRemoveUntil(
+              CupertinoPageRoute(
+                builder: (BuildContext context) => const GeneralHomeWidget(),
+              ),
+              (route) => false,
+            );
+          }
+        });
       } else {
         showDialog(
           context: context,

@@ -154,49 +154,109 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                               if (companyResponse["status"]) {
                                 String companyID =
                                     companyResponse["payload"]["id"];
-                                Map<String, dynamic> adminRole = {
-                                  "company_id": companyID,
-                                  "role": "Administrator",
-                                  "description": "Administrator for Company",
-                                };
+                                List<Map<String, dynamic>> basicUserRoles = [
+                                  {
+                                    "company_id": companyID,
+                                    "role": "Administrator",
+                                    "description": "Administrator for Company",
+                                  },
+                                  {
+                                    "company_id": companyID,
+                                    "role": "Production Manager",
+                                    "description": "Production Manager",
+                                  },
+                                  {
+                                    "company_id": companyID,
+                                    "role": "Team Leader",
+                                    "description":
+                                        "Team Leader for Weighing Team",
+                                  },
+                                  {
+                                    "company_id": companyID,
+                                    "role": "Operator",
+                                    "description": "Weighing Operators",
+                                  },
+                                  {
+                                    "company_id": companyID,
+                                    "role": "Verifier",
+                                    "description":
+                                        "Verifier for weighed out batches",
+                                  },
+                                  {
+                                    "company_id": companyID,
+                                    "role": "Viewer",
+                                    "description": "General Viewer for Company",
+                                  },
+                                ];
                                 await appStore.userRoleApp
-                                    .create(adminRole)
-                                    .then((roleResponse) async {
-                                  if (roleResponse["status"]) {
-                                    String roleID =
-                                        roleResponse["payload"]["id"];
-                                    user["user_role_id"] = roleID;
-                                    await appStore.userApp
-                                        .create(user)
-                                        .then((userResponse) async {
-                                      if (userResponse["status"]) {
-                                        Map<String, String> userCompany = {
-                                          "company_id": companyID,
-                                          "user_username": username,
-                                        };
-                                        await appStore.userCompanyApp
-                                            .create(userCompany)
+                                    .createMultiple(basicUserRoles)
+                                    .then(
+                                  (basicRoleResponse) async {
+                                    if (basicRoleResponse["status"]) {
+                                      try {
+                                        for (var basicRole
+                                            in basicRoleResponse["payload"]
+                                                ["models"]) {
+                                          if (basicRole["role"] ==
+                                              "Administrator") {
+                                            user["user_role_id"] =
+                                                basicRole["id"];
+                                          }
+                                        }
+                                        await appStore.userApp
+                                            .create(user)
                                             .then(
-                                          (value) {
-                                            if (value["status"]) {
-                                              Navigator.of(context).pop();
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return const CustomDialog(
-                                                    message:
-                                                        "Company Details Created.",
-                                                    title: "Info",
-                                                  );
+                                          (userResponse) async {
+                                            if (userResponse["status"]) {
+                                              Map<String, String> userCompany =
+                                                  {
+                                                "company_id": companyID,
+                                                "user_username": username,
+                                              };
+                                              await appStore.userCompanyApp
+                                                  .create(userCompany)
+                                                  .then(
+                                                (value) {
+                                                  if (value["status"]) {
+                                                    Navigator.of(context).pop();
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return const CustomDialog(
+                                                          message:
+                                                              "Company Details Created.",
+                                                          title: "Info",
+                                                        );
+                                                      },
+                                                    );
+                                                    usernameController.text =
+                                                        "";
+                                                    passwordController.text =
+                                                        "";
+                                                    firstNameController.text =
+                                                        "";
+                                                    lastNameController.text =
+                                                        "";
+                                                    emailController.text = "";
+                                                    companyNameController.text =
+                                                        "";
+                                                  } else {
+                                                    Navigator.of(context).pop();
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CustomDialog(
+                                                          message:
+                                                              value["message"],
+                                                          title: "Errors",
+                                                        );
+                                                      },
+                                                    );
+                                                  }
                                                 },
                                               );
-                                              usernameController.text = "";
-                                              passwordController.text = "";
-                                              firstNameController.text = "";
-                                              lastNameController.text = "";
-                                              emailController.text = "";
-                                              companyNameController.text = "";
                                             } else {
                                               Navigator.of(context).pop();
                                               showDialog(
@@ -204,7 +264,8 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                                 builder:
                                                     (BuildContext context) {
                                                   return CustomDialog(
-                                                    message: value["message"],
+                                                    message:
+                                                        userResponse["message"],
                                                     title: "Errors",
                                                   );
                                                 },
@@ -212,43 +273,55 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                             }
                                           },
                                         );
-                                      } else {
+                                      } catch (e) {
+                                        print(e);
                                         Navigator.of(context).pop();
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return CustomDialog(
-                                              message: userResponse["message"],
-                                              title: "Errors",
-                                            );
-                                          },
-                                        );
                                       }
-                                    });
-                                  } else {
-                                    Navigator.of(context).pop();
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialog(
-                                          message: roleResponse["message"],
-                                          title: "Errors",
-                                        );
-                                      },
-                                    );
-                                  }
-                                });
-                              } else {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: companyResponse["message"],
-                                      title: "Errors",
-                                    );
+                                    } else {
+                                      Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomDialog(
+                                            message:
+                                                basicRoleResponse["message"],
+                                            title: "Errors",
+                                          );
+                                        },
+                                      );
+                                    }
                                   },
                                 );
+                                //   await appStore.userRoleApp
+                                //       .create(adminRole)
+                                //       .then((roleResponse) async {
+                                //     if (roleResponse["status"]) {
+                                //       String roleID =
+                                //           roleResponse["payload"]["id"];
+                                //     } else {
+                                //       Navigator.of(context).pop();
+                                //       showDialog(
+                                //         context: context,
+                                //         builder: (BuildContext context) {
+                                //           return CustomDialog(
+                                //             message: roleResponse["message"],
+                                //             title: "Errors",
+                                //           );
+                                //         },
+                                //       );
+                                //     }
+                                //   });
+                                // } else {
+                                //   Navigator.of(context).pop();
+                                //   showDialog(
+                                //     context: context,
+                                //     builder: (BuildContext context) {
+                                //       return CustomDialog(
+                                //         message: companyResponse["message"],
+                                //         title: "Errors",
+                                //       );
+                                //     },
+                                //   );
                               }
                             },
                           );

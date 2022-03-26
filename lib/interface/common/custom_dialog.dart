@@ -14,6 +14,14 @@ class CustomDialog extends StatefulWidget {
 }
 
 class _CustomDialogState extends State<CustomDialog> {
+  late ScrollController dialogScrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    dialogScrollController = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -50,54 +58,57 @@ class _CustomDialogState extends State<CustomDialog> {
             constraints: BoxConstraints(maxWidth: size.width / 4),
             child: BaseWidget(
               builder: (context, sizeInfo) {
-                return SizedBox(
-                  width: sizeInfo.localWidgetSize.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        widget.title,
-                        style: const TextStyle(
-                          fontSize: 28.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        padding:
-                            const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.message,
+                return SingleChildScrollView(
+                  controller: dialogScrollController,
+                  child: SizedBox(
+                    width: sizeInfo.localWidgetSize.width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          widget.title,
                           style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.red,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      TextButton(
-                        child: const Text(
-                          "Close",
-                          style: TextStyle(
+                            fontSize: 28.0,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                            color: primaryColor,
+                            color: Colors.white,
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          padding:
+                              const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                          alignment: Alignment.center,
+                          child: Text(
+                            widget.message,
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.red,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        TextButton(
+                          child: const Text(
+                            "Close",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
+                              color: primaryColor,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -1,5 +1,3 @@
-import 'package:eazyweigh/domain/entity/user.dart';
-
 class Address {
   final String id;
   final String line1;
@@ -11,9 +9,9 @@ class Address {
   final bool headOffice;
   final String companyID;
   final DateTime createdAt;
-  final User createdBy;
+  final String createdBy;
   final DateTime updatedAt;
-  final User updatedBy;
+  final String updatedBy;
 
   Address({
     required this.city,
@@ -36,7 +34,7 @@ class Address {
       "city": city,
       "country": country,
       "created_at": createdAt,
-      "created_by": createdBy.toJSON(),
+      "created_by_username": createdBy,
       "head_office": headOffice,
       "id": id,
       "line1": line1,
@@ -44,7 +42,7 @@ class Address {
       "state": state,
       "company_id": companyID,
       "updated_at": updatedAt,
-      "updated_by": updatedBy.toJSON(),
+      "updated_by_username": updatedBy,
       "zip": zip,
     };
   }
@@ -54,7 +52,7 @@ class Address {
       city: jsonObject["city"],
       country: jsonObject["country"],
       createdAt: DateTime.parse(jsonObject["created_at"]),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
+      createdBy: jsonObject["created_by_username"],
       headOffice: jsonObject["head_office"],
       id: jsonObject["id"],
       line1: jsonObject["line1"],
@@ -62,7 +60,7 @@ class Address {
       state: jsonObject["state"],
       companyID: jsonObject["company_id"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      updatedBy: jsonObject["updated_by_username"],
       zip: jsonObject["zip"],
     );
     return address;
