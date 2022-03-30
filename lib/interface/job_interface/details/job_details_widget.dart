@@ -1,10 +1,15 @@
 import 'dart:convert';
 
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
+import 'package:eazyweigh/domain/entity/terminals.dart';
+import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
+import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/job_item_interface/details/job_item_details_widget.dart';
@@ -24,17 +29,21 @@ class JobDetailsWidget extends StatefulWidget {
 }
 
 class _JobDetailsWidgetState extends State<JobDetailsWidget> {
+  bool isLoadingData = true;
   int start = 0;
   int end = 2;
   bool isLoading = true;
   List<Map<String, dynamic>> jobItems = [];
   ScrollController? scrollController;
+  List<Terminal> terminals = [];
+  List<UnitOfMeasurementConversion> uomConversions = [];
   String previous = '{"action":"navigation", "data":{"type":"previous"}}';
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
 
   @override
   void initState() {
+    getAllData();
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
     super.initState();
@@ -45,6 +54,101 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     scrollController?.dispose();
     scannerListener.removeListener(listenToScanner);
     super.dispose();
+  }
+
+  void getAllData() async {
+    await Future.forEach([
+      await getUOMConversions(),
+      await getScales(),
+    ], (element) {
+      setState(() {
+        isLoadingData = false;
+      });
+    });
+  }
+
+  Future<dynamic> getUOMConversions() async {
+    uomConversions = [];
+    Map<String, dynamic> conditions = {
+      "factory_id": widget.jobItems[0].material.factoryID,
+    };
+    await appStore.unitOfMeasurementConversionApp
+        .list(conditions)
+        .then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          UnitOfMeasurementConversion unitOfMeasurementConversion =
+              UnitOfMeasurementConversion.fromJSON(item);
+          uomConversions.add(unitOfMeasurementConversion);
+        }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: response["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    });
+  }
+
+  Future<dynamic> getScales() async {
+    terminals = [];
+    Map<String, dynamic> conditions = {
+      "factory_id": widget.jobItems[0].material.factoryID,
+    };
+    await appStore.terminalApp.list(conditions).then((value) async {
+      if (value["status"]) {
+        for (var item in value["payload"]) {
+          Terminal terminal = Terminal.fromJSON(item);
+          terminals.add(terminal);
+        }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: value["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    });
+  }
+
+  double getScaleFactor(String terminalCode, String jobItemCode) {
+    if (terminalCode != jobItemCode) {
+      for (var uomConversion in uomConversions) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode &&
+            uomConversion.unitOfMeasure2.code == jobItemCode) {
+          return uomConversion.value2 / uomConversion.value1;
+        }
+        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
+            uomConversion.unitOfMeasure2.code == terminalCode) {
+          return uomConversion.value1 / uomConversion.value2;
+        }
+      }
+    }
+    return 1;
+  }
+
+  String assignTerminal(double req, String uomCode) {
+    String scales = "";
+    for (var terminal in terminals) {
+      double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
+      if (req <= 0.9 * terminal.capacity * scaleFactor &&
+          req > terminal.leastCount * scaleFactor &&
+          req > 0.1 * terminal.capacity * scaleFactor) {
+        scales += terminal.description + "\n";
+      }
+    }
+    return scales;
   }
 
   dynamic listenToScanner(String data) {
@@ -161,6 +265,29 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             jobItem.requiredWeight.toString(),
             style: const TextStyle(
               fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+    widgets.add(
+      Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            "Suggestes Scales",
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            assignTerminal(jobItem.requiredWeight, jobItem.uom.code),
+            style: const TextStyle(
+              fontSize: 16.0,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -290,15 +417,23 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SuperPage(
-      childWidget: buildWidget(
-        listWidget(),
-        context,
-        "All Job Items",
-        () {
-          Navigator.of(context).pop();
-        },
-      ),
-    );
+    return isLoadingData
+        ? SuperPage(
+            childWidget: loader(context),
+          )
+        : SuperPage(
+            childWidget: buildWidget(
+              listWidget(),
+              context,
+              "All Job Items",
+              () {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const JobListWidget(),
+                  ),
+                );
+              },
+            ),
+          );
   }
 }

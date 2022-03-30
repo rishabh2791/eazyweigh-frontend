@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage> {
         await appStore.userCompanyApp.get(userCondition).then((value) async {
           companyID = value["payload"][0]["company_id"];
           if (currentUser.userRole.role == "Operator") {
+            menuItemSelected = "Job";
             Navigator.of(context).pushAndRemoveUntil(
               CupertinoPageRoute(
                 builder: (BuildContext context) => const JobListWidget(),

@@ -122,7 +122,13 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                             };
                             await appStore.authApp
                                 .logout(headers)
-                                .then((value) async => await storage?.clear())
+                                .then((value) async => await Future.forEach([
+                                      await storage?.remove("username"),
+                                      await storage?.remove("access_token"),
+                                      await storage?.remove("refresh_token"),
+                                      await storage?.remove("access_validity"),
+                                      await storage?.remove("logged_in"),
+                                    ], (element) => null))
                                 .then((value) {
                               isLoggedIn = false;
                               isMenuCollapsed = true;

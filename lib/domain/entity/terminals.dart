@@ -53,16 +53,16 @@ class Terminal {
   factory Terminal.fromJSON(Map<String, dynamic> jsonObject) {
     Terminal terminal = Terminal(
       apiKey: jsonObject["api_key"],
-      capacity: jsonObject["capacity"],
+      capacity: double.parse(jsonObject["capacity"].toString()),
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       description: jsonObject["description"],
       factoryID: jsonObject["factory_id"],
       id: jsonObject["id"],
-      leastCount: jsonObject["least_count"],
+      leastCount: double.parse(jsonObject["least_count"].toString()),
       macAddress: jsonObject["mac_address"],
       occupied: jsonObject["occupied"],
-      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );

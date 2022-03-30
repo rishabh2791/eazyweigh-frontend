@@ -128,16 +128,32 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     buildContext = context;
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: foregroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Image(
+                  image: AssetImage("assets/img/wipro_logo.png"),
+                  width: 200.0,
+                  fit: BoxFit.scaleDown,
+                ),
+                Image(
+                  image: AssetImage("assets/img/canway.png"),
+                  width: 200.0,
+                  fit: BoxFit.scaleDown,
+                ),
+              ],
+            ),
             const Text(
               "Scan your Login Card.",
               style: TextStyle(
                 fontSize: 30.0,
-                color: foregroundColor,
+                color: backgroundColor,
               ),
             ),
             const Divider(
@@ -147,7 +163,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               "or",
               style: TextStyle(
                 fontSize: 16.0,
-                color: foregroundColor,
+                color: backgroundColor,
               ),
             ),
             const Divider(

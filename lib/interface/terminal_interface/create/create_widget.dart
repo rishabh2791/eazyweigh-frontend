@@ -257,7 +257,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                             "description": description,
                             "capacity": double.parse(capacity),
                             "unit_of_measurement_id": uom,
-                            "least_ceunt": double.parse(leastCount),
+                            "least_count": double.parse(leastCount),
                             "factory_id": factoryName,
                             "mac_address": macAddress,
                           };

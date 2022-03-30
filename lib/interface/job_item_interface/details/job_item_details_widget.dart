@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
+import 'package:eazyweigh/domain/entity/terminals.dart';
+import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/socket_utility.dart';
@@ -29,12 +31,17 @@ class JobItemDetailsWidget extends StatefulWidget {
 }
 
 class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
+  bool isLoadingData = true;
   double currentWeight = 0;
   double taredWeight = 0;
   double actualWeight = 0;
   bool isVerified = false;
   double requiredQty = 0;
   bool isMaterialScanned = false;
+  List<Terminal> terminals = [];
+  List<Terminal> thisTerminal = [];
+  double scaleFactor = 1;
+  List<UnitOfMeasurementConversion> uomConversions = [];
   String back = '{"action":"back"}';
   String tare = '{"action":"tare"}';
   String complete = '{"action":"complete"}';
@@ -43,6 +50,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   @override
   void initState() {
     super.initState();
+    getAllData();
     requiredQty = widget.jobItem.requiredWeight - widget.jobItem.actualWeight;
     startTime = DateTime.now();
     scannerListener.addListener(listenToScanner);
@@ -54,6 +62,122 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     scannerListener.removeListener(listenToScanner);
     socketUtility.removeListener(listenToWeighingScale);
     super.dispose();
+  }
+
+  void getAllData() async {
+    await Future.forEach([
+      await getUOMConversions(),
+      await getScales(),
+    ], (element) {
+      setState(() {
+        isLoadingData = false;
+      });
+    }).then((value) async {
+      await getAPIKey();
+    });
+  }
+
+  Future<dynamic> getAPIKey() async {
+    String apiKey = storage?.getString("api_key") ?? "";
+    if (apiKey.isEmpty || apiKey == "") {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "This is not a registered Terminal.",
+            title: "Errors",
+          );
+        },
+      );
+      await Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pushReplacement(
+          CupertinoPageRoute(
+            builder: (BuildContext context) => JobDetailsWidget(
+              jobItems: widget.allJobItems,
+            ),
+          ),
+        );
+      });
+    } else {
+      for (var terminal in terminals) {
+        if (terminal.apiKey == apiKey) {
+          thisTerminal.add(terminal);
+        }
+      }
+      scaleFactor =
+          getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
+    }
+  }
+
+  double getScaleFactor(String terminalCode, String jobItemCode) {
+    if (terminalCode != jobItemCode) {
+      for (var uomConversion in uomConversions) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode &&
+            uomConversion.unitOfMeasure2.code == jobItemCode) {
+          return uomConversion.value2 / uomConversion.value1;
+        }
+        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
+            uomConversion.unitOfMeasure2.code == terminalCode) {
+          return uomConversion.value1 / uomConversion.value2;
+        }
+      }
+    }
+    return 1;
+  }
+
+  Future<dynamic> getUOMConversions() async {
+    uomConversions = [];
+    Map<String, dynamic> conditions = {
+      "factory_id": widget.jobItem.material.factoryID,
+    };
+    await appStore.unitOfMeasurementConversionApp
+        .list(conditions)
+        .then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          UnitOfMeasurementConversion unitOfMeasurementConversion =
+              UnitOfMeasurementConversion.fromJSON(item);
+          uomConversions.add(unitOfMeasurementConversion);
+        }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: response["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    });
+  }
+
+  Future<dynamic> getScales() async {
+    terminals = [];
+    Map<String, dynamic> conditions = {
+      "factory_id": widget.jobItem.material.factoryID,
+    };
+    await appStore.terminalApp.list(conditions).then((value) async {
+      if (value["status"]) {
+        for (var item in value["payload"]) {
+          Terminal terminal = Terminal.fromJSON(item);
+          terminals.add(terminal);
+        }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: value["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    });
   }
 
   dynamic listenToScanner(String data) async {
@@ -79,7 +203,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         case "complete":
           Map<String, dynamic> jobItemWeighing = {
             "job_item_id": widget.jobItem.id,
-            "weight": actualWeight, //TODO correct this
+            "weight": actualWeight,
             "batch": "123456",
             "start_time": startTime.toIso8601String() + "Z",
             "end_time": DateTime.now().toIso8601String() + "Z",
@@ -442,6 +566,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     );
   }
 
+//TODO check actual weight in terms of scale factor
   @override
   Widget build(BuildContext context) {
     return SuperPage(
@@ -454,7 +579,13 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         context,
         "All Job Items",
         () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => JobDetailsWidget(
+                jobItems: widget.allJobItems,
+              ),
+            ),
+          );
         },
       ),
     );

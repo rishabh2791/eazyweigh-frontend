@@ -1,6 +1,7 @@
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:eazyweigh/interface/terminal_interface/assign.dart';
 import 'package:eazyweigh/interface/terminal_interface/create/create_widget.dart';
 import 'package:eazyweigh/interface/terminal_interface/details/details_widget.dart';
 import 'package:eazyweigh/interface/terminal_interface/list/list_widget.dart';
@@ -83,6 +84,20 @@ class _TerminalWidgetState extends State<TerminalWidget> {
                     label: "Update",
                     table: "terminals",
                     accessType: "Update",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const AssignAsTerminal(),
+                        ),
+                      );
+                    },
+                    icon: Icons.update,
+                    label: "Assign",
+                    table: "terminals",
+                    accessType: "Assign",
                   ),
                 ],
               ),
