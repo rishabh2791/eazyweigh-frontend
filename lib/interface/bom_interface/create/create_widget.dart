@@ -612,68 +612,53 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                               if (foundation.kIsWeb) {
                                 //TODO Web Version
                               } else {
-                                final path = fileController.text;
-                                if (path.isEmpty) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const CustomDialog(
-                                        message: "Select File...",
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  final csvFile =
-                                      File(file.path.toString()).openRead();
-                                  csvData = await csvFile
-                                      .transform(utf8.decoder)
-                                      .transform(
-                                        const CsvToListConverter(),
-                                      )
-                                      .toList();
-                                  csvData.forEach(
-                                    (element) {
-                                      String uomID = getUOMID(element[1]);
-                                      if (uomID.isEmpty) {
-                                        errors += "Unit of Measure: " +
-                                            element[1] +
+                                final csvFile =
+                                    File(file.path.toString()).openRead();
+                                csvData = await csvFile
+                                    .transform(utf8.decoder)
+                                    .transform(
+                                      const CsvToListConverter(),
+                                    )
+                                    .toList();
+                                csvData.forEach(
+                                  (element) {
+                                    String uomID = getUOMID(element[1]);
+                                    if (uomID.isEmpty) {
+                                      errors += "Unit of Measure: " +
+                                          element[1] +
+                                          " not created.\n";
+                                    } else {
+                                      String materialID =
+                                          getMaterialID(element[0].toString());
+                                      if (materialID.isEmpty ||
+                                          materialID == "") {
+                                        errors += "Material: " +
+                                            element[0] +
                                             " not created.\n";
                                       } else {
-                                        String materialID = getMaterialID(
-                                            element[0].toString());
-                                        if (materialID.isEmpty ||
-                                            materialID == "") {
-                                          errors += "Material: " +
-                                              element[0] +
-                                              " not created.\n";
-                                        } else {
-                                          bomItems.add(
-                                            {
-                                              "bom_id": "",
-                                              "material_id": getMaterialID(
-                                                  element[0].toString()),
-                                              "unit_of_measurement_id":
-                                                  getUOMID(element[1]),
-                                              "qty": double.parse(
-                                                  element[2].toString()),
-                                              "upper_tolerance": double.parse(
-                                                  element[3].toString()),
-                                              "lower_tolerance": double.parse(
-                                                  element[4].toString()),
-                                              "over_issue": element[5] == 1
-                                                  ? true
-                                                  : false,
-                                              "under_issue": element[6] == 1
-                                                  ? true
-                                                  : false,
-                                            },
-                                          );
-                                        }
+                                        bomItems.add(
+                                          {
+                                            "bom_id": "",
+                                            "material_id": getMaterialID(
+                                                element[0].toString()),
+                                            "unit_of_measurement_id":
+                                                getUOMID(element[1]),
+                                            "quantity": double.parse(
+                                                element[2].toString()),
+                                            "upper_tolerance": double.parse(
+                                                element[3].toString()),
+                                            "lower_tolerance": double.parse(
+                                                element[4].toString()),
+                                            "over_issue":
+                                                element[5] == 1 ? true : false,
+                                            "under_issue":
+                                                element[6] == 1 ? true : false,
+                                          },
+                                        );
                                       }
-                                    },
-                                  );
-                                }
+                                    }
+                                  },
+                                );
                               }
                             } else {
                               if (getEmptyRows(codeControllers) == rows) {
@@ -735,7 +720,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                                           "material_id":
                                               getMaterialID(thisCode),
                                           "unit_of_measurement_id": thisUOM,
-                                          "qty": double.parse(thisQty),
+                                          "quantity": double.parse(thisQty),
                                           "upper_tolerance":
                                               double.parse(thisUpperTol),
                                           "lower_tolerance":

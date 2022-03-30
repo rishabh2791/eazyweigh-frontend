@@ -1,30 +1,30 @@
-import 'package:eazyweigh/domain/repository/job_assignment_repository.dart';
+import 'package:eazyweigh/domain/repository/job_item_assignment_repository.dart';
 import 'package:eazyweigh/infrastructure/network/network.dart';
 import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
 import 'package:eazyweigh/infrastructure/utilities/headers.dart';
 
-class JobAssignmentRepo implements JobAssignmentRepository {
+class JobItemAssignmentRepo implements JobItemAssignmentRepository {
   @override
   Future<Map<String, dynamic>> create(
-      Map<String, dynamic> jobAssignment) async {
-    String url = "job_assignment/create/";
+      Map<String, dynamic> jobItemAssignment) async {
+    String url = "job_item_assignment/create/";
     var response = await networkAPIProvider.post(
-        url, jobAssignment, getHeader(TokenType.accessToken));
+        url, jobItemAssignment, getHeader(TokenType.accessToken));
     return response;
   }
 
   @override
   Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> jobAssignments) async {
-    String url = "job_assignment/create/multi/";
+      List<Map<String, dynamic>> jobItemAssignments) async {
+    String url = "job_item_assignment/create/multi/";
     var response = await networkAPIProvider.post(
-        url, jobAssignments, getHeader(TokenType.accessToken));
+        url, jobItemAssignments, getHeader(TokenType.accessToken));
     return response;
   }
 
   @override
   Future<Map<String, dynamic>> get(String id) async {
-    String url = "job_assignment/" + id + "/";
+    String url = "job_item_assignment/" + id + "/";
     var response =
         await networkAPIProvider.get(url, getHeader(TokenType.accessToken));
     return response;
@@ -32,7 +32,7 @@ class JobAssignmentRepo implements JobAssignmentRepository {
 
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
-    String url = "job_assignment/";
+    String url = "job_item_assignment/";
     var response = await networkAPIProvider.post(
         url, conditions, getHeader(TokenType.accessToken));
     return response;
@@ -41,7 +41,7 @@ class JobAssignmentRepo implements JobAssignmentRepository {
   @override
   Future<Map<String, dynamic>> update(
       String id, Map<String, dynamic> update) async {
-    String url = "job_assignment/" + id + "/";
+    String url = "job_item_assignment/" + id + "/";
     var response = await networkAPIProvider.patch(
         url, update, getHeader(TokenType.accessToken));
     return response;

@@ -5,8 +5,9 @@ import 'package:eazyweigh/application/bom_item_app.dart';
 import 'package:eazyweigh/application/company_app.dart';
 import 'package:eazyweigh/application/factory_app.dart';
 import 'package:eazyweigh/application/job_app.dart';
-import 'package:eazyweigh/application/job_assignment_app.dart';
+import 'package:eazyweigh/application/job_item_assignment_app.dart';
 import 'package:eazyweigh/application/job_item_app.dart';
+import 'package:eazyweigh/application/job_item_weighing_app.dart';
 import 'package:eazyweigh/application/material_app.dart';
 import 'package:eazyweigh/application/over_issue_app.dart';
 import 'package:eazyweigh/application/scanned_data_app.dart';
@@ -37,8 +38,10 @@ class AppStore {
   final factoryApp = FactoryApp(factoryRepository: repoStore.factoryRepo);
   final jobApp = JobApp(jobRepository: repoStore.jobRepo);
   final jobItemApp = JobItemApp(jobItemRepository: repoStore.jobItemRepo);
-  final jobAssignmentApp =
-      JobAssignmentApp(jobAssignmentRepository: repoStore.jobAssignmentRepo);
+  final jobItemAssignmentApp = JobItemAssignmentApp(
+      jobItemAssignmentRepository: repoStore.jobItemAssignmentRepo);
+  final jobWeighingApp =
+      JobItemWeighingApp(jobItemWeighingRepository: repoStore.jobWeighingRepo);
   final materialApp = MaterialApp(materialRepository: repoStore.materialRepo);
   final overIssueApp =
       OverIssueApp(overIssueRepository: repoStore.overIssueRepo);

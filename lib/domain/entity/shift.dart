@@ -26,6 +26,11 @@ class Shift {
     required this.updatedBy,
   });
 
+  @override
+  String toString() {
+    return fact.name + " - " + code;
+  }
+
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "code": code,

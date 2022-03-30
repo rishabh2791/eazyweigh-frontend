@@ -32,6 +32,9 @@ class WebSocketUtility {
           tries += 1;
           if (tries < 10) {
             await initCommunication();
+          } else {
+            //TODO Logging service.
+            print("Unable to Find Weighing Scale.");
           }
         },
       );

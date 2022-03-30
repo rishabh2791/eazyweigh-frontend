@@ -22,10 +22,11 @@ class JobItemRepo implements JobItemRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> get(String id) async {
+  Future<Map<String, dynamic>> get(
+      String id, Map<String, dynamic> conditions) async {
     String url = "job_item/" + id + "/";
-    var response =
-        await networkAPIProvider.get(url, getHeader(TokenType.accessToken));
+    var response = await networkAPIProvider.post(
+        url, conditions, getHeader(TokenType.accessToken));
     return response;
   }
 

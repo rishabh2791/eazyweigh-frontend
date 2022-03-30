@@ -4,7 +4,7 @@ import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
-import 'package:eazyweigh/interface/job_interface/list/job_list_page.dart';
+import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -37,10 +37,10 @@ class _HomePageState extends State<HomePage> {
         };
         await appStore.userCompanyApp.get(userCondition).then((value) async {
           companyID = value["payload"][0]["company_id"];
-          if (currentUser.userRole.role == "Weigher") {
+          if (currentUser.userRole.role == "Operator") {
             Navigator.of(context).pushAndRemoveUntil(
               CupertinoPageRoute(
-                builder: (BuildContext context) => const JobListPage(),
+                builder: (BuildContext context) => const JobListWidget(),
               ),
               (route) => false,
             );

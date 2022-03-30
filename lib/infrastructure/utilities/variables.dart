@@ -1,7 +1,6 @@
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/interface/address_interface/address_widget.dart';
 import 'package:eazyweigh/interface/bom_interface/bom_widget.dart';
-import 'package:eazyweigh/interface/bom_item_interface/bom_item_widget.dart';
 import 'package:eazyweigh/interface/company_interface/company_widget.dart';
 import 'package:eazyweigh/interface/factory_interface/factory_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
@@ -41,7 +40,6 @@ Map<String, dynamic> menuWidgetMapping = {
   "Home": HomePage(username: currentUser.username),
   "Address": const AddressWidget(),
   "BOM": const BOMWidget(),
-  "BOM Items": const BOMItemWidget(),
   "Company": const CompanyWidget(),
   "Factory": const FactoryWidget(),
   "Job": const JobWidget(),

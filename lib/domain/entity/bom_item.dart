@@ -7,7 +7,8 @@ class BomItem {
   final String bomID;
   final Mat material;
   final double quantity;
-  final double tolerance;
+  final double upperTolerance;
+  final double lowerTolerance;
   final bool overIssue;
   final bool underIssue;
   final UnitOfMeasure uom;
@@ -24,7 +25,8 @@ class BomItem {
     required this.material,
     required this.overIssue,
     required this.quantity,
-    required this.tolerance,
+    required this.upperTolerance,
+    required this.lowerTolerance,
     required this.underIssue,
     required this.uom,
     required this.updatedAt,
@@ -40,7 +42,8 @@ class BomItem {
       "material": material.toJSON(),
       "over_issue": overIssue,
       "quantity": quantity,
-      "tolerance": tolerance,
+      "upper_tolerance": upperTolerance,
+      "lower_tolerance": lowerTolerance,
       "under_issue": underIssue,
       "unit_of_measurement": uom.toJSON(),
       "updated_at": updatedAt,
@@ -57,10 +60,11 @@ class BomItem {
       material: Mat.fromJSON(jsonObject["material"]),
       overIssue: jsonObject["over_issue"],
       quantity: jsonObject["quantity"],
-      tolerance: jsonObject["tolerance"],
+      upperTolerance: double.parse(jsonObject["upper_tolerance"].toString()),
+      lowerTolerance: double.parse(jsonObject["lower_tolerance"].toString()),
       underIssue: jsonObject["under_issue"],
-      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),
-      updatedAt: DateTime.parse(jsonObject["udpated_at"]),
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return bomItem;

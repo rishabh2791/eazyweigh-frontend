@@ -27,6 +27,11 @@ class User {
     required this.username,
   });
 
+  @override
+  String toString() {
+    return username;
+  }
+
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "active": active,
@@ -50,7 +55,7 @@ class User {
       createdByUsername: jsonObject["created_by_username"],
       email: jsonObject["email"],
       firstName: jsonObject["first_name"],
-      lastName: jsonObject["last_name"],
+      lastName: jsonObject["last_name"] ?? jsonObject["first_name"],
       password: jsonObject["password"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedByUsername: jsonObject["updated_by_username"],

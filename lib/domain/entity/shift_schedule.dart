@@ -22,6 +22,15 @@ class ShiftSchedule {
     required this.weigher,
   });
 
+  @override
+  String toString() {
+    return date.toString().substring(0, 10) +
+        " - " +
+        shift.description +
+        " - " +
+        weigher.username;
+  }
+
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "created_at": createdAt,

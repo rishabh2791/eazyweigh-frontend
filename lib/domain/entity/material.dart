@@ -29,7 +29,19 @@ class Mat {
   });
 
   Map<String, dynamic> toJSON() {
-    return <String, dynamic>{};
+    return <String, dynamic>{
+      "id": id,
+      "code": code,
+      "description": description,
+      "type": type,
+      "factory_id": factoryID,
+      "bar_code": barCode,
+      "unit_of_measurement": uom.toJSON(),
+      "created_at": createdAt,
+      "created_by": createdBy.toJSON(),
+      "updated_at": updatedAt,
+      "updated_by": updatedBy.toJSON(),
+    };
   }
 
   factory Mat.fromJSON(Map<String, dynamic> jsonObject) {

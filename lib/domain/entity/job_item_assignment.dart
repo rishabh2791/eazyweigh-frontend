@@ -1,26 +1,22 @@
-import 'package:eazyweigh/domain/entity/job.dart';
+import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/shift_schedule.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
-class JobAssignment {
+class JobItemAssignment {
   final String id;
-  final Job job;
+  final JobItem jobItem;
   final ShiftSchedule shiftSchedule;
-  final DateTime startTime;
-  final DateTime endTime;
   final User createdBy;
   final DateTime createdAt;
   final User updatedBy;
   final DateTime updatedAt;
 
-  JobAssignment({
+  JobItemAssignment({
     required this.createdAt,
     required this.createdBy,
-    required this.endTime,
     required this.id,
-    required this.job,
+    required this.jobItem,
     required this.shiftSchedule,
-    required this.startTime,
     required this.updatedAt,
     required this.updatedBy,
   });
@@ -29,28 +25,25 @@ class JobAssignment {
     return <String, dynamic>{
       "created_at": createdAt,
       "created_by": createdBy.toJSON(),
-      "end_time": endTime,
       "id": id,
-      "job": job.toJSON(),
+      "job": jobItem.toJSON(),
       "shift_schedule": shiftSchedule.toJSON(),
-      "start_time": startTime,
       "updated_at": updatedAt,
       "updated_by": updatedBy.toJSON(),
     };
   }
 
-  factory JobAssignment.fromJSON(Map<String, dynamic> jsonObject) {
-    JobAssignment jobAssignment = JobAssignment(
+  factory JobItemAssignment.fromJSON(Map<String, dynamic> jsonObject) {
+    JobItemAssignment jobAssignment = JobItemAssignment(
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
-      endTime: DateTime.parse(jsonObject["end_time"]),
       id: jsonObject["id"],
-      job: Job.fromJSON(jsonObject["job"]),
+      jobItem: JobItem.fromJSON(jsonObject["job_item"]),
       shiftSchedule: ShiftSchedule.fromJSON(jsonObject["shift_schedule"]),
-      startTime: DateTime.parse(jsonObject["start_time"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
+    print(jobAssignment.jobItem.material);
     return jobAssignment;
   }
 }

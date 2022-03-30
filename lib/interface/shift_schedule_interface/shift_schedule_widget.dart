@@ -1,6 +1,11 @@
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:eazyweigh/interface/shift_schedule_interface/create/create_widget.dart';
+import 'package:eazyweigh/interface/shift_schedule_interface/details/details_widget.dart';
+import 'package:eazyweigh/interface/shift_schedule_interface/list/list_widget.dart';
+import 'package:eazyweigh/interface/shift_schedule_interface/update/update_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ShiftScheduleWidget extends StatefulWidget {
@@ -25,7 +30,12 @@ class _ShiftScheduleWidgetState extends State<ShiftScheduleWidget> {
                 children: [
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const ShiftScheduleCreateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.create,
                     label: "Create",
@@ -34,7 +44,12 @@ class _ShiftScheduleWidgetState extends State<ShiftScheduleWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const ShiftScheduleDetailsWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.get_app,
                     label: "Details",
@@ -43,7 +58,12 @@ class _ShiftScheduleWidgetState extends State<ShiftScheduleWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const ShiftScheduleListWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.list,
                     label: "List",
@@ -52,7 +72,12 @@ class _ShiftScheduleWidgetState extends State<ShiftScheduleWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const ShiftScheduleUpdateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.update,
                     label: "Update",

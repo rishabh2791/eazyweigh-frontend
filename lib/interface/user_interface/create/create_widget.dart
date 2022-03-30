@@ -231,43 +231,85 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                             "email": email,
                             "user_role_id": userRole,
                           };
-                          await appStore.userApp
-                              .create(user)
-                              .then((response) async {
-                            if (response["status"]) {
-                              if (factoryName.isNotEmpty) {
-                                Map<String, dynamic> userFactory = {
+                          await appStore.userApp.create(user).then(
+                            (response) async {
+                              if (response["status"]) {
+                                Map<String, dynamic> userCompany = {
                                   "user_username": username,
-                                  "factory_id": factoryName,
+                                  "company_id": companyID,
                                 };
-                                await appStore.userFactoryApp
-                                    .create(userFactory)
-                                    .then((value) {
-                                  if (value["status"]) {
-                                    Navigator.of(context).pop();
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const CustomDialog(
-                                          message: "User Created",
-                                          title: "Info",
-                                        );
-                                      },
-                                    );
-                                    userRoleController.text = "";
-                                    passwordController.text = "";
-                                    firstNameController.text = "";
-                                    lastNameController.text = "";
-                                    emailController.text = "";
-                                    factoryController.text = "";
-                                    userRoleController.text = "";
+                                await appStore.userCompanyApp
+                                    .create(userCompany)
+                                    .then((userCompanyResponse) async {
+                                  if (userCompanyResponse["status"]) {
+                                    if (factoryName.isNotEmpty) {
+                                      Map<String, dynamic> userFactory = {
+                                        "user_username": username,
+                                        "factory_id": factoryName,
+                                      };
+                                      await appStore.userFactoryApp
+                                          .create(userFactory)
+                                          .then(
+                                        (value) {
+                                          if (value["status"]) {
+                                            Navigator.of(context).pop();
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const CustomDialog(
+                                                  message: "User Created",
+                                                  title: "Info",
+                                                );
+                                              },
+                                            );
+                                            userRoleController.text = "";
+                                            passwordController.text = "";
+                                            firstNameController.text = "";
+                                            lastNameController.text = "";
+                                            emailController.text = "";
+                                            factoryController.text = "";
+                                            userRoleController.text = "";
+                                          } else {
+                                            Navigator.of(context).pop();
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return CustomDialog(
+                                                  message: value["message"],
+                                                  title: "Errors",
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      );
+                                    } else {
+                                      Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const CustomDialog(
+                                            message: "User Created",
+                                            title: "Info",
+                                          );
+                                        },
+                                      );
+                                      userRoleController.text = "";
+                                      passwordController.text = "";
+                                      firstNameController.text = "";
+                                      lastNameController.text = "";
+                                      emailController.text = "";
+                                      factoryController.text = "";
+                                      userRoleController.text = "";
+                                    }
                                   } else {
                                     Navigator.of(context).pop();
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return CustomDialog(
-                                          message: value["message"],
+                                          message:
+                                              userCompanyResponse["message"],
                                           title: "Errors",
                                         );
                                       },
@@ -279,33 +321,15 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const CustomDialog(
-                                      message: "User Created",
-                                      title: "Info",
+                                    return CustomDialog(
+                                      message: response["message"],
+                                      title: "Errors",
                                     );
                                   },
                                 );
-                                userRoleController.text = "";
-                                passwordController.text = "";
-                                firstNameController.text = "";
-                                lastNameController.text = "";
-                                emailController.text = "";
-                                factoryController.text = "";
-                                userRoleController.text = "";
                               }
-                            } else {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialog(
-                                    message: response["message"],
-                                    title: "Errors",
-                                  );
-                                },
-                              );
-                            }
-                          });
+                            },
+                          );
                         }
                       },
                       child: checkButton(),

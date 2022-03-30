@@ -61,20 +61,6 @@ class _BOMWidgetState extends State<BOMWidget> {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
-                              const BOMListWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.list,
-                    label: "List",
-                    table: "boms",
-                    accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
                               const BOMUpdateWidget(),
                         ),
                       );

@@ -9,7 +9,6 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
-import 'package:eazyweigh/interface/job_interface/list/job_list_page.dart';
 import 'package:eazyweigh/interface/middlewares/refresh_token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
