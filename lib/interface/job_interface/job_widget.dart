@@ -48,6 +48,7 @@ class _JobWidgetState extends State<JobWidget> {
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
                               const JobDetailsWidget(
+                            jobCode: "",
                             jobItems: [],
                           ),
                         ),

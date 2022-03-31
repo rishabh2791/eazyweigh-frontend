@@ -18,10 +18,12 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class JobItemDetailsWidget extends StatefulWidget {
+  final String jobCode;
   final JobItem jobItem;
   final List<JobItem> allJobItems;
   const JobItemDetailsWidget({
     Key? key,
+    required this.jobCode,
     required this.jobItem,
     required this.allJobItems,
   }) : super(key: key);
@@ -93,6 +95,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
             builder: (BuildContext context) => JobDetailsWidget(
+              jobCode: widget.jobCode,
               jobItems: widget.allJobItems,
             ),
           ),
@@ -195,6 +198,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           navigationService.pushReplacement(
             CupertinoPageRoute(
               builder: (BuildContext context) => JobDetailsWidget(
+                jobCode: widget.jobCode,
                 jobItems: widget.allJobItems,
               ),
             ),
@@ -202,9 +206,13 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           break;
         case "complete":
           Map<String, dynamic> jobItemWeighing = {
+            "job_code": widget.jobCode,
             "job_item_id": widget.jobItem.id,
+            "material_code": widget.jobItem.material.code,
+            "material_description": widget.jobItem.material.description,
             "weight": actualWeight,
-            "batch": "123456",
+            "batch":
+                "123456", //TODO correct this while scanning material barcode
             "start_time": startTime.toIso8601String() + "Z",
             "end_time": DateTime.now().toIso8601String() + "Z",
           };
@@ -582,6 +590,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           Navigator.of(context).pushReplacement(
             CupertinoPageRoute(
               builder: (BuildContext context) => JobDetailsWidget(
+                jobCode: widget.jobCode,
                 jobItems: widget.allJobItems,
               ),
             ),

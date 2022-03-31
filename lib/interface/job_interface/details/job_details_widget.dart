@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
@@ -6,7 +7,6 @@ import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
-import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
@@ -18,9 +18,11 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class JobDetailsWidget extends StatefulWidget {
+  final String jobCode;
   final List<JobItem> jobItems;
   const JobDetailsWidget({
     Key? key,
+    required this.jobCode,
     required this.jobItems,
   }) : super(key: key);
 
@@ -138,12 +140,18 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     return 1;
   }
 
-  String assignTerminal(double req, String uomCode) {
+  String assignTerminal(
+    double req,
+    double upperBound,
+    double lowerBound,
+    String uomCode,
+  ) {
     String scales = "";
+    double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
       if (req <= 0.9 * terminal.capacity * scaleFactor &&
-          req > terminal.leastCount * scaleFactor &&
+          terminal.leastCount < precision &&
           req > 0.1 * terminal.capacity * scaleFactor) {
         scales += terminal.description + "\n";
       }
@@ -171,6 +179,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         navigationService.pushReplacement(
           CupertinoPageRoute(
             builder: (BuildContext context) => JobItemDetailsWidget(
+              jobCode: widget.jobCode,
               jobItem: passedJobItem,
               allJobItems: widget.jobItems,
             ),
@@ -285,7 +294,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             ),
           ),
           Text(
-            assignTerminal(jobItem.requiredWeight, jobItem.uom.code),
+            assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
+                jobItem.lowerBound, jobItem.uom.code),
             style: const TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,

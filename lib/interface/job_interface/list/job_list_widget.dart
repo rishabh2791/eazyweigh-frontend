@@ -151,11 +151,14 @@ class _JobListWidgetState extends State<JobListWidget> {
     switch (scannerData["action"]) {
       case "selection":
         String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
+        String jobCode = scannerData["data"]["job_code"].toString();
         // Selection to Navigate to Next Page
         navigationService.pushReplacement(
           CupertinoPageRoute(
-            builder: (BuildContext context) =>
-                JobDetailsWidget(jobItems: (jobMapping[id])!),
+            builder: (BuildContext context) => JobDetailsWidget(
+              jobItems: (jobMapping[id])!,
+              jobCode: jobCode,
+            ),
           ),
         );
         break;
@@ -281,7 +284,9 @@ class _JobListWidgetState extends State<JobListWidget> {
     }
 
     String jobItemData =
-        '{"action": "selection","data": {"type": "job", "data": "' +
+        '{"action": "selection","data": {"type": "job","job_code":"' +
+            job.jobCode +
+            '", "data": "' +
             job.id +
             '"}}';
     widgets.add(
