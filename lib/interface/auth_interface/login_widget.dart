@@ -76,35 +76,46 @@ class _LoginWidgetState extends State<LoginWidget> {
       };
       await appStore.authApp.login(loginDetails).then((response) async {
         Navigator.of(ctx, rootNavigator: true).pop('dialog');
-        if (response["status"]) {
-          showDialog(
-            context: ctx,
-            builder: (BuildContext context) {
-              return const LoadingWidget();
-            },
-          );
-          var payload = response["payload"];
-          await storage!.setString("username", payload["Username"]);
-          await storage!.setString("access_token", payload["AccessToken"]);
-          await storage!.setString('refresh_token', payload["RefreshToken"]);
-          await storage!.setInt("access_validity", payload["ATDuration"]);
-          await storage!.setBool("logged_in", true);
-          isLoggedIn = true;
-          refreshToken(payload["ATDuration"]);
+        if (!response.containsKey("error")) {
+          if (response["status"]) {
+            showDialog(
+              context: ctx,
+              builder: (BuildContext context) {
+                return const LoadingWidget();
+              },
+            );
+            var payload = response["payload"];
+            await storage!.setString("username", payload["Username"]);
+            await storage!.setString("access_token", payload["AccessToken"]);
+            await storage!.setString('refresh_token', payload["RefreshToken"]);
+            await storage!.setInt("access_validity", payload["ATDuration"]);
+            await storage!.setBool("logged_in", true);
+            isLoggedIn = true;
+            refreshToken(payload["ATDuration"]);
 
-          scannerListener.removeListener(listenToScanner);
-          navigationService.pushReplacement(
-            CupertinoPageRoute(
-              builder: (BuildContext context) => HomePage(username: username),
-              // builder: (BuildContext context) => const JobListPage(),
-            ),
-          );
+            scannerListener.removeListener(listenToScanner);
+            navigationService.pushReplacement(
+              CupertinoPageRoute(
+                builder: (BuildContext context) => HomePage(username: username),
+              ),
+            );
+          } else {
+            showDialog(
+              context: ctx,
+              builder: (BuildContext context) {
+                return CustomDialog(
+                  message: response["message"],
+                  title: "Error",
+                );
+              },
+            );
+          }
         } else {
           showDialog(
             context: ctx,
             builder: (BuildContext context) {
-              return CustomDialog(
-                message: response["message"],
+              return const CustomDialog(
+                message: "Unable to Connect to Server.",
                 title: "Error",
               );
             },

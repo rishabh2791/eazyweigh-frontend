@@ -39,6 +39,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   double actualWeight = 0;
   bool isVerified = false;
   double requiredQty = 0;
+  int start = 0;
+  int end = 2;
   bool isMaterialScanned = false;
   List<Terminal> terminals = [];
   List<Terminal> thisTerminal = [];
@@ -183,6 +185,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     });
   }
 
+  Future<void> printLabel(Map<String, dynamic> printData) async {}
+
   dynamic listenToScanner(String data) async {
     if (!data.contains("[") || !data.contains("]")) {
       verifyMaterial(data);
@@ -216,9 +220,20 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             "start_time": startTime.toIso8601String() + "Z",
             "end_time": DateTime.now().toIso8601String() + "Z",
           };
+          Map<String, dynamic> printingData = {
+            "job_code": widget.jobCode,
+            "weigher": currentUser.firstName + " " + currentUser.lastName,
+            "material_code": widget.jobItem.material.code,
+            "material_description": widget.jobItem.material.description,
+            "weight": actualWeight,
+            "job_item_id": widget.jobItem.id,
+          };
           if (actualWeight != 0) {
             await appStore.jobWeighingApp.create(jobItemWeighing).then((value) {
               if (value["status"]) {
+                String id = value["payload"]["id"];
+                printingData["job_item_weighing_id"] = id;
+                printLabel(printingData);
                 setState(() {
                   widget.jobItem.requiredWeight =
                       widget.jobItem.requiredWeight - actualWeight;

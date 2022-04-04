@@ -2,7 +2,6 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/shift_schedule.dart';
-import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';

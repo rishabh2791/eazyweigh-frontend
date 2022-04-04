@@ -336,7 +336,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                                 );
                               } else {
                                 if (value["payload"].length > 1) {
-                                  //TODO select BOM revision version
+                                  //TODO pull job details from cloud server (data warehouse)
                                   Navigator.of(context).pop();
                                   showDialog(
                                     context: context,

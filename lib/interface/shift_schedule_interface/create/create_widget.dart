@@ -288,13 +288,9 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                             },
                           );
                         } else {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return loader(context);
-                            },
-                          );
+                          setState(() {
+                            isLoadingData = true;
+                          });
                           Map<String, dynamic> shiftSchedule = {
                             "shift_id": shiftID,
                             "date": DateTime.parse(dateController.text)
@@ -309,28 +305,33 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                               .then(
                             (response) async {
                               if (response["status"]) {
-                                userController.text = "";
-                                shiftController.text = "";
-                                dateController.text = "";
-                                factoryController.text = "";
-                                Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return const CustomDialog(
-                                      message: "Shift Schedule Created.",
+                                      message: "Shift Schedule Created",
                                       title: "Info",
                                     );
                                   },
                                 );
+                                setState(() {
+                                  isLoadingData = false;
+                                });
                               } else {
-                                Navigator.of(context).pop();
+                                setState(() {
+                                  isLoadingData = false;
+                                });
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
+                                    String message = response["message"]
+                                            .toString()
+                                            .contains("Duplicate")
+                                        ? "Job Already Assigned."
+                                        : response["message"];
                                     return CustomDialog(
-                                      message: response["message"],
-                                      title: "Errors",
+                                      message: message,
+                                      title: "Info",
                                     );
                                   },
                                 );

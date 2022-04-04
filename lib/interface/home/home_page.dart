@@ -39,18 +39,17 @@ class _HomePageState extends State<HomePage> {
           companyID = value["payload"][0]["company_id"];
           if (currentUser.userRole.role == "Operator") {
             menuItemSelected = "Job";
-            Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).pushReplacement(
               CupertinoPageRoute(
                 builder: (BuildContext context) => const JobListWidget(),
               ),
-              (route) => false,
             );
           } else {
-            Navigator.of(context).pushAndRemoveUntil(
+            menuItemSelected = "Home";
+            Navigator.of(context).pushReplacement(
               CupertinoPageRoute(
                 builder: (BuildContext context) => const GeneralHomeWidget(),
               ),
-              (route) => false,
             );
           }
         });

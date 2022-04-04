@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-String baseURL = "http://172.20.243.45:8000/";
+String baseURL = "http://172.24.143.92:8000/";
 const primaryColor = Color(0xFF2F2FA2);
 const backgroundColor = Color(0xFF161B40);
 const foregroundColor = Color(0xFFF9FAF4);

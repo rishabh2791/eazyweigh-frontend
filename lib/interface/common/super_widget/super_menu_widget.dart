@@ -115,34 +115,7 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                   isLoggedIn
                       ? TextButton(
                           onPressed: () async {
-                            Map<String, String> headers = {
-                              "Authorization": "AccessToken " +
-                                  (storage?.getString("access_token"))
-                                      .toString(),
-                            };
-                            await appStore.authApp
-                                .logout(headers)
-                                .then((value) async => await Future.forEach([
-                                      await storage?.remove("username"),
-                                      await storage?.remove("access_token"),
-                                      await storage?.remove("refresh_token"),
-                                      await storage?.remove("access_validity"),
-                                      await storage?.remove("logged_in"),
-                                    ], (element) => null))
-                                .then((value) {
-                              isLoggedIn = false;
-                              isMenuCollapsed = true;
-                            }).then((value) {
-                              refreshToken(0);
-                              menuItemSelected = "Home";
-                              Navigator.pushReplacement(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const LoginWidget(),
-                                ),
-                              );
-                            });
+                            logout(context);
                           },
                           child: const Text(
                             "Logout",
@@ -161,4 +134,33 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
       ),
     );
   }
+}
+
+Future<void> logout(BuildContext context) async {
+  Map<String, String> headers = {
+    "Authorization":
+        "AccessToken " + (storage?.getString("access_token")).toString(),
+  };
+  await appStore.authApp
+      .logout(headers)
+      .then((value) async => await Future.forEach([
+            await storage?.remove("username"),
+            await storage?.remove("access_token"),
+            await storage?.remove("refresh_token"),
+            await storage?.remove("access_validity"),
+            await storage?.remove("logged_in"),
+          ], (element) => null))
+      .then((value) {
+    isLoggedIn = false;
+    isMenuCollapsed = true;
+  }).then((value) {
+    refreshToken(0);
+    menuItemSelected = "Home";
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(
+        builder: (BuildContext context) => const LoginWidget(),
+      ),
+    );
+  });
 }

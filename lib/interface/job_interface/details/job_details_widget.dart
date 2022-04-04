@@ -33,7 +33,7 @@ class JobDetailsWidget extends StatefulWidget {
 class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   bool isLoadingData = true;
   int start = 0;
-  int end = 2;
+  int end = 3;
   bool isLoading = true;
   List<Map<String, dynamic>> jobItems = [];
   ScrollController? scrollController;
@@ -197,25 +197,29 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          start += 3;
-          if (end + 3 >= jobItems.length) {
-            end = jobItems.length - 1;
-          } else {
-            end += 3;
+          if (start + 3 <= jobItems.length) {
+            start += 3;
+            if (end + 3 >= jobItems.length) {
+              end = jobItems.length - 1;
+            } else {
+              end += 3;
+            }
           }
         });
         break;
       case "previous":
         setState(() {
-          if (end == jobItems.length - 1) {
-            start -= 3;
-            end = start + 2;
-          } else {
-            end -= 3;
-            if (start - 3 < 0) {
-              start = 0;
-            } else {
+          if (start - 3 >= 0) {
+            if (end == jobItems.length - 1) {
               start -= 3;
+              end = start + 2;
+            } else {
+              end -= 3;
+              if (start - 3 < 0) {
+                start = 0;
+              } else {
+                start -= 3;
+              }
             }
           }
         });
@@ -332,8 +336,9 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   List<Widget> getJobItems() {
     List<Widget> list = [];
-    for (var jobItem in widget.jobItems) {
-      Widget widget = Padding(
+    for (var i = start; i < end; i++) {
+      JobItem jobItem = widget.jobItems[i];
+      Widget wid = Padding(
         padding: const EdgeInsets.fromLTRB(
           0.0,
           0.0,
@@ -346,7 +351,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
           children: getRowWidget(jobItem),
         ),
       );
-      list.add(widget);
+      list.add(wid);
     }
 
     Widget navigation = Row(
@@ -354,10 +359,19 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       children: [
         Column(
           children: [
-            QrImage(
-              data: back,
-              size: 150,
-              backgroundColor: Colors.green,
+            TextButton(
+              onPressed: () {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const JobListWidget(),
+                  ),
+                );
+              },
+              child: QrImage(
+                data: back,
+                size: 150,
+                backgroundColor: Colors.green,
+              ),
             ),
             const Text(
               "Back",
@@ -370,11 +384,30 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         ),
         Column(
           children: [
-            QrImage(
-              data: previous,
-              size: 150,
-              backgroundColor: start == 0 ? Colors.transparent : Colors.green,
-              foregroundColor: start == 0 ? Colors.transparent : Colors.black,
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  if (start - 3 >= 0) {
+                    if (end == widget.jobItems.length - 1) {
+                      start -= 3;
+                      end = start + 2;
+                    } else {
+                      end -= 3;
+                      if (start - 3 < 0) {
+                        start = 0;
+                      } else {
+                        start -= 3;
+                      }
+                    }
+                  }
+                });
+              },
+              child: QrImage(
+                data: previous,
+                size: 150,
+                backgroundColor: start == 0 ? Colors.transparent : Colors.green,
+                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
+              ),
             ),
             start == 0
                 ? Container()
@@ -389,19 +422,33 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         ),
         Column(
           children: [
-            QrImage(
-              data: next,
-              size: 150,
-              backgroundColor:
-                  (end == jobItems.length - 1 || widget.jobItems.length < 3)
-                      ? Colors.transparent
-                      : Colors.green,
-              foregroundColor:
-                  (end == jobItems.length - 1 || widget.jobItems.length < 3)
-                      ? Colors.transparent
-                      : Colors.black,
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  if (start + 3 < widget.jobItems.length) {
+                    start += 3;
+                    if (end + 3 > widget.jobItems.length) {
+                      end = widget.jobItems.length - 1;
+                    } else {
+                      end += 3;
+                    }
+                  }
+                });
+              },
+              child: QrImage(
+                data: next,
+                size: 150,
+                backgroundColor: (end == widget.jobItems.length ||
+                        widget.jobItems.length < 3)
+                    ? Colors.transparent
+                    : Colors.green,
+                foregroundColor: (end == widget.jobItems.length ||
+                        widget.jobItems.length < 3)
+                    ? Colors.transparent
+                    : Colors.black,
+              ),
             ),
-            (end == jobItems.length - 1 || widget.jobItems.length < 3)
+            (end == widget.jobItems.length || widget.jobItems.length < 3)
                 ? Container()
                 : const Text(
                     "Next",
