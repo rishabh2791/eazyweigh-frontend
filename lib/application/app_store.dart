@@ -2,6 +2,7 @@ import 'package:eazyweigh/application/address_app.dart';
 import 'package:eazyweigh/application/auth_app.dart';
 import 'package:eazyweigh/application/bom_app.dart';
 import 'package:eazyweigh/application/bom_item_app.dart';
+import 'package:eazyweigh/application/common_app.dart';
 import 'package:eazyweigh/application/company_app.dart';
 import 'package:eazyweigh/application/factory_app.dart';
 import 'package:eazyweigh/application/job_app.dart';
@@ -35,6 +36,7 @@ class AppStore {
   final bomApp = BOMApp(bomRepository: repoStore.bomRepo);
   final bomItemApp = BOMItemApp(bomItemRepository: repoStore.bomItemRepo);
   final companyApp = CompanyApp(companyRepository: repoStore.companyRepo);
+  final commonApp = CommonApp(commonRepository: repoStore.commonRepo);
   final factoryApp = FactoryApp(factoryRepository: repoStore.factoryRepo);
   final jobApp = JobApp(jobRepository: repoStore.jobRepo);
   final jobItemApp = JobItemApp(jobItemRepository: repoStore.jobItemRepo);

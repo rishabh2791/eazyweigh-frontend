@@ -1,11 +1,18 @@
+import 'dart:convert';
+
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/file_picker/file_picker.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class CompanyCreatePage extends StatefulWidget {
@@ -21,7 +28,9 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
       firstNameController,
       lastNameController,
       emailController,
+      profilePicController,
       companyNameController;
+  late PlatformFile file;
 
   @override
   void initState() {
@@ -30,6 +39,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     emailController = TextEditingController();
+    profilePicController = TextEditingController();
     companyNameController = TextEditingController();
     super.initState();
   }
@@ -37,6 +47,71 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getFile(PlatformFile readFile) {
+    setState(() {
+      file = readFile;
+      profilePicController.text = readFile.name;
+    });
+  }
+
+  Future<void> handleUserCreation(
+      Map<String, String> user, String username, String companyID) async {
+    await appStore.userApp.create(user).then(
+      (userResponse) async {
+        if (userResponse["status"]) {
+          Map<String, String> userCompany = {
+            "company_id": companyID,
+            "user_username": username,
+          };
+          await appStore.userCompanyApp.create(userCompany).then(
+            (value) {
+              if (value["status"]) {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const CustomDialog(
+                      message: "Company Details Created.",
+                      title: "Info",
+                    );
+                  },
+                );
+                usernameController.text = "";
+                passwordController.text = "";
+                firstNameController.text = "";
+                lastNameController.text = "";
+                emailController.text = "";
+                companyNameController.text = "";
+              } else {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CustomDialog(
+                      message: value["message"],
+                      title: "Errors",
+                    );
+                  },
+                );
+              }
+            },
+          );
+        } else {
+          Navigator.of(context).pop();
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomDialog(
+                message: userResponse["message"],
+                title: "Errors",
+              );
+            },
+          );
+        }
+      },
+    );
   }
 
   Widget createWidget() {
@@ -73,6 +148,12 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                 textField(false, usernameController, "Username", false),
                 textField(true, passwordController, "Password", false),
                 textField(false, emailController, "E Mail ID", false),
+                FilePickerer(
+                  hint: "Select Profile Picture",
+                  label: "Select Profile Picture",
+                  updateParent: getFile,
+                  controller: profilePicController,
+                ),
                 const Text(
                   "Company Details",
                   style: TextStyle(
@@ -100,6 +181,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                         var password = passwordController.text;
                         var email = emailController.text;
                         var companyName = companyNameController.text;
+                        var profilePic = profilePicController.text;
 
                         String errors = "";
 
@@ -141,7 +223,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                               return loader(context);
                             },
                           );
-                          Map<String, dynamic> user = {
+                          Map<String, String> user = {
                             "username": username,
                             "first_name": firstName,
                             "last_name": lastName,
@@ -203,78 +285,41 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                                 basicRole["id"];
                                           }
                                         }
-                                        await appStore.userApp
-                                            .create(user)
-                                            .then(
-                                          (userResponse) async {
-                                            if (userResponse["status"]) {
-                                              Map<String, String> userCompany =
-                                                  {
-                                                "company_id": companyID,
-                                                "user_username": username,
-                                              };
-                                              await appStore.userCompanyApp
-                                                  .create(userCompany)
-                                                  .then(
-                                                (value) {
-                                                  if (value["status"]) {
-                                                    Navigator.of(context).pop();
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return const CustomDialog(
-                                                          message:
-                                                              "Company Details Created.",
-                                                          title: "Info",
-                                                        );
-                                                      },
-                                                    );
-                                                    usernameController.text =
-                                                        "";
-                                                    passwordController.text =
-                                                        "";
-                                                    firstNameController.text =
-                                                        "";
-                                                    lastNameController.text =
-                                                        "";
-                                                    emailController.text = "";
-                                                    companyNameController.text =
-                                                        "";
-                                                  } else {
-                                                    Navigator.of(context).pop();
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return CustomDialog(
-                                                          message:
-                                                              value["message"],
-                                                          title: "Errors",
-                                                        );
-                                                      },
-                                                    );
-                                                  }
-                                                },
-                                              );
-                                            } else {
-                                              Navigator.of(context).pop();
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return CustomDialog(
-                                                    message:
-                                                        userResponse["message"],
-                                                    title: "Errors",
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          },
-                                        );
+                                        if (profilePic.isNotEmpty) {
+                                          var url = baseURL + "image/upload/";
+                                          String? token = storage
+                                              ?.getString("access_token");
+                                          Map<String, String> headers = {
+                                            "Authorization": "accessToken " +
+                                                token.toString(),
+                                            "Content-Type":
+                                                "multipart/form-data",
+                                          };
+                                          var request = http.MultipartRequest(
+                                              "POST", Uri.parse(url));
+                                          var pic =
+                                              await http.MultipartFile.fromPath(
+                                                  "file", file.path.toString());
+                                          request.headers.addAll(headers);
+                                          request.files.add(pic);
+                                          var response = await request.send();
+                                          var responseData =
+                                              await response.stream.toBytes();
+                                          var responseString =
+                                              String.fromCharCodes(
+                                                  responseData);
+                                          var responseJSON =
+                                              json.decode(responseString);
+                                          Navigator.of(context).pop();
+                                          user["profile_pic"] =
+                                              responseJSON["payload"];
+                                          handleUserCreation(
+                                              user, username, companyID);
+                                        } else {
+                                          handleUserCreation(
+                                              user, username, companyID);
+                                        }
                                       } catch (e) {
-                                        print(e);
                                         Navigator.of(context).pop();
                                       }
                                     } else {

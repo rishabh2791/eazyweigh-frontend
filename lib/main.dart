@@ -3,6 +3,7 @@ import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/socket_utility.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/auth_interface/login_widget.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +13,28 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Future<SharedPreferences> store = SharedPreferences.getInstance();
   storage = await store;
+  initLogging();
   runApp(const MyApp());
+}
+
+initLogging() {
+  LogsConfig config = FLog.getDefaultConfigurations()
+    ..isDevelopmentDebuggingEnabled = true
+    ..timestampFormat = TimestampFormat.TIME_FORMAT_FULL_3
+    ..formatType = FormatType.FORMAT_CUSTOM
+    ..fieldOrderFormatCustom = [
+      FieldName.TIMESTAMP,
+      FieldName.LOG_LEVEL,
+      FieldName.CLASSNAME,
+      FieldName.METHOD_NAME,
+      FieldName.TEXT,
+      FieldName.EXCEPTION,
+      FieldName.STACKTRACE
+    ]
+    ..customOpeningDivider = "{"
+    ..customClosingDivider = "}";
+
+  FLog.applyConfigurations(config);
 }
 
 class MyApp extends StatelessWidget {

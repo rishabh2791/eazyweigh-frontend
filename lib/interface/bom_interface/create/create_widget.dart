@@ -608,6 +608,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                           } else {
                             if (fileController.text.isNotEmpty ||
                                 fileController.text != "") {
+                              // ignore: prefer_typing_uninitialized_variables
                               var csvData;
                               if (foundation.kIsWeb) {
                                 //TODO Web Version

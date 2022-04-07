@@ -203,6 +203,7 @@ class _DataSource extends DataTableSource {
 
   final BuildContext context;
   List<JobItem> _jobItems;
+  // ignore: unused_field
   int _selectedCount = 0;
 
   @override

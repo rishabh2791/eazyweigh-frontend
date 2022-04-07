@@ -378,6 +378,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                       );
                     } else {
                       List<Map<String, dynamic>> materials = [];
+                      // ignore: prefer_typing_uninitialized_variables
                       var csvData;
                       if (foundation.kIsWeb) {
                         //TODO Web Version

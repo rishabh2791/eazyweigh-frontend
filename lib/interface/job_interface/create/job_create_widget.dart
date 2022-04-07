@@ -489,7 +489,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Upload BOM Items",
+                  "Upload JOB Items",
                   style: TextStyle(
                     color: formHintTextColor,
                     fontSize: 30.0,
@@ -527,6 +527,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                             },
                           );
                         } else {
+                          // ignore: prefer_typing_uninitialized_variables
                           var csvData;
                           if (foundation.kIsWeb) {
                             //TODO Web Version
@@ -584,7 +585,8 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                                   int created =
                                       response["payload"]["models"].length;
                                   int notCreated =
-                                      response["payload"]["errors"].length;
+                                      response["payload"]["errors"].length +
+                                          errors.length;
                                   Navigator.of(context).pop();
                                   showDialog(
                                     context: context,

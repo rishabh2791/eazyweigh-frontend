@@ -5,7 +5,7 @@ import 'package:eazyweigh/infrastructure/utilities/headers.dart';
 
 class UserRepo implements UserRepository {
   @override
-  Future<Map<String, dynamic>> create(Map<String, dynamic> user) async {
+  Future<Map<String, dynamic>> create(Map<String, String> user) async {
     String url = "user/create/";
     var response = await networkAPIProvider.post(
         url, user, getHeader(TokenType.accessToken));

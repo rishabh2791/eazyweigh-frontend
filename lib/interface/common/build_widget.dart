@@ -1,4 +1,5 @@
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,22 @@ Widget buildWidget(
                     ),
                   ),
                 ),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 10, color: Colors.black, spreadRadius: 5)
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(baseURL + currentUser.profilePic),
+                    radius: 40,
+                  ),
+                ),
+                const VerticalDivider(),
                 Text(
                   title,
                   style: const TextStyle(

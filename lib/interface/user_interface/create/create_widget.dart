@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/user_role.dart';
@@ -6,10 +8,12 @@ import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/drop_down_widget.dart';
+import 'package:eazyweigh/interface/common/file_picker/file_picker.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class UserCreateWidget extends StatefulWidget {
@@ -23,6 +27,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
   bool isLoadingData = true;
   List<UserRole> userRoles = [];
   List<Factory> factories = [];
+  late PlatformFile file;
 
   late TextEditingController usernameController,
       passwordController,
@@ -30,6 +35,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
       lastNameController,
       emailController,
       userRoleController,
+      profilePicController,
       factoryController;
 
   @override
@@ -42,12 +48,20 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     emailController = TextEditingController();
+    profilePicController = TextEditingController();
     factoryController = TextEditingController();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getFile(PlatformFile readFile) {
+    setState(() {
+      file = readFile;
+      profilePicController.text = readFile.name;
+    });
   }
 
   void getAllData() async {
@@ -117,6 +131,119 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
     });
   }
 
+  Future<void> handleCreation(
+      Map<String, String> user, String username, String factoryName) async {
+    await appStore.userApp.create(user).then(
+      (response) async {
+        if (response.containsKey("status")) {
+          if (response["status"]) {
+            Map<String, dynamic> userCompany = {
+              "user_username": username,
+              "company_id": companyID,
+            };
+            await appStore.userCompanyApp
+                .create(userCompany)
+                .then((userCompanyResponse) async {
+              if (userCompanyResponse["status"]) {
+                if (factoryName.isNotEmpty) {
+                  Map<String, dynamic> userFactory = {
+                    "user_username": username,
+                    "factory_id": factoryName,
+                  };
+                  await appStore.userFactoryApp.create(userFactory).then(
+                    (value) {
+                      if (value["status"]) {
+                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const CustomDialog(
+                              message: "User Created",
+                              title: "Info",
+                            );
+                          },
+                        );
+                        userRoleController.text = "";
+                        passwordController.text = "";
+                        firstNameController.text = "";
+                        lastNameController.text = "";
+                        emailController.text = "";
+                        factoryController.text = "";
+                        userRoleController.text = "";
+                      } else {
+                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialog(
+                              message: value["message"],
+                              title: "Errors",
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
+                } else {
+                  Navigator.of(context).pop();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const CustomDialog(
+                        message: "User Created",
+                        title: "Info",
+                      );
+                    },
+                  );
+                  userRoleController.text = "";
+                  passwordController.text = "";
+                  firstNameController.text = "";
+                  lastNameController.text = "";
+                  emailController.text = "";
+                  factoryController.text = "";
+                  userRoleController.text = "";
+                }
+              } else {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CustomDialog(
+                      message: userCompanyResponse["message"],
+                      title: "Errors",
+                    );
+                  },
+                );
+              }
+            });
+          } else {
+            Navigator.of(context).pop();
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomDialog(
+                  message: response["message"],
+                  title: "Errors",
+                );
+              },
+            );
+          }
+        } else {
+          Navigator.of(context).pop();
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const CustomDialog(
+                message: "Invalid Response",
+                title: "Errors",
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
   Widget createWidget() {
     return Container(
       padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
@@ -145,7 +272,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                 textField(true, passwordController, "Password", false),
                 textField(false, firstNameController, "First Name", false),
                 textField(false, lastNameController, "Last Name", false),
-                textField(false, emailController, "EMail", false),
+                textField(false, emailController, "Email", false),
                 DropDownWidget(
                   disabled: false,
                   hint: "Select User Role",
@@ -157,6 +284,13 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                   hint: "Select Factory",
                   controller: factoryController,
                   itemList: factories,
+                ),
+                FilePickerer(
+                  hint: "Select Profile Picture",
+                  label: "Select Profile Picture",
+                  updateParent: getFile,
+                  controller: profilePicController,
+                  allowedExtensions: const ['jpg', 'png'],
                 ),
                 const SizedBox(
                   height: 10.0,
@@ -177,6 +311,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                         var email = emailController.text;
                         var userRole = userRoleController.text;
                         var factoryName = factoryController.text;
+                        var profilePic = profilePicController.text;
 
                         String errors = "";
 
@@ -222,8 +357,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                               return loader(context);
                             },
                           );
-
-                          Map<String, dynamic> user = {
+                          Map<String, String> user = {
                             "username": username,
                             "password": password,
                             "first_name": firstName,
@@ -231,105 +365,31 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                             "email": email,
                             "user_role_id": userRole,
                           };
-                          await appStore.userApp.create(user).then(
-                            (response) async {
-                              if (response["status"]) {
-                                Map<String, dynamic> userCompany = {
-                                  "user_username": username,
-                                  "company_id": companyID,
-                                };
-                                await appStore.userCompanyApp
-                                    .create(userCompany)
-                                    .then((userCompanyResponse) async {
-                                  if (userCompanyResponse["status"]) {
-                                    if (factoryName.isNotEmpty) {
-                                      Map<String, dynamic> userFactory = {
-                                        "user_username": username,
-                                        "factory_id": factoryName,
-                                      };
-                                      await appStore.userFactoryApp
-                                          .create(userFactory)
-                                          .then(
-                                        (value) {
-                                          if (value["status"]) {
-                                            Navigator.of(context).pop();
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const CustomDialog(
-                                                  message: "User Created",
-                                                  title: "Info",
-                                                );
-                                              },
-                                            );
-                                            userRoleController.text = "";
-                                            passwordController.text = "";
-                                            firstNameController.text = "";
-                                            lastNameController.text = "";
-                                            emailController.text = "";
-                                            factoryController.text = "";
-                                            userRoleController.text = "";
-                                          } else {
-                                            Navigator.of(context).pop();
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return CustomDialog(
-                                                  message: value["message"],
-                                                  title: "Errors",
-                                                );
-                                              },
-                                            );
-                                          }
-                                        },
-                                      );
-                                    } else {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const CustomDialog(
-                                            message: "User Created",
-                                            title: "Info",
-                                          );
-                                        },
-                                      );
-                                      userRoleController.text = "";
-                                      passwordController.text = "";
-                                      firstNameController.text = "";
-                                      lastNameController.text = "";
-                                      emailController.text = "";
-                                      factoryController.text = "";
-                                      userRoleController.text = "";
-                                    }
-                                  } else {
-                                    Navigator.of(context).pop();
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialog(
-                                          message:
-                                              userCompanyResponse["message"],
-                                          title: "Errors",
-                                        );
-                                      },
-                                    );
-                                  }
-                                });
-                              } else {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: response["message"],
-                                      title: "Errors",
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                          );
+
+                          if (profilePic.isNotEmpty) {
+                            var url = baseURL + "image/upload/";
+                            String? token = storage?.getString("access_token");
+                            Map<String, String> headers = {
+                              "Authorization":
+                                  "accessToken " + token.toString(),
+                              "Content-Type": "multipart/form-data",
+                            };
+                            var request =
+                                http.MultipartRequest("POST", Uri.parse(url));
+                            var pic = await http.MultipartFile.fromPath(
+                                "file", file.path.toString());
+                            request.headers.addAll(headers);
+                            request.files.add(pic);
+                            var response = await request.send();
+                            var responseData = await response.stream.toBytes();
+                            var responseString =
+                                String.fromCharCodes(responseData);
+                            var responseJSON = json.decode(responseString);
+                            user["profile_pic"] = responseJSON["payload"];
+                            handleCreation(user, username, factoryName);
+                          } else {
+                            handleCreation(user, username, factoryName);
+                          }
                         }
                       },
                       child: checkButton(),

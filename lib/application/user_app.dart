@@ -8,7 +8,7 @@ class UserApp implements UserAppInterface {
   });
 
   @override
-  Future<Map<String, dynamic>> create(Map<String, dynamic> user) async {
+  Future<Map<String, dynamic>> create(Map<String, String> user) async {
     return userRepository.create(user);
   }
 
@@ -47,7 +47,7 @@ class UserApp implements UserAppInterface {
 }
 
 abstract class UserAppInterface {
-  Future<Map<String, dynamic>> create(Map<String, dynamic> user);
+  Future<Map<String, dynamic>> create(Map<String, String> user);
   Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> users);
   Future<Map<String, dynamic>> getUser(String username);
   Future<Map<String, dynamic>> listUsers(Map<String, dynamic> conditions);

@@ -6,8 +6,7 @@ class Mat {
   final String code; //done
   final String description; //done
   final String type; //done
-  final String factoryID; //done
-  final String barCode; //
+  final String factoryID; //
   final UnitOfMeasure uom; //
   final DateTime createdAt; //
   final User createdBy; //
@@ -15,7 +14,6 @@ class Mat {
   final User updatedBy; //
 
   Mat({
-    required this.barCode,
     required this.code,
     required this.createdAt,
     required this.createdBy,
@@ -35,7 +33,6 @@ class Mat {
       "description": description,
       "type": type,
       "factory_id": factoryID,
-      "bar_code": barCode,
       "unit_of_measurement": uom.toJSON(),
       "created_at": createdAt,
       "created_by": createdBy.toJSON(),
@@ -46,7 +43,6 @@ class Mat {
 
   factory Mat.fromJSON(Map<String, dynamic> jsonObject) {
     Mat material = Mat(
-      barCode: jsonObject["bar_code"],
       code: jsonObject["code"],
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),

@@ -14,12 +14,14 @@ class FilePickerer extends StatelessWidget {
   final TextEditingController controller;
   final String label, hint;
   final Function(PlatformFile file) updateParent;
-  const FilePickerer({
+  List<String> allowedExtensions;
+  FilePickerer({
     Key? key,
     required this.controller,
     required this.hint,
     required this.label,
     required this.updateParent,
+    this.allowedExtensions = const ['csv', 'xlsx'],
   }) : super(key: key);
 
   @override
@@ -32,6 +34,7 @@ class FilePickerer extends StatelessWidget {
         hint: hint,
         updateParent: updateParent,
         controller: controller,
+        allowedExtensions: allowedExtensions,
       ),
     );
   }
@@ -42,12 +45,14 @@ class FilePickerWidget extends StatefulWidget {
   final TextEditingController controller;
   final String label, hint;
   final Function(PlatformFile file) updateParent;
-  const FilePickerWidget({
+  List<String> allowedExtensions;
+  FilePickerWidget({
     Key? key,
     required this.controller,
     required this.hint,
     required this.label,
     required this.updateParent,
+    this.allowedExtensions = const ['csv', 'xlsx'],
   }) : super(key: key);
 
   @override
@@ -89,7 +94,7 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
           onTap: () async {
             FilePickerResult? result = await FilePicker.platform.pickFiles(
               type: FileType.custom,
-              allowedExtensions: ['csv', 'xlsx'],
+              allowedExtensions: widget.allowedExtensions,
             );
 
             if (result != null) {

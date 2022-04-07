@@ -6,7 +6,6 @@ import 'package:eazyweigh/interface/factory_interface/factory_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
 import 'package:eazyweigh/interface/job_assignment_interface/job_assignment_widget.dart';
 import 'package:eazyweigh/interface/job_interface/job_widget.dart';
-import 'package:eazyweigh/interface/job_item_interface/job_item_widget.dart';
 import 'package:eazyweigh/interface/material_interface/material_widget.dart';
 import 'package:eazyweigh/interface/over_issue_interface/over_issue_widget.dart';
 import 'package:eazyweigh/interface/shift_interface/shift_widget.dart';
@@ -15,12 +14,8 @@ import 'package:eazyweigh/interface/terminal_interface/terminal_widget.dart';
 import 'package:eazyweigh/interface/under_issue_interface/under_issue_widget.dart';
 import 'package:eazyweigh/interface/unit_of_measure_conversion%20_interface/unit_of_measurement_conversion_widget.dart';
 import 'package:eazyweigh/interface/unit_of_measurement_interface/unit_of_measurement_widget.dart';
-import 'package:eazyweigh/interface/user_company_access_interface/user_company_access_widget.dart';
-import 'package:eazyweigh/interface/user_factory_access_interface/user_factory_access_widget.dart';
+import 'package:eazyweigh/interface/user_access/user_access_widget.dart';
 import 'package:eazyweigh/interface/user_interface/user_widget.dart';
-import 'package:eazyweigh/interface/user_role_access_interface/user_role_access_widget.dart';
-import 'package:eazyweigh/interface/user_role_interface/user_role_widget.dart';
-import 'package:eazyweigh/interface/user_terminal_access_interface/user_terminal_access_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late User currentUser;
@@ -44,7 +39,6 @@ Map<String, dynamic> menuWidgetMapping = {
   "Factory": const FactoryWidget(),
   "Job": const JobWidget(),
   "Job Assignment": const JobAssignmentWidget(),
-  "Job Item": const JobItemWidget(),
   "Material": const MaterialWidget(),
   "Over Issue": const OverIssueWidget(),
   "Shift": const ShiftWidget(),
@@ -54,9 +48,5 @@ Map<String, dynamic> menuWidgetMapping = {
   "Unit Of Measurement": const UnitOfMeasurementWidget(),
   "UOM Conversion": const UnitOfMeasurementConversionWidget(),
   "User": const UserWidget(),
-  "User Roles": const UserRoleWidget(),
-  "User Company Access": const UserCompanyAccessWidget(),
-  "User Factory Access": const UserFactoryAccessWidget(),
-  "User Role Access": const UserRoleAccessWidget(),
-  "User Terminal Access": const UserTerminalAccessWidget(),
+  "User Access": const UserAccessWidget(),
 };

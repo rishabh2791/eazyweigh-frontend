@@ -1,4 +1,3 @@
-import 'package:eazyweigh/domain/repository/job_item_assignment_repository.dart';
 import 'package:eazyweigh/domain/repository/job_item_weighing_repository.dart';
 import 'package:eazyweigh/infrastructure/network/network.dart';
 import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';

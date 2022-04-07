@@ -1,5 +1,5 @@
 abstract class UserRepository {
-  Future<Map<String, dynamic>> create(Map<String, dynamic> user);
+  Future<Map<String, dynamic>> create(Map<String, String> user);
   Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> users);
   Future<Map<String, dynamic>> getUser(String username);
   Future<Map<String, dynamic>> listUsers(Map<String, dynamic> conditions);

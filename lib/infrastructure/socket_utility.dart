@@ -1,4 +1,5 @@
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -32,14 +33,11 @@ class WebSocketUtility {
           tries += 1;
           if (tries < 10) {
             await initCommunication();
-          } else {
-            //TODO Logging service.
-            print("Unable to Find Weighing Scale.");
-          }
+          } else {}
         },
       );
     } catch (ex) {
-      //TODO logging service
+      FLog.info(text: "Unable to Connect to Scale");
     }
   }
 

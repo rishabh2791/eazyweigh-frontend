@@ -10,6 +10,7 @@ class User {
   final bool active;
   final String createdByUsername;
   final DateTime createdAt;
+  final String profilePic;
   final String updatedByUsername;
   final DateTime updatedAt;
 
@@ -22,6 +23,7 @@ class User {
     required this.lastName,
     required this.password,
     required this.updatedAt,
+    required this.profilePic,
     required this.updatedByUsername,
     required this.userRole,
     required this.username,
@@ -42,6 +44,7 @@ class User {
       "last_name": lastName,
       "password": password,
       "updated_at": updatedAt,
+      "profile_pic": profilePic,
       "updated_by_username": updatedByUsername,
       "user_role": userRole,
       "username": username,
@@ -57,6 +60,7 @@ class User {
       firstName: jsonObject["first_name"],
       lastName: jsonObject["last_name"] ?? jsonObject["first_name"],
       password: jsonObject["password"],
+      profilePic: jsonObject["profile_pic"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedByUsername: jsonObject["updated_by_username"],
       userRole: UserRole.fromJSON(jsonObject["user_role"]),

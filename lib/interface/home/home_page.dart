@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    getUserDetails();
+    getAllDetails();
     super.initState();
   }
 
@@ -27,6 +27,14 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     super.dispose();
   }
+
+  Future<void> getAllDetails() async {
+    await Future.forEach([
+      await getUserDetails(),
+    ], (element) {});
+  }
+
+  Future<void> getUserAuthorizations() async {}
 
   Future<dynamic> getUserDetails() async {
     await appStore.userApp.getUser(widget.username).then((response) async {

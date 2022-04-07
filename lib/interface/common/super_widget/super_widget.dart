@@ -4,6 +4,7 @@ import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_page_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class SuperPage extends StatefulWidget {
   final Widget childWidget;
@@ -19,6 +20,7 @@ class _SuperPageState extends State<SuperPage>
   late Animation<Offset> slideAnimation;
   late ScrollController scrollController;
   late AnimationController animationController;
+  String logout = '{"action":"logout"}';
 
   @override
   void initState() {
@@ -58,6 +60,26 @@ class _SuperPageState extends State<SuperPage>
                 childWidget: widget.childWidget,
                 screenType: sizeInformation.screenType,
               ),
+              isLoggedIn
+                  ? currentUser.userRole.role == "Operator"
+                      ? Positioned(
+                          left: 20,
+                          bottom: 100,
+                          child: Row(
+                            children: [
+                              QrImage(
+                                data: logout,
+                                size: 150.0,
+                                backgroundColor: foregroundColor,
+                              ),
+                              const SizedBox(
+                                width: 16.0,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container()
+                  : Container(),
               isLoggedIn
                   ? Positioned(
                       left: 20,

@@ -84,6 +84,26 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                 children: [
                   isLoggedIn
                       ? Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 10,
+                                  color: Colors.black,
+                                  spreadRadius: 5)
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(baseURL + currentUser.profilePic),
+                            radius: 50,
+                          ),
+                        )
+                      : Container(),
+                  const SizedBox(height: 10),
+                  isLoggedIn
+                      ? Container(
                           alignment: Alignment.centerRight,
                           child: Text(
                             currentUser.firstName + " " + currentUser.lastName,

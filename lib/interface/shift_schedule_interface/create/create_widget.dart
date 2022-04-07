@@ -15,7 +15,6 @@ import 'package:eazyweigh/interface/common/drop_down_widget.dart';
 import 'package:eazyweigh/interface/common/file_picker/file_picker.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
-import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -411,6 +410,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                             },
                           );
                         } else {
+                          // ignore: prefer_typing_uninitialized_variables
                           var csvData;
                           if (foundation.kIsWeb) {
                             //TODO Web Version
@@ -460,44 +460,44 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                                 }
                               },
                             );
-                            Navigator.of(context).pop();
-                            // await appStore.shiftScheduleApp
-                            //     .createMultiple(shiftSchedules)
-                            //     .then(
-                            //   (response) async {
-                            //     if (response["status"]) {
-                            //       int created =
-                            //           response["payload"]["models"].length;
-                            //       int notCreated =
-                            //           response["payload"]["errors"].length;
-                            //       Navigator.of(context).pop();
-                            //       showDialog(
-                            //         context: context,
-                            //         builder: (BuildContext context) {
-                            //           return CustomDialog(
-                            //             message: "Created " +
-                            //                 created.toString() +
-                            //                 " Shift Schedules and found error in " +
-                            //                 notCreated.toString() +
-                            //                 " schedules.",
-                            //             title: "Info",
-                            //           );
-                            //         },
-                            //       );
-                            //     } else {
-                            //       Navigator.of(context).pop();
-                            //       showDialog(
-                            //         context: context,
-                            //         builder: (BuildContext context) {
-                            //           return CustomDialog(
-                            //             message: response["message"],
-                            //             title: "Errors",
-                            //           );
-                            //         },
-                            //       );
-                            //     }
-                            //   },
-                            // );
+                            await appStore.shiftScheduleApp
+                                .createMultiple(shiftSchedules)
+                                .then(
+                              (response) async {
+                                if (response["status"]) {
+                                  int created =
+                                      response["payload"]["models"].length;
+                                  int notCreated =
+                                      response["payload"]["errors"].length +
+                                          errors.length;
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialog(
+                                        message: "Created " +
+                                            created.toString() +
+                                            " Shift Schedules and found error in " +
+                                            notCreated.toString() +
+                                            " schedules.",
+                                        title: "Info",
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialog(
+                                        message: response["message"],
+                                        title: "Errors",
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                            );
                           }
                         }
                       },

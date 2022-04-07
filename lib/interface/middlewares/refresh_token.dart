@@ -49,6 +49,8 @@ void refreshToken(int delay) async {
       Future.delayed(Duration(seconds: timeOut - 2), () {
         refreshToken(0);
       });
+    } else {
+      return;
     }
   });
 }

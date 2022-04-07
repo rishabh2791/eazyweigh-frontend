@@ -227,6 +227,9 @@ class _JobListWidgetState extends State<JobListWidget> {
       case "navigation":
         navigate(scannerData["data"]);
         break;
+      case "logout":
+        logout(context);
+        break;
       default:
     }
   }

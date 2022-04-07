@@ -24,8 +24,17 @@ class JobItemWeighing {
   });
 
   Map<String, dynamic> toJSON() {
-    return <String, dynamic>{};
-    //TODO
+    return <String, dynamic>{
+      "id": id,
+      "job_item_id": jobItemID,
+      "weight": weight,
+      "start_time": startTime,
+      "end_time": endTime,
+      "created_by": createdBy.toJSON(),
+      "created_at": createdAt,
+      "updated_by": updatedBy.toJSON(),
+      "updated_at": updatedAt,
+    };
   }
 
   factory JobItemWeighing.fromJSON(Map<String, dynamic> jsonObject) {

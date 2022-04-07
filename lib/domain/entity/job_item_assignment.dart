@@ -43,7 +43,6 @@ class JobItemAssignment {
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
-    print(jobAssignment.jobItem.material);
     return jobAssignment;
   }
 }

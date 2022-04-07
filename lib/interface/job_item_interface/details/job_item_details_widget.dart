@@ -11,6 +11,7 @@ import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,6 +50,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   String back = '{"action":"back"}';
   String tare = '{"action":"tare"}';
   String complete = '{"action":"complete"}';
+  Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
 
   @override
@@ -188,94 +190,94 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   Future<void> printLabel(Map<String, dynamic> printData) async {}
 
   dynamic listenToScanner(String data) async {
-    if (!data.contains("[") || !data.contains("]")) {
-      verifyMaterial(data);
-    } else {
-      Map<String, dynamic> scannerData = jsonDecode(data
-          .replaceAll(";", ":")
-          .replaceAll("[", "{")
-          .replaceAll("]", "}")
-          .replaceAll("'", "\"")
-          .replaceAll("-", "_"));
-      switch (scannerData["action"]) {
-        case "back":
-          navigationService.pushReplacement(
-            CupertinoPageRoute(
-              builder: (BuildContext context) => JobDetailsWidget(
-                jobCode: widget.jobCode,
-                jobItems: widget.allJobItems,
-              ),
+    Map<String, dynamic> scannerData = jsonDecode(data
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
+    switch (scannerData["action"]) {
+      case "back":
+        navigationService.pushReplacement(
+          CupertinoPageRoute(
+            builder: (BuildContext context) => JobDetailsWidget(
+              jobCode: widget.jobCode,
+              jobItems: widget.allJobItems,
             ),
-          );
-          break;
-        case "complete":
-          Map<String, dynamic> jobItemWeighing = {
-            "job_code": widget.jobCode,
-            "job_item_id": widget.jobItem.id,
-            "material_code": widget.jobItem.material.code,
-            "material_description": widget.jobItem.material.description,
-            "weight": actualWeight,
-            "batch":
-                "123456", //TODO correct this while scanning material barcode
-            "start_time": startTime.toIso8601String() + "Z",
-            "end_time": DateTime.now().toIso8601String() + "Z",
-          };
-          Map<String, dynamic> printingData = {
-            "job_code": widget.jobCode,
-            "weigher": currentUser.firstName + " " + currentUser.lastName,
-            "material_code": widget.jobItem.material.code,
-            "material_description": widget.jobItem.material.description,
-            "weight": actualWeight,
-            "job_item_id": widget.jobItem.id,
-          };
-          if (actualWeight != 0) {
-            await appStore.jobWeighingApp.create(jobItemWeighing).then((value) {
-              if (value["status"]) {
-                String id = value["payload"]["id"];
-                printingData["job_item_weighing_id"] = id;
-                printLabel(printingData);
-                setState(() {
-                  widget.jobItem.requiredWeight =
-                      widget.jobItem.requiredWeight - actualWeight;
-                  widget.jobItem.actualWeight += actualWeight;
-                  requiredQty = requiredQty - actualWeight;
-                  actualWeight = 0;
-                });
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CustomDialog(
-                      message: value["message"],
-                      title: "Errors",
-                    );
-                  },
-                );
-              }
-            });
-          } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return const CustomDialog(
-                  message: "Nothing to Weigh.",
-                  title: "Errors",
-                );
-              },
-            );
-            Future.delayed(const Duration(seconds: 3)).then((value) {
-              Navigator.of(context).pop();
-            });
-          }
-          break;
-        case "tare":
-          setState(() {
-            taredWeight = currentWeight;
-            currentWeight = 0;
+          ),
+        );
+        break;
+      case "complete":
+        actualWeight = currentWeight;
+        Map<String, dynamic> jobItemWeighing = {
+          "job_code": widget.jobCode,
+          "job_item_id": widget.jobItem.id,
+          "material_code": widget.jobItem.material.code,
+          "material_description": widget.jobItem.material.description,
+          "weight": actualWeight,
+          "batch": scannedMaterialData["batch"],
+          "start_time": startTime.toIso8601String() + "Z",
+          "end_time": DateTime.now().toIso8601String() + "Z",
+        };
+        Map<String, dynamic> printingData = {
+          "job_code": widget.jobCode,
+          "weigher": currentUser.firstName + " " + currentUser.lastName,
+          "material_code": widget.jobItem.material.code,
+          "material_description": widget.jobItem.material.description,
+          "weight": actualWeight,
+          "job_item_id": widget.jobItem.id,
+        };
+        if (actualWeight != 0) {
+          await appStore.jobWeighingApp.create(jobItemWeighing).then((value) {
+            if (value["status"]) {
+              String id = value["payload"]["id"];
+              printingData["job_item_weighing_id"] = id;
+              printLabel(printingData);
+              setState(() {
+                widget.jobItem.requiredWeight =
+                    widget.jobItem.requiredWeight - actualWeight;
+                widget.jobItem.actualWeight += actualWeight;
+                requiredQty = requiredQty - actualWeight;
+                actualWeight = 0;
+              });
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return CustomDialog(
+                    message: value["message"],
+                    title: "Errors",
+                  );
+                },
+              );
+            }
           });
-          break;
-        default:
-      }
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const CustomDialog(
+                message: "Nothing to Weigh.",
+                title: "Errors",
+              );
+            },
+          );
+          Future.delayed(const Duration(seconds: 3)).then((value) {
+            Navigator.of(context).pop();
+          });
+        }
+        break;
+      case "tare":
+        setState(() {
+          taredWeight = currentWeight * scaleFactor;
+          currentWeight = 0;
+        });
+        break;
+      case "logout":
+        logout(context);
+        break;
+      default:
+        verifyMaterial(data);
     }
   }
 
@@ -289,31 +291,40 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     try {
       setState(() {
         currentWeight =
-            double.parse((scannerData["data"]).toString()) - taredWeight;
+            double.parse((scannerData["data"]).toString()) * scaleFactor -
+                taredWeight;
       });
     } catch (e) {
       //TODO logging service
-      print(e);
     }
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
-    String itemBarcode = widget.jobItem.material.barCode;
+    Map<String, dynamic> jsonData = jsonDecode(scannerData
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
+
+    String matCode = jsonData["code"];
     if (!isMaterialScanned) {
       setState(() {
         isMaterialScanned = true;
       });
     }
-    if (itemBarcode == scannerData) {
+    if (matCode == widget.jobItem.material.code) {
+      scannedMaterialData = jsonData;
       setState(() {
         isVerified = true;
       });
     } else {
       Map<String, dynamic> scannedData = {
         "job_id": widget.jobItem.jobID,
-        "actual_code": scannerData,
-        "expected_code": itemBarcode,
+        "actual_code": matCode,
+        "expected_code": widget.jobItem.material.code,
         "user_username": currentUser.username,
+        "terminal_id": thisTerminal[0].id,
       };
       await appStore.scannedDataApp.create(scannedData).then((value) {});
     }
@@ -367,29 +378,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         ],
       ),
     );
-    widgets.add(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            "Barcode",
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            jobItem.material.barCode,
-            style: const TextStyle(
-              fontSize: 30.0,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
     return widgets;
   }
 
@@ -421,143 +409,146 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             return SizedBox(
               width: sizeInformation.screenSize.width,
               height: sizeInformation.screenSize.height - 260,
-              child: Container(
-                color: Colors.white,
-                child: Row(children: [
-                  SizedBox(
-                    width: sizeInformation.screenSize.width * 0.7 - 60,
-                    height: sizeInformation.screenSize.height - 260,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              currentWeight.toStringAsFixed(precision),
-                              style: TextStyle(
-                                  fontSize: 300.0 *
-                                      sizeInformation.screenSize.height /
-                                      1006,
-                                  color: (currentWeight > upperLimit ||
-                                          currentWeight < lowerLimit)
-                                      ? Colors.red
-                                      : Colors.green),
-                            ),
-                            Icon(
-                              currentWeight < lowerLimit
-                                  ? Icons.arrow_circle_up
-                                  : currentWeight > upperLimit
-                                      ? Icons.arrow_circle_down
-                                      : Icons.check_circle,
-                              size: 200.0 *
-                                  sizeInformation.screenSize.height /
-                                  1006,
-                              color: (currentWeight < lowerLimit ||
-                                      currentWeight > upperLimit)
-                                  ? Colors.red
-                                  : Colors.green,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              child: Row(children: [
+                SizedBox(
+                  width: sizeInformation.screenSize.width * 0.7 - 60,
+                  height: sizeInformation.screenSize.height - 260,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            currentWeight.toStringAsFixed(precision),
+                            style: TextStyle(
+                                fontSize: 300.0 *
+                                    sizeInformation.screenSize.height /
+                                    1006,
+                                color: (currentWeight > upperLimit ||
+                                        currentWeight < lowerLimit)
+                                    ? Colors.red
+                                    : Colors.green),
+                          ),
+                          Icon(
+                            currentWeight < lowerLimit
+                                ? Icons.arrow_circle_up
+                                : currentWeight > upperLimit
+                                    ? Icons.arrow_circle_down
+                                    : Icons.check_circle,
+                            size: 200.0 *
+                                sizeInformation.screenSize.height /
+                                1006,
+                            color: (currentWeight < lowerLimit ||
+                                    currentWeight > upperLimit)
+                                ? Colors.red
+                                : Colors.green,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: sizeInformation.screenSize.width * 0.3,
-                    height: sizeInformation.screenSize.height - 260,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: sizeInformation.screenSize.width * 0.15,
-                              child: Center(
-                                child: QrImage(
-                                  data: tare,
-                                  size: 200.0,
+                ),
+                SizedBox(
+                  width: sizeInformation.screenSize.width * 0.3,
+                  height: sizeInformation.screenSize.height - 260,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: sizeInformation.screenSize.width * 0.15,
+                            child: Center(
+                              child: QrImage(
+                                data: tare,
+                                size: 200.0,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: sizeInformation.screenSize.width * 0.15,
+                            child: const Center(
+                              child: Text(
+                                "Tare",
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: sizeInformation.screenSize.width * 0.15,
-                              child: const Center(
-                                child: Text(
-                                  "Tare",
-                                  style: TextStyle(
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        color: Colors.transparent,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: sizeInformation.screenSize.width * 0.15,
+                            child: Center(
+                              child: QrImage(
+                                data: complete,
+                                size: 200.0,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: sizeInformation.screenSize.width * 0.15,
+                            child: const Center(
+                              child: Text(
+                                "Complete",
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        const Divider(
-                          color: Colors.white,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: sizeInformation.screenSize.width * 0.15,
-                              child: Center(
-                                child: QrImage(
-                                  data: complete,
-                                  size: 200.0,
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        color: Colors.transparent,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: sizeInformation.screenSize.width * 0.15,
+                            child: Center(
+                              child: QrImage(
+                                data: back,
+                                size: 200.0,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: sizeInformation.screenSize.width * 0.15,
+                            child: const Center(
+                              child: Text(
+                                "Back",
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: sizeInformation.screenSize.width * 0.15,
-                              child: const Center(
-                                child: Text(
-                                  "Complete",
-                                  style: TextStyle(
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Divider(
-                          color: Colors.white,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: sizeInformation.screenSize.width * 0.15,
-                              child: Center(
-                                child: QrImage(
-                                  data: back,
-                                  size: 200.0,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: sizeInformation.screenSize.width * 0.15,
-                              child: const Center(
-                                child: Text(
-                                  "Back",
-                                  style: TextStyle(
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ]),
-              ),
+                ),
+              ]),
             );
           },
         ),
@@ -589,7 +580,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     );
   }
 
-//TODO check actual weight in terms of scale factor
   @override
   Widget build(BuildContext context) {
     return SuperPage(

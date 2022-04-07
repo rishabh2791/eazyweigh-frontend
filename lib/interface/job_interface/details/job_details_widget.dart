@@ -10,6 +10,7 @@ import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
+import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/job_item_interface/details/job_item_details_widget.dart';
@@ -168,6 +169,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         .replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
+        // ignore: prefer_typing_uninitialized_variables
         var passedJobItem;
         String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
         for (var jobItem in widget.jobItems) {
@@ -188,6 +190,9 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         break;
       case "navigation":
         navigate(scannerData["data"]);
+        break;
+      case "logout":
+        logout(context);
         break;
       default:
     }

@@ -1,20 +1,18 @@
-import 'package:eazyweigh/interface/bom_interface/create/create_widget.dart';
-import 'package:eazyweigh/interface/bom_interface/details/details_widget.dart';
-import 'package:eazyweigh/interface/bom_interface/update/update_widget.dart';
+import 'package:eazyweigh/application/user_company_access_app.dart';
+import 'package:eazyweigh/application/user_terminal_access_app.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:eazyweigh/interface/user_company_access_interface/user_company_access_widget.dart';
+import 'package:eazyweigh/interface/user_factory_access_interface/user_factory_access_widget.dart';
+import 'package:eazyweigh/interface/user_role_access_interface/user_role_access_widget.dart';
+import 'package:eazyweigh/interface/user_terminal_access_interface/user_terminal_access_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class BOMWidget extends StatefulWidget {
-  const BOMWidget({Key? key}) : super(key: key);
+class UserAccessWidget extends StatelessWidget {
+  const UserAccessWidget({Key? key}) : super(key: key);
 
-  @override
-  State<BOMWidget> createState() => _BOMWidgetState();
-}
-
-class _BOMWidgetState extends State<BOMWidget> {
   @override
   Widget build(BuildContext context) {
     return SuperPage(
@@ -32,27 +30,13 @@ class _BOMWidgetState extends State<BOMWidget> {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
-                              const BOMCreateWidget(),
+                              const UserRoleAccessWidget(),
                         ),
                       );
                     },
                     icon: Icons.create,
-                    label: "Create",
-                    table: "boms",
-                    accessType: "create",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const BOMDetailsWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.get_app,
-                    label: "Details",
-                    table: "boms",
+                    label: "Role Access",
+                    table: "user_role_access",
                     accessType: "view",
                   ),
                   UserActionButton(
@@ -60,14 +44,28 @@ class _BOMWidgetState extends State<BOMWidget> {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
-                              const BOMUpdateWidget(),
+                              const UserFactoryAccessWidget(),
                         ),
                       );
                     },
-                    icon: Icons.update,
-                    label: "Update",
-                    table: "boms",
-                    accessType: "Update",
+                    icon: Icons.create,
+                    label: "Factory Access",
+                    table: "user_factory_accesses",
+                    accessType: "view",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const UserTerminalAccessWidget(),
+                        ),
+                      );
+                    },
+                    icon: Icons.create,
+                    label: "Terminal Access",
+                    table: "user_terminal_accesses",
+                    accessType: "view",
                   ),
                 ],
               ),
