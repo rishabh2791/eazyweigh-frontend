@@ -36,7 +36,6 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   int start = 0;
   int end = 3;
   bool isLoading = true;
-  List<Map<String, dynamic>> jobItems = [];
   ScrollController? scrollController;
   List<Terminal> terminals = [];
   List<UnitOfMeasurementConversion> uomConversions = [];
@@ -202,10 +201,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= jobItems.length) {
+          if (start + 3 <= widget.jobItems.length) {
             start += 3;
-            if (end + 3 >= jobItems.length) {
-              end = jobItems.length - 1;
+            if (end + 3 > widget.jobItems.length) {
+              end = widget.jobItems.length - 1;
             } else {
               end += 3;
             }
@@ -215,7 +214,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       case "previous":
         setState(() {
           if (start - 3 >= 0) {
-            if (end == jobItems.length - 1) {
+            if (end == widget.jobItems.length - 1) {
               start -= 3;
               end = start + 2;
             } else {

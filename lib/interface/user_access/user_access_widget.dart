@@ -1,9 +1,6 @@
-import 'package:eazyweigh/application/user_company_access_app.dart';
-import 'package:eazyweigh/application/user_terminal_access_app.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
-import 'package:eazyweigh/interface/user_company_access_interface/user_company_access_widget.dart';
 import 'package:eazyweigh/interface/user_factory_access_interface/user_factory_access_widget.dart';
 import 'package:eazyweigh/interface/user_role_access_interface/user_role_access_widget.dart';
 import 'package:eazyweigh/interface/user_terminal_access_interface/user_terminal_access_widget.dart';
@@ -36,7 +33,7 @@ class UserAccessWidget extends StatelessWidget {
                     },
                     icon: Icons.create,
                     label: "Role Access",
-                    table: "user_role_access",
+                    table: "user_role_accesses",
                     accessType: "view",
                   ),
                   UserActionButton(

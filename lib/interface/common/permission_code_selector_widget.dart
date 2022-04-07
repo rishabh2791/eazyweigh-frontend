@@ -43,7 +43,7 @@ class _PermissionCodeSelectorState extends State<PermissionCodeSelector> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            Container(
+            SizedBox(
               width: 400,
               child: Text(
                 widget.title.toUpperCase().replaceAll("_", " "),

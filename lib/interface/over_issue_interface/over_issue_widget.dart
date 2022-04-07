@@ -1,6 +1,9 @@
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:eazyweigh/interface/over_issue_interface/create/over_issue_create_widget.dart';
+import 'package:eazyweigh/interface/over_issue_interface/list/over_issue_list_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OverIssueWidget extends StatefulWidget {
@@ -25,7 +28,12 @@ class _OverIssueWidgetState extends State<OverIssueWidget> {
                 children: [
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OverIssueCreateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.create,
                     label: "Create",
@@ -34,21 +42,31 @@ class _OverIssueWidgetState extends State<OverIssueWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OverIssueListWidget(),
+                        ),
+                      );
                     },
-                    icon: Icons.list,
+                    icon: Icons.details,
                     label: "List",
                     table: "over_issues",
                     accessType: "view",
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OverIssueListWidget(),
+                        ),
+                      );
                     },
-                    icon: Icons.update,
-                    label: "Update",
+                    icon: Icons.list,
+                    label: "List",
                     table: "over_issues",
-                    accessType: "Update",
+                    accessType: "view",
                   ),
                 ],
               ),

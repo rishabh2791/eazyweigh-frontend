@@ -9,7 +9,6 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
-import 'package:eazyweigh/interface/middlewares/refresh_token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -91,7 +90,8 @@ class _LoginWidgetState extends State<LoginWidget> {
             await storage!.setInt("access_validity", payload["ATDuration"]);
             await storage!.setBool("logged_in", true);
             isLoggedIn = true;
-            refreshToken(payload["ATDuration"]);
+            accessTokenExpiryTime = DateTime.now().add(
+                Duration(seconds: int.parse(payload["ATDuration"].toString())));
 
             scannerListener.removeListener(listenToScanner);
             navigationService.pushReplacement(

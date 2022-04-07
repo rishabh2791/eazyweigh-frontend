@@ -13,26 +13,28 @@ class AuthApp implements AuthAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> logout(Map<String, String> headers) async {
-    return authRepository.logout(headers);
+  Future<Map<String, dynamic>> logout() async {
+    return authRepository.logout();
   }
 
   @override
-  Future<Map<String, dynamic>> refresh(Map<String, String> headers) async {
-    return authRepository.refresh(headers);
+  Future<Map<String, dynamic>> refresh() async {
+    return authRepository.refresh();
   }
 
   @override
   Future<Map<String, dynamic>> resetPassword(
-      Map<String, dynamic> passwordDetails, Map<String, String> headers) async {
-    return authRepository.resetPassword(passwordDetails, headers);
+    Map<String, dynamic> passwordDetails,
+  ) async {
+    return authRepository.resetPassword(passwordDetails);
   }
 }
 
 abstract class AuthAppInterface {
   Future<Map<String, dynamic>> login(Map<String, dynamic> loginDetails);
-  Future<Map<String, dynamic>> logout(Map<String, String> headers);
-  Future<Map<String, dynamic>> refresh(Map<String, String> headers);
+  Future<Map<String, dynamic>> logout();
+  Future<Map<String, dynamic>> refresh();
   Future<Map<String, dynamic>> resetPassword(
-      Map<String, dynamic> passwordDetails, Map<String, String> headers);
+    Map<String, dynamic> passwordDetails,
+  );
 }

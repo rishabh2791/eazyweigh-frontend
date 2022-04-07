@@ -240,7 +240,7 @@ class _JobListWidgetState extends State<JobListWidget> {
         setState(() {
           if (start + 3 <= jobsByID.length) {
             start += 3;
-            if (end + 3 >= jobsByID.length) {
+            if (end + 3 > jobsByID.length) {
               end = jobsByID.length - 1;
             } else {
               end += 3;
@@ -504,6 +504,7 @@ class _JobListWidgetState extends State<JobListWidget> {
     });
   }
 
+  //TODO for non-operator users
   Widget listWidget() {
     return Column();
   }

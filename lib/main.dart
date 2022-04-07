@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  accessTokenExpiryTime = DateTime.now();
   scannerListener.barcodeListener();
   socketUtility.initCommunication();
   WidgetsFlutterBinding.ensureInitialized();

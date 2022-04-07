@@ -1,7 +1,7 @@
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
-import 'package:eazyweigh/interface/user_role_access_interface/create_widget/user_role_access_created_widget.dart';
+import 'package:eazyweigh/interface/user_role_access_interface/create_widget/user_role_access_create_widget.dart';
 import 'package:eazyweigh/interface/user_role_access_interface/list_widget/user_role_access_list_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

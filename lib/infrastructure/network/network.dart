@@ -2,23 +2,39 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
+import 'package:eazyweigh/infrastructure/utilities/headers.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/interface/middlewares/refresh_token.dart';
 import 'package:http/http.dart' as http;
 
 NetworkAPIProvider networkAPIProvider = NetworkAPIProvider();
 
 class NetworkAPIProvider {
-  Future<Map<String, dynamic>> get(
-      String url, Map<String, String> headers) async {
+  Future<Map<String, dynamic>> get(String url, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
+    var uri = Uri.parse(baseURL + url);
+    DateTime now = DateTime.now();
 
     try {
-      var uri = Uri.parse(baseURL + url);
       isLoadingServerData = true;
-      await http.get(uri, headers: headers).then((response) {
-        isLoadingServerData = false;
-        responseJSON = json.decode(response.body.toString());
-      });
+      int secondsToExpiry = accessTokenExpiryTime.difference(now).inSeconds;
+      if (secondsToExpiry < 2 && isLoggedIn && !isRefreshing) {
+        await Future.forEach(
+            ([
+              await refreshAccessToken(),
+            ]), (value) async {
+          await http.get(uri, headers: getHeader(tokenType)).then((response) {
+            isLoadingServerData = false;
+            responseJSON = json.decode(response.body.toString());
+          });
+        });
+      } else {
+        await http.get(uri, headers: getHeader(tokenType)).then((response) {
+          isLoadingServerData = false;
+          responseJSON = json.decode(response.body.toString());
+        });
+      }
     } on SocketException {
       responseJSON = {"error": "Socket Exception"};
     } on FormatException {
@@ -30,59 +46,109 @@ class NetworkAPIProvider {
   }
 
   Future<Map<String, dynamic>> post(
-      String url, dynamic payload, Map<String, String> headers) async {
+      String url, dynamic payload, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
+    DateTime now = DateTime.now();
+    var uri = Uri.parse(baseURL + url);
 
-    headers["Content-Type"] = "application/text";
     try {
-      var uri = Uri.parse(baseURL + url);
       isLoadingServerData = true;
-      await http
-          .post(uri, headers: headers, body: json.encode(payload))
-          .then((response) {
-        isLoadingServerData = false;
-        responseJSON = json.decode(response.body.toString());
-      });
+      int secondsToExpiry = accessTokenExpiryTime.difference(now).inSeconds;
+      if (secondsToExpiry < 2 && isLoggedIn) {
+        await Future.forEach(
+            ([
+              await refreshAccessToken(),
+            ]), (value) async {
+          await http
+              .post(uri,
+                  headers: getHeader(tokenType), body: json.encode(payload))
+              .then((response) {
+            isLoadingServerData = false;
+            responseJSON = json.decode(response.body.toString());
+          });
+        });
+      } else {
+        await http
+            .post(uri,
+                headers: getHeader(tokenType), body: json.encode(payload))
+            .then((response) {
+          isLoadingServerData = false;
+          responseJSON = json.decode(response.body.toString());
+        });
+      }
     } on Exception {
       responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
 
-  Future<Map<String, dynamic>> patch(String url, Map<String, dynamic> payload,
-      Map<String, String> headers) async {
+  Future<Map<String, dynamic>> patch(
+      String url, Map<String, dynamic> payload, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
+    var uri = Uri.parse(baseURL + url);
+    DateTime now = DateTime.now();
 
-    headers["Content-Type"] = "application/text";
     try {
-      var uri = Uri.parse(baseURL + url);
       isLoadingServerData = true;
-      await http
-          .patch(uri, headers: headers, body: json.encode(payload))
-          .then((response) {
-        isLoadingServerData = false;
-        responseJSON = json.decode(response.body.toString());
-      });
+      int secondsToExpiry = accessTokenExpiryTime.difference(now).inSeconds;
+      if (secondsToExpiry < 2 && isLoggedIn) {
+        await Future.forEach(
+            ([
+              await refreshAccessToken(),
+            ]), (value) async {
+          await http
+              .patch(uri,
+                  headers: getHeader(tokenType), body: json.encode(payload))
+              .then((response) {
+            isLoadingServerData = false;
+            responseJSON = json.decode(response.body.toString());
+          });
+        });
+      } else {
+        await http
+            .patch(uri,
+                headers: getHeader(tokenType), body: json.encode(payload))
+            .then((response) {
+          isLoadingServerData = false;
+          responseJSON = json.decode(response.body.toString());
+        });
+      }
     } on Exception {
       responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
 
-  Future<Map<String, dynamic>> put(String url, Map<String, dynamic> payload,
-      Map<String, String> headers) async {
+  Future<Map<String, dynamic>> put(
+      String url, Map<String, dynamic> payload, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
+    var uri = Uri.parse(baseURL + url);
+    DateTime now = DateTime.now();
 
-    headers["Content-Type"] = "application/text";
     try {
-      var uri = Uri.parse(baseURL + url);
       isLoadingServerData = true;
-      await http
-          .put(uri, headers: headers, body: json.encode(payload))
-          .then((response) {
-        isLoadingServerData = false;
-        responseJSON = json.decode(response.body.toString());
-      });
+      int secondsToExpiry = accessTokenExpiryTime.difference(now).inSeconds;
+      if (secondsToExpiry < 2 && isLoggedIn) {
+        await Future.forEach(
+            ([
+              await refreshAccessToken(),
+            ]), (value) async {
+          await http
+              .put(uri,
+                  headers: getHeader(tokenType), body: json.encode(payload))
+              .then((response) {
+            isLoadingServerData = false;
+            responseJSON = json.decode(response.body.toString());
+          });
+        });
+      } else {
+        await http
+            .put(uri, headers: getHeader(tokenType), body: json.encode(payload))
+            .then((response) {
+          isLoadingServerData = false;
+          responseJSON = json.decode(response.body.toString());
+        });
+      }
     } on Exception {
       responseJSON = {"error": "Network Exception"};
     }
@@ -90,17 +156,32 @@ class NetworkAPIProvider {
   }
 
   Future<Map<String, dynamic>> delete(
-      String url, String id, Map<String, String> headers) async {
+      String url, String id, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
+    var uri = Uri.parse(baseURL + url);
+    DateTime now = DateTime.now();
 
-    headers["Content-Type"] = "application/text";
     try {
-      var uri = Uri.parse(baseURL + url);
       isLoadingServerData = true;
-      await http.delete(uri).then((response) {
-        isLoadingServerData = false;
-        responseJSON = json.decode(response.body.toString());
-      });
+      int secondsToExpiry = accessTokenExpiryTime.difference(now).inSeconds;
+      if (secondsToExpiry < 2 && isLoggedIn) {
+        await Future.forEach(
+            ([
+              await refreshAccessToken(),
+            ]), (value) async {
+          await http
+              .delete(uri, headers: getHeader(tokenType))
+              .then((response) {
+            isLoadingServerData = false;
+            responseJSON = json.decode(response.body.toString());
+          });
+        });
+      } else {
+        await http.delete(uri, headers: getHeader(tokenType)).then((response) {
+          isLoadingServerData = false;
+          responseJSON = json.decode(response.body.toString());
+        });
+      }
     } on Exception {
       responseJSON = {"error": "Network Exception"};
     }

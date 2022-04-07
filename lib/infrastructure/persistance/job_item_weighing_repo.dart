@@ -1,7 +1,6 @@
 import 'package:eazyweigh/domain/repository/job_item_weighing_repository.dart';
 import 'package:eazyweigh/infrastructure/network/network.dart';
 import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
-import 'package:eazyweigh/infrastructure/utilities/headers.dart';
 
 class JobItemWeighingRepo implements JobItemWeighingRepository {
   @override
@@ -9,7 +8,7 @@ class JobItemWeighingRepo implements JobItemWeighingRepository {
       Map<String, dynamic> jobItemWeighing) async {
     String url = "job_item_weight/create/";
     var response = await networkAPIProvider.post(
-        url, jobItemWeighing, getHeader(TokenType.accessToken));
+        url, jobItemWeighing, TokenType.accessToken);
     return response;
   }
 }

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -45,14 +49,48 @@ class _UserActionButtonState extends State<UserActionButton> {
     super.dispose();
   }
 
-  dynamic listenToScanner(String data) {}
+  String getAccessCode(String tableName, String accessType) {
+    String accessCode = "0000";
+    for (var userPermission in userRolePermissions) {
+      if (userPermission.table == tableName) {
+        accessCode = userPermission.accessLevel;
+      }
+    }
+    switch (accessType) {
+      case "create":
+        return accessCode[0];
+      case "view":
+        return accessCode[1];
+      case "update":
+        return accessCode[2];
+      case "delete":
+        return accessCode[3];
+      default:
+        break;
+    }
+    return "0";
+  }
+
+  dynamic listenToScanner(String data) {
+    Map<String, dynamic> scannerData = jsonDecode(data
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
+    switch (scannerData["action"]) {
+      case "navigation":
+        break;
+      default:
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    String qrImageData = '{"table":"' +
+    String qrImageData = '{"action":"navigation", "table":"' +
         widget.table +
-        '", "action":"' +
-        widget.label.toLowerCase() +
+        '", "access_type":"' +
+        widget.accessType +
         '" }';
     return SizedBox(
       width: 200.0,
@@ -60,15 +98,29 @@ class _UserActionButtonState extends State<UserActionButton> {
       child: Tooltip(
         message: widget.label,
         child: InkWell(
-          onTap: () {
+          onTap: () async {
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return const LoadingWidget();
               },
             );
-            //TODO User authorization check
-            widget.callback();
+            if (getAccessCode(widget.table, widget.accessType) == "1") {
+              widget.callback();
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const CustomDialog(
+                    message: "You are not Authorized.",
+                    title: "Errors",
+                  );
+                },
+              );
+              await Future.delayed(const Duration(seconds: 3)).then((value) {
+                Navigator.of(context).pop();
+              });
+            }
           },
           // onTap: widget.callback,
           child: Padding(

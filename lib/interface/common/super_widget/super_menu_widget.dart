@@ -2,7 +2,6 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/auth_interface/login_widget.dart';
-import 'package:eazyweigh/interface/middlewares/refresh_token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -157,12 +156,8 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
 }
 
 Future<void> logout(BuildContext context) async {
-  Map<String, String> headers = {
-    "Authorization":
-        "AccessToken " + (storage?.getString("access_token")).toString(),
-  };
   await appStore.authApp
-      .logout(headers)
+      .logout()
       .then((value) async => await Future.forEach([
             await storage?.remove("username"),
             await storage?.remove("access_token"),
@@ -174,7 +169,6 @@ Future<void> logout(BuildContext context) async {
     isLoggedIn = false;
     isMenuCollapsed = true;
   }).then((value) {
-    refreshToken(0);
     menuItemSelected = "Home";
     Navigator.pushReplacement(
       context,

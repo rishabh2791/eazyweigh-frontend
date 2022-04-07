@@ -1,10 +1,11 @@
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
+import 'package:eazyweigh/domain/entity/user_role_access.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
-import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
+import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,10 +32,49 @@ class _HomePageState extends State<HomePage> {
   Future<void> getAllDetails() async {
     await Future.forEach([
       await getUserDetails(),
-    ], (element) {});
+    ], (element) {})
+        .then((value) async {
+      await Future.forEach([
+        await getUserAuthorizations(),
+      ], (element) {});
+    });
   }
 
-  Future<void> getUserAuthorizations() async {}
+  Future<void> getUserAuthorizations() async {
+    userRolePermissions = [];
+    await appStore.userRoleAccessApp
+        .list(currentUser.userRole.role)
+        .then((response) {
+      if (response.containsKey("error")) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: response["error"],
+              title: "Errors",
+            );
+          },
+        );
+      } else {
+        if (response["status"]) {
+          for (var item in response["payload"]) {
+            UserRoleAccess userRoleAccess = UserRoleAccess.fromJSON(item);
+            userRolePermissions.add(userRoleAccess);
+          }
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomDialog(
+                message: response["message"],
+                title: "Errors",
+              );
+            },
+          );
+        }
+      }
+    });
+  }
 
   Future<dynamic> getUserDetails() async {
     await appStore.userApp.getUser(widget.username).then((response) async {
@@ -49,7 +89,7 @@ class _HomePageState extends State<HomePage> {
             menuItemSelected = "Job";
             Navigator.of(context).pushReplacement(
               CupertinoPageRoute(
-                builder: (BuildContext context) => const JobListWidget(),
+                builder: (BuildContext context) => const OperatorHomePage(),
               ),
             );
           } else {
