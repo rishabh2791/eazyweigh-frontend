@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:flutter/material.dart';
 
-class UnderIssueCreateWidget extends StatefulWidget {
-  const UnderIssueCreateWidget({Key? key}) : super(key: key);
+class UserRoleCreateWidget extends StatefulWidget {
+  const UserRoleCreateWidget({Key? key}) : super(key: key);
 
   @override
-  State<UnderIssueCreateWidget> createState() => _UnderIssueCreateWidgetState();
+  State<UserRoleCreateWidget> createState() => _UserRoleCreateWidgetState();
 }
 
-class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
+class _UserRoleCreateWidgetState extends State<UserRoleCreateWidget> {
   //TODO
   bool isLoadingPage = true;
 
@@ -31,7 +32,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
     });
   }
 
-  Widget homeWidget() {
+  Widget createWidget() {
     return Center(
       child: Text(
         currentUser.firstName,
@@ -46,7 +47,14 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
             childWidget: loader(context),
           )
         : SuperPage(
-            childWidget: homeWidget(),
+            childWidget: buildWidget(
+              createWidget(),
+              context,
+              "Create User Roles",
+              () {
+                Navigator.of(context).pop();
+              },
+            ),
           );
   }
 }

@@ -52,7 +52,7 @@ class _UserActionButtonState extends State<UserActionButton> {
   String getAccessCode(String tableName, String accessType) {
     String accessCode = "0000";
     for (var userPermission in userRolePermissions) {
-      if (userPermission.table == tableName) {
+      if (userPermission.tableName == tableName) {
         accessCode = userPermission.accessLevel;
       }
     }

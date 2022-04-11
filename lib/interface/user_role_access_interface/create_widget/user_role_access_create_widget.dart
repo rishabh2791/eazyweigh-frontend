@@ -188,7 +188,7 @@ class _UserRoleAccessCreateWidgetState
       } else {
         if (response["status"]) {
           for (var item in response["payload"]) {
-            existingPermissions[item["table"]] = item["access_level"];
+            existingPermissions[item["table_name"]] = item["access_level"];
           }
         } else {
           showDialog(
@@ -237,7 +237,8 @@ class _UserRoleAccessCreateWidgetState
                           List<Map<String, dynamic>> permissions = [];
                           controllers.forEach((key, value) {
                             permissions.add({
-                              "table": key,
+                              "user_role_id": userRoleController.text,
+                              "table_name": key,
                               "access_level": value.text,
                               "user_role_role":
                                   getUserRole(userRoleController.text),

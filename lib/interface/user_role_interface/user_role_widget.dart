@@ -1,6 +1,11 @@
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:eazyweigh/interface/user_role_interface/create/user_role_create_widget.dart';
+import 'package:eazyweigh/interface/user_role_interface/details/user_role_details_widget.dart';
+import 'package:eazyweigh/interface/user_role_interface/list/user_role_list_widget.dart';
+import 'package:eazyweigh/interface/user_role_interface/update/user_role_update_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserRoleWidget extends StatefulWidget {
@@ -25,7 +30,12 @@ class _UserRoleWidgetState extends State<UserRoleWidget> {
                 children: [
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const UserRoleCreateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.create,
                     label: "Create",
@@ -34,7 +44,12 @@ class _UserRoleWidgetState extends State<UserRoleWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const UserRoleDetailsWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.get_app,
                     label: "Details",
@@ -43,7 +58,12 @@ class _UserRoleWidgetState extends State<UserRoleWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const UserRoleListWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.list,
                     label: "List",
@@ -52,7 +72,12 @@ class _UserRoleWidgetState extends State<UserRoleWidget> {
                   ),
                   UserActionButton(
                     callback: () {
-                      //TODO define navigation
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const UserRoleUpdateWidget(),
+                        ),
+                      );
                     },
                     icon: Icons.update,
                     label: "Update",

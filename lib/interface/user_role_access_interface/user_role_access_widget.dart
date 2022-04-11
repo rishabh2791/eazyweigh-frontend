@@ -37,7 +37,7 @@ class _UserRoleAccessWidgetState extends State<UserRoleAccessWidget> {
                     },
                     icon: Icons.create,
                     label: "Create",
-                    table: "user_roles",
+                    table: "user_role_accesses",
                     accessType: "create",
                   ),
                   UserActionButton(
@@ -51,7 +51,7 @@ class _UserRoleAccessWidgetState extends State<UserRoleAccessWidget> {
                     },
                     icon: Icons.list,
                     label: "List",
-                    table: "user_roles",
+                    table: "user_roles_accesses",
                     accessType: "view",
                   ),
                 ],

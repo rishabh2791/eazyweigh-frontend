@@ -63,12 +63,6 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
-  // "Job Assignment": [
-  //   "Create",
-  //   "Details",
-  //   "List",
-  //   "Update",
-  // ],
   "Job Assignment": [
     "Create",
     "Details",

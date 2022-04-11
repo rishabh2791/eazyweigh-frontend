@@ -12,6 +12,7 @@ class JobItem {
   final double lowerBound;
   double actualWeight;
   final bool assigned;
+  final bool verified;
   final DateTime createdAt;
   final User createdBy;
   final DateTime updatedAt;
@@ -33,6 +34,7 @@ class JobItem {
     required this.updatedAt,
     required this.updatedBy,
     required this.upperBound,
+    required this.verified,
   });
 
   Map<String, dynamic> toJSON() {
@@ -50,6 +52,7 @@ class JobItem {
       "updated_at": updatedAt,
       "updated_by": updatedBy,
       "upper_bound": upperBound,
+      "verified": verified,
     };
   }
 
@@ -68,6 +71,7 @@ class JobItem {
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       upperBound: double.parse(jsonObject["upper_bound"].toString()),
+      verified: jsonObject["verified"],
     );
     return jobItem;
   }

@@ -6,6 +6,7 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
+import 'package:eazyweigh/interface/home/verifier_home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -85,20 +86,30 @@ class _HomePageState extends State<HomePage> {
         };
         await appStore.userCompanyApp.get(userCondition).then((value) async {
           companyID = value["payload"][0]["company_id"];
-          if (currentUser.userRole.role == "Operator") {
-            menuItemSelected = "Job";
-            Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(
-                builder: (BuildContext context) => const OperatorHomePage(),
-              ),
-            );
-          } else {
-            menuItemSelected = "Home";
-            Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(
-                builder: (BuildContext context) => const GeneralHomeWidget(),
-              ),
-            );
+          switch (currentUser.userRole.role) {
+            case "Operator":
+              menuItemSelected = "Job";
+              Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const OperatorHomePage(),
+                ),
+              );
+              break;
+            case "Verifier":
+              menuItemSelected = "Job";
+              Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const VerifierHomePage(),
+                ),
+              );
+              break;
+            default:
+              menuItemSelected = "Home";
+              Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const GeneralHomeWidget(),
+                ),
+              );
           }
         });
       } else {

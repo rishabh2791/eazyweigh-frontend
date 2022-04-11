@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
@@ -82,94 +83,129 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
   }
 
   Widget homeWidget() {
+    String timeOfDay = "Good Morning";
+    int hour = DateTime.now().hour;
+    if (hour >= 12 && hour < 16) {
+      timeOfDay = "Good Afternoon";
+    }
+    if (hour >= 16) {
+      timeOfDay = "Good Evening";
+    }
     return BaseWidget(builder: (context, sizeInformation) {
       return SizedBox(
         width: sizeInformation.screenSize.width,
-        height: sizeInformation.screenSize.height - 200,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: sizeInformation.screenSize.width / 3 - 20,
+              height: 200,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(
-                    child: QrImage(
-                      size: 250,
-                      data: underIssue,
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.black,
-                    ),
-                  ),
-                  const Divider(
-                    color: Colors.transparent,
-                  ),
-                  const Text(
-                    "Under Issue",
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                    child: Text(
+                      timeOfDay +
+                          " " +
+                          currentUser.firstName +
+                          " " +
+                          currentUser.lastName,
+                      style: const TextStyle(
+                        fontSize: 60.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              width: sizeInformation.screenSize.width / 3 - 20,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: QrImage(
-                      size: 250,
-                      data: weighing,
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.black,
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: sizeInformation.screenSize.width / 3 - 20,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: QrImage(
+                          size: 250,
+                          data: underIssue,
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.black,
+                        ),
+                      ),
+                      const Divider(
+                        color: Colors.transparent,
+                      ),
+                      const Text(
+                        "Under Issue",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  const Divider(
-                    color: Colors.transparent,
+                ),
+                SizedBox(
+                  width: sizeInformation.screenSize.width / 3 - 20,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: QrImage(
+                          size: 250,
+                          data: weighing,
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.black,
+                        ),
+                      ),
+                      const Divider(
+                        color: Colors.transparent,
+                      ),
+                      const Text(
+                        "Job Weighing",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  const Text(
-                    "Job Weighing",
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                SizedBox(
+                  width: sizeInformation.screenSize.width / 3 - 20,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: QrImage(
+                          size: 250,
+                          data: overIssue,
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.black,
+                        ),
+                      ),
+                      const Divider(
+                        color: Colors.transparent,
+                      ),
+                      const Text(
+                        "Over Issue",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: sizeInformation.screenSize.width / 3 - 20,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: QrImage(
-                      size: 250,
-                      data: overIssue,
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.black,
-                    ),
-                  ),
-                  const Divider(
-                    color: Colors.transparent,
-                  ),
-                  const Text(
-                    "Over Issue",
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),

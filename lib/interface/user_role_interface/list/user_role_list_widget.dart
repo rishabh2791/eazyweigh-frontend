@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:flutter/material.dart';
 
-class UnderIssueCreateWidget extends StatefulWidget {
-  const UnderIssueCreateWidget({Key? key}) : super(key: key);
+class UserRoleListWidget extends StatefulWidget {
+  const UserRoleListWidget({Key? key}) : super(key: key);
 
   @override
-  State<UnderIssueCreateWidget> createState() => _UnderIssueCreateWidgetState();
+  State<UserRoleListWidget> createState() => _UserRoleListWidgetState();
 }
 
-class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
+class _UserRoleListWidgetState extends State<UserRoleListWidget> {
   //TODO
   bool isLoadingPage = true;
 

@@ -7,9 +7,11 @@ import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
+import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
+import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
@@ -239,86 +241,92 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     }
   }
 
-  List<Widget> getRowWidget(JobItem jobItem) {
+  List<Widget> getRowWidget(JobItem jobItem, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
     bool isComplete = jobItem.actualWeight <= jobItem.upperBound &&
         jobItem.actualWeight >= jobItem.lowerBound;
-    widgets.add(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            "Material",
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            jobItem.material.code + " - " + jobItem.material.description,
-            style: const TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-    widgets.add(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            "Quantity",
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            jobItem.requiredWeight.toString(),
-            style: const TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-    widgets.add(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            "Suggestes Scales",
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
-                jobItem.lowerBound, jobItem.uom.code),
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (isComplete) {
+    if (!isComplete) {
       widgets.add(
-        const Icon(
-          Icons.check_circle,
-          color: Colors.green,
-          size: 50.0,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: sizeInfo.screenSize.width - 1200,
+              child: Column(
+                children: [
+                  const Text(
+                    "Material",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    jobItem.material.code +
+                        " - " +
+                        jobItem.material.description,
+                    style: const TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 20.0,
+            ),
+            Column(
+              children: [
+                const Text(
+                  "Required",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  (jobItem.requiredWeight - jobItem.actualWeight).toString(),
+                  style: const TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 20.0,
+            ),
+            Column(
+              children: [
+                const Text(
+                  "Suggested Scale",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
+                      jobItem.lowerBound, jobItem.uom.code),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 20.0,
+            ),
+          ],
         ),
       );
     }
@@ -330,7 +338,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     widgets.add(
       QrImage(
         data: jobItemData,
-        size: 200.0,
+        size: 250.0,
         backgroundColor: isComplete ? Colors.transparent : Colors.green,
         foregroundColor: isComplete ? Colors.transparent : Colors.black,
       ),
@@ -338,26 +346,32 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     return widgets;
   }
 
-  List<Widget> getJobItems() {
+  List<Widget> getJobItems(ScreenSizeInformation screenSizeInformation) {
     List<Widget> list = [];
     for (var i = start; i < end; i++) {
       JobItem jobItem = widget.jobItems[i];
-      Widget wid = Padding(
-        padding: const EdgeInsets.fromLTRB(
-          0.0,
-          0.0,
-          0.0,
-          10.0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: getRowWidget(jobItem),
+      Widget wid = SizedBox(
+        width: screenSizeInformation.screenSize.width / 3 - 20,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            0.0,
+            0.0,
+            0.0,
+            10.0,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: getRowWidget(jobItem, screenSizeInformation),
+          ),
         ),
       );
       list.add(wid);
     }
+    return list;
+  }
 
+  Widget listWidget() {
     Widget navigation = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -465,14 +479,21 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         ),
       ],
     );
-
-    list.add(navigation);
-    return list;
-  }
-
-  Widget listWidget() {
-    return Column(
-      children: getJobItems(),
+    return BaseWidget(
+      builder: (context, screenSizeInfo) {
+        return SizedBox(
+          height: screenSizeInfo.screenSize.height - 200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: getJobItems(screenSizeInfo),
+              ),
+              navigation
+            ],
+          ),
+        );
+      },
     );
   }
 

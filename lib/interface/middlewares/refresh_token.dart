@@ -18,19 +18,24 @@ Future<void> refreshAccessToken() async {
     isRefreshing = true;
 
     await appStore.authApp.refresh().then((response) async {
-      if (response["status"]) {
-        var payload = response["payload"];
-        await storage.setString("access_token", payload["AccessToken"]);
-        await storage.setString('refresh_token', payload["RefreshToken"]);
-        await storage.setInt("access_validity", payload["ATDuration"]);
-        await storage.setBool("logged_in", true);
-        isLoggedIn = true;
-        isRefreshing = false;
-        accessTokenExpiryTime = DateTime.now().add(
-            Duration(seconds: int.parse(payload["ATDuration"].toString())));
-      } else {
+      if (response.containsKey("error")) {
         navigationService.pushReplacement(CupertinoPageRoute(
             builder: (BuildContext context) => const LoginWidget()));
+      } else {
+        if (response["status"]) {
+          var payload = response["payload"];
+          await storage.setString("access_token", payload["AccessToken"]);
+          await storage.setString('refresh_token', payload["RefreshToken"]);
+          await storage.setInt("access_validity", payload["ATDuration"]);
+          await storage.setBool("logged_in", true);
+          isLoggedIn = true;
+          isRefreshing = false;
+          accessTokenExpiryTime = DateTime.now().add(
+              Duration(seconds: int.parse(payload["ATDuration"].toString())));
+        } else {
+          navigationService.pushReplacement(CupertinoPageRoute(
+              builder: (BuildContext context) => const LoginWidget()));
+        }
       }
     });
   }

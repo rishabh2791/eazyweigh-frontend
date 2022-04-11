@@ -280,7 +280,7 @@ class _JobListWidgetState extends State<JobListWidget> {
     List<Widget> widgets = [];
     if (!job.complete) {
       widgets.add(
-        Row(
+        Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -306,49 +306,55 @@ class _JobListWidgetState extends State<JobListWidget> {
                 ],
               ),
             ),
-            SizedBox(
-              width: 200,
-              child: Column(
-                children: [
-                  const Text(
-                    "Job Size",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    job.quantity.toString() + " " + job.uom.code,
-                    style: const TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+            const Divider(
+              color: Colors.transparent,
+              height: 20.0,
             ),
-            SizedBox(
-              width: 200,
-              child: Column(
-                children: [
-                  const Text(
-                    "Item",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                    ),
+            Column(
+              children: [
+                const Text(
+                  "Job Size",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
                   ),
-                  Text(
-                    (jobMapping[job.id]?.length).toString(),
-                    style: const TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                Text(
+                  job.quantity.toString() + " " + job.uom.code,
+                  style: const TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 20.0,
+            ),
+            Column(
+              children: [
+                const Text(
+                  "Items",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  (jobMapping[job.id]?.length).toString(),
+                  style: const TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 20.0,
             ),
           ],
         ),
@@ -362,25 +368,22 @@ class _JobListWidgetState extends State<JobListWidget> {
             job.id +
             '"}}';
     widgets.add(
-      SizedBox(
-        width: 200,
-        child: TextButton(
-          onPressed: () {
-            navigationService.pushReplacement(
-              CupertinoPageRoute(
-                builder: (BuildContext context) => JobDetailsWidget(
-                  jobItems: (jobMapping[job.id])!,
-                  jobCode: job.jobCode,
-                ),
+      TextButton(
+        onPressed: () {
+          navigationService.pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => JobDetailsWidget(
+                jobItems: (jobMapping[job.id])!,
+                jobCode: job.jobCode,
               ),
-            );
-          },
-          child: QrImage(
-            data: jobItemData,
-            size: 200.0,
-            backgroundColor: Colors.green,
-            foregroundColor: job.complete ? backgroundColor : Colors.black,
-          ),
+            ),
+          );
+        },
+        child: QrImage(
+          data: jobItemData,
+          size: 250.0,
+          backgroundColor: Colors.green,
+          foregroundColor: job.complete ? backgroundColor : Colors.black,
         ),
       ),
     );
@@ -390,18 +393,25 @@ class _JobListWidgetState extends State<JobListWidget> {
   List<Widget> getJobs(ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
     jobsByID.forEach((key, value) {
-      Widget widget = Row(
+      Widget widget = Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: getRowWidget(value, sizeInfo),
       );
       widgets.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-          child: widget,
+        SizedBox(
+          width: sizeInfo.screenSize.width / 3 - 20,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+            child: widget,
+          ),
         ),
       );
     });
+    return widgets;
+  }
+
+  Widget weigherlistWidget() {
     Widget navigation = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -484,11 +494,6 @@ class _JobListWidgetState extends State<JobListWidget> {
         ),
       ],
     );
-    widgets.add(navigation);
-    return widgets;
-  }
-
-  Widget weigherlistWidget() {
     return BaseWidget(builder: (context, screenSizeInfo) {
       return jobMapping.isEmpty
           ? const Text(
@@ -498,8 +503,17 @@ class _JobListWidgetState extends State<JobListWidget> {
                 color: Colors.white,
               ),
             )
-          : Column(
-              children: getJobs(screenSizeInfo),
+          : SizedBox(
+              height: screenSizeInfo.screenSize.height - 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: getJobs(screenSizeInfo),
+                  ),
+                  navigation,
+                ],
+              ),
             );
     });
   }

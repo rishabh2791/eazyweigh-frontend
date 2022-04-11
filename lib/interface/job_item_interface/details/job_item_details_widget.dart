@@ -307,26 +307,28 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         .replaceAll("'", "\"")
         .replaceAll("-", "_"));
 
-    String matCode = jsonData["code"];
-    if (!isMaterialScanned) {
-      setState(() {
-        isMaterialScanned = true;
-      });
-    }
-    if (matCode == widget.jobItem.material.code) {
-      scannedMaterialData = jsonData;
-      setState(() {
-        isVerified = true;
-      });
-    } else {
-      Map<String, dynamic> scannedData = {
-        "job_id": widget.jobItem.jobID,
-        "actual_code": matCode,
-        "expected_code": widget.jobItem.material.code,
-        "user_username": currentUser.username,
-        "terminal_id": thisTerminal[0].id,
-      };
-      await appStore.scannedDataApp.create(scannedData).then((value) {});
+    if (jsonData.containsKey("code")) {
+      String matCode = jsonData["code"];
+      if (!isMaterialScanned) {
+        setState(() {
+          isMaterialScanned = true;
+        });
+      }
+      if (matCode == widget.jobItem.material.code) {
+        scannedMaterialData = jsonData;
+        setState(() {
+          isVerified = true;
+        });
+      } else {
+        Map<String, dynamic> scannedData = {
+          "job_id": widget.jobItem.jobID,
+          "actual_code": matCode,
+          "expected_code": widget.jobItem.material.code,
+          "user_username": currentUser.username,
+          "terminal_id": thisTerminal[0].id,
+        };
+        await appStore.scannedDataApp.create(scannedData).then((value) {});
+      }
     }
   }
 
@@ -557,25 +559,45 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   Widget unScannedState() {
-    return const Center(
-      child: Text(
-        "Please Scan Material Barcode.",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 50.0,
-        ),
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            "Please Scan Material QR Code.",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 50.0,
+            ),
+          ),
+          const Divider(),
+          QrImage(
+            data: back,
+            size: 250,
+            backgroundColor: Colors.green,
+          ),
+        ],
       ),
     );
   }
 
   Widget unVerifiedState() {
-    return const Center(
-      child: Text(
-        "Incorrect Material. Please Scan Correct Material.",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 50.0,
-        ),
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            "Incorrect Material. Please Scan Correct Material.",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 50.0,
+            ),
+          ),
+          const Divider(),
+          QrImage(
+            data: back,
+            size: 250,
+            backgroundColor: Colors.green,
+          ),
+        ],
       ),
     );
   }
