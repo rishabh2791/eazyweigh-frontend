@@ -41,6 +41,15 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
         break;
       case 1:
         if (ascending) {
+          widget.jobItems.sort(
+              (a, b) => a.assigned.toString().compareTo(b.assigned.toString()));
+        } else {
+          widget.jobItems.sort(
+              (a, b) => b.assigned.toString().compareTo(a.assigned.toString()));
+        }
+        break;
+      case 2:
+        if (ascending) {
           widget.jobItems
               .sort((a, b) => a.material.code.compareTo(b.material.code));
         } else {
@@ -48,7 +57,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
               .sort((a, b) => b.material.code.compareTo(a.material.code));
         }
         break;
-      case 2:
+      case 3:
         if (ascending) {
           widget.jobItems.sort((a, b) =>
               a.material.description.compareTo(b.material.description));
@@ -57,7 +66,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
               b.material.description.compareTo(a.material.description));
         }
         break;
-      case 3:
+      case 4:
         if (ascending) {
           widget.jobItems
               .sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
@@ -101,6 +110,24 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                           DataColumn(
                             label: const Text(
                               "Selected",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: const Text(
+                              "Assigned",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -226,6 +253,16 @@ class _DataSource extends DataTableSource {
             jobItem.assigned
                 ? true.toString().toUpperCase()
                 : jobItem.selected.toString().toUpperCase(),
+            style: const TextStyle(
+              fontSize: 16.0,
+              color: foregroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            jobItem.assigned.toString().toUpperCase(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,

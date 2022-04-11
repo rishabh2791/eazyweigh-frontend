@@ -49,20 +49,6 @@ class _OverIssueWidgetState extends State<OverIssueWidget> {
                         ),
                       );
                     },
-                    icon: Icons.details,
-                    label: "List",
-                    table: "over_issues",
-                    accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const OverIssueListWidget(),
-                        ),
-                      );
-                    },
                     icon: Icons.list,
                     label: "List",
                     table: "over_issues",

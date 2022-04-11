@@ -47,23 +47,6 @@ class _JobWidgetState extends State<JobWidget> {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
-                              const JobDetailsWidget(
-                            jobCode: "",
-                            jobItems: [],
-                          ),
-                        ),
-                      );
-                    },
-                    icon: Icons.get_app,
-                    label: "Details",
-                    table: "jobs",
-                    accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
                               const JobListWidget(),
                         ),
                       );

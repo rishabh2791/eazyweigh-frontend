@@ -39,7 +39,7 @@ class _JobAssignmentWidgetState extends State<JobAssignmentWidget> {
                     },
                     icon: Icons.create,
                     label: "Create",
-                    table: "job_assignments",
+                    table: "job_item_assignments",
                     accessType: "create",
                   ),
                   UserActionButton(
@@ -53,7 +53,7 @@ class _JobAssignmentWidgetState extends State<JobAssignmentWidget> {
                     },
                     icon: Icons.get_app,
                     label: "Details",
-                    table: "job_assignments",
+                    table: "job_item_assignments",
                     accessType: "view",
                   ),
                   UserActionButton(
@@ -67,7 +67,7 @@ class _JobAssignmentWidgetState extends State<JobAssignmentWidget> {
                     },
                     icon: Icons.list,
                     label: "List",
-                    table: "job_assignments",
+                    table: "job_item_assignments",
                     accessType: "view",
                   ),
                   UserActionButton(
@@ -81,7 +81,7 @@ class _JobAssignmentWidgetState extends State<JobAssignmentWidget> {
                     },
                     icon: Icons.update,
                     label: "Update",
-                    table: "job_assignments",
+                    table: "job_item_assignments",
                     accessType: "Update",
                   ),
                 ],

@@ -345,41 +345,6 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                   height: 10.0,
                 ),
                 const Divider(),
-                const Text(
-                  "Pull from Syspro",
-                  style: TextStyle(
-                    color: formHintTextColor,
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(menuItemColor),
-                    elevation: MaterialStateProperty.all<double>(5.0),
-                  ),
-                  onPressed: () async {
-                    //TODO pull data from Syspro
-                  },
-                  child: const Tooltip(
-                    decoration: BoxDecoration(
-                      color: foregroundColor,
-                    ),
-                    message: "Pull",
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                      child: Icon(
-                        Icons.download,
-                        color: backgroundColor,
-                        size: 30.0,
-                      ),
-                    ),
-                  ),
-                ),
                 const SizedBox(
                   height: 20.0,
                 ),

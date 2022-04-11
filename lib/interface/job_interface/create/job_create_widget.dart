@@ -111,7 +111,6 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
       },
     );
     await Future.forEach([
-      await getMaterials(),
       await getUOMs(),
     ], (element) {
       setState(() {
@@ -119,32 +118,6 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
       });
     }).then((value) {
       Navigator.of(context).pop();
-    });
-  }
-
-  Future<dynamic> getMaterials() async {
-    uoms = [];
-    String factoryID = factoryController.text;
-    Map<String, dynamic> condition = {
-      "factory_id": factoryID,
-    };
-    await appStore.materialApp.list(condition).then((response) async {
-      if (response["status"]) {
-        for (var item in response["payload"]) {
-          Mat material = Mat.fromJSON(item);
-          materials.add(material);
-        }
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomDialog(
-              message: response["message"],
-              title: "Errors",
-            );
-          },
-        );
-      }
     });
   }
 
@@ -268,7 +241,6 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                         String errors = "";
                         var factoryID = factoryController.text;
                         var jobCode = codeController.text;
-                        var materialID = getMaterialID(materialController.text);
                         var uomID = uomController.text;
                         var quantity = quantityController.text;
 
@@ -289,16 +261,9 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                           errors += "Unit of Measurement Missing.\n";
                         }
 
-                        if (materialID.isEmpty || materialID == "") {
-                          errors += "Material Code " +
-                              materialController.text.toString() +
-                              " not created.";
-                        }
-
                         if (errors.isEmpty && errors == "") {
                           Map<String, dynamic> job = {
                             "factory_id": factoryID,
-                            "material_id": materialID,
                             "job_code": jobCode,
                             "quantity": double.parse(quantity),
                             "unit_of_measurement_id": uomID,
@@ -310,142 +275,39 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                               return loader(context);
                             },
                           );
-                          // Check if BOM exists for the Job.
-                          Map<String, dynamic> checkCondition = {
-                            "factory_id": factoryID,
-                            "material_id": materialID,
-                          };
 
-                          await appStore.bomApp
-                              .list(checkCondition)
-                              .then((value) async {
-                            if (value["status"]) {
-                              if (value["payload"].length == 0) {
+                          await appStore.jobApp.create(job).then(
+                            (response) async {
+                              if (response["status"]) {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const CustomDialog(
+                                      message: "Job Created",
+                                      title: "Info",
+                                    );
+                                  },
+                                );
+                                codeController.text = "";
+                                uomController.text = "";
+                                factoryController.text = "";
+                                materialController.text = "";
+                                quantityController.text = "";
+                              } else {
                                 Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return CustomDialog(
-                                      message:
-                                          "BOM Not Created for Material Code: " +
-                                              materialController.text
-                                                  .toString(),
+                                      message: response["message"],
                                       title: "Errors",
                                     );
                                   },
                                 );
-                              } else {
-                                if (value["payload"].length > 1) {
-                                  //TODO pull job details from cloud server (data warehouse)
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: "BOM has: " +
-                                            value["payload"].length.toString() +
-                                            " revisions. Selecting Revision 1 by default. You can update the revision later.",
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                }
-                                //Create Job if BOM Exists.
-                                await appStore.jobApp.create(job).then(
-                                  (response) async {
-                                    if (response["status"]) {
-                                      String jobID = response["payload"]["id"];
-                                      List<Map<String, dynamic>> jobItems = [];
-                                      for (var bomItem in value["payload"][0]
-                                          ["bom_items"]) {
-                                        double jobItemQuantity =
-                                            double.parse(quantity) *
-                                                bomItem["quantity"];
-                                        double upperBound = jobItemQuantity *
-                                            (1 +
-                                                bomItem["upper_tolerance"] /
-                                                    100);
-                                        double lowerBound = jobItemQuantity *
-                                            (1 -
-                                                bomItem["lower_tolerance"] /
-                                                    100);
-                                        Map<String, dynamic> jobItem = {
-                                          "job_id": jobID,
-                                          "material_id": bomItem["material_id"],
-                                          "unit_of_measurement_id":
-                                              bomItem["unit_of_measurement_id"],
-                                          "required_weight": jobItemQuantity,
-                                          "upper_bound": upperBound,
-                                          "lower_bound": lowerBound,
-                                        };
-                                        jobItems.add(jobItem);
-                                      }
-                                      await appStore.jobItemApp
-                                          .createMultiple(jobItems)
-                                          .then((jobItemsResponse) async {
-                                        if (jobItemsResponse["status"]) {
-                                          Navigator.of(context).pop();
-                                          if (jobItemsResponse["payload"]
-                                                      ["errors"]
-                                                  .length >
-                                              0) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const CustomDialog(
-                                                  message:
-                                                      "Error in Creating Jobs. You can edit Job Items through Job Update.",
-                                                  title: "Info",
-                                                );
-                                              },
-                                            );
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const CustomDialog(
-                                                  message: "Job Created",
-                                                  title: "Info",
-                                                );
-                                              },
-                                            );
-                                            codeController.text = "";
-                                            uomController.text = "";
-                                            factoryController.text = "";
-                                            materialController.text = "";
-                                            quantityController.text = "";
-                                          }
-                                        } else {
-                                          Navigator.of(context).pop();
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return CustomDialog(
-                                                message:
-                                                    jobItemsResponse["message"],
-                                                title: "Errors",
-                                              );
-                                            },
-                                          );
-                                        }
-                                      });
-                                    } else {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            message: response["message"],
-                                            title: "Errors",
-                                          );
-                                        },
-                                      );
-                                    }
-                                  },
-                                );
                               }
-                            } else {}
-                          });
+                            },
+                          );
                         } else {
                           showDialog(
                             context: context,
@@ -516,7 +378,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                       onPressed: () async {
                         String errors = "";
                         if (fileController.text.isEmpty ||
-                            fileController.text != "") {
+                            fileController.text == "") {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -527,94 +389,97 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                             },
                           );
                         } else {
-                          // ignore: prefer_typing_uninitialized_variables
-                          var csvData;
-                          if (foundation.kIsWeb) {
-                            //TODO Web Version
-                          } else {
-                            List<Map<String, dynamic>> jobs = [];
-                            final csvFile =
-                                File(file.path.toString()).openRead();
-                            csvData = await csvFile
-                                .transform(utf8.decoder)
-                                .transform(
-                                  const CsvToListConverter(),
-                                )
-                                .toList();
+                          if (factoryController.text == "" ||
+                              factoryController.text.isEmpty) {
                             showDialog(
                               context: context,
-                              barrierDismissible: false,
                               builder: (BuildContext context) {
-                                return loader(context);
+                                return const CustomDialog(
+                                  message: "Factory Missing",
+                                  title: "Errors",
+                                );
                               },
                             );
-                            csvData.forEach(
-                              (element) {
-                                String uomID = getUOMID(element[2]);
-                                if (uomID.isEmpty) {
-                                  errors += "Unit of Measure: " +
-                                      element[1] +
-                                      " not created.\n";
-                                } else {
-                                  String materialID =
-                                      getMaterialID(element[1].toString());
-                                  if (materialID.isEmpty || materialID == "") {
-                                    errors += "Material: " +
-                                        element[0] +
+                          } else {
+                            // ignore: prefer_typing_uninitialized_variables
+                            var csvData;
+                            if (foundation.kIsWeb) {
+                              //TODO Web Version
+                            } else {
+                              List<Map<String, dynamic>> jobs = [];
+                              final csvFile =
+                                  File(file.path.toString()).openRead();
+                              csvData = await csvFile
+                                  .transform(utf8.decoder)
+                                  .transform(
+                                    const CsvToListConverter(),
+                                  )
+                                  .toList();
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return loader(context);
+                                },
+                              );
+                              csvData.forEach(
+                                (element) {
+                                  String uomID = getUOMID(element[3]);
+                                  if (uomID.isEmpty) {
+                                    errors += "Unit of Measure: " +
+                                        element[3] +
                                         " not created.\n";
                                   } else {
                                     jobs.add(
                                       {
                                         "job_code": element[0].toString(),
-                                        "material_id": getMaterialID(
-                                            element[1].toString()),
-                                        "unit_of_measurement_id":
-                                            getUOMID(element[2]),
+                                        "factory_id": factoryController.text,
+                                        "unit_of_measurement_id": uomID,
                                         "quantity":
-                                            double.parse(element[3].toString()),
+                                            double.parse(element[2].toString()),
                                       },
                                     );
                                   }
-                                }
-                              },
-                            );
+                                },
+                              );
 
-                            await appStore.jobApp.createMultiple(jobs).then(
-                              (response) async {
-                                if (response["status"]) {
-                                  int created =
-                                      response["payload"]["models"].length;
-                                  int notCreated =
-                                      response["payload"]["errors"].length +
-                                          errors.length;
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: "Created " +
-                                            created.toString() +
-                                            " job and found error in " +
-                                            notCreated.toString() +
-                                            " jobs.",
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: response["message"],
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                            );
+                              await appStore.jobApp.createMultiple(jobs).then(
+                                (response) async {
+                                  if (response["status"]) {
+                                    int created =
+                                        response["payload"]["models"].length;
+                                    int notCreated =
+                                        response["payload"]["errors"].length +
+                                            errors.length;
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialog(
+                                          message: "Created " +
+                                              created.toString() +
+                                              " job and found error in " +
+                                              notCreated.toString() +
+                                              " jobs.",
+                                          title: "Errors",
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialog(
+                                          message: response["message"],
+                                          title: "Errors",
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                              );
+                            }
                           }
                         }
                       },
