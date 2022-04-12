@@ -2,7 +2,7 @@ import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:eazyweigh/interface/under_issue_interface/create/under_issue_create_widget.dart';
-import 'package:eazyweigh/interface/under_issue_interface/list/under_widget_list_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/list/under_issue_list_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

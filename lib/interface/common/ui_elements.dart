@@ -6,7 +6,10 @@ Widget checkButton() {
     decoration: BoxDecoration(
       color: foregroundColor,
     ),
-    message: "Check",
+    textStyle: TextStyle(
+      fontSize: 16.0,
+    ),
+    message: "OK",
     child: Padding(
       padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
       child: Icon(
@@ -22,6 +25,9 @@ Widget clearButton() {
   return const Tooltip(
     decoration: BoxDecoration(
       color: foregroundColor,
+    ),
+    textStyle: TextStyle(
+      fontSize: 16.0,
     ),
     message: "Clear",
     child: Padding(

@@ -139,7 +139,7 @@ class _JobListWidgetState extends State<JobListWidget> {
                           );
                         }
                       });
-                    } else {}
+                    }
                   } else {
                     Navigator.of(context).pop();
                     showDialog(

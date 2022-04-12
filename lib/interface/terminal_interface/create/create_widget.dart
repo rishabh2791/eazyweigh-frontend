@@ -334,7 +334,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Create Multiple Terminal",
+                  "Create Multiple Terminals",
                   style: TextStyle(
                     color: formHintTextColor,
                     fontSize: 30.0,

@@ -170,8 +170,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         .replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
-        // ignore: prefer_typing_uninitialized_variables
-        var passedJobItem;
+        late JobItem passedJobItem;
         String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
         for (var jobItem in widget.jobItems) {
           if (jobItem.id == id) {

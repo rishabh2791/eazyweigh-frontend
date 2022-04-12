@@ -4,10 +4,19 @@ import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
 
 class UnderIssueRepo implements UnderIssueRepository {
   @override
-  Future<Map<String, dynamic>> create(Map<String, dynamic> bom) async {
+  Future<Map<String, dynamic>> create(Map<String, dynamic> underIssues) async {
     String url = "under_issue/create/";
     var response =
-        await networkAPIProvider.post(url, bom, TokenType.accessToken);
+        await networkAPIProvider.post(url, underIssues, TokenType.accessToken);
+    return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> createMultiple(
+      List<Map<String, dynamic>> underIssuess) async {
+    String url = "under_issue/create/multi/";
+    var response =
+        await networkAPIProvider.post(url, underIssuess, TokenType.accessToken);
     return response;
   }
 
@@ -15,31 +24,6 @@ class UnderIssueRepo implements UnderIssueRepository {
   Future<Map<String, dynamic>> list(String id) async {
     String url = "under_issue/" + id + "/";
     var response = await networkAPIProvider.get(url, TokenType.accessToken);
-    return response;
-  }
-
-  @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
-    String url = "under_issue/" + id + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
-    return response;
-  }
-
-  @override
-  Future<Map<String, dynamic>> approve(String id) async {
-    String url = "under_issue/" + id + "/approve/";
-    var response =
-        await networkAPIProvider.patch(url, {}, TokenType.accessToken);
-    return response;
-  }
-
-  @override
-  Future<Map<String, dynamic>> reject(String id) async {
-    String url = "under_issue/" + id + "/reject/";
-    var response =
-        await networkAPIProvider.patch(url, {}, TokenType.accessToken);
     return response;
   }
 }

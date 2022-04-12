@@ -1,7 +1,8 @@
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
-import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
+import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart'
+    as menu;
 import 'package:eazyweigh/interface/common/super_widget/super_page_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -50,7 +51,7 @@ class _SuperPageState extends State<SuperPage>
           backgroundColor: isDarkTheme ? backgroundColor : foregroundColor,
           body: Stack(
             children: [
-              SuperMenuWidget(
+              menu.SuperMenuWidget(
                 context: context,
                 slideAnimation: slideAnimation,
                 animationController: animationController,
@@ -61,16 +62,22 @@ class _SuperPageState extends State<SuperPage>
                 screenType: sizeInformation.screenType,
               ),
               isLoggedIn
-                  ? currentUser.userRole.role == "Operator"
+                  ? currentUser.userRole.role == "Operator" ||
+                          currentUser.userRole.role == "Verifier"
                       ? Positioned(
                           left: 20,
                           bottom: 100,
                           child: Row(
                             children: [
-                              QrImage(
-                                data: logout,
-                                size: 150.0,
-                                backgroundColor: foregroundColor,
+                              TextButton(
+                                onPressed: () {
+                                  menu.logout(context);
+                                },
+                                child: QrImage(
+                                  data: logout,
+                                  size: 150.0,
+                                  backgroundColor: foregroundColor,
+                                ),
                               ),
                               const SizedBox(
                                 width: 16.0,

@@ -372,7 +372,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Upload BOM Items",
+                  "Upload Shift Schedule",
                   style: TextStyle(
                     color: formHintTextColor,
                     fontSize: 30.0,

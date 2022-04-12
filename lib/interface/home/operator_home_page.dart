@@ -9,7 +9,7 @@ import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/over_issue_interface/list/over_issue_list_widget.dart';
-import 'package:eazyweigh/interface/under_issue_interface/list/under_widget_list_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/list/under_issue_list_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -64,14 +64,14 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
       case "over_issue":
         navigationService.pushReplacement(
           CupertinoPageRoute(
-            builder: (BuildContext context) => const UnderIssueListWidget(),
+            builder: (BuildContext context) => const OverIssueListWidget(),
           ),
         );
         break;
       case "under_issue":
         navigationService.pushReplacement(
           CupertinoPageRoute(
-            builder: (BuildContext context) => const OverIssueListWidget(),
+            builder: (BuildContext context) => const UnderIssueListWidget(),
           ),
         );
         break;

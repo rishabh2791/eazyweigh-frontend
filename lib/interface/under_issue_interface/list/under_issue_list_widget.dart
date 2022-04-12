@@ -4,32 +4,32 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
-import 'package:eazyweigh/domain/entity/over_issue.dart';
+import 'package:eazyweigh/domain/entity/under_issue.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
-import 'package:eazyweigh/interface/over_issue_interface/details/over_issue_details_widget.dart';
-import 'package:eazyweigh/interface/over_issue_interface/over_issue_widget.dart';
+import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/details/under_issue_details_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/under_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:eazyweigh/infrastructure/utilities/variables.dart';
-import 'package:eazyweigh/interface/common/loader.dart';
-import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class OverIssueListWidget extends StatefulWidget {
-  const OverIssueListWidget({Key? key}) : super(key: key);
+class UnderIssueListWidget extends StatefulWidget {
+  const UnderIssueListWidget({Key? key}) : super(key: key);
 
   @override
-  State<OverIssueListWidget> createState() => _OverIssueListWidgetState();
+  State<UnderIssueListWidget> createState() => _UnderIssueListWidgetState();
 }
 
-class _OverIssueListWidgetState extends State<OverIssueListWidget> {
+class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   int start = 0;
   int end = 2;
   bool isLoadingData = true;
@@ -41,7 +41,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   String previous = '{"action":"navigation", "data":{"type":"previous"}}';
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
-  Map<String, List<OverIssue>> jobMapping = {};
+  Map<String, List<UnderIssue>> jobMapping = {};
 
   @override
   void initState() {
@@ -136,6 +136,46 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                             Job thisJob = Job.fromJSON(job);
                             jobs[job["id"]] = thisJob;
                           }
+                          jobMapping.forEach((key, value) async {
+                            await appStore.underIssueApp
+                                .list(key)
+                                .then((underIssueReposnse) {
+                              if (underIssueReposnse.containsKey("status")) {
+                                if (underIssueReposnse["status"]) {
+                                  for (var item
+                                      in underIssueReposnse["payload"]) {
+                                    UnderIssue underIssue =
+                                        UnderIssue.fromJSON(item);
+                                    if (!underIssue.weighed) {
+                                      value.add(underIssue);
+                                    }
+                                  }
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialog(
+                                        message: underIssueReposnse["message"],
+                                        title: "Error",
+                                      );
+                                    },
+                                  );
+                                }
+                              } else {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const CustomDialog(
+                                      message: "Unable to Connect.",
+                                      title: "Error",
+                                    );
+                                  },
+                                );
+                              }
+                            });
+                          });
                         } else {
                           Navigator.of(context).pop();
                           showDialog(
@@ -148,46 +188,6 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                             },
                           );
                         }
-                      }).then((value) async {
-                        jobMapping.forEach((key, value) async {
-                          await appStore.overIssueApp
-                              .list(key)
-                              .then((overIssueReposnse) {
-                            if (overIssueReposnse.containsKey("status")) {
-                              if (overIssueReposnse["status"]) {
-                                for (var item in overIssueReposnse["payload"]) {
-                                  OverIssue overIssue =
-                                      OverIssue.fromJSON(item);
-                                  if (!overIssue.weighed) {
-                                    value.add(overIssue);
-                                  }
-                                }
-                              } else {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: overIssueReposnse["message"],
-                                      title: "Error",
-                                    );
-                                  },
-                                );
-                              }
-                            } else {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const CustomDialog(
-                                    message: "Unable to Connect.",
-                                    title: "Error",
-                                  );
-                                },
-                              );
-                            }
-                          });
-                        });
                       });
                       cleanJobMapping();
                     } else {}
@@ -268,10 +268,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
         // Selection to Navigate to Next Page
         navigationService.pushReplacement(
           CupertinoPageRoute(
-            builder: (BuildContext context) => OverIssueDetailsWidget(
+            builder: (BuildContext context) => UnderIssueDetailsWidget(
               jobCode: jobCode,
-              overIssueItems: jobMapping[id]!,
               jobItems: jobItems,
+              underIssueItems: jobMapping[id]!,
             ),
           ),
         );
@@ -320,7 +320,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
       case "back":
         navigationService.pushReplacement(
           CupertinoPageRoute(
-            builder: (BuildContext context) => const OverIssueWidget(),
+            builder: (BuildContext context) => const UnderIssueWidget(),
           ),
         );
         break;
@@ -424,9 +424,9 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
         onPressed: () {
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) => OverIssueDetailsWidget(
+              builder: (BuildContext context) => UnderIssueDetailsWidget(
                   jobCode: job.jobCode,
-                  overIssueItems: jobMapping[job.id]!,
+                  underIssueItems: jobMapping[job.id]!,
                   jobItems: jobItems),
             ),
           );
@@ -549,7 +549,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     return BaseWidget(builder: (context, screenSizeInfo) {
       return jobMapping.isEmpty
           ? const Text(
-              "No Over Issues Found.",
+              "No Under Issues Found.",
               style: TextStyle(
                 fontSize: 20.0,
                 color: Colors.white,
@@ -570,6 +570,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     });
   }
 
+//TODO
   Widget generalWidget() {
     return Center(
       child: Text(
@@ -594,7 +595,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             childWidget: buildWidget(
               homeWidget(),
               context,
-              "Over Issue Materials",
+              "Under Issue Materials",
               () {
                 Navigator.of(context).pop();
               },
