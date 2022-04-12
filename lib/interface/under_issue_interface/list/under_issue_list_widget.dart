@@ -16,6 +16,7 @@ import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/under_issue_interface/details/under_issue_details_widget.dart';
 import 'package:eazyweigh/interface/under_issue_interface/under_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +43,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
   Map<String, List<UnderIssue>> jobMapping = {};
+  Map<String, List<UnderIssue>> passedJobMapping = {};
 
   @override
   void initState() {
@@ -58,10 +60,11 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
 
   void cleanJobMapping() {
     jobMapping.forEach((key, value) {
-      if (value.isEmpty) {
-        jobMapping.remove(key);
+      if (value.isNotEmpty) {
+        passedJobMapping[key] = value;
       }
     });
+    setState(() {});
   }
 
   Future<dynamic> checkWeigher() async {
@@ -147,9 +150,10 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                     UnderIssue underIssue =
                                         UnderIssue.fromJSON(item);
                                     if (!underIssue.weighed) {
-                                      value.add(underIssue);
+                                      jobMapping[key]!.add(underIssue);
                                     }
                                   }
+                                  cleanJobMapping();
                                 } else {
                                   Navigator.of(context).pop();
                                   showDialog(
@@ -189,7 +193,6 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                           );
                         }
                       });
-                      cleanJobMapping();
                     } else {}
                   } else {
                     Navigator.of(context).pop();
@@ -271,7 +274,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             builder: (BuildContext context) => UnderIssueDetailsWidget(
               jobCode: jobCode,
               jobItems: jobItems,
-              underIssueItems: jobMapping[id]!,
+              underIssueItems: passedJobMapping[id]!,
             ),
           ),
         );
@@ -318,11 +321,17 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
         });
         break;
       case "back":
-        navigationService.pushReplacement(
-          CupertinoPageRoute(
-            builder: (BuildContext context) => const UnderIssueWidget(),
-          ),
-        );
+        currentUser.userRole.role == "Operator"
+            ? navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const OperatorHomePage(),
+                ),
+              )
+            : navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const UnderIssueWidget(),
+                ),
+              );
         break;
       default:
     }
@@ -395,7 +404,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   ),
                 ),
                 Text(
-                  (jobMapping[job.id]?.length).toString(),
+                  (passedJobMapping[job.id]?.length).toString(),
                   style: const TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
@@ -426,7 +435,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             CupertinoPageRoute(
               builder: (BuildContext context) => UnderIssueDetailsWidget(
                   jobCode: job.jobCode,
-                  underIssueItems: jobMapping[job.id]!,
+                  underIssueItems: passedJobMapping[job.id]!,
                   jobItems: jobItems),
             ),
           );
@@ -444,7 +453,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
 
   List<Widget> getJobs(ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
-    jobMapping.forEach((key, value) {
+    passedJobMapping.forEach((key, value) {
       Widget widget = Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -471,11 +480,36 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
           children: [
             TextButton(
               onPressed: () {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+              },
+              child: QrImage(
+                data: back,
+                size: 150,
+                backgroundColor: Colors.green,
+              ),
+            ),
+            const Text(
+              "Back",
+              style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            TextButton(
+              onPressed: () {
                 setState(() {
                   if (start - 3 >= 0) {
-                    if (end == jobMapping.length - 1) {
+                    if (end == passedJobMapping.length) {
                       start -= 3;
-                      end = start + 2;
+                      end = start + 3;
                     } else {
                       end -= 3;
                       if (start - 3 < 0) {
@@ -510,10 +544,10 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 <= jobMapping.length) {
+                  if (start + 3 <= passedJobMapping.length) {
                     start += 3;
-                    if (end + 3 >= jobMapping.length) {
-                      end = jobMapping.length - 1;
+                    if (end + 3 >= passedJobMapping.length) {
+                      end = passedJobMapping.length;
                     } else {
                       end += 3;
                     }
@@ -523,17 +557,17 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor:
-                    (end == jobMapping.length - 1 || jobMapping.length < 3)
-                        ? Colors.transparent
-                        : Colors.green,
-                foregroundColor:
-                    (end == jobMapping.length - 1 || jobMapping.length < 3)
-                        ? backgroundColor
-                        : Colors.black,
+                backgroundColor: (end == passedJobMapping.length - 1 ||
+                        passedJobMapping.length < 3)
+                    ? Colors.transparent
+                    : Colors.green,
+                foregroundColor: (end == passedJobMapping.length - 1 ||
+                        passedJobMapping.length < 3)
+                    ? backgroundColor
+                    : Colors.black,
               ),
             ),
-            (end == jobMapping.length - 1 || jobMapping.length < 3)
+            (end == passedJobMapping.length - 1 || passedJobMapping.length < 3)
                 ? Container()
                 : const Text(
                     "Next",
@@ -547,12 +581,21 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
       ],
     );
     return BaseWidget(builder: (context, screenSizeInfo) {
-      return jobMapping.isEmpty
-          ? const Text(
-              "No Under Issues Found.",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.white,
+      return passedJobMapping.isEmpty
+          ? SizedBox(
+              height: screenSizeInfo.screenSize.height - 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "No Under Issues Found.",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  navigation,
+                ],
               ),
             )
           : SizedBox(
@@ -596,9 +639,18 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               homeWidget(),
               context,
               "Under Issue Materials",
-              () {
-                Navigator.of(context).pop();
-              },
+              currentUser.userRole.role == "Operator"
+                  ? () {
+                      navigationService.pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OperatorHomePage(),
+                        ),
+                      );
+                    }
+                  : () {
+                      Navigator.of(context).pop();
+                    },
             ),
           );
   }

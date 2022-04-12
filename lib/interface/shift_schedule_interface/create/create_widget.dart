@@ -119,7 +119,9 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
         if (response["status"]) {
           for (var item in response["payload"]) {
             User user = User.fromJSON(item["user"]);
-            users.add(user);
+            if (user.userRole.role == "Operator") {
+              users.add(user);
+            }
           }
         } else {
           showDialog(

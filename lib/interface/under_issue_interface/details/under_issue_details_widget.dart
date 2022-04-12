@@ -9,6 +9,7 @@ import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
@@ -51,6 +52,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   @override
   void initState() {
     getAllData();
+    end = min(end, widget.underIssueItems.length);
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
     super.initState();
@@ -208,10 +210,10 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= widget.jobItems.length) {
+          if (start + 3 <= widget.underIssueItems.length) {
             start += 3;
-            if (end + 3 > widget.jobItems.length) {
-              end = widget.jobItems.length - 1;
+            if (end + 3 > widget.underIssueItems.length) {
+              end = widget.underIssueItems.length - 1;
             } else {
               end += 3;
             }
@@ -221,7 +223,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
       case "previous":
         setState(() {
           if (start - 3 >= 0) {
-            if (end == widget.jobItems.length - 1) {
+            if (end == widget.underIssueItems.length - 1) {
               start -= 3;
               end = start + 2;
             } else {
@@ -337,11 +339,23 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
             underIssue.id +
             '"}}';
     widgets.add(
-      QrImage(
-        data: jobItemData,
-        size: 250.0,
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.black,
+      TextButton(
+        onPressed: () {
+          navigationService.pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => UnderIssueItemDetailsWidget(
+                underIssue: underIssue,
+                jobItem: widget.jobItems[underIssue.jobItem]!,
+              ),
+            ),
+          );
+        },
+        child: QrImage(
+          data: jobItemData,
+          size: 250.0,
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.black,
+        ),
       ),
     );
     return widgets;
@@ -409,7 +423,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
               onPressed: () {
                 setState(() {
                   if (start - 3 >= 0) {
-                    if (end == widget.jobItems.length - 1) {
+                    if (end == widget.underIssueItems.length - 1) {
                       start -= 3;
                       end = start + 2;
                     } else {
@@ -446,10 +460,10 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 < widget.jobItems.length) {
+                  if (start + 3 < widget.underIssueItems.length) {
                     start += 3;
-                    if (end + 3 > widget.jobItems.length) {
-                      end = widget.jobItems.length - 1;
+                    if (end + 3 > widget.underIssueItems.length) {
+                      end = widget.underIssueItems.length - 1;
                     } else {
                       end += 3;
                     }
@@ -459,17 +473,18 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.jobItems.length ||
-                        widget.jobItems.length < 3)
+                backgroundColor: (end == widget.underIssueItems.length ||
+                        widget.underIssueItems.length < 3)
                     ? Colors.transparent
                     : Colors.green,
-                foregroundColor: (end == widget.jobItems.length ||
-                        widget.jobItems.length < 3)
+                foregroundColor: (end == widget.underIssueItems.length ||
+                        widget.underIssueItems.length < 3)
                     ? Colors.transparent
                     : Colors.black,
               ),
             ),
-            (end == widget.jobItems.length || widget.jobItems.length < 3)
+            (end == widget.underIssueItems.length ||
+                    widget.underIssueItems.length < 3)
                 ? Container()
                 : const Text(
                     "Next",
@@ -507,7 +522,19 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
             childWidget: loader(context),
           )
         : SuperPage(
-            childWidget: listWidget(),
+            childWidget: buildWidget(
+              listWidget(),
+              context,
+              "Under Issue Materials",
+              () {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) =>
+                        const UnderIssueListWidget(),
+                  ),
+                );
+              },
+            ),
           );
   }
 }

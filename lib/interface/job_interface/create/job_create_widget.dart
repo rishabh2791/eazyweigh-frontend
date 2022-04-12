@@ -278,29 +278,42 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
 
                           await appStore.jobApp.create(job).then(
                             (response) async {
-                              if (response["status"]) {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const CustomDialog(
-                                      message: "Job Created",
-                                      title: "Info",
-                                    );
-                                  },
-                                );
-                                codeController.text = "";
-                                uomController.text = "";
-                                factoryController.text = "";
-                                materialController.text = "";
-                                quantityController.text = "";
+                              if (response.containsKey("status")) {
+                                if (response["status"]) {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const CustomDialog(
+                                        message: "Job Created",
+                                        title: "Info",
+                                      );
+                                    },
+                                  );
+                                  codeController.text = "";
+                                  uomController.text = "";
+                                  factoryController.text = "";
+                                  materialController.text = "";
+                                  quantityController.text = "";
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialog(
+                                        message: response["message"],
+                                        title: "Errors",
+                                      );
+                                    },
+                                  );
+                                }
                               } else {
                                 Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: response["message"],
+                                    return const CustomDialog(
+                                      message: "Unable to Connect.",
                                       title: "Errors",
                                     );
                                   },

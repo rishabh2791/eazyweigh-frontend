@@ -130,11 +130,21 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Center(
-                        child: QrImage(
-                          size: 250,
-                          data: underIssue,
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.black,
+                        child: TextButton(
+                          onPressed: () {
+                            navigationService.pushReplacement(
+                              CupertinoPageRoute(
+                                builder: (BuildContext context) =>
+                                    const UnderIssueListWidget(),
+                              ),
+                            );
+                          },
+                          child: QrImage(
+                            size: 250,
+                            data: underIssue,
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.black,
+                          ),
                         ),
                       ),
                       const Divider(
@@ -157,11 +167,21 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Center(
-                        child: QrImage(
-                          size: 250,
-                          data: weighing,
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.black,
+                        child: TextButton(
+                          onPressed: () {
+                            navigationService.pushReplacement(
+                              CupertinoPageRoute(
+                                builder: (BuildContext context) =>
+                                    const JobListWidget(),
+                              ),
+                            );
+                          },
+                          child: QrImage(
+                            size: 250,
+                            data: underIssue,
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.black,
+                          ),
                         ),
                       ),
                       const Divider(
@@ -184,11 +204,21 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Center(
-                        child: QrImage(
-                          size: 250,
-                          data: overIssue,
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.black,
+                        child: TextButton(
+                          onPressed: () {
+                            navigationService.pushReplacement(
+                              CupertinoPageRoute(
+                                builder: (BuildContext context) =>
+                                    const OverIssueListWidget(),
+                              ),
+                            );
+                          },
+                          child: QrImage(
+                            size: 250,
+                            data: underIssue,
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.black,
+                          ),
                         ),
                       ),
                       const Divider(

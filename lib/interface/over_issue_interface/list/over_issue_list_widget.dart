@@ -13,6 +13,7 @@ import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
+import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/over_issue_interface/details/over_issue_details_widget.dart';
 import 'package:eazyweigh/interface/over_issue_interface/over_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +43,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
   Map<String, List<OverIssue>> jobMapping = {};
+  Map<String, List<OverIssue>> passedJobMapping = {};
 
   @override
   void initState() {
@@ -58,10 +60,11 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
 
   void cleanJobMapping() {
     jobMapping.forEach((key, value) {
-      if (value.isEmpty) {
-        jobMapping.remove(key);
+      if (value.isNotEmpty) {
+        passedJobMapping[key] = value;
       }
     });
+    setState(() {});
   }
 
   Future<dynamic> checkWeigher() async {
@@ -159,9 +162,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                   OverIssue overIssue =
                                       OverIssue.fromJSON(item);
                                   if (!overIssue.weighed) {
-                                    value.add(overIssue);
+                                    jobMapping[key]!.add(overIssue);
                                   }
                                 }
+                                cleanJobMapping();
                               } else {
                                 Navigator.of(context).pop();
                                 showDialog(
@@ -189,7 +193,6 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                           });
                         });
                       });
-                      cleanJobMapping();
                     } else {}
                   } else {
                     Navigator.of(context).pop();
@@ -270,7 +273,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
           CupertinoPageRoute(
             builder: (BuildContext context) => OverIssueDetailsWidget(
               jobCode: jobCode,
-              overIssueItems: jobMapping[id]!,
+              overIssueItems: passedJobMapping[id]!,
               jobItems: jobItems,
             ),
           ),
@@ -290,10 +293,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= jobMapping.length) {
+          if (start + 3 <= passedJobMapping.length) {
             start += 3;
-            if (end + 3 > jobMapping.length) {
-              end = jobMapping.length - 1;
+            if (end + 3 > passedJobMapping.length) {
+              end = passedJobMapping.length - 1;
             } else {
               end += 3;
             }
@@ -303,7 +306,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
       case "previous":
         setState(() {
           if (start - 3 >= 0) {
-            if (end == jobMapping.length - 1) {
+            if (end == passedJobMapping.length - 1) {
               start -= 3;
               end = start + 2;
             } else {
@@ -395,7 +398,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   ),
                 ),
                 Text(
-                  (jobMapping[job.id]?.length).toString(),
+                  (passedJobMapping[job.id]?.length).toString(),
                   style: const TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
@@ -426,7 +429,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             CupertinoPageRoute(
               builder: (BuildContext context) => OverIssueDetailsWidget(
                   jobCode: job.jobCode,
-                  overIssueItems: jobMapping[job.id]!,
+                  overIssueItems: passedJobMapping[job.id]!,
                   jobItems: jobItems),
             ),
           );
@@ -444,7 +447,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
 
   List<Widget> getJobs(ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
-    jobMapping.forEach((key, value) {
+    passedJobMapping.forEach((key, value) {
       Widget widget = Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -471,11 +474,36 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
           children: [
             TextButton(
               onPressed: () {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+              },
+              child: QrImage(
+                data: back,
+                size: 150,
+                backgroundColor: Colors.green,
+              ),
+            ),
+            const Text(
+              "Back",
+              style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            TextButton(
+              onPressed: () {
                 setState(() {
                   if (start - 3 >= 0) {
-                    if (end == jobMapping.length - 1) {
+                    if (end == jobMapping.length) {
                       start -= 3;
-                      end = start + 2;
+                      end = start + 3;
                     } else {
                       end -= 3;
                       if (start - 3 < 0) {
@@ -513,7 +541,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   if (start + 3 <= jobMapping.length) {
                     start += 3;
                     if (end + 3 >= jobMapping.length) {
-                      end = jobMapping.length - 1;
+                      end = jobMapping.length;
                     } else {
                       end += 3;
                     }
@@ -548,11 +576,20 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     );
     return BaseWidget(builder: (context, screenSizeInfo) {
       return jobMapping.isEmpty
-          ? const Text(
-              "No Over Issues Found.",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.white,
+          ? SizedBox(
+              height: screenSizeInfo.screenSize.height - 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "No Over Issues Found.",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  navigation,
+                ],
               ),
             )
           : SizedBox(

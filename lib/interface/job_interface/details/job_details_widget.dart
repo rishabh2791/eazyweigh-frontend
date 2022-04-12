@@ -405,9 +405,9 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
               onPressed: () {
                 setState(() {
                   if (start - 3 >= 0) {
-                    if (end == widget.jobItems.length - 1) {
+                    if (end == widget.jobItems.length) {
                       start -= 3;
-                      end = start + 2;
+                      end = start + 3;
                     } else {
                       end -= 3;
                       if (start - 3 < 0) {
@@ -445,7 +445,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   if (start + 3 < widget.jobItems.length) {
                     start += 3;
                     if (end + 3 > widget.jobItems.length) {
-                      end = widget.jobItems.length - 1;
+                      end = widget.jobItems.length;
                     } else {
                       end += 3;
                     }

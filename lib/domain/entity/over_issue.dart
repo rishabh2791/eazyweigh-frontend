@@ -55,7 +55,7 @@ class OverIssue {
       req: jsonObject["required"],
       weighed: jsonObject["weighed"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["udpated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return overIssue;

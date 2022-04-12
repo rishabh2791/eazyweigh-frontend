@@ -14,6 +14,7 @@ import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
 import 'package:eazyweigh/interface/job_interface/job_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -419,11 +420,36 @@ class _JobListWidgetState extends State<JobListWidget> {
           children: [
             TextButton(
               onPressed: () {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+              },
+              child: QrImage(
+                data: back,
+                size: 150,
+                backgroundColor: Colors.green,
+              ),
+            ),
+            const Text(
+              "Back",
+              style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            TextButton(
+              onPressed: () {
                 setState(() {
                   if (start - 3 >= 0) {
-                    if (end == jobsByID.length - 1) {
+                    if (end == jobsByID.length) {
                       start -= 3;
-                      end = start + 2;
+                      end = start + 3;
                     } else {
                       end -= 3;
                       if (start - 3 < 0) {
@@ -461,7 +487,7 @@ class _JobListWidgetState extends State<JobListWidget> {
                   if (start + 3 <= jobsByID.length) {
                     start += 3;
                     if (end + 3 >= jobsByID.length) {
-                      end = jobsByID.length - 1;
+                      end = jobsByID.length;
                     } else {
                       end += 3;
                     }
@@ -496,11 +522,20 @@ class _JobListWidgetState extends State<JobListWidget> {
     );
     return BaseWidget(builder: (context, screenSizeInfo) {
       return jobMapping.isEmpty
-          ? const Text(
-              "No Jobs Found.",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.white,
+          ? SizedBox(
+              height: screenSizeInfo.screenSize.height - 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "No Jobs Found.",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  navigation,
+                ],
               ),
             )
           : SizedBox(
@@ -537,7 +572,14 @@ class _JobListWidgetState extends State<JobListWidget> {
               context,
               "All Jobs",
               currentUser.userRole.role == "Operator"
-                  ? () {}
+                  ? () {
+                      navigationService.pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OperatorHomePage(),
+                        ),
+                      );
+                    }
                   : () {
                       Navigator.of(context).pop();
                     },
