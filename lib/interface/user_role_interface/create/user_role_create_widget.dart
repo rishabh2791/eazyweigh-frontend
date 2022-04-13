@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -27,14 +28,7 @@ class _UserRoleCreateWidgetState extends State<UserRoleCreateWidget> {
   late TextEditingController roleController,
       descriptionController,
       fileController;
-  late PlatformFile file;
-
-  getFile(PlatformFile readFile) {
-    setState(() {
-      file = readFile;
-      fileController.text = readFile.name;
-    });
-  }
+  late FilePickerResult? file;
 
   @override
   void initState() {
@@ -48,6 +42,13 @@ class _UserRoleCreateWidgetState extends State<UserRoleCreateWidget> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getFile(FilePickerResult? result) {
+    setState(() {
+      file = result;
+      fileController.text = result!.files.single.name;
+    });
   }
 
   void getDetails() {
@@ -218,9 +219,11 @@ class _UserRoleCreateWidgetState extends State<UserRoleCreateWidget> {
                   ),
                   onPressed: () async {
                     List<Map<String, dynamic>> userRoles = [];
-                    List<List> csvData;
+                    // ignore: prefer_typing_uninitialized_variables
+                    var csvData;
                     if (foundation.kIsWeb) {
-                      //TODO Web Version
+                      final bytes = utf8.decode(file!.files.single.bytes!);
+                      csvData = const CsvToListConverter().convert(bytes);
                     } else {
                       final path = fileController.text;
                       if (path.isEmpty) {
@@ -234,62 +237,58 @@ class _UserRoleCreateWidgetState extends State<UserRoleCreateWidget> {
                           },
                         );
                       } else {
-                        final csvFile = File(file.path.toString()).openRead();
-                        // ignore: prefer_typing_uninitialized_variables
-                        var utf8;
+                        final csvFile =
+                            File(file!.files.single.path.toString()).openRead();
                         csvData = await csvFile
                             .transform(utf8.decoder)
                             .transform(
                               const CsvToListConverter(),
                             )
                             .toList();
-                        for (var element in csvData) {
-                          userRoles.add(
-                            {
-                              "description": element[1],
-                              "role": element[0],
-                            },
-                          );
-                        }
-                        await appStore.userRoleApp
-                            .createMultiple(userRoles)
-                            .then(
-                          (value) {
-                            if (value["status"]) {
-                              int created = value["payload"]["models"].length;
-                              int notCreated =
-                                  value["payload"]["errors"].length;
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialog(
-                                    message: "Created " +
-                                        created.toString() +
-                                        " roles." +
-                                        (notCreated != 0
-                                            ? "Unable to create " +
-                                                notCreated.toString() +
-                                                " roles."
-                                            : ""),
-                                    title: "Info",
-                                  );
-                                },
-                              );
-                            } else {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialog(
-                                    message: value["message"],
-                                    title: "Errors",
-                                  );
-                                },
-                              );
-                            }
+                      }
+                      for (var element in csvData) {
+                        userRoles.add(
+                          {
+                            "description": element[1],
+                            "role": element[0],
                           },
                         );
                       }
+                      await appStore.userRoleApp.createMultiple(userRoles).then(
+                        (value) {
+                          if (value["status"]) {
+                            int created = value["payload"]["models"].length;
+                            int notCreated = value["payload"]["errors"].length;
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialog(
+                                  message: "Created " +
+                                      created.toString() +
+                                      " roles." +
+                                      (notCreated != 0
+                                          ? "Unable to create " +
+                                              notCreated.toString() +
+                                              " roles."
+                                          : ""),
+                                  title: "Info",
+                                );
+                              },
+                            );
+                          } else {
+                            Navigator.of(context).pop();
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialog(
+                                  message: value["message"],
+                                  title: "Errors",
+                                );
+                              },
+                            );
+                          }
+                        },
+                      );
                     }
                   },
                   child: checkButton(),

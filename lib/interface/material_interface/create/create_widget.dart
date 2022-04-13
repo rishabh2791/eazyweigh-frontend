@@ -31,7 +31,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
   bool isLoadingData = true;
   List<Factory> factories = [];
   List<UnitOfMeasure> uoms = [];
-  late PlatformFile file;
+  late FilePickerResult? file;
 
   late TextEditingController typeController,
       factoryController,
@@ -60,10 +60,10 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
     super.dispose();
   }
 
-  getFile(PlatformFile readFile) {
+  getFile(FilePickerResult? result) {
     setState(() {
-      file = readFile;
-      fileController.text = readFile.name;
+      file = result;
+      fileController.text = result!.files.single.name;
     });
   }
 
@@ -381,7 +381,8 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                       // ignore: prefer_typing_uninitialized_variables
                       var csvData;
                       if (foundation.kIsWeb) {
-                        //TODO Web Version
+                        final bytes = utf8.decode(file!.files.single.bytes!);
+                        csvData = const CsvToListConverter().convert(bytes);
                       } else {
                         final path = fileController.text;
                         if (path.isEmpty) {
@@ -395,46 +396,50 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                             },
                           );
                         } else {
-                          final csvFile = File(file.path.toString()).openRead();
+                          final csvFile =
+                              File(file!.files.single.path.toString())
+                                  .openRead();
                           csvData = await csvFile
                               .transform(utf8.decoder)
                               .transform(
                                 const CsvToListConverter(),
                               )
                               .toList();
-                          csvData.forEach(
-                            (element) {
-                              String uomID = getUOMID(uoms, element[2]);
-                              if (uomID.isEmpty) {
-                              } else {
-                                materials.add(
-                                  {
-                                    "code": element[0].toString(),
-                                    "description": element[1],
-                                    "factory_id": factoryName,
-                                    "unit_of_measurement_id": uomID,
-                                    "type": element[3],
-                                    "bar_code": element[4].toString(),
-                                  },
-                                );
-                              }
-                              if (errors.isNotEmpty) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: errors +
-                                          "\n Creating the Others Now.",
-                                      title: "Errors",
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                          );
-                          await appStore.materialApp
-                              .createMultiple(materials)
-                              .then((value) {
+                        }
+                        csvData.forEach(
+                          (element) {
+                            String uomID = getUOMID(uoms, element[2]);
+                            if (uomID.isEmpty) {
+                            } else {
+                              materials.add(
+                                {
+                                  "code": element[0].toString(),
+                                  "description": element[1],
+                                  "factory_id": factoryName,
+                                  "unit_of_measurement_id": uomID,
+                                  "type": element[3],
+                                  "bar_code": element[4].toString(),
+                                },
+                              );
+                            }
+                            if (errors.isNotEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialog(
+                                    message:
+                                        errors + "\n Creating the Others Now.",
+                                    title: "Errors",
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        );
+                        await appStore.materialApp
+                            .createMultiple(materials)
+                            .then(
+                          (value) {
                             if (value["status"]) {
                               int created = value["payload"]["models"].length;
                               int notCreated =
@@ -467,8 +472,8 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                                 },
                               );
                             }
-                          });
-                        }
+                          },
+                        );
                       }
                     }
                   },

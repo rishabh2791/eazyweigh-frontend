@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -30,7 +31,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
   bool isLoadingData = true;
   List<Factory> factories = [];
   List<UnitOfMeasure> uoms = [];
-  late PlatformFile file;
+  late FilePickerResult? file;
 
   late TextEditingController descriptionController,
       factoryController,
@@ -59,10 +60,10 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
     super.dispose();
   }
 
-  getFile(PlatformFile readFile) {
+  getFile(FilePickerResult? result) {
     setState(() {
-      file = readFile;
-      fileController.text = readFile.name;
+      file = result;
+      fileController.text = result!.files.single.name;
     });
   }
 
@@ -376,9 +377,11 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                       );
                     } else {
                       List<Map<String, dynamic>> terminals = [];
-                      List<List> csvData;
+                      // ignore: prefer_typing_uninitialized_variables
+                      var csvData;
                       if (foundation.kIsWeb) {
-                        //TODO Web Version
+                        final bytes = utf8.decode(file!.files.single.bytes!);
+                        csvData = const CsvToListConverter().convert(bytes);
                       } else {
                         final path = fileController.text;
                         if (path.isEmpty) {
@@ -392,82 +395,83 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                             },
                           );
                         } else {
-                          final csvFile = File(file.path.toString()).openRead();
+                          final csvFile =
+                              File(file!.files.single.path.toString())
+                                  .openRead();
                           // ignore: prefer_typing_uninitialized_variables
-                          var utf8;
                           csvData = await csvFile
                               .transform(utf8.decoder)
                               .transform(
                                 const CsvToListConverter(),
                               )
                               .toList();
-                          for (var element in csvData) {
-                            String uomID = getUOMID(uoms, element[1]);
-                            if (uomID.isEmpty) {
-                            } else {
-                              terminals.add(
-                                {
-                                  "description": element[1],
-                                  "factory_id": factoryName,
-                                  "unit_of_measurement_id": uomID,
-                                  "capacity": element[2],
-                                  "least_count": element[3].toString(),
-                                  "mac_address": element[4],
-                                },
-                              );
-                            }
-                            if (errors.isNotEmpty) {
+                        }
+                        for (var element in csvData) {
+                          String uomID = getUOMID(uoms, element[1]);
+                          if (uomID.isEmpty) {
+                          } else {
+                            terminals.add(
+                              {
+                                "description": element[1],
+                                "factory_id": factoryName,
+                                "unit_of_measurement_id": uomID,
+                                "capacity": element[2],
+                                "least_count": element[3].toString(),
+                                "mac_address": element[4],
+                              },
+                            );
+                          }
+                          if (errors.isNotEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialog(
+                                  message:
+                                      errors + "\n Creating the Others Now.",
+                                  title: "Errors",
+                                );
+                              },
+                            );
+                          }
+                        }
+                        await appStore.terminalApp
+                            .createMultiple(terminals)
+                            .then(
+                          (value) {
+                            if (value["status"]) {
+                              int created = value["payload"]["models"].length;
+                              int notCreated =
+                                  value["payload"]["errors"].length;
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomDialog(
-                                    message:
-                                        errors + "\n Creating the Others Now.",
+                                    message: "Created " +
+                                        created.toString() +
+                                        " terminals." +
+                                        (notCreated != 0
+                                            ? "Unable to create " +
+                                                notCreated.toString() +
+                                                " terminals."
+                                            : ""),
+                                    title: "Info",
+                                  );
+                                },
+                              );
+                            } else {
+                              Navigator.of(context).pop();
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialog(
+                                    message: value["message"],
                                     title: "Errors",
                                   );
                                 },
                               );
                             }
-                          }
-                          await appStore.terminalApp
-                              .createMultiple(terminals)
-                              .then(
-                            (value) {
-                              if (value["status"]) {
-                                int created = value["payload"]["models"].length;
-                                int notCreated =
-                                    value["payload"]["errors"].length;
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: "Created " +
-                                          created.toString() +
-                                          " terminals." +
-                                          (notCreated != 0
-                                              ? "Unable to create " +
-                                                  notCreated.toString() +
-                                                  " terminals."
-                                              : ""),
-                                      title: "Info",
-                                    );
-                                  },
-                                );
-                              } else {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: value["message"],
-                                      title: "Errors",
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                          );
-                        }
+                          },
+                        );
                       }
                     }
                   },

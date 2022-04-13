@@ -36,7 +36,7 @@ dependencies:
   flutter_bloc: ^7.0.0
   font_awesome_flutter: ^8.8.1
   shared_preferences: ^2.0.6
-  csv: ^5.0.0
+  csv: ^5.0.1
   file_picker: ^4.0.1
   charts_flutter: ^0.11.0
   qr_flutter: ^4.0.0

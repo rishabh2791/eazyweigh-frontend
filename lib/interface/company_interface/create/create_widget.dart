@@ -30,7 +30,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
       emailController,
       profilePicController,
       companyNameController;
-  late PlatformFile file;
+  late FilePickerResult? file;
 
   @override
   void initState() {
@@ -49,10 +49,10 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
     super.dispose();
   }
 
-  getFile(PlatformFile readFile) {
+  getFile(FilePickerResult? result) {
     setState(() {
-      file = readFile;
-      profilePicController.text = readFile.name;
+      file = result;
+      profilePicController.text = result!.files.single.name;
     });
   }
 
@@ -299,7 +299,9 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                               "POST", Uri.parse(url));
                                           var pic =
                                               await http.MultipartFile.fromPath(
-                                                  "file", file.path.toString());
+                                                  "file",
+                                                  file!.files.single.path
+                                                      .toString());
                                           request.headers.addAll(headers);
                                           request.files.add(pic);
                                           var response = await request.send();

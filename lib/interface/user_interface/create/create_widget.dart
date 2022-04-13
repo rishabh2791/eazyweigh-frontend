@@ -27,7 +27,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
   bool isLoadingData = true;
   List<UserRole> userRoles = [];
   List<Factory> factories = [];
-  late PlatformFile file;
+  late FilePickerResult? file;
 
   late TextEditingController usernameController,
       passwordController,
@@ -57,10 +57,10 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
     super.dispose();
   }
 
-  getFile(PlatformFile readFile) {
+  getFile(FilePickerResult? result) {
     setState(() {
-      file = readFile;
-      profilePicController.text = readFile.name;
+      file = result;
+      profilePicController.text = result!.files.single.name;
     });
   }
 
@@ -377,7 +377,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                             var request =
                                 http.MultipartRequest("POST", Uri.parse(url));
                             var pic = await http.MultipartFile.fromPath(
-                                "file", file.path.toString());
+                                "file", file!.files.single.path.toString());
                             request.headers.addAll(headers);
                             request.files.add(pic);
                             var response = await request.send();

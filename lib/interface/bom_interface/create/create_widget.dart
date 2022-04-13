@@ -33,7 +33,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
   List<Factory> factories = [];
   List<UnitOfMeasure> uoms = [];
   List<Mat> materials = [];
-  late PlatformFile file;
+  late FilePickerResult? file;
 
   int rows = 0;
   Map<int, TextEditingController> codeControllers = {};
@@ -69,10 +69,10 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
     super.dispose();
   }
 
-  getFile(PlatformFile readFile) {
+  getFile(FilePickerResult? result) {
     setState(() {
-      file = readFile;
-      fileController.text = readFile.name;
+      file = result;
+      fileController.text = result!.files.single.name;
     });
   }
 
@@ -576,56 +576,60 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                               // ignore: prefer_typing_uninitialized_variables
                               var csvData;
                               if (foundation.kIsWeb) {
-                                //TODO Web Version
+                                final bytes =
+                                    utf8.decode(file!.files.single.bytes!);
+                                csvData =
+                                    const CsvToListConverter().convert(bytes);
                               } else {
                                 final csvFile =
-                                    File(file.path.toString()).openRead();
+                                    File(file!.files.single.path.toString())
+                                        .openRead();
                                 csvData = await csvFile
                                     .transform(utf8.decoder)
                                     .transform(
                                       const CsvToListConverter(),
                                     )
                                     .toList();
-                                csvData.forEach(
-                                  (element) {
-                                    String uomID = getUOMID(element[1]);
-                                    if (uomID.isEmpty) {
-                                      errors += "Unit of Measure: " +
-                                          element[1] +
+                              }
+                              csvData.forEach(
+                                (element) {
+                                  String uomID = getUOMID(element[1]);
+                                  if (uomID.isEmpty) {
+                                    errors += "Unit of Measure: " +
+                                        element[1] +
+                                        " not created.\n";
+                                  } else {
+                                    String materialID =
+                                        getMaterialID(element[0].toString());
+                                    if (materialID.isEmpty ||
+                                        materialID == "") {
+                                      errors += "Material: " +
+                                          element[0] +
                                           " not created.\n";
                                     } else {
-                                      String materialID =
-                                          getMaterialID(element[0].toString());
-                                      if (materialID.isEmpty ||
-                                          materialID == "") {
-                                        errors += "Material: " +
-                                            element[0] +
-                                            " not created.\n";
-                                      } else {
-                                        bomItems.add(
-                                          {
-                                            "bom_id": "",
-                                            "material_id": getMaterialID(
-                                                element[0].toString()),
-                                            "unit_of_measurement_id":
-                                                getUOMID(element[1]),
-                                            "quantity": double.parse(
-                                                element[2].toString()),
-                                            "upper_tolerance": double.parse(
-                                                element[3].toString()),
-                                            "lower_tolerance": double.parse(
-                                                element[4].toString()),
-                                            "over_issue":
-                                                element[5] == 1 ? true : false,
-                                            "under_issue":
-                                                element[6] == 1 ? true : false,
-                                          },
-                                        );
-                                      }
+                                      bomItems.add(
+                                        {
+                                          "bom_id": "",
+                                          "material_id": getMaterialID(
+                                              element[0].toString()),
+                                          "unit_of_measurement_id":
+                                              getUOMID(element[1]),
+                                          "quantity": double.parse(
+                                              element[2].toString()),
+                                          "upper_tolerance": double.parse(
+                                              element[3].toString()),
+                                          "lower_tolerance": double.parse(
+                                              element[4].toString()),
+                                          "over_issue":
+                                              element[5] == 1 ? true : false,
+                                          "under_issue":
+                                              element[6] == 1 ? true : false,
+                                        },
+                                      );
                                     }
-                                  },
-                                );
-                              }
+                                  }
+                                },
+                              );
                             } else {
                               if (getEmptyRows(codeControllers) == rows) {
                                 errors += "No BOM Items Found.";

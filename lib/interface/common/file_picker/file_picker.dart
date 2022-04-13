@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FilePickerer extends StatelessWidget {
   final TextEditingController controller;
   final String label, hint;
-  final Function(PlatformFile file) updateParent;
+  final Function(FilePickerResult? result) updateParent;
   List<String> allowedExtensions;
   FilePickerer({
     Key? key,
@@ -44,7 +44,7 @@ class FilePickerer extends StatelessWidget {
 class FilePickerWidget extends StatefulWidget {
   final TextEditingController controller;
   final String label, hint;
-  final Function(PlatformFile file) updateParent;
+  final Function(FilePickerResult? result) updateParent;
   List<String> allowedExtensions;
   FilePickerWidget({
     Key? key,
@@ -98,8 +98,7 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
             );
 
             if (result != null) {
-              var path = result.files.single;
-              widget.updateParent(path);
+              widget.updateParent(result);
             } else {}
           },
           decoration: InputDecoration(

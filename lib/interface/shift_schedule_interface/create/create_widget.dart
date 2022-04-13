@@ -38,14 +38,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
   List<Factory> factories = [];
   List<User> users = [];
   List<Shift> shifts = [];
-  late PlatformFile file;
-
-  getFile(PlatformFile readFile) {
-    setState(() {
-      file = readFile;
-      fileController.text = readFile.name;
-    });
-  }
+  late FilePickerResult? file;
 
   @override
   void initState() {
@@ -62,6 +55,13 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getFile(FilePickerResult? result) {
+    setState(() {
+      file = result;
+      fileController.text = result!.files.single.name;
+    });
   }
 
   void getFactories() async {
@@ -412,95 +412,98 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                             },
                           );
                         } else {
+                          List<Map<String, dynamic>> shiftSchedules = [];
                           // ignore: prefer_typing_uninitialized_variables
                           var csvData;
                           if (foundation.kIsWeb) {
-                            //TODO Web Version
+                            final bytes =
+                                utf8.decode(file!.files.single.bytes!);
+                            csvData = const CsvToListConverter().convert(bytes);
                           } else {
-                            List<Map<String, dynamic>> shiftSchedules = [];
                             final csvFile =
-                                File(file.path.toString()).openRead();
+                                File(file!.files.single.path.toString())
+                                    .openRead();
                             csvData = await csvFile
                                 .transform(utf8.decoder)
                                 .transform(
                                   const CsvToListConverter(),
                                 )
                                 .toList();
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return loader(context);
-                              },
-                            );
-                            csvData.forEach(
-                              (element) {
-                                String username = element[1];
-                                if (username.isEmpty) {
-                                  errors += "Username " +
-                                      element[1] +
+                          }
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return loader(context);
+                            },
+                          );
+                          csvData.forEach(
+                            (element) {
+                              String username = element[1];
+                              if (username.isEmpty) {
+                                errors += "Username " +
+                                    element[1] +
+                                    " not created.\n";
+                              } else {
+                                String shiftId =
+                                    getShiftID(element[2].toString());
+                                if (shiftId.isEmpty || shiftId == "") {
+                                  errors += "Shift: " +
+                                      element[0] +
                                       " not created.\n";
                                 } else {
-                                  String shiftId =
-                                      getShiftID(element[2].toString());
-                                  if (shiftId.isEmpty || shiftId == "") {
-                                    errors += "Shift: " +
-                                        element[0] +
-                                        " not created.\n";
-                                  } else {
-                                    shiftSchedules.add(
-                                      {
-                                        "date": DateTime.parse(element[0])
-                                                .toString()
-                                                .substring(0, 10) +
-                                            "T00:00:00.0Z",
-                                        "user_username": username,
-                                        "shift_id": shiftId,
-                                      },
+                                  shiftSchedules.add(
+                                    {
+                                      "date": DateTime.parse(element[0])
+                                              .toString()
+                                              .substring(0, 10) +
+                                          "T00:00:00.0Z",
+                                      "user_username": username,
+                                      "shift_id": shiftId,
+                                    },
+                                  );
+                                }
+                              }
+                            },
+                          );
+                          await appStore.shiftScheduleApp
+                              .createMultiple(shiftSchedules)
+                              .then(
+                            (response) async {
+                              if (response["status"]) {
+                                int created =
+                                    response["payload"]["models"].length;
+                                int notCreated =
+                                    response["payload"]["errors"].length +
+                                        errors.length;
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialog(
+                                      message: "Created " +
+                                          created.toString() +
+                                          " Shift Schedules and found error in " +
+                                          notCreated.toString() +
+                                          " schedules.",
+                                      title: "Info",
                                     );
-                                  }
-                                }
-                              },
-                            );
-                            await appStore.shiftScheduleApp
-                                .createMultiple(shiftSchedules)
-                                .then(
-                              (response) async {
-                                if (response["status"]) {
-                                  int created =
-                                      response["payload"]["models"].length;
-                                  int notCreated =
-                                      response["payload"]["errors"].length +
-                                          errors.length;
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: "Created " +
-                                            created.toString() +
-                                            " Shift Schedules and found error in " +
-                                            notCreated.toString() +
-                                            " schedules.",
-                                        title: "Info",
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: response["message"],
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                            );
-                          }
+                                  },
+                                );
+                              } else {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialog(
+                                      message: response["message"],
+                                      title: "Errors",
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          );
                         }
                       },
                       child: checkButton(),
