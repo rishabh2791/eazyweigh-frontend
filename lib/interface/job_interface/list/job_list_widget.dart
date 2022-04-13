@@ -267,11 +267,17 @@ class _JobListWidgetState extends State<JobListWidget> {
         });
         break;
       case "back":
-        navigationService.pushReplacement(
-          CupertinoPageRoute(
-            builder: (BuildContext context) => const JobWidget(),
-          ),
-        );
+        currentUser.userRole.role == "Operator"
+            ? navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const OperatorHomePage(),
+                ),
+              )
+            : navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const JobWidget(),
+                ),
+              );
         break;
       default:
     }
@@ -292,14 +298,14 @@ class _JobListWidgetState extends State<JobListWidget> {
                   const Text(
                     "Material",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 9.0,
                       color: Colors.white,
                     ),
                   ),
                   Text(
                     job.material.code + " - " + job.material.description,
                     style: const TextStyle(
-                      fontSize: 30.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -309,21 +315,21 @@ class _JobListWidgetState extends State<JobListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Job Size",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   job.quantity.toString() + " " + job.uom.code,
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -332,21 +338,21 @@ class _JobListWidgetState extends State<JobListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Items",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   (jobMapping[job.id]?.length).toString(),
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -355,7 +361,7 @@ class _JobListWidgetState extends State<JobListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
           ],
         ),
@@ -382,7 +388,7 @@ class _JobListWidgetState extends State<JobListWidget> {
         },
         child: QrImage(
           data: jobItemData,
-          size: 250.0,
+          size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
           foregroundColor: job.complete ? backgroundColor : Colors.black,
         ),

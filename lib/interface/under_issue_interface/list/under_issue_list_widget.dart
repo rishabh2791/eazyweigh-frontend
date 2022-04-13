@@ -352,14 +352,14 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   const Text(
                     "Material",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 9.0,
                       color: Colors.white,
                     ),
                   ),
                   Text(
                     job.material.code + " - " + job.material.description,
                     style: const TextStyle(
-                      fontSize: 30.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -369,21 +369,21 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Job Size",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   job.quantity.toString() + " " + job.uom.code,
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -392,21 +392,21 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Items",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   (passedJobMapping[job.id]?.length).toString(),
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -415,7 +415,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
           ],
         ),
@@ -442,7 +442,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
         },
         child: QrImage(
           data: jobItemData,
-          size: 250.0,
+          size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
           foregroundColor: Colors.black,
         ),
@@ -613,7 +613,6 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
     });
   }
 
-//TODO
   Widget generalWidget() {
     return Center(
       child: Text(

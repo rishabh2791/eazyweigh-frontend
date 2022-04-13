@@ -26,4 +26,13 @@ class UnderIssueRepo implements UnderIssueRepository {
     var response = await networkAPIProvider.get(url, TokenType.accessToken);
     return response;
   }
+
+  @override
+  Future<Map<String, dynamic>> update(
+      String underIssueID, Map<String, dynamic> update) async {
+    String url = "under_issue/" + underIssueID + "/";
+    var response =
+        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    return response;
+  }
 }

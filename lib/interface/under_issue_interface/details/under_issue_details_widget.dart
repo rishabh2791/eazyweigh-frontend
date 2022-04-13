@@ -161,13 +161,12 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
     double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (req <= 0.9 * terminal.capacity * scaleFactor &&
-          terminal.leastCount < precision &&
+      if (terminal.leastCount < precision &&
           req > 0.1 * terminal.capacity * scaleFactor) {
         scales += terminal.description + "\n";
       }
     }
-    return scales;
+    return scales.split("\n")[0];
   }
 
   dynamic listenToScanner(String data) {
@@ -187,7 +186,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
           }
         }
         // Selection to Navigate to Next Page
-        navigationService.pushReplacement(
+        navigationService.push(
           CupertinoPageRoute(
             builder: (BuildContext context) => UnderIssueItemDetailsWidget(
               underIssue: passedUnderIssueItem,
@@ -264,14 +263,14 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
                 const Text(
                   "Material",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   jobItem.material.code + " - " + jobItem.material.description,
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -281,21 +280,21 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
           ),
           const Divider(
             color: Colors.transparent,
-            height: 20.0,
+            height: 10.0,
           ),
           Column(
             children: [
               const Text(
                 "Required",
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 9.0,
                   color: Colors.white,
                 ),
               ),
               Text(
-                (underIssue.actual - underIssue.req).toString(),
+                (underIssue.req - underIssue.actual).toString(),
                 style: const TextStyle(
-                  fontSize: 30.0,
+                  fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -304,14 +303,14 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
           ),
           const Divider(
             color: Colors.transparent,
-            height: 20.0,
+            height: 10.0,
           ),
           Column(
             children: [
               const Text(
                 "Suggested Scale",
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 9.0,
                   color: Colors.white,
                 ),
               ),
@@ -328,7 +327,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
           ),
           const Divider(
             color: Colors.transparent,
-            height: 20.0,
+            height: 10.0,
           ),
         ],
       ),
@@ -341,7 +340,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
     widgets.add(
       TextButton(
         onPressed: () {
-          navigationService.pushReplacement(
+          navigationService.push(
             CupertinoPageRoute(
               builder: (BuildContext context) => UnderIssueItemDetailsWidget(
                 underIssue: underIssue,
@@ -352,7 +351,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
         },
         child: QrImage(
           data: jobItemData,
-          size: 250.0,
+          size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
           foregroundColor: Colors.black,
         ),

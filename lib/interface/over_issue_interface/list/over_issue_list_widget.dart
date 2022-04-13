@@ -321,11 +321,17 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
         });
         break;
       case "back":
-        navigationService.pushReplacement(
-          CupertinoPageRoute(
-            builder: (BuildContext context) => const OverIssueWidget(),
-          ),
-        );
+        currentUser.userRole.role == "Operator"
+            ? navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const OperatorHomePage(),
+                ),
+              )
+            : navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const OverIssueWidget(),
+                ),
+              );
         break;
       default:
     }
@@ -346,14 +352,14 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   const Text(
                     "Material",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 9.0,
                       color: Colors.white,
                     ),
                   ),
                   Text(
                     job.material.code + " - " + job.material.description,
                     style: const TextStyle(
-                      fontSize: 30.0,
+                      fontSize: 15.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -363,21 +369,21 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Job Size",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   job.quantity.toString() + " " + job.uom.code,
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -386,21 +392,21 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Items",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   (passedJobMapping[job.id]?.length).toString(),
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -409,7 +415,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
           ],
         ),
@@ -436,7 +442,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
         },
         child: QrImage(
           data: jobItemData,
-          size: 250.0,
+          size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
           foregroundColor: Colors.black,
         ),
@@ -632,9 +638,18 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
               homeWidget(),
               context,
               "Over Issue Materials",
-              () {
-                Navigator.of(context).pop();
-              },
+              currentUser.userRole.role == "Operator"
+                  ? () {
+                      navigationService.pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OperatorHomePage(),
+                        ),
+                      );
+                    }
+                  : () {
+                      Navigator.of(context).pop();
+                    },
             ),
           );
   }

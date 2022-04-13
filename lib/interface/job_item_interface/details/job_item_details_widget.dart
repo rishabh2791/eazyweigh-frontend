@@ -40,8 +40,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   double actualWeight = 0;
   bool isVerified = false;
   double requiredQty = 0;
-  int start = 0;
-  int end = 2;
   bool isMaterialScanned = false;
   List<Terminal> terminals = [];
   List<Terminal> thisTerminal = [];
@@ -250,6 +248,9 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                   );
                 },
               );
+              Future.delayed(const Duration(seconds: 3)).then((value) {
+                Navigator.of(context).pop();
+              });
             }
           });
         } else {
@@ -406,16 +407,107 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             children: getRowWidget(jobItem),
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3 - 50,
+                  child: Center(
+                    child: QrImage(
+                      data: tare,
+                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  child: Center(
+                    child: Text(
+                      "Tare",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3 - 50,
+                  child: Center(
+                    child: QrImage(
+                      data: complete,
+                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  child: Center(
+                    child: Text(
+                      "Complete",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3 - 50,
+                  child: Center(
+                    child: QrImage(
+                      data: back,
+                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  child: Center(
+                    child: Text(
+                      "Back",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
         BaseWidget(
           builder: (context, sizeInformation) {
             return SizedBox(
               width: sizeInformation.screenSize.width,
-              height: sizeInformation.screenSize.height - 260,
-              child: Row(children: [
-                SizedBox(
-                  width: sizeInformation.screenSize.width * 0.7 - 60,
-                  height: sizeInformation.screenSize.height - 260,
-                  child: Column(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
@@ -450,107 +542,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                       ),
                     ],
                   ),
-                ),
-                SizedBox(
-                  width: sizeInformation.screenSize.width * 0.3,
-                  height: sizeInformation.screenSize.height - 260,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: sizeInformation.screenSize.width * 0.15,
-                            child: Center(
-                              child: QrImage(
-                                data: tare,
-                                size: 200.0,
-                                backgroundColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: sizeInformation.screenSize.width * 0.15,
-                            child: const Center(
-                              child: Text(
-                                "Tare",
-                                style: TextStyle(
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                        color: Colors.transparent,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: sizeInformation.screenSize.width * 0.15,
-                            child: Center(
-                              child: QrImage(
-                                data: complete,
-                                size: 200.0,
-                                backgroundColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: sizeInformation.screenSize.width * 0.15,
-                            child: const Center(
-                              child: Text(
-                                "Complete",
-                                style: TextStyle(
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                        color: Colors.transparent,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: sizeInformation.screenSize.width * 0.15,
-                            child: Center(
-                              child: QrImage(
-                                data: back,
-                                size: 200.0,
-                                backgroundColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: sizeInformation.screenSize.width * 0.15,
-                            child: const Center(
-                              child: Text(
-                                "Back",
-                                style: TextStyle(
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
+                ],
+              ),
             );
           },
         ),

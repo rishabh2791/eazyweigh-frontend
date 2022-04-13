@@ -152,13 +152,12 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (req <= 0.9 * terminal.capacity * scaleFactor &&
-          terminal.leastCount < precision &&
+      if (terminal.leastCount < precision &&
           req > 0.1 * terminal.capacity * scaleFactor) {
         scales += terminal.description + "\n";
       }
     }
-    return scales;
+    return scales.split("\n")[0];
   }
 
   dynamic listenToScanner(String data) {
@@ -257,7 +256,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   const Text(
                     "Material",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 9.0,
                       color: Colors.white,
                     ),
                   ),
@@ -266,7 +265,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                         " - " +
                         jobItem.material.description,
                     style: const TextStyle(
-                      fontSize: 30.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -276,21 +275,21 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Required",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   (jobItem.requiredWeight - jobItem.actualWeight).toString(),
                   style: const TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -299,14 +298,14 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
             Column(
               children: [
                 const Text(
                   "Suggested Scale",
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
@@ -323,7 +322,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             ),
             const Divider(
               color: Colors.transparent,
-              height: 20.0,
+              height: 10.0,
             ),
           ],
         ),
@@ -337,7 +336,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     widgets.add(
       QrImage(
         data: jobItemData,
-        size: 250.0,
+        size: 250.0 * sizeInfo.screenSize.width / 1920,
         backgroundColor: isComplete ? Colors.transparent : Colors.green,
         foregroundColor: isComplete ? Colors.transparent : Colors.black,
       ),

@@ -253,7 +253,7 @@ class _DataSource extends DataTableSource {
                     );
                   } else {
                     _underIssueQty[jobItem.id] =
-                        _underIssueQty[jobItem.id]! + double.parse(qty);
+                        _underIssueQty[jobItem.id]! - double.parse(qty);
                     Navigator.of(context).pop();
                     notifyListeners();
                   }

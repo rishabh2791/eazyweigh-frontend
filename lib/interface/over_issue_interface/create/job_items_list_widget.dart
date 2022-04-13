@@ -278,8 +278,6 @@ class _DataSource extends DataTableSource {
           notifyListeners();
         }
         if (value!) {
-          print(jobItem.id);
-          print(_overIssueQty[jobItem.id]);
           _displayTextInputDialog(context, jobItem);
         }
       },

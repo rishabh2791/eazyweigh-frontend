@@ -11,7 +11,6 @@ class UserRoleUpdateWidget extends StatefulWidget {
 }
 
 class _UserRoleUpdateWidgetState extends State<UserRoleUpdateWidget> {
-  //TODO
   bool isLoadingPage = true;
 
   @override

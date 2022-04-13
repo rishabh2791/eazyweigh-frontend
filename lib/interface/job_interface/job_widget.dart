@@ -2,7 +2,6 @@ import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:eazyweigh/interface/job_interface/create/job_create_widget.dart';
-import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/job_interface/update/job_update_widget.dart';
 import 'package:flutter/cupertino.dart';

@@ -26,4 +26,13 @@ class OverIssueRepo implements OverIssueRepository {
     var response = await networkAPIProvider.get(url, TokenType.accessToken);
     return response;
   }
+
+  @override
+  Future<Map<String, dynamic>> update(
+      String overIssueID, Map<String, dynamic> update) async {
+    String url = "over_issue/" + overIssueID + "/";
+    var response =
+        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    return response;
+  }
 }
