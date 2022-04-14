@@ -5,6 +5,7 @@ import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/over_issue.dart';
 import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
+import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/socket_utility.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
@@ -65,8 +66,6 @@ class _OverIssueItemDetailsWidgetState
     super.dispose();
   }
 
-  Future<void> printLabel(Map<String, dynamic> printData) async {}
-
   dynamic listenToScanner(String data) async {
     Map<String, dynamic> scannerData = jsonDecode(data
         .replaceAll(";", ":")
@@ -96,7 +95,7 @@ class _OverIssueItemDetailsWidgetState
               .update(widget.overIssue.id, update)
               .then((value) {
             if (value["status"]) {
-              printLabel(printingData);
+              printingService.printJobItemLabel(printingData);
               setState(() {
                 widget.jobItem.requiredWeight =
                     widget.jobItem.requiredWeight - actualWeight;

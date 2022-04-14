@@ -33,13 +33,22 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
       case 0:
         if (ascending) {
           widget.jobItems.sort(
+              (a, b) => a.complete.toString().compareTo(b.complete.toString()));
+        } else {
+          widget.jobItems.sort(
+              (a, b) => b.complete.toString().compareTo(a.complete.toString()));
+        }
+        break;
+      case 1:
+        if (ascending) {
+          widget.jobItems.sort(
               (a, b) => a.verified.toString().compareTo(b.verified.toString()));
         } else {
           widget.jobItems.sort(
               (a, b) => b.verified.toString().compareTo(a.verified.toString()));
         }
         break;
-      case 1:
+      case 2:
         if (ascending) {
           widget.jobItems
               .sort((a, b) => a.material.code.compareTo(b.material.code));
@@ -48,7 +57,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
               .sort((a, b) => b.material.code.compareTo(a.material.code));
         }
         break;
-      case 2:
+      case 3:
         if (ascending) {
           widget.jobItems.sort((a, b) =>
               a.material.description.compareTo(b.material.description));
@@ -57,7 +66,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
               b.material.description.compareTo(a.material.description));
         }
         break;
-      case 3:
+      case 4:
         if (ascending) {
           widget.jobItems
               .sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
@@ -98,6 +107,24 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
                         columns: [
+                          DataColumn(
+                            label: const Text(
+                              "Weighed",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
                           DataColumn(
                             label: const Text(
                               "Verified",
@@ -219,48 +246,55 @@ class _DataSource extends DataTableSource {
           jobItem.selected = value;
           notifyListeners();
         }
-        if (value!) {
-          //TODO
-        }
       },
       cells: [
         DataCell(
           Text(
-            jobItem.verified.toString().toUpperCase(),
-            style: const TextStyle(
+            jobItem.complete.toString().toUpperCase(),
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
+              color: jobItem.complete ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            jobItem.verified.toString().toUpperCase(),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: jobItem.verified ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
         DataCell(
           Text(
             jobItem.material.code,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
+              color: jobItem.verified ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
         DataCell(
           Text(
             jobItem.material.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
+              color: jobItem.verified ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
         DataCell(
           Text(
             jobItem.requiredWeight.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
+              color: jobItem.verified ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

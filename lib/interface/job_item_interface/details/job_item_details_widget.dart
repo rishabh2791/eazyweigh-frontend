@@ -4,6 +4,7 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
+import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/socket_utility.dart';
@@ -185,8 +186,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     });
   }
 
-  Future<void> printLabel(Map<String, dynamic> printData) async {}
-
   dynamic listenToScanner(String data) async {
     Map<String, dynamic> scannerData = jsonDecode(data
         .replaceAll(";", ":")
@@ -219,6 +218,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         };
         Map<String, dynamic> printingData = {
           "job_code": widget.jobCode,
+          "job_id": widget.jobItem.jobID,
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
@@ -230,7 +230,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             if (value["status"]) {
               String id = value["payload"]["id"];
               printingData["job_item_weighing_id"] = id;
-              printLabel(printingData);
+              printingService.printJobItemLabel(printingData);
               setState(() {
                 widget.jobItem.requiredWeight =
                     widget.jobItem.requiredWeight - actualWeight;

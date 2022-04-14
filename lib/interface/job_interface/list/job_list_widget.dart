@@ -16,6 +16,7 @@ import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
+import 'package:eazyweigh/interface/job_interface/details/verifier_job_details_widget.dart';
 import 'package:eazyweigh/interface/job_interface/job_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -211,27 +212,39 @@ class _JobListWidgetState extends State<JobListWidget> {
         .replaceAll("]", "}")
         .replaceAll("'", "\"")
         .replaceAll("-", "_"));
-    switch (scannerData["action"]) {
-      case "selection":
-        String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
-        String jobCode = scannerData["data"]["job_code"].toString();
-        // Selection to Navigate to Next Page
-        navigationService.pushReplacement(
-          CupertinoPageRoute(
-            builder: (BuildContext context) => JobDetailsWidget(
-              jobItems: (jobMapping[id])!,
-              jobCode: jobCode,
+    if (scannerData.containsKey("action")) {
+      switch (scannerData["action"]) {
+        case "selection":
+          String id =
+              scannerData["data"]["data"].toString().replaceAll("_", "-");
+          String jobCode = scannerData["data"]["job_code"].toString();
+          // Selection to Navigate to Next Page
+          navigationService.pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => JobDetailsWidget(
+                jobItems: (jobMapping[id])!,
+                jobCode: jobCode,
+              ),
             ),
+          );
+          break;
+        case "navigation":
+          navigate(scannerData["data"]);
+          break;
+        case "logout":
+          logout(context);
+          break;
+        default:
+      }
+    } else {
+      String jobCode = scannerData["job_code"];
+      navigationService.pushReplacement(
+        CupertinoPageRoute(
+          builder: (BuildContext context) => VerifierJobDetailsWidget(
+            jobCode: jobCode,
           ),
-        );
-        break;
-      case "navigation":
-        navigate(scannerData["data"]);
-        break;
-      case "logout":
-        logout(context);
-        break;
-      default:
+        ),
+      );
     }
   }
 
@@ -267,7 +280,8 @@ class _JobListWidgetState extends State<JobListWidget> {
         });
         break;
       case "back":
-        currentUser.userRole.role == "Operator"
+        currentUser.userRole.role == "Operator" ||
+                currentUser.userRole.role == "Verifier"
             ? navigationService.pushReplacement(
                 CupertinoPageRoute(
                   builder: (BuildContext context) => const OperatorHomePage(),
@@ -559,6 +573,28 @@ class _JobListWidgetState extends State<JobListWidget> {
     });
   }
 
+  Widget verifierlistWidget() {
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            "Please Scan Job Code to Proceed.",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 50.0,
+            ),
+          ),
+          const Divider(),
+          QrImage(
+            data: back,
+            size: 250,
+            backgroundColor: Colors.green,
+          ),
+        ],
+      ),
+    );
+  }
+
   //TODO for non-operator users
   Widget listWidget() {
     return Column();
@@ -574,7 +610,9 @@ class _JobListWidgetState extends State<JobListWidget> {
             childWidget: buildWidget(
               currentUser.userRole.role == "Operator"
                   ? weigherlistWidget()
-                  : listWidget(),
+                  : currentUser.userRole.role == "Verifier"
+                      ? verifierlistWidget()
+                      : listWidget(),
               context,
               "All Jobs",
               currentUser.userRole.role == "Operator"

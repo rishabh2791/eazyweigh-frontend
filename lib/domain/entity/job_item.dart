@@ -11,8 +11,9 @@ class JobItem {
   final double upperBound;
   final double lowerBound;
   double actualWeight;
-  final bool assigned;
-  final bool verified;
+  bool assigned;
+  bool verified;
+  final bool complete;
   final DateTime createdAt;
   final User createdBy;
   final DateTime updatedAt;
@@ -23,6 +24,7 @@ class JobItem {
   JobItem({
     required this.actualWeight,
     required this.assigned,
+    required this.complete,
     required this.createdAt,
     required this.createdBy,
     required this.id,
@@ -41,6 +43,7 @@ class JobItem {
     return <String, dynamic>{
       "actual_weight": actualWeight,
       "assigned": assigned,
+      "complete": complete,
       "created_at": createdAt,
       "created_by": createdBy,
       "id": id,
@@ -60,6 +63,7 @@ class JobItem {
     JobItem jobItem = JobItem(
       actualWeight: double.parse(jsonObject["actual_weight"].toString()),
       assigned: jsonObject["assigned"],
+      complete: jsonObject["complete"],
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],

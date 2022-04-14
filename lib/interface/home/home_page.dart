@@ -6,7 +6,6 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
-import 'package:eazyweigh/interface/home/verifier_home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -99,7 +98,7 @@ class _HomePageState extends State<HomePage> {
               menuItemSelected = "Job";
               Navigator.of(context).pushReplacement(
                 CupertinoPageRoute(
-                  builder: (BuildContext context) => const VerifierHomePage(),
+                  builder: (BuildContext context) => const OperatorHomePage(),
                 ),
               );
               break;
