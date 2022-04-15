@@ -19,6 +19,8 @@ class Job {
   final User updatedBy;
   final List<JobItem> jobItems;
 
+  bool selected = false;
+
   Job({
     required this.createdAt,
     required this.createdBy,

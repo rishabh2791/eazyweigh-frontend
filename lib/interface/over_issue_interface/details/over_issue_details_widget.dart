@@ -190,6 +190,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
             builder: (BuildContext context) => OverIssueItemDetailsWidget(
               overIssue: passedOverIssueItem,
               jobItem: widget.jobItems[passedOverIssueItem.jobItem]!,
+              jobCode: widget.jobCode,
             ),
           ),
         );
@@ -344,6 +345,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
               builder: (BuildContext context) => OverIssueItemDetailsWidget(
                 overIssue: overIssue,
                 jobItem: widget.jobItems[overIssue.jobItem]!,
+                jobCode: widget.jobCode,
               ),
             ),
           );

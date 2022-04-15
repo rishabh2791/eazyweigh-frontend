@@ -105,7 +105,9 @@ class _UserActionButtonState extends State<UserActionButton> {
                 return const LoadingWidget();
               },
             );
-            if (getAccessCode(widget.table, widget.accessType) == "1") {
+            if (getAccessCode(widget.table, widget.accessType) == "1" ||
+                (currentUser.userRole.role == "Superuser" &&
+                    widget.table == "companies")) {
               widget.callback();
             } else {
               showDialog(

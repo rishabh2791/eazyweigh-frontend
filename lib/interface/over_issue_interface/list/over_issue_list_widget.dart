@@ -15,6 +15,7 @@ import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/over_issue_interface/details/over_issue_details_widget.dart';
+import 'package:eazyweigh/interface/over_issue_interface/details/verifier_over_issue_details_widget.dart';
 import 'package:eazyweigh/interface/over_issue_interface/over_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -264,28 +265,41 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
         .replaceAll("]", "}")
         .replaceAll("'", "\"")
         .replaceAll("-", "_"));
-    switch (scannerData["action"]) {
-      case "selection":
-        String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
-        String jobCode = scannerData["data"]["job_code"].toString();
-        // Selection to Navigate to Next Page
-        navigationService.pushReplacement(
-          CupertinoPageRoute(
-            builder: (BuildContext context) => OverIssueDetailsWidget(
-              jobCode: jobCode,
-              overIssueItems: passedJobMapping[id]!,
-              jobItems: jobItems,
+
+    if (scannerData.containsKey("action")) {
+      switch (scannerData["action"]) {
+        case "selection":
+          String id =
+              scannerData["data"]["data"].toString().replaceAll("_", "-");
+          String jobCode = scannerData["data"]["job_code"].toString();
+          // Selection to Navigate to Next Page
+          navigationService.pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => OverIssueDetailsWidget(
+                jobCode: jobCode,
+                overIssueItems: passedJobMapping[id]!,
+                jobItems: jobItems,
+              ),
             ),
+          );
+          break;
+        case "navigation":
+          navigate(scannerData["data"]);
+          break;
+        case "logout":
+          logout(context);
+          break;
+        default:
+      }
+    } else {
+      String jobID = scannerData["job_id"];
+      navigationService.pushReplacement(
+        CupertinoPageRoute(
+          builder: (BuildContext context) => VerifierOverIssueDetailsWidget(
+            jobID: jobID,
           ),
-        );
-        break;
-      case "navigation":
-        navigate(scannerData["data"]);
-        break;
-      case "logout":
-        logout(context);
-        break;
-      default:
+        ),
+      );
     }
   }
 
@@ -621,10 +635,34 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     );
   }
 
+  Widget verifierlistWidget() {
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            "Please Scan Job Code to Proceed.",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 50.0,
+            ),
+          ),
+          const Divider(),
+          QrImage(
+            data: back,
+            size: 250,
+            backgroundColor: Colors.green,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget homeWidget() {
     return currentUser.userRole.role == "Operator"
         ? operatorWidget()
-        : generalWidget();
+        : currentUser.userRole.role == "Verifier"
+            ? verifierlistWidget()
+            : generalWidget();
   }
 
   @override
@@ -638,7 +676,8 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
               homeWidget(),
               context,
               "Over Issue Materials",
-              currentUser.userRole.role == "Operator"
+              currentUser.userRole.role == "Operator" ||
+                      currentUser.userRole.role == "Verifier"
                   ? () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(

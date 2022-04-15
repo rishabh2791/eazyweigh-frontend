@@ -15,6 +15,7 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
+import 'package:f_logs/model/flog/flog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -296,7 +297,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 taredWeight;
       });
     } catch (e) {
-      //TODO logging service
+      FLog.info(text: "Unable to Connect to Scale");
     }
   }
 

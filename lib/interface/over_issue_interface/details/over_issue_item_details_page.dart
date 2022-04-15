@@ -14,16 +14,19 @@ import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:f_logs/model/flog/flog.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class OverIssueItemDetailsWidget extends StatefulWidget {
   final OverIssue overIssue;
   final JobItem jobItem;
+  final String jobCode;
   const OverIssueItemDetailsWidget({
     Key? key,
     required this.jobItem,
     required this.overIssue,
+    required this.jobCode,
   }) : super(key: key);
 
   @override
@@ -81,14 +84,17 @@ class _OverIssueItemDetailsWidgetState
         actualWeight = currentWeight;
         Map<String, dynamic> update = {
           "weighed": true,
+          "weight": actualWeight,
         };
         Map<String, dynamic> printingData = {
           "job_id": widget.jobItem.jobID,
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": widget.overIssue.actual - widget.overIssue.req,
+          "weight": actualWeight,
           "job_item_id": widget.jobItem.id,
+          "job_code": widget.jobCode,
+          "over_issue_id": widget.overIssue.id,
         };
         if (actualWeight != 0) {
           await appStore.overIssueApp
@@ -194,7 +200,7 @@ class _OverIssueItemDetailsWidgetState
                 taredWeight;
       });
     } catch (e) {
-      //TODO logging service
+      FLog.info(text: "Unable to Connect to Scale");
     }
   }
 

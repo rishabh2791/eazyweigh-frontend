@@ -18,6 +18,7 @@ import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/under_issue_interface/details/under_issue_details_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/details/verifier_under_issue_details_widget.dart';
 import 'package:eazyweigh/interface/under_issue_interface/under_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -264,28 +265,40 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
         .replaceAll("]", "}")
         .replaceAll("'", "\"")
         .replaceAll("-", "_"));
-    switch (scannerData["action"]) {
-      case "selection":
-        String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
-        String jobCode = scannerData["data"]["job_code"].toString();
-        // Selection to Navigate to Next Page
-        navigationService.pushReplacement(
-          CupertinoPageRoute(
-            builder: (BuildContext context) => UnderIssueDetailsWidget(
-              jobCode: jobCode,
-              jobItems: jobItems,
-              underIssueItems: passedJobMapping[id]!,
+    if (scannerData.containsKey("action")) {
+      switch (scannerData["action"]) {
+        case "selection":
+          String id =
+              scannerData["data"]["data"].toString().replaceAll("_", "-");
+          String jobCode = scannerData["data"]["job_code"].toString();
+          // Selection to Navigate to Next Page
+          navigationService.pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => UnderIssueDetailsWidget(
+                jobCode: jobCode,
+                jobItems: jobItems,
+                underIssueItems: passedJobMapping[id]!,
+              ),
             ),
+          );
+          break;
+        case "navigation":
+          navigate(scannerData["data"]);
+          break;
+        case "logout":
+          logout(context);
+          break;
+        default:
+      }
+    } else {
+      String jobID = scannerData["job_id"];
+      navigationService.pushReplacement(
+        CupertinoPageRoute(
+          builder: (BuildContext context) => VerifierUnderIssueDetailsWidget(
+            jobID: jobID,
           ),
-        );
-        break;
-      case "navigation":
-        navigate(scannerData["data"]);
-        break;
-      case "logout":
-        logout(context);
-        break;
-      default:
+        ),
+      );
     }
   }
 
@@ -613,6 +626,28 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
     });
   }
 
+  Widget verifierlistWidget() {
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            "Please Scan Job Code to Proceed.",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 50.0,
+            ),
+          ),
+          const Divider(),
+          QrImage(
+            data: back,
+            size: 250,
+            backgroundColor: Colors.green,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget generalWidget() {
     return Center(
       child: Text(
@@ -624,7 +659,9 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   Widget homeWidget() {
     return currentUser.userRole.role == "Operator"
         ? operatorWidget()
-        : generalWidget();
+        : currentUser.userRole.role == "Verifier"
+            ? verifierlistWidget()
+            : generalWidget();
   }
 
   @override
@@ -638,7 +675,8 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               homeWidget(),
               context,
               "Under Issue Materials",
-              currentUser.userRole.role == "Operator"
+              currentUser.userRole.role == "Operator" ||
+                      currentUser.userRole.role == "Verifier"
                   ? () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(

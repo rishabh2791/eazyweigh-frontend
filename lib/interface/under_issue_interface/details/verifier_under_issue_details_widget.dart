@@ -1,9 +1,8 @@
 import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
-import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
-import 'package:eazyweigh/infrastructure/printing_service.dart';
+import 'package:eazyweigh/domain/entity/under_issue.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
@@ -12,31 +11,32 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
-import 'package:eazyweigh/interface/home/operator_home_page.dart';
-import 'package:eazyweigh/interface/job_interface/details/job_items_list_widget.dart';
-import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/details/under_issue_items_list_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/list/under_issue_list_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class VerifierJobDetailsWidget extends StatefulWidget {
-  final String jobCode;
-  const VerifierJobDetailsWidget({
+class VerifierUnderIssueDetailsWidget extends StatefulWidget {
+  final String jobID;
+  const VerifierUnderIssueDetailsWidget({
     Key? key,
-    required this.jobCode,
+    required this.jobID,
   }) : super(key: key);
 
   @override
-  State<VerifierJobDetailsWidget> createState() =>
-      _VerifierJobDetailsWidgetState();
+  State<VerifierUnderIssueDetailsWidget> createState() =>
+      _VerifierUnderIssueDetailsWidgetState();
 }
 
-class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
-  bool isLoadingData = true;
-  List<JobItem> jobItems = [];
-  late Job job;
+class _VerifierUnderIssueDetailsWidgetState
+    extends State<VerifierUnderIssueDetailsWidget> {
+  bool isLoadingData = false;
+  List<UnderIssue> underIssueItems = [];
+  Map<String, JobItem> jobItems = {};
+
   @override
   void initState() {
-    getJobData();
+    getUnderIssueItems();
     scannerListener.addListener(listenToScanner);
     super.initState();
   }
@@ -47,63 +47,63 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
     super.dispose();
   }
 
-  Future<dynamic> getJobData() async {
-    await appStore.jobApp.get(widget.jobCode).then((value) async {
-      if (value.containsKey("status")) {
-        if (value["status"]) {
-          job = Job.fromJSON(value["payload"]);
-          await appStore.jobItemApp.get(job.id, {}).then((response) async {
-            if (response.containsKey("status")) {
-              if (response["status"]) {
-                for (var item in response["payload"]) {
-                  JobItem jobItem = JobItem.fromJSON(item);
-                  jobItems.add(jobItem);
+  Future<void> getUnderIssueItems() async {
+    await appStore.underIssueApp.list(widget.jobID).then((response) async {
+      if (response.containsKey("status")) {
+        if (response["status"]) {
+          for (var item in response["payload"]) {
+            UnderIssue underIssue = UnderIssue.fromJSON(item);
+            Map<String, dynamic> condition = {
+              "EQUAL": {
+                "Field": "job_item",
+                "Value": underIssue.jobItem,
+              },
+            };
+            await appStore.jobItemApp
+                .get(widget.jobID, condition)
+                .then((value) {
+              if (value.containsKey("status")) {
+                if (value["status"]) {
+                  JobItem jobItem = JobItem.fromJSON(value["payload"][0]);
+                  jobItems[underIssue.id] = jobItem;
                 }
-                setState(() {
-                  isLoadingData = false;
-                });
-              } else {
-                Navigator.of(context).pop();
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CustomDialog(
-                      message: response["message"],
-                      title: "Error",
-                    );
-                  },
-                );
               }
-            } else {
-              Navigator.of(context).pop();
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const CustomDialog(
-                    message: "Unable to Connect.",
-                    title: "Error",
-                  );
-                },
-              );
-            }
+            }).then((value) {
+              underIssueItems.add(underIssue);
+            });
+          }
+          setState(() {
+            isLoadingData = false;
           });
         } else {
+          Navigator.of(context).pop();
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return const CustomDialog(
-                message: "Unable to Connect.",
+              return CustomDialog(
+                message: response["message"],
                 title: "Error",
               );
             },
           );
         }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const CustomDialog(
+              message: "Unable to Connect.",
+              title: "Error",
+            );
+          },
+        );
       }
     });
   }
 
-  void updateJobItems(String jobItemID) {
-    for (var jobItem in jobItems) {
+  void updateUnderIssueItems(String jobItemID) {
+    for (var jobItem in underIssueItems) {
       if (jobItemID.replaceAll("_", "-") == jobItem.id) {
         jobItem.verified = true;
       }
@@ -113,7 +113,7 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
 
   bool checkAllItemsVerified() {
     bool allVerified = true;
-    for (var jobItem in jobItems) {
+    for (var jobItem in underIssueItems) {
       allVerified = allVerified && jobItem.verified;
     }
     return allVerified;
@@ -134,17 +134,17 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
         default:
       }
     } else {
-      if (scannerData.containsKey("job_item_id")) {
-        await appStore.jobItemApp.update(
-            scannerData["job_item_id"].toString().replaceAll("_", "-"),
+      if (scannerData.containsKey("under_issue_id")) {
+        await appStore.underIssueApp.update(
+            scannerData["under_issue_id"].toString().replaceAll("_", "-"),
             {"verified": true}).then((response) async {
-          updateJobItems(scannerData["job_item_id"]);
+          updateUnderIssueItems(scannerData["under_issue_id"]);
           if (checkAllItemsVerified()) {
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return const CustomDialog(
-                  message: "All Items Verified. Printing Job Sheet.",
+                  message: "All Items Verified.",
                   title: "Info",
                 );
               },
@@ -158,51 +158,35 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
     }
   }
 
-  void printJobSheet() {
-    Map<String, dynamic> jobSheet = {
-      "job_id": job.id,
-      "job_code": job.jobCode,
-      "job_items": jobItems,
-    };
-    printingService.printJobSheet(jobSheet);
-    navigationService.pushReplacement(
-      CupertinoPageRoute(
-        builder: (BuildContext context) => const OperatorHomePage(),
-      ),
-    );
-  }
-
   int getVerifiedItems() {
     int verified = 0;
-    for (var jobItem in jobItems) {
-      if (jobItem.verified) {
+    for (var underIssueItem in underIssueItems) {
+      if (underIssueItem.verified) {
         verified++;
       }
     }
     return verified;
   }
 
-  Widget jobListWidget() {
+  Widget underIssueListWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           getVerifiedItems().toString() +
               " item(s) of " +
-              jobItems.length.toString() +
-              " Items for Job Code: " +
-              widget.jobCode +
-              " Verified.",
+              underIssueItems.length.toString() +
+              " Items Verified.",
           style: const TextStyle(
             color: formHintTextColor,
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
           ),
         ),
-        jobItems.isEmpty
+        underIssueItems.isEmpty
             ? const Center(
                 child: Text(
-                  "No Job Items Found",
+                  "No Under Issue Items Found",
                   style: TextStyle(
                     color: formHintTextColor,
                     fontSize: 30.0,
@@ -210,7 +194,8 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
                   ),
                 ),
               )
-            : JobItemsListWidget(
+            : UnderIssueItemsListWidget(
+                underIssues: underIssueItems,
                 jobItems: jobItems,
               ),
       ],
@@ -225,13 +210,14 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
           )
         : SuperPage(
             childWidget: buildWidget(
-              jobListWidget(),
+              underIssueListWidget(),
               context,
-              "Verify Job Items",
+              "Verify Under Issued Items",
               () {
                 navigationService.pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) => const JobListWidget(),
+                    builder: (BuildContext context) =>
+                        const UnderIssueListWidget(),
                   ),
                 );
               },

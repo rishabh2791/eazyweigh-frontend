@@ -7,12 +7,14 @@ class OverIssue {
   final UnitOfMeasure uom;
   final double req;
   final double actual;
-  final bool verified;
+  bool verified;
   final bool weighed;
   final DateTime createdAt;
   final User createdBy;
   final DateTime updatedAt;
   final User updatedBy;
+
+  bool selected = false;
 
   OverIssue({
     required this.actual,

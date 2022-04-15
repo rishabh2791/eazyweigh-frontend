@@ -7,7 +7,9 @@ class UserRole {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const UserRole({
+  bool selected = false;
+
+  UserRole({
     required this.id,
     required this.active,
     this.companyID = "",

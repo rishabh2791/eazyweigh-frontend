@@ -1,6 +1,13 @@
+import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/user_role.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/interface/common/build_widget.dart';
+import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/user_role_interface/list/user_role_list.dart';
+import 'package:eazyweigh/interface/user_role_interface/user_role_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserRoleListWidget extends StatefulWidget {
@@ -11,8 +18,8 @@ class UserRoleListWidget extends StatefulWidget {
 }
 
 class _UserRoleListWidgetState extends State<UserRoleListWidget> {
-  //TODO
   bool isLoadingPage = true;
+  List<UserRole> userRoles = [];
 
   @override
   void initState() {
@@ -25,17 +32,54 @@ class _UserRoleListWidgetState extends State<UserRoleListWidget> {
     super.dispose();
   }
 
-  void getDetails() {
-    setState(() {
-      isLoadingPage = false;
+  void getDetails() async {
+    userRoles = [];
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "FIELD": "company_id",
+        "Value": companyID,
+      }
+    };
+    await appStore.userRoleApp.list(conditions).then((response) {
+      if (response.containsKey("status")) {
+        if (response["status"]) {
+          for (var item in response["payload"]) {
+            UserRole userRole = UserRole.fromJSON(item);
+            userRoles.add(userRole);
+          }
+          userRoles.sort((a, b) => a.role.compareTo(b.role));
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomDialog(
+                message: response["message"],
+                title: "Error",
+              );
+            },
+          );
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const CustomDialog(
+              message: "Unable to Connect.",
+              title: "Error",
+            );
+          },
+        );
+      }
+      setState(() {
+        isLoadingPage = false;
+      });
     });
   }
 
   Widget homeWidget() {
-    return Center(
-      child: Text(
-        currentUser.firstName,
-      ),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 3,
+      child: UserRoleList(userRoles: userRoles),
     );
   }
 
@@ -46,7 +90,18 @@ class _UserRoleListWidgetState extends State<UserRoleListWidget> {
             childWidget: loader(context),
           )
         : SuperPage(
-            childWidget: homeWidget(),
+            childWidget: buildWidget(
+              homeWidget(),
+              context,
+              "User Roles",
+              () {
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const UserRoleWidget(),
+                  ),
+                );
+              },
+            ),
           );
   }
 }

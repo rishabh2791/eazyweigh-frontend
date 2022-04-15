@@ -7,6 +7,7 @@ import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
@@ -14,6 +15,7 @@ import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/job_interface/details/jobs_items_list.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/job_item_interface/details/job_item_details_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -477,22 +479,36 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         ),
       ],
     );
-    return BaseWidget(
-      builder: (context, screenSizeInfo) {
-        return SizedBox(
-          height: screenSizeInfo.screenSize.height - 200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return currentUser.userRole.role == "Operator"
+        ? BaseWidget(
+            builder: (context, screenSizeInfo) {
+              return SizedBox(
+                height: screenSizeInfo.screenSize.height - 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: getJobItems(screenSizeInfo),
+                    ),
+                    navigation
+                  ],
+                ),
+              );
+            },
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: getJobItems(screenSizeInfo),
+              Text(
+                "Job Items for Job: " + widget.jobCode,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 50.0,
+                ),
               ),
-              navigation
+              JobItemsList(jobs: widget.jobItems),
             ],
-          ),
-        );
-      },
-    );
+          );
   }
 
   @override

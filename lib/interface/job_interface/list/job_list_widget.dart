@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
@@ -10,14 +11,18 @@ import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/drop_down_widget.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/common/text_field_widget.dart';
+import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/verifier_job_details_widget.dart';
 import 'package:eazyweigh/interface/job_interface/job_widget.dart';
+import 'package:eazyweigh/interface/job_interface/list/jobs_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -33,17 +38,35 @@ class _JobListWidgetState extends State<JobListWidget> {
   int start = 0;
   int end = 2;
   bool isLoadingData = true;
-  List<JobItem> jobItems = [];
+  bool isQueried = false;
+  List<Job> jobs = [];
+  List<Factory> factories = [];
   ScrollController? scrollController;
   Map<String, List<JobItem>> jobMapping = {};
   String previous = '{"action":"navigation", "data":{"type":"previous"}}';
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
   Map<String, Job> jobsByID = {};
+  late TextEditingController createdStart,
+      createdEnd,
+      factoryController,
+      completeController,
+      jobCodeStartController,
+      jobCodeEndController;
 
   @override
   void initState() {
-    checkWeigher();
+    currentUser.userRole.role == "Operator"
+        ? checkWeigher()
+        : currentUser.userRole.role == "Verifier"
+            ? null
+            : getFactories();
+    createdEnd = TextEditingController();
+    createdStart = TextEditingController();
+    factoryController = TextEditingController();
+    completeController = TextEditingController();
+    jobCodeEndController = TextEditingController();
+    jobCodeStartController = TextEditingController();
     scannerListener.addListener(listenToScanner);
     super.initState();
   }
@@ -203,6 +226,33 @@ class _JobListWidgetState extends State<JobListWidget> {
         isLoadingData = false;
       });
     }
+  }
+
+  Future<dynamic> getFactories() async {
+    factories = [];
+    Map<String, dynamic> conditions = {"company_id": companyID};
+    await appStore.factoryApp.list(conditions).then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
+        });
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: response["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    });
   }
 
   dynamic listenToScanner(String data) {
@@ -595,9 +645,198 @@ class _JobListWidgetState extends State<JobListWidget> {
     );
   }
 
-  //TODO for non-operator users
   Widget listWidget() {
-    return Column();
+    return isQueried
+        ? jobs.isEmpty
+            ? const Center(
+                child: Text("No Job Found."),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Jobs Found",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 50.0,
+                    ),
+                  ),
+                  JobList(jobs: jobs),
+                ],
+              )
+        : Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 300.0),
+                    child: const Text(
+                      "Factory:",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: formHintTextColor,
+                      ),
+                    ),
+                  ),
+                  DropDownWidget(
+                    disabled: false,
+                    hint: "Select Factory",
+                    controller: factoryController,
+                    itemList: factories,
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 300.0),
+                    child: const Text(
+                      "Job Between:",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: formHintTextColor,
+                      ),
+                    ),
+                  ),
+                  textField(
+                      false, jobCodeStartController, "Job Code Start", false),
+                  textField(false, jobCodeEndController, "Job Code End", false),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 300.0),
+                    child: const Text(
+                      "Created Between:",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: formHintTextColor,
+                      ),
+                    ),
+                  ),
+                  textField(false, createdStart, "Created After", false),
+                  textField(false, createdEnd, "Created Before", false),
+                ],
+              ),
+              Row(
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
+                      elevation: MaterialStateProperty.all<double>(5.0),
+                    ),
+                    onPressed: () async {
+                      var factoryID = factoryController.text;
+                      var startDate =
+                          createdStart.text != "" && createdStart.text.isEmpty
+                              ? DateTime.parse(createdStart.text)
+                              : "";
+                      var endDate =
+                          createdEnd.text != "" && createdEnd.text.isEmpty
+                              ? DateTime.parse(createdEnd.text)
+                              : "";
+                      var jobStart = jobCodeStartController.text;
+                      var jobEnd = jobCodeEndController.text;
+                      var listOfConditions = [];
+                      Map<String, dynamic> startCondition = {};
+                      Map<String, dynamic> endCondition = {};
+                      if (startDate != "") {
+                        startCondition["GREATEREQUAL"] = {
+                          "Field": "created_at",
+                          "Value": startDate.toString(),
+                        };
+                        listOfConditions.add(startCondition);
+                      }
+                      if (endDate != "") {
+                        endCondition["LESSEQUAL"] = {
+                          "Field": "created_at",
+                          "Value": endDate.toString(),
+                        };
+                        listOfConditions.add(endCondition);
+                      }
+                      Map<String, dynamic> jobStartCondition = {};
+                      Map<String, dynamic> jobEndCondition = {};
+                      if (jobStart.isNotEmpty) {
+                        jobStartCondition["GREATEREQUAL"] = {
+                          "Field": "job_code",
+                          "Value": jobStart,
+                        };
+                        listOfConditions.add(jobStartCondition);
+                      }
+                      if (jobEnd.isNotEmpty) {
+                        jobEndCondition["LESSEQUAL"] = {
+                          "Field": "job_code",
+                          "Value": jobEnd,
+                        };
+                        listOfConditions.add(jobEndCondition);
+                      }
+                      if (factoryID.isNotEmpty) {
+                        listOfConditions.add({
+                          "EQUALS": {
+                            "Field": "factory_id",
+                            "Value": factoryID,
+                          }
+                        });
+                      }
+                      Map<String, dynamic> conditions = listOfConditions.isEmpty
+                          ? {}
+                          : {"AND": listOfConditions};
+                      if (factoryID.isNotEmpty) {
+                        setState(() {
+                          isLoadingData = true;
+                        });
+                        await appStore.jobApp.list(conditions).then((response) {
+                          if (response.containsKey("status")) {
+                            if (response["status"]) {
+                              for (var item in response["payload"]) {
+                                Job thisJob = Job.fromJSON(item);
+                                jobs.add(thisJob);
+                              }
+                              jobs.sort(
+                                  ((a, b) => a.jobCode.compareTo(b.jobCode)));
+                            }
+                          }
+                          setState(() {
+                            isLoadingData = false;
+                            isQueried = true;
+                          });
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const CustomDialog(
+                              message: "Factory Required",
+                              title: "Error",
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: checkButton(),
+                  ),
+                  const VerticalDivider(),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
+                      elevation: MaterialStateProperty.all<double>(5.0),
+                    ),
+                    onPressed: () {
+                      factoryController.text = "";
+                      createdStart.text = "";
+                      createdEnd.text = "";
+                      jobCodeEndController.text = "";
+                      jobCodeStartController.text = "";
+                    },
+                    child: clearButton(),
+                  ),
+                ],
+              )
+            ],
+          );
   }
 
   @override
@@ -615,7 +854,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                       : listWidget(),
               context,
               "All Jobs",
-              currentUser.userRole.role == "Operator"
+              currentUser.userRole.role == "Operator" ||
+                      currentUser.userRole.role == "Verifier"
                   ? () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(

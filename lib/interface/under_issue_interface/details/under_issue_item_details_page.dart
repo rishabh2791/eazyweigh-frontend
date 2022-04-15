@@ -14,6 +14,7 @@ import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:f_logs/model/flog/flog.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -81,17 +82,19 @@ class _UnderIssueItemDetailsWidgetState
         actualWeight = currentWeight;
         Map<String, dynamic> update = {
           "weighed": true,
+          "weight": actualWeight,
         };
         Map<String, dynamic> printingData = {
           "job_id": widget.jobItem.jobID,
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": widget.underIssue.req - widget.underIssue.actual,
+          "weight": actualWeight,
           "job_item_id": widget.jobItem.id,
+          "under_issue_id": widget.underIssue.id,
         };
         if (actualWeight != 0) {
-          await appStore.overIssueApp
+          await appStore.underIssueApp
               .update(widget.underIssue.id, update)
               .then((value) {
             if (value["status"]) {
@@ -194,7 +197,7 @@ class _UnderIssueItemDetailsWidgetState
                 taredWeight;
       });
     } catch (e) {
-      //TODO logging service
+      FLog.info(text: "Unable to Connect to Scale");
     }
   }
 
