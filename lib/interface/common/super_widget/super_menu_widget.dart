@@ -168,6 +168,8 @@ Future<void> logout(BuildContext context) async {
       .then((value) {
     isLoggedIn = false;
     isMenuCollapsed = true;
+    companyID = "";
+    factoryID = "";
   }).then((value) {
     menuItemSelected = "Home";
     Navigator.pushReplacement(

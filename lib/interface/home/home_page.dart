@@ -81,7 +81,10 @@ class _HomePageState extends State<HomePage> {
       if (response["status"] && response.containsKey("payload")) {
         currentUser = User.fromJSON(response["payload"]);
         Map<String, dynamic> userCondition = {
-          "user_username": currentUser.username
+          "EQUALS": {
+            "Field": "user_username",
+            "Value": currentUser.username,
+          }
         };
         await appStore.userCompanyApp.get(userCondition).then((value) async {
           companyID = value["payload"][0]["company_id"];

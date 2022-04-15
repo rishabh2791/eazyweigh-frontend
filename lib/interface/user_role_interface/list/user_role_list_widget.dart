@@ -36,7 +36,7 @@ class _UserRoleListWidgetState extends State<UserRoleListWidget> {
     userRoles = [];
     Map<String, dynamic> conditions = {
       "EQUALS": {
-        "FIELD": "company_id",
+        "Field": "company_id",
         "Value": companyID,
       }
     };
@@ -78,7 +78,7 @@ class _UserRoleListWidgetState extends State<UserRoleListWidget> {
 
   Widget homeWidget() {
     return SizedBox(
-      width: MediaQuery.of(context).size.width / 3,
+      width: 600,
       child: UserRoleList(userRoles: userRoles),
     );
   }

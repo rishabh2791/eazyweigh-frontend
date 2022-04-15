@@ -153,6 +153,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                   label: "Select Profile Picture",
                   updateParent: getFile,
                   controller: profilePicController,
+                  allowedExtensions: const ['jpg', 'jpeg', 'png'],
                 ),
                 const Text(
                   "Company Details",
