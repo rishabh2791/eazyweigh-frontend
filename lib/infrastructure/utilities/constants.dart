@@ -33,6 +33,10 @@ const WEBSOCKET_SERVER_HOST = '10.19.0.64';
 const WEBSOCKET_PORT = 8010;
 const WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';
 
+const PRINTER_HOST = '10.19.1.89';
+const PRINTER_PORT = 9100;
+const PRINTER_URL = 'ws://$PRINTER_HOST:$PRINTER_PORT/';
+
 const Map<String, List<String>> menuItems = {
   "Home": [],
   "Address": [

@@ -3,8 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  charset_converter
-  quick_usb
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
