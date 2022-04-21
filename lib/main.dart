@@ -1,6 +1,5 @@
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
-import 'package:eazyweigh/infrastructure/socket_utility.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/auth_interface/login_widget.dart';
 import 'package:f_logs/f_logs.dart';
@@ -10,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   accessTokenExpiryTime = DateTime.now();
   scannerListener.barcodeListener();
-  socketUtility.initCommunication();
   WidgetsFlutterBinding.ensureInitialized();
   Future<SharedPreferences> store = SharedPreferences.getInstance();
   storage = await store;

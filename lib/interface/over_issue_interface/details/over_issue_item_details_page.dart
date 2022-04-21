@@ -58,6 +58,7 @@ class _OverIssueItemDetailsWidgetState
     super.initState();
     getAllData();
     startTime = DateTime.now();
+    socketUtility.initCommunication();
     printingService.initCommunication();
     scannerListener.addListener(listenToScanner);
     socketUtility.addListener(listenToWeighingScale);
@@ -197,11 +198,26 @@ class _OverIssueItemDetailsWidgetState
         .replaceAll("'", "\"")
         .replaceAll("-", "_"));
     try {
-      setState(() {
-        currentWeight =
-            double.parse((scannerData["data"]).toString()) * scaleFactor -
-                taredWeight;
-      });
+      if (scannerData.containsKey("error")) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: scannerData["error"],
+              title: "Errors",
+            );
+          },
+        );
+        Future.delayed(const Duration(seconds: 3)).then((value) {
+          Navigator.of(context).pop();
+        });
+      } else {
+        setState(() {
+          currentWeight =
+              double.parse((scannerData["data"]).toString()) * scaleFactor -
+                  taredWeight;
+        });
+      }
     } catch (e) {
       FLog.info(text: "Unable to Connect to Scale");
     }

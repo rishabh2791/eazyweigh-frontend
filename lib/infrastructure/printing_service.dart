@@ -69,6 +69,8 @@ class PrintingService extends ChangeNotifier {
             FLog.error(
                 text:
                     "Unable to Connect to Printer. Too Many Attempts to Connect.");
+            _onReceptionOfMessageFromServer(
+                {"error": "Unable to Connect to Printer."});
           }
         },
       );

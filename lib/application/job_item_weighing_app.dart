@@ -10,8 +10,14 @@ class JobItemWeighingApp implements JobItemWeighingAppInterface {
       Map<String, dynamic> jobItemWeighing) async {
     return jobItemWeighingRepository.create(jobItemWeighing);
   }
+
+  @override
+  Future<Map<String, dynamic>> list(String jobItemID) async {
+    return jobItemWeighingRepository.list(jobItemID);
+  }
 }
 
 abstract class JobItemWeighingAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> jobItemWeighing);
+  Future<Map<String, dynamic>> list(String jobItemID);
 }

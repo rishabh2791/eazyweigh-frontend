@@ -506,7 +506,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   fontSize: 50.0,
                 ),
               ),
-              JobItemsList(jobs: widget.jobItems),
+              JobItemsList(
+                jobs: widget.jobItems,
+                jobCode: widget.jobCode,
+              ),
             ],
           );
   }

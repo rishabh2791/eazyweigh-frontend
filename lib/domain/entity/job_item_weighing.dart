@@ -1,9 +1,11 @@
+import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
 class JobItemWeighing {
   final String id;
-  final String jobItemID;
+  final JobItem jobItem;
   final double weight;
+  final String batch;
   final DateTime startTime;
   final DateTime endTime;
   final User createdBy;
@@ -16,7 +18,8 @@ class JobItemWeighing {
     required this.createdBy,
     required this.endTime,
     required this.id,
-    required this.jobItemID,
+    required this.batch,
+    required this.jobItem,
     required this.startTime,
     required this.updatedAt,
     required this.updatedBy,
@@ -26,7 +29,8 @@ class JobItemWeighing {
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "id": id,
-      "job_item_id": jobItemID,
+      "batch": batch,
+      "job_item_id": jobItem,
       "weight": weight,
       "start_time": startTime,
       "end_time": endTime,
@@ -39,11 +43,12 @@ class JobItemWeighing {
 
   factory JobItemWeighing.fromJSON(Map<String, dynamic> jsonObject) {
     JobItemWeighing jobItemWeighing = JobItemWeighing(
+      batch: jsonObject["batch"].toString(),
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       endTime: DateTime.parse(jsonObject["end_time"]),
       id: jsonObject["id"],
-      jobItemID: jsonObject["job_item_id"],
+      jobItem: JobItem.fromJSON(jsonObject["job_item"]),
       startTime: DateTime.parse(jsonObject["start_time"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),

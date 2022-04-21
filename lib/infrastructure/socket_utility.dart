@@ -33,7 +33,10 @@ class WebSocketUtility {
           tries += 1;
           if (tries < 10) {
             await initCommunication();
-          } else {}
+          } else {
+            _onReceptionOfMessageFromServer(
+                {"error": "Unable to Connect to Weighing Scale."});
+          }
         },
       );
     } catch (ex) {
