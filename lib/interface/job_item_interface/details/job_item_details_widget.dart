@@ -59,6 +59,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     getAllData();
     requiredQty = widget.jobItem.requiredWeight - widget.jobItem.actualWeight;
     startTime = DateTime.now();
+    printingService.initCommunication();
     scannerListener.addListener(listenToScanner);
     socketUtility.addListener(listenToWeighingScale);
   }
@@ -213,6 +214,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
           "weight": actualWeight,
+          "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "start_time": startTime.toIso8601String() + "Z",
           "end_time": DateTime.now().toIso8601String() + "Z",
@@ -224,6 +226,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
           "weight": actualWeight,
+          "uom": widget.jobItem.uom.code,
+          "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
         if (actualWeight != 0) {

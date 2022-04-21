@@ -191,6 +191,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
             builder: (BuildContext context) => UnderIssueItemDetailsWidget(
               underIssue: passedUnderIssueItem,
               jobItem: widget.jobItems[passedUnderIssueItem.jobItem]!,
+              jobCode: widget.jobCode,
             ),
           ),
         );
@@ -345,6 +346,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
               builder: (BuildContext context) => UnderIssueItemDetailsWidget(
                 underIssue: underIssue,
                 jobItem: widget.jobItems[underIssue.jobItem]!,
+                jobCode: widget.jobCode,
               ),
             ),
           );

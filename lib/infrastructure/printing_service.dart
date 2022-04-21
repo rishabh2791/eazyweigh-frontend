@@ -5,8 +5,21 @@ import 'package:f_logs/model/flog/flog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+// Map<String, dynamic> printingData = {
+//   "job_code": "153847",
+//   "job_id": "a2a41b82-a6a9-4e2f-966c-550675ae7fcf",
+//   "weigher": "Operator First",
+//   "material_code": "110196",
+//   "material_description": "LIPO EGMS/ SP CITHROL EGMS MB",
+//   "weight": 0.8,
+//   "uom": "KG",
+//   "batch": "123456",
+//   "job_item_id": "b476e722-5eb5-4aa1-9f85-e4825bb69676",
+// };
+// printingService.printJobItemLabel(printingData);
+
 String mapToZPLString(Map<String, dynamic> data) {
-  String zplString = "^FO490,30^BQN,2,4^FH^FDMA _7B";
+  String zplString = "^FO480,30^BQN,2,4^FH^FDMA _7B";
   data.forEach((key, value) {
     zplString += "_22" +
         key.replaceAll("_", "_5F") +
@@ -92,50 +105,35 @@ class PrintingService extends ChangeNotifier {
     return done;
   }
 
-  Map<String, dynamic> printingData = {
-    "job_code": "153847",
-    "job_id": "a2a41b82-a6a9-4e2f-966c-550675ae7fcf",
-    "weigher": "Operator First",
-    "material_code": "110196",
-    "material_description": "LIPO EGMS/ SP CITHROL EGMS MB",
-    "weight": 0.8,
-    "job_item_id": "b476e722-5eb5-4aa1-9f85-e4825bb69676",
-  };
-
-  Map<String, dynamic> printingOverIssueData = {
-    "job_id": "a2a41b82-a6a9-4e2f-966c-550675ae7fcf",
-    "weigher": "Operator First",
-    "material_code": "110023",
-    "material_description": "Stearic Acid",
-    "weight": 0.25,
-    "job_item_id": "56221f29-21d4-41cf-9ee9-ae487a1c5c60",
-    "under_issue_id": "a129f4ec-a7be-47d8-87d5-46f70cbe2d7f",
-  };
-
   Future<int> printJobItemLabel(Map<String, dynamic> data) async {
     int done = 1;
     String zplString = "^XA";
     zplString += "^CFA,15";
     zplString += "^FO30,30^FD Job Code: ^FS";
     zplString += "^CFA,30";
-    zplString += "^FO50,60^FD" + data["job_code"] + "^FS";
+    zplString += "^FO50,50^FD" + data["job_code"] + "^FS";
     zplString += "^CFA,15";
-    zplString += "^FO30,105^FD Weight: ^FS";
+    zplString += "^FO30,85^FD Weight: ^FS";
     zplString += "^CFA,30";
-    zplString += "^FO50,135^FD" + data["weight"].toString() + "^FS";
+    zplString +=
+        "^FO50,105^FD" + data["weight"].toString() + " " + data["uom"] + "^FS";
     zplString += "^CFA,15";
-    zplString += "^FO30,180^FD Weighed By: ^FS";
+    zplString += "^FO30,140^FD Weighed By: ^FS";
     zplString += "^CFA,30";
-    zplString += "^FO50,200^FD" + data["weigher"] + "^FS";
+    zplString += "^FO50,160^FD" + data["weigher"] + "^FS";
     zplString += "^CFA,15";
-    zplString += "^FO30,255^FD Material Code: ^FS";
+    zplString += "^FO30,195^FD Material Code: ^FS";
     zplString += "^CFA,30";
-    zplString += "^FO50,285^FD" + data["material_code"] + "^FS";
+    zplString += "^FO50,215^FD" + data["material_code"] + "^FS";
     zplString += "^CFA,15";
-    zplString += "^FO30,325^FD Material Name: ^FS";
+    zplString += "^FO30,250^FD Batch: ^FS";
     zplString += "^CFA,30";
-    zplString += "^FO50,355^FD" + data["material_description"] + "^FS";
-    zplString += mapToZPLString(printingData) + "^XZ";
+    zplString += "^FO50,270^FD" + data["batch"] + "^FS";
+    zplString += "^CFA,15";
+    zplString += "^FO30,305^FD Material Name: ^FS";
+    zplString += "^CFA,30";
+    zplString += "^FO50,325^FD" + data["material_description"] + "^FS";
+    zplString += mapToZPLString(data) + "^XZ";
     send(zplString);
     return done;
   }

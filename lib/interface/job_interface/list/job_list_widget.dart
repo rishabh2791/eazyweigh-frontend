@@ -59,7 +59,7 @@ class _JobListWidgetState extends State<JobListWidget> {
     currentUser.userRole.role == "Operator"
         ? checkWeigher()
         : currentUser.userRole.role == "Verifier"
-            ? null
+            ? isLoadingData = false
             : getFactories();
     createdEnd = TextEditingController();
     createdStart = TextEditingController();

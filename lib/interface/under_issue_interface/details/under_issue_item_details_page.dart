@@ -21,10 +21,12 @@ import 'package:qr_flutter/qr_flutter.dart';
 class UnderIssueItemDetailsWidget extends StatefulWidget {
   final UnderIssue underIssue;
   final JobItem jobItem;
+  final String jobCode;
   const UnderIssueItemDetailsWidget({
     Key? key,
     required this.jobItem,
     required this.underIssue,
+    required this.jobCode,
   }) : super(key: key);
 
   @override
@@ -56,6 +58,7 @@ class _UnderIssueItemDetailsWidgetState
     super.initState();
     getAllData();
     startTime = DateTime.now();
+    printingService.initCommunication();
     scannerListener.addListener(listenToScanner);
     socketUtility.addListener(listenToWeighingScale);
   }
@@ -90,7 +93,10 @@ class _UnderIssueItemDetailsWidgetState
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
           "weight": actualWeight,
+          "uom": widget.jobItem.uom.code,
+          "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
+          "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
         if (actualWeight != 0) {

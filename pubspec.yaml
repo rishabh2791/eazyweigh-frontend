@@ -44,7 +44,6 @@ dependencies:
   visibility_detector: ^0.2.2
   web_socket_channel: ^2.1.0
   f_logs: ^2.0.0
-  device_info_plus: ^3.2.2
 
 
   # The following adds the Cupertino Icons font to your application.
