@@ -22,6 +22,8 @@ class Factory {
     required this.updatedBy,
   });
 
+  bool selected = false;
+
   @override
   String toString() {
     return name;

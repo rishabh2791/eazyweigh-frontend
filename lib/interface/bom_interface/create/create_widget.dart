@@ -87,7 +87,12 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
 
   Future<dynamic> getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -135,10 +140,13 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
   Future<dynamic> getMaterials() async {
     uoms = [];
     String factoryID = factoryController.text;
-    Map<String, dynamic> condition = {
-      "factory_id": factoryID,
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryID,
+      }
     };
-    await appStore.materialApp.list(condition).then((response) async {
+    await appStore.materialApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
           Mat material = Mat.fromJSON(item);
@@ -162,7 +170,10 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
     uoms = [];
     String factoryID = factoryController.text;
     Map<String, dynamic> condition = {
-      "factory_id": factoryID,
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryID,
+      }
     };
     await appStore.unitOfMeasurementApp.list(condition).then((response) async {
       if (response["status"]) {

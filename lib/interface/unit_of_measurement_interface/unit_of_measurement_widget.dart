@@ -2,9 +2,7 @@ import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:eazyweigh/interface/unit_of_measurement_interface/create/create_widget.dart';
-import 'package:eazyweigh/interface/unit_of_measurement_interface/details/details_widget.dart';
 import 'package:eazyweigh/interface/unit_of_measurement_interface/list/list_widget.dart';
-import 'package:eazyweigh/interface/unit_of_measurement_interface/update/update_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -48,20 +46,6 @@ class _UnitOfMeasurementWidgetState extends State<UnitOfMeasurementWidget> {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
-                              const UOMDetailsWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.get_app,
-                    label: "Details",
-                    table: "unit_of_measures",
-                    accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
                               const UOMListWidget(),
                         ),
                       );
@@ -70,20 +54,6 @@ class _UnitOfMeasurementWidgetState extends State<UnitOfMeasurementWidget> {
                     label: "List",
                     table: "unit_of_measures",
                     accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const UOMUpdateWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.update,
-                    label: "Update",
-                    table: "unit_of_measures",
-                    accessType: "Update",
                   ),
                 ],
               ),

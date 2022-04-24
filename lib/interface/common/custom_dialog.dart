@@ -45,15 +45,14 @@ class _CustomDialogState extends State<CustomDialog> {
             bottom: 10,
           ),
           decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: const [
-                BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0, 10),
-                    blurRadius: 10),
-              ]),
+            shape: BoxShape.rectangle,
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(20.0),
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
+            ],
+          ),
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: size.width / 4),
             child: BaseWidget(

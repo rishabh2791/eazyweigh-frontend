@@ -77,7 +77,12 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
 
   Future<dynamic> getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "FIELD": "company_id",
+        "VALUE": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {

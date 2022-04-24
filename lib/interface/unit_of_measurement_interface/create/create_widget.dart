@@ -42,7 +42,12 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
 
   Future<dynamic> getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -91,15 +96,15 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
                 const SizedBox(
                   height: 10.0,
                 ),
-                textField(false, codeController, "UOM Code", false),
-                textField(
-                    false, descriptionController, "UOM Description", false),
                 DropDownWidget(
                   disabled: false,
                   hint: "Select Factory",
                   controller: factoryController,
                   itemList: factories,
                 ),
+                textField(false, codeController, "UOM Code", false),
+                textField(
+                    false, descriptionController, "UOM Description", false),
                 const SizedBox(
                   height: 10.0,
                 ),

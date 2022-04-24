@@ -41,7 +41,12 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
 
   Future<dynamic> getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {

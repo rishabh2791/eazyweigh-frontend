@@ -649,7 +649,13 @@ class _JobListWidgetState extends State<JobListWidget> {
     return isQueried
         ? jobs.isEmpty
             ? const Center(
-                child: Text("No Job Found."),
+                child: Text(
+                  "No Job Found.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 50.0,
+                  ),
+                ),
               )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

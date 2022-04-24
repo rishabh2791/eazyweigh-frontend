@@ -66,7 +66,12 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
 
   void getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -112,7 +117,10 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
   Future<dynamic> getUsers() async {
     users = [];
     Map<String, dynamic> conditions = {
-      "factory_id": factoryController.text,
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryController.text,
+      }
     };
     try {
       await appStore.userFactoryApp.get(conditions).then((response) async {
@@ -152,7 +160,10 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
   Future<dynamic> getShifts() async {
     shifts = [];
     Map<String, dynamic> conditions = {
-      "factory_id": factoryController.text,
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryController.text,
+      }
     };
     try {
       await appStore.shiftApp.list(conditions).then((response) async {

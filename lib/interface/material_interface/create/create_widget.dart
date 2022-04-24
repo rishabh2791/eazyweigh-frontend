@@ -78,7 +78,12 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
 
   Future<dynamic> getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -106,8 +111,11 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
   Future<dynamic> getUOMs() async {
     uoms = [];
     String factoryID = factoryController.text;
-    Map<String, dynamic> condition = {
-      "factory_id": factoryID,
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": factoryID,
+      }
     };
     showDialog(
       context: context,
@@ -116,7 +124,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
         return loader(context);
       },
     );
-    await appStore.unitOfMeasurementApp.list(condition).then((response) async {
+    await appStore.unitOfMeasurementApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
           UnitOfMeasure uom = UnitOfMeasure.fromJSON(item);

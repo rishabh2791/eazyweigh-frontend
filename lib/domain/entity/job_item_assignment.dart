@@ -21,6 +21,8 @@ class JobItemAssignment {
     required this.updatedBy,
   });
 
+  bool selected = false;
+
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "created_at": createdAt,

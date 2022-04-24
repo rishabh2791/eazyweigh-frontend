@@ -2,9 +2,7 @@ import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:eazyweigh/interface/shift_schedule_interface/create/create_widget.dart';
-import 'package:eazyweigh/interface/shift_schedule_interface/details/details_widget.dart';
 import 'package:eazyweigh/interface/shift_schedule_interface/list/list_widget.dart';
-import 'package:eazyweigh/interface/shift_schedule_interface/update/update_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -47,20 +45,6 @@ class _ShiftScheduleWidgetState extends State<ShiftScheduleWidget> {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
                           builder: (BuildContext context) =>
-                              const ShiftScheduleDetailsWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.get_app,
-                    label: "Details",
-                    table: "shift_schedules",
-                    accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
                               const ShiftScheduleListWidget(),
                         ),
                       );
@@ -69,20 +53,6 @@ class _ShiftScheduleWidgetState extends State<ShiftScheduleWidget> {
                     label: "List",
                     table: "shift_schedules",
                     accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const ShiftScheduleUpdateWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.update,
-                    label: "Update",
-                    table: "shift_schedules",
-                    accessType: "Update",
                   ),
                 ],
               ),

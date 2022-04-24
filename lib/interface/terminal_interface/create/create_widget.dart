@@ -78,7 +78,12 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
 
   Future<dynamic> getFactories() async {
     factories = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -107,7 +112,10 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
     uoms = [];
     String factoryID = factoryController.text;
     Map<String, dynamic> condition = {
-      "factory_id": factoryID,
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryID,
+      }
     };
     showDialog(
       context: context,

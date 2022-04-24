@@ -1,9 +1,6 @@
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/user_role_access.dart';
 import 'package:eazyweigh/interface/address_interface/address_widget.dart';
-import 'package:eazyweigh/interface/address_interface/create/create_widget.dart';
-import 'package:eazyweigh/interface/address_interface/list/list_widget.dart';
-import 'package:eazyweigh/interface/address_interface/update/update_widget.dart';
 import 'package:eazyweigh/interface/bom_interface/bom_widget.dart';
 import 'package:eazyweigh/interface/company_interface/company_widget.dart';
 import 'package:eazyweigh/interface/factory_interface/factory_widget.dart';
@@ -22,7 +19,6 @@ import 'package:eazyweigh/interface/unit_of_measurement_interface/unit_of_measur
 import 'package:eazyweigh/interface/user_access/user_access_widget.dart';
 import 'package:eazyweigh/interface/user_interface/user_widget.dart';
 import 'package:eazyweigh/interface/user_role_interface/user_role_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late User currentUser;
@@ -87,37 +83,4 @@ Map<String, List<String>> menuTableMapping = {
     "user_factory_accesses",
     "user_terminal_accesses",
   ],
-};
-
-Map<String, Map<String, Widget>> tableMenuMapping = {
-  "addresses": {
-    "create": const AddressCreateWidget(),
-    "view": const AddressListWidget(),
-    "udpate": const AddressUpdateWidget(),
-  },
-  "boms": {},
-  "bom_items": {},
-  "companies": {},
-  "factories": {},
-  "jobs": {},
-  "job_items": {},
-  "job_item_assignments": {},
-  "job_item_weighings": {},
-  "materials": {},
-  "over_issues": {},
-  "scanned_data": {},
-  "shifts": {},
-  "shift_schedules": {},
-  "terminals": {},
-  "under_issues": {},
-  "unit_of_measures": {},
-  "unit_of_measure_conversions": {},
-  "users": {},
-  "user_roles": {},
-  "user_role_accesses": {},
-  "user_company_accesses": {},
-  "user_factory_accesses": {},
-  "user_terminal_accesses": {},
-  "user_companies": {},
-  "user_factories": {},
 };

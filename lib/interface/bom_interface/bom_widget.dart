@@ -67,7 +67,7 @@ class _BOMWidgetState extends State<BOMWidget> {
                     icon: Icons.update,
                     label: "Update",
                     table: "boms",
-                    accessType: "Update",
+                    accessType: "update",
                   ),
                 ],
               ),
