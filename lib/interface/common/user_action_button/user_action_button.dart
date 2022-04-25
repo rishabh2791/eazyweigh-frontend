@@ -27,6 +27,28 @@ class UserActionButton extends StatefulWidget {
   State<UserActionButton> createState() => _UserActionButtonState();
 }
 
+String getAccessCode(String tableName, String accessType) {
+  String accessCode = "0000";
+  for (var userPermission in userRolePermissions) {
+    if (userPermission.tableName == tableName) {
+      accessCode = userPermission.accessLevel;
+    }
+  }
+  switch (accessType) {
+    case "create":
+      return accessCode[0];
+    case "view":
+      return accessCode[1];
+    case "update":
+      return accessCode[2];
+    case "delete":
+      return accessCode[3];
+    default:
+      break;
+  }
+  return "0";
+}
+
 class _UserActionButtonState extends State<UserActionButton> {
   Map<String, String> actionMapping = {
     "create": "create",
@@ -47,28 +69,6 @@ class _UserActionButtonState extends State<UserActionButton> {
   void dispose() {
     scannerListener.removeListener(listenToScanner);
     super.dispose();
-  }
-
-  String getAccessCode(String tableName, String accessType) {
-    String accessCode = "0000";
-    for (var userPermission in userRolePermissions) {
-      if (userPermission.tableName == tableName) {
-        accessCode = userPermission.accessLevel;
-      }
-    }
-    switch (accessType) {
-      case "create":
-        return accessCode[0];
-      case "view":
-        return accessCode[1];
-      case "update":
-        return accessCode[2];
-      case "delete":
-        return accessCode[3];
-      default:
-        break;
-    }
-    return "0";
   }
 
   dynamic listenToScanner(String data) {

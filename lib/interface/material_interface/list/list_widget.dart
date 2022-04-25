@@ -42,19 +42,16 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
     factories = [];
     Map<String, dynamic> conditions = {
       "EQUALS": {
-        "Field": "company_id",
-        "Value": companyID,
+        "Field": "user_username",
+        "Value": currentUser.username,
       }
     };
-    await appStore.factoryApp.list(conditions).then((response) async {
+    await appStore.userFactoryApp.get(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
+          Factory fact = Factory.fromJSON(item["factory"]);
           factories.add(fact);
         }
-        setState(() {
-          isLoadingData = false;
-        });
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -67,6 +64,10 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
           },
         );
       }
+    }).then((value) {
+      setState(() {
+        isLoadingData = false;
+      });
     });
   }
 

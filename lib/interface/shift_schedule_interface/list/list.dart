@@ -1,20 +1,22 @@
-import 'package:eazyweigh/domain/entity/scanned_data.dart';
+import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/shift_schedule.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:flutter/material.dart';
 
-class ScannedDataList extends StatefulWidget {
-  final List<ScannedData> scannedData;
-  const ScannedDataList({
+class ShiftScheduleList extends StatefulWidget {
+  final List<ShiftSchedule> shiftSchedules;
+  const ShiftScheduleList({
     Key? key,
-    required this.scannedData,
+    required this.shiftSchedules,
   }) : super(key: key);
 
   @override
-  State<ScannedDataList> createState() => _ScannedDataListState();
+  State<ShiftScheduleList> createState() => _ShiftScheduleListState();
 }
 
-class _ScannedDataListState extends State<ScannedDataList> {
+class _ShiftScheduleListState extends State<ShiftScheduleList> {
   bool sort = true, ascending = true;
   int sortingColumnIndex = 0;
 
@@ -32,66 +34,29 @@ class _ScannedDataListState extends State<ScannedDataList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(0, 10)
-              .compareTo(b.createdAt.toString().substring(0, 10)));
+          widget.shiftSchedules.sort((a, b) => a.date.compareTo(b.date));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(0, 10)
-              .compareTo(a.createdAt.toString().substring(0, 10)));
+          widget.shiftSchedules.sort((a, b) => b.date.compareTo(a.date));
         }
         break;
       case 1:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(b.createdAt.toString().substring(11, 16)));
+          widget.shiftSchedules
+              .sort((a, b) => a.shift.code.compareTo(b.shift.code));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(a.createdAt.toString().substring(11, 16)));
+          widget.shiftSchedules
+              .sort((a, b) => b.shift.code.compareTo(a.shift.code));
         }
         break;
       case 2:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.expectedCode.toString().compareTo(b.expectedCode.toString()));
+          widget.shiftSchedules.sort((a, b) =>
+              (a.weigher.firstName + " " + a.weigher.lastName)
+                  .compareTo((b.weigher.firstName + " " + b.weigher.lastName)));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.expectedCode.toString().compareTo(a.expectedCode.toString()));
-        }
-        break;
-      case 3:
-        if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.actualCode.toString().compareTo(b.actualCode.toString()));
-        } else {
-          widget.scannedData.sort((a, b) =>
-              b.actualCode.toString().compareTo(a.actualCode.toString()));
-        }
-        break;
-      case 4:
-        if (ascending) {
-          widget.scannedData.sort((a, b) => a.terminal.description
-              .toString()
-              .compareTo(b.terminal.description.toString()));
-        } else {
-          widget.scannedData.sort((a, b) => b.terminal.description
-              .toString()
-              .compareTo(a.terminal.description.toString()));
-        }
-        break;
-      case 5:
-        if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
-        } else {
-          widget.scannedData.sort((a, b) =>
-              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
+          widget.shiftSchedules.sort((a, b) =>
+              (b.weigher.firstName + " " + b.weigher.lastName)
+                  .compareTo((a.weigher.firstName + " " + a.weigher.lastName)));
         }
         break;
       default:
@@ -146,7 +111,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Time",
+                              "Shift",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -164,7 +129,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Job Code",
+                              "Weigher",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -182,43 +147,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Terminal",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Expected Data",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Actual Data",
+                              " ",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -235,10 +164,10 @@ class _ScannedDataListState extends State<ScannedDataList> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.scannedData),
-                        rowsPerPage: widget.scannedData.length > 25
+                        source: _DataSource(context, widget.shiftSchedules),
+                        rowsPerPage: widget.shiftSchedules.length > 25
                             ? 25
-                            : widget.scannedData.length,
+                            : widget.shiftSchedules.length,
                       )
                     ],
                   ),
@@ -261,23 +190,23 @@ class _ScannedDataListState extends State<ScannedDataList> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._scannedData) {
-    _scannedData = _scannedData;
+  _DataSource(this.context, this._shiftSchedules) {
+    _shiftSchedules = _shiftSchedules;
   }
 
   final BuildContext context;
-  List<ScannedData> _scannedData;
+  List<ShiftSchedule> _shiftSchedules;
 
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    final scannedData = _scannedData[index];
+    final shiftSchedule = _shiftSchedules[index];
     return DataRow.byIndex(
       index: index,
       cells: [
         DataCell(
           Text(
-            scannedData.createdAt.toLocal().toString().substring(0, 10),
+            shiftSchedule.date.toLocal().toString().substring(0, 10),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -287,7 +216,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.createdAt.toLocal().toString().substring(11, 16),
+            shiftSchedule.shift.code,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -297,7 +226,9 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.job.jobCode,
+            shiftSchedule.weigher.firstName +
+                " " +
+                shiftSchedule.weigher.lastName,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -307,40 +238,36 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.terminal.description,
+            shiftSchedule.date.difference(DateTime.now()) >
+                    const Duration(seconds: 0)
+                ? "Delete"
+                : " ",
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
-        ),
-        DataCell(
-          Text(
-            scannedData.expectedCode,
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            scannedData.actualCode,
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          onTap: () async {
+            String accessCode = getAccessCode("shift_schedules", "create");
+            if (accessCode == "1" &&
+                shiftSchedule.date.difference(DateTime.now()) >
+                    const Duration(seconds: 0)) {
+              await appStore.shiftScheduleApp
+                  .delete(shiftSchedule.id)
+                  .then((value) {
+                _shiftSchedules
+                    .removeWhere((element) => element.id == shiftSchedule.id);
+              });
+            }
+          },
         ),
       ],
     );
   }
 
   @override
-  int get rowCount => _scannedData.length;
+  int get rowCount => _shiftSchedules.length;
 
   @override
   bool get isRowCountApproximate => false;

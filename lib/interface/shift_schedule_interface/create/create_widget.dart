@@ -64,7 +64,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
     });
   }
 
-  void getFactories() async {
+  Future<dynamic> getFactories() async {
     factories = [];
     Map<String, dynamic> conditions = {
       "EQUALS": {

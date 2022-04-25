@@ -1,3 +1,5 @@
+import 'package:eazyweigh/interface/common/build_widget.dart';
+import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:flutter/material.dart';
 
 class UserDeactivateWidget extends StatefulWidget {
@@ -8,8 +10,18 @@ class UserDeactivateWidget extends StatefulWidget {
 }
 
 class _UserDeactivateWidgetState extends State<UserDeactivateWidget> {
+  //TODO complete this
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return SuperPage(
+      childWidget: buildWidget(
+        Container(),
+        context,
+        "Get Materials List",
+        () {
+          Navigator.of(context).pop();
+        },
+      ),
+    );
   }
 }

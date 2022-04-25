@@ -51,7 +51,7 @@ class _UserRoleAccessWidgetState extends State<UserRoleAccessWidget> {
                     },
                     icon: Icons.list,
                     label: "List",
-                    table: "user_roles_accesses",
+                    table: "user_role_accesses",
                     accessType: "view",
                   ),
                 ],

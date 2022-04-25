@@ -84,6 +84,9 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
+  "Scanned Data": [
+    "List",
+  ],
   "Shift": [
     "Create",
     "Details",

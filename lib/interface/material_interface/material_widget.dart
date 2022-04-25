@@ -3,7 +3,6 @@ import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:eazyweigh/interface/material_interface/create/create_widget.dart';
 import 'package:eazyweigh/interface/material_interface/list/list_widget.dart';
-import 'package:eazyweigh/interface/material_interface/update/update_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -55,20 +54,6 @@ class _MaterialWidgetState extends State<MaterialWidget> {
                     table: "materials",
                     accessType: "view",
                   ),
-                  // UserActionButton(
-                  //   callback: () {
-                  //     Navigator.of(context).pushReplacement(
-                  //       CupertinoPageRoute(
-                  //         builder: (BuildContext context) =>
-                  //             const MaterialUpdateWidget(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   icon: Icons.update,
-                  //   label: "Update",
-                  //   table: "materials",
-                  //   accessType: "update",
-                  // ),
                 ],
               ),
             ),

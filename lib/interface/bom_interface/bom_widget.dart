@@ -1,6 +1,5 @@
 import 'package:eazyweigh/interface/bom_interface/create/create_widget.dart';
 import 'package:eazyweigh/interface/bom_interface/details/details_widget.dart';
-import 'package:eazyweigh/interface/bom_interface/update/update_widget.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
@@ -55,20 +54,20 @@ class _BOMWidgetState extends State<BOMWidget> {
                     table: "boms",
                     accessType: "view",
                   ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const BOMUpdateWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.update,
-                    label: "Update",
-                    table: "boms",
-                    accessType: "update",
-                  ),
+                  // UserActionButton(
+                  //   callback: () {
+                  //     Navigator.of(context).pushReplacement(
+                  //       CupertinoPageRoute(
+                  //         builder: (BuildContext context) =>
+                  //             const BOMUpdateWidget(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   icon: Icons.update,
+                  //   label: "Update",
+                  //   table: "boms",
+                  //   accessType: "update",
+                  // ),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
@@ -11,11 +12,16 @@ import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/date_picker/date_picker.dart';
+import 'package:eazyweigh/interface/common/drop_down_widget.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
+import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/over_issue_interface/details/over_issue_details_widget.dart';
 import 'package:eazyweigh/interface/over_issue_interface/details/verifier_over_issue_details_widget.dart';
+import 'package:eazyweigh/interface/over_issue_interface/list/hybrid_over_issue.dart';
+import 'package:eazyweigh/interface/over_issue_interface/list/list.dart';
 import 'package:eazyweigh/interface/over_issue_interface/over_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,20 +41,30 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   int start = 0;
   int end = 2;
   bool isLoadingData = true;
+  bool isDataLoaded = false;
   ScrollController? scrollController;
   Map<String, Mat> materialMapping = {};
   Map<String, JobItem> jobItems = {};
   Map<String, Job> jobs = {};
   List<String> jobIDs = [];
+  List<Factory> factories = [];
   String previous = '{"action":"navigation", "data":{"type":"previous"}}';
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
   Map<String, List<OverIssue>> jobMapping = {};
   Map<String, List<OverIssue>> passedJobMapping = {};
+  List<HybridOverIssue> overIssues = [];
+  late TextEditingController factoryController,
+      startDateController,
+      endDateController;
 
   @override
   void initState() {
     scannerListener.addListener(listenToScanner);
+    currentUser.userRole.role == "Weigher" ? checkWeigher() : getFactories();
+    factoryController = TextEditingController();
+    startDateController = TextEditingController();
+    endDateController = TextEditingController();
     checkWeigher();
     super.initState();
   }
@@ -66,6 +82,39 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
       }
     });
     setState(() {});
+  }
+
+  Future<dynamic> getFactories() async {
+    factories = [];
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
+    await appStore.factoryApp.list(conditions).then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: response["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    }).then((value) {
+      setState(() {
+        isLoadingData = false;
+      });
+    });
   }
 
   Future<dynamic> checkWeigher() async {
@@ -628,11 +677,193 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   }
 
   Widget generalWidget() {
-    return Center(
-      child: Text(
-        currentUser.firstName,
-      ),
-    );
+    return isDataLoaded
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              overIssues.isEmpty
+                  ? const Text(
+                      "No Over Issued Found",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 20.0,
+                      ),
+                    )
+                  : const Text(
+                      "Over Issued Items",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 20.0,
+                      ),
+                    ),
+              OverIssueList(overIssues: overIssues),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DropDownWidget(
+                disabled: false,
+                hint: "Select Factory",
+                controller: factoryController,
+                itemList: factories,
+              ),
+              DatePickerWidget(
+                dateController: startDateController,
+                hintText: "Created After",
+                labelText: "Created After",
+              ),
+              DatePickerWidget(
+                dateController: endDateController,
+                hintText: "Created Before",
+                labelText: "Created Before",
+              ),
+              const Divider(
+                color: Colors.transparent,
+              ),
+              Row(
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
+                      elevation: MaterialStateProperty.all<double>(5.0),
+                    ),
+                    onPressed: () async {
+                      overIssues = [];
+                      String errors = "";
+                      var factoryID = factoryController.text;
+                      var startDate = startDateController.text;
+                      var endDate = endDateController.text;
+                      Map<String, dynamic> conditions = {};
+
+                      if (factoryID.isEmpty || factoryID == "") {
+                        errors += "Factory Required.\n";
+                      }
+
+                      if (errors.isEmpty && errors == "") {
+                        Map<String, dynamic> factoryCondition = {
+                          "EQUALS": {
+                            "Field": "factory_id",
+                            "Value": factoryID,
+                          }
+                        };
+                        Map<String, dynamic> startDateCondition = {};
+                        Map<String, dynamic> endDateCondition = {};
+                        if (startDate.isNotEmpty) {
+                          startDateCondition = {
+                            "GREATEREQUAL": {
+                              "Field": "created_at",
+                              "Value": DateTime.parse(startDate)
+                                      .toString()
+                                      .substring(0, 10) +
+                                  "T00:00:00.0Z",
+                            }
+                          };
+                        }
+                        if (startDate.isNotEmpty) {
+                          endDateCondition = {
+                            "LESSEQUAL": {
+                              "Field": "created_at",
+                              "Value": DateTime.parse(endDate)
+                                      .toString()
+                                      .substring(0, 10) +
+                                  "T00:00:00.0Z",
+                            }
+                          };
+                        }
+                        if (startDateCondition.isNotEmpty ||
+                            endDateCondition.isNotEmpty) {
+                          conditions["AND"] = [factoryCondition];
+                          if (startDateCondition.isNotEmpty) {
+                            conditions["AND"].add(startDateCondition);
+                          }
+                          if (endDateCondition.isNotEmpty) {
+                            conditions["AND"].add(endDateCondition);
+                          }
+                        }
+
+                        setState(() {
+                          isLoadingData = true;
+                        });
+                        await appStore.jobApp
+                            .list(conditions)
+                            .then((value) async {
+                          if (value.containsKey("status") && value["status"]) {
+                            for (var item in value["payload"]) {
+                              Job job = Job.fromJSON(item);
+                              await appStore.overIssueApp
+                                  .list(job.id)
+                                  .then((response) {
+                                if (response.containsKey("status") &&
+                                    response["status"]) {
+                                  if (response["payload"].length != 0) {
+                                    for (var under in response["payload"]) {
+                                      OverIssue overIssue =
+                                          OverIssue.fromJSON(under);
+                                      overIssues.add(HybridOverIssue(
+                                        job: job,
+                                        overIssue: overIssue,
+                                      ));
+                                    }
+                                  }
+                                }
+                              });
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CustomDialog(
+                                  message: "Unable to Get Data.",
+                                  title: "Info",
+                                );
+                              },
+                            );
+                          }
+                        }).then((value) {
+                          setState(() {
+                            isLoadingData = false;
+                            isDataLoaded = true;
+                          });
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialog(
+                              message: errors,
+                              title: "Errors",
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: checkButton(),
+                  ),
+                  const VerticalDivider(
+                    color: Colors.transparent,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
+                      elevation: MaterialStateProperty.all<double>(5.0),
+                    ),
+                    onPressed: () {
+                      navigationService.pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const OverIssueListWidget(),
+                        ),
+                      );
+                    },
+                    child: clearButton(),
+                  ),
+                ],
+              ),
+            ],
+          );
   }
 
   Widget verifierlistWidget() {

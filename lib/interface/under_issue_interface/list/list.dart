@@ -1,20 +1,20 @@
-import 'package:eazyweigh/domain/entity/scanned_data.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/list/hybrid_under_issue.dart';
 import 'package:flutter/material.dart';
 
-class ScannedDataList extends StatefulWidget {
-  final List<ScannedData> scannedData;
-  const ScannedDataList({
+class UnderIssueList extends StatefulWidget {
+  final List<HybridUnderIssue> underIssues;
+  const UnderIssueList({
     Key? key,
-    required this.scannedData,
+    required this.underIssues,
   }) : super(key: key);
 
   @override
-  State<ScannedDataList> createState() => _ScannedDataListState();
+  State<UnderIssueList> createState() => _UnderIssueListState();
 }
 
-class _ScannedDataListState extends State<ScannedDataList> {
+class _UnderIssueListState extends State<UnderIssueList> {
   bool sort = true, ascending = true;
   int sortingColumnIndex = 0;
 
@@ -32,66 +32,91 @@ class _ScannedDataListState extends State<ScannedDataList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
+          widget.underIssues.sort((a, b) => a.underIssue.createdAt
               .toString()
-              .substring(0, 10)
-              .compareTo(b.createdAt.toString().substring(0, 10)));
+              .compareTo(b.underIssue.createdAt.toString()));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
+          widget.underIssues.sort((a, b) => b.underIssue.createdAt
               .toString()
-              .substring(0, 10)
-              .compareTo(a.createdAt.toString().substring(0, 10)));
+              .compareTo(a.underIssue.createdAt.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(b.createdAt.toString().substring(11, 16)));
+          widget.underIssues.sort((a, b) =>
+              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(a.createdAt.toString().substring(11, 16)));
+          widget.underIssues.sort((a, b) =>
+              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.expectedCode.toString().compareTo(b.expectedCode.toString()));
+          widget.underIssues.sort((a, b) => a.underIssue.jobItem.material.code
+              .toString()
+              .compareTo(b.underIssue.jobItem.material.code.toString()));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.expectedCode.toString().compareTo(a.expectedCode.toString()));
+          widget.underIssues.sort((a, b) => b.underIssue.jobItem.material.code
+              .toString()
+              .compareTo(a.underIssue.jobItem.material.code.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.actualCode.toString().compareTo(b.actualCode.toString()));
+          widget.underIssues.sort((a, b) => a
+              .underIssue.jobItem.material.description
+              .toString()
+              .compareTo(b.underIssue.jobItem.material.description.toString()));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.actualCode.toString().compareTo(a.actualCode.toString()));
+          widget.underIssues.sort((a, b) => b
+              .underIssue.jobItem.material.description
+              .toString()
+              .compareTo(a.underIssue.jobItem.material.description.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.terminal.description
+          widget.underIssues.sort((a, b) => a.underIssue.req
               .toString()
-              .compareTo(b.terminal.description.toString()));
+              .compareTo(b.underIssue.req.toString()));
         } else {
-          widget.scannedData.sort((a, b) => b.terminal.description
+          widget.underIssues.sort((a, b) => b.underIssue.req
               .toString()
-              .compareTo(a.terminal.description.toString()));
+              .compareTo(a.underIssue.req.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
+          widget.underIssues.sort((a, b) => (a.underIssue.req -
+                  a.underIssue.actual)
+              .toString()
+              .compareTo((b.underIssue.req - b.underIssue.actual).toString()));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
+          widget.underIssues.sort((a, b) => (b.underIssue.req -
+                  b.underIssue.actual)
+              .toString()
+              .compareTo((a.underIssue.req - a.underIssue.actual).toString()));
+        }
+        break;
+      case 6:
+        if (ascending) {
+          widget.underIssues.sort((a, b) => (a.underIssue.createdBy.firstName +
+                  " " +
+                  a.underIssue.createdBy.lastName)
+              .toString()
+              .compareTo((b.underIssue.createdBy.firstName +
+                      " " +
+                      b.underIssue.createdBy.lastName)
+                  .toString()));
+        } else {
+          widget.underIssues.sort((a, b) => (b.underIssue.createdBy.firstName +
+                  " " +
+                  b.underIssue.createdBy.lastName)
+              .toString()
+              .compareTo((a.underIssue.createdBy.firstName +
+                      " " +
+                      a.underIssue.createdBy.lastName)
+                  .toString()));
         }
         break;
       default:
@@ -146,24 +171,6 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Time",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
                               "Job Code",
                               style: TextStyle(
                                 fontSize: 20.0,
@@ -182,7 +189,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Terminal",
+                              "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -200,7 +207,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Expected Data",
+                              "Material Name",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -218,7 +225,43 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Actual Data",
+                              "Required Qty",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: const Text(
+                              "Under Issued Qty.",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: const Text(
+                              "Created By",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -235,10 +278,10 @@ class _ScannedDataListState extends State<ScannedDataList> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.scannedData),
-                        rowsPerPage: widget.scannedData.length > 25
+                        source: _DataSource(context, widget.underIssues),
+                        rowsPerPage: widget.underIssues.length > 25
                             ? 25
-                            : widget.scannedData.length,
+                            : widget.underIssues.length,
                       )
                     ],
                   ),
@@ -261,23 +304,26 @@ class _ScannedDataListState extends State<ScannedDataList> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._scannedData) {
-    _scannedData = _scannedData;
+  _DataSource(this.context, this._underIssues) {
+    _underIssues = _underIssues;
   }
 
   final BuildContext context;
-  List<ScannedData> _scannedData;
+  List<HybridUnderIssue> _underIssues;
 
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    final scannedData = _scannedData[index];
+    final underIssues = _underIssues[index];
     return DataRow.byIndex(
       index: index,
       cells: [
         DataCell(
           Text(
-            scannedData.createdAt.toLocal().toString().substring(0, 10),
+            underIssues.underIssue.createdAt
+                .toLocal()
+                .toString()
+                .substring(0, 10),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -287,7 +333,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.createdAt.toLocal().toString().substring(11, 16),
+            underIssues.job.jobCode,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -297,7 +343,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.job.jobCode,
+            underIssues.underIssue.jobItem.material.code.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -307,7 +353,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.terminal.description,
+            underIssues.underIssue.jobItem.material.description,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -317,7 +363,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.expectedCode,
+            underIssues.underIssue.req.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -327,7 +373,20 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.actualCode,
+            (underIssues.underIssue.req - underIssues.underIssue.actual)
+                .toString(),
+            style: const TextStyle(
+              fontSize: 16.0,
+              color: foregroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            underIssues.underIssue.createdBy.firstName +
+                " " +
+                underIssues.underIssue.createdBy.lastName,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -340,7 +399,7 @@ class _DataSource extends DataTableSource {
   }
 
   @override
-  int get rowCount => _scannedData.length;
+  int get rowCount => _underIssues.length;
 
   @override
   bool get isRowCountApproximate => false;

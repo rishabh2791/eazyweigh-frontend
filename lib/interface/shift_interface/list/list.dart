@@ -1,20 +1,20 @@
-import 'package:eazyweigh/domain/entity/scanned_data.dart';
+import 'package:eazyweigh/domain/entity/shift.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
-class ScannedDataList extends StatefulWidget {
-  final List<ScannedData> scannedData;
-  const ScannedDataList({
+class ShiftList extends StatefulWidget {
+  final List<Shift> shifts;
+  const ShiftList({
     Key? key,
-    required this.scannedData,
+    required this.shifts,
   }) : super(key: key);
 
   @override
-  State<ScannedDataList> createState() => _ScannedDataListState();
+  State<ShiftList> createState() => _ShiftListState();
 }
 
-class _ScannedDataListState extends State<ScannedDataList> {
+class _ShiftListState extends State<ShiftList> {
   bool sort = true, ascending = true;
   int sortingColumnIndex = 0;
 
@@ -32,66 +32,30 @@ class _ScannedDataListState extends State<ScannedDataList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(0, 10)
-              .compareTo(b.createdAt.toString().substring(0, 10)));
+          widget.shifts.sort((a, b) => a.code.compareTo(b.code));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(0, 10)
-              .compareTo(a.createdAt.toString().substring(0, 10)));
+          widget.shifts.sort((a, b) => b.code.compareTo(a.code));
         }
         break;
       case 1:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(b.createdAt.toString().substring(11, 16)));
+          widget.shifts.sort((a, b) => a.description.compareTo(b.description));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(a.createdAt.toString().substring(11, 16)));
+          widget.shifts.sort((a, b) => b.description.compareTo(a.description));
         }
         break;
       case 2:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.expectedCode.toString().compareTo(b.expectedCode.toString()));
+          widget.shifts.sort((a, b) => a.startTime.compareTo(b.startTime));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.expectedCode.toString().compareTo(a.expectedCode.toString()));
+          widget.shifts.sort((a, b) => b.startTime.compareTo(a.startTime));
         }
         break;
       case 3:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.actualCode.toString().compareTo(b.actualCode.toString()));
+          widget.shifts.sort((a, b) => a.endTime.compareTo(b.endTime));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.actualCode.toString().compareTo(a.actualCode.toString()));
-        }
-        break;
-      case 4:
-        if (ascending) {
-          widget.scannedData.sort((a, b) => a.terminal.description
-              .toString()
-              .compareTo(b.terminal.description.toString()));
-        } else {
-          widget.scannedData.sort((a, b) => b.terminal.description
-              .toString()
-              .compareTo(a.terminal.description.toString()));
-        }
-        break;
-      case 5:
-        if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
-        } else {
-          widget.scannedData.sort((a, b) =>
-              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
+          widget.shifts.sort((a, b) => b.endTime.compareTo(a.endTime));
         }
         break;
       default:
@@ -128,7 +92,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                         columns: [
                           DataColumn(
                             label: const Text(
-                              "Date",
+                              "Shift Code",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -146,7 +110,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Time",
+                              "Shift Name",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -164,7 +128,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Job Code",
+                              "Start Time",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -182,43 +146,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Terminal",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Expected Data",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Actual Data",
+                              "End Time",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -235,10 +163,10 @@ class _ScannedDataListState extends State<ScannedDataList> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.scannedData),
-                        rowsPerPage: widget.scannedData.length > 25
+                        source: _DataSource(context, widget.shifts),
+                        rowsPerPage: widget.shifts.length > 25
                             ? 25
-                            : widget.scannedData.length,
+                            : widget.shifts.length,
                       )
                     ],
                   ),
@@ -261,23 +189,23 @@ class _ScannedDataListState extends State<ScannedDataList> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._scannedData) {
-    _scannedData = _scannedData;
+  _DataSource(this.context, this._shifts) {
+    _shifts = _shifts;
   }
 
   final BuildContext context;
-  List<ScannedData> _scannedData;
+  List<Shift> _shifts;
 
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    final scannedData = _scannedData[index];
+    final shift = _shifts[index];
     return DataRow.byIndex(
       index: index,
       cells: [
         DataCell(
           Text(
-            scannedData.createdAt.toLocal().toString().substring(0, 10),
+            shift.code,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -287,7 +215,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.createdAt.toLocal().toString().substring(11, 16),
+            shift.description,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -297,7 +225,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.job.jobCode,
+            shift.startTime.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -307,27 +235,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.terminal.description,
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            scannedData.expectedCode,
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            scannedData.actualCode,
+            shift.endTime.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -340,7 +248,7 @@ class _DataSource extends DataTableSource {
   }
 
   @override
-  int get rowCount => _scannedData.length;
+  int get rowCount => _shifts.length;
 
   @override
   bool get isRowCountApproximate => false;

@@ -19,7 +19,6 @@ class BOMUpdateWidget extends StatefulWidget {
   State<BOMUpdateWidget> createState() => _BOMUpdateWidgetState();
 }
 
-//TODO complete this
 class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
   bool isLoadingData = true;
   bool isBomItemsLoaded = false;

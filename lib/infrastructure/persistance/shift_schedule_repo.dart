@@ -22,9 +22,10 @@ class ShiftScheduleRepo implements ShiftScheduleRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> get(String id) async {
+  Future<Map<String, dynamic>> delete(String id) async {
     String url = "shift_schedule/" + id + "/";
-    var response = await networkAPIProvider.get(url, TokenType.accessToken);
+    var response =
+        await networkAPIProvider.delete(url, id, TokenType.accessToken);
     return response;
   }
 
@@ -33,15 +34,6 @@ class ShiftScheduleRepo implements ShiftScheduleRepository {
     String url = "shift_schedule/";
     var response =
         await networkAPIProvider.post(url, conditions, TokenType.accessToken);
-    return response;
-  }
-
-  @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
-    String url = "shift_schedule/" + id + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

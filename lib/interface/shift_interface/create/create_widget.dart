@@ -43,7 +43,7 @@ class _ShiftCreateWidgetState extends State<ShiftCreateWidget> {
     super.dispose();
   }
 
-  void getFactories() async {
+  Future<dynamic> getFactories() async {
     factories = [];
     Map<String, dynamic> conditions = {
       "EQUALS": {

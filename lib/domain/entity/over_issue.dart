@@ -1,9 +1,10 @@
+import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
 class OverIssue {
   final String id;
-  final String jobItem;
+  final JobItem jobItem;
   final UnitOfMeasure uom;
   final double req;
   final double actual;
@@ -53,7 +54,7 @@ class OverIssue {
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
-      jobItem: jsonObject["job_item"],
+      jobItem: JobItem.fromJSON(jsonObject["job_item"]),
       req: jsonObject["required"],
       weighed: jsonObject["weighed"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),

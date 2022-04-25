@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
@@ -12,13 +13,18 @@ import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/date_picker/date_picker.dart';
+import 'package:eazyweigh/interface/common/drop_down_widget.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/screem_size_information.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/under_issue_interface/details/under_issue_details_widget.dart';
 import 'package:eazyweigh/interface/under_issue_interface/details/verifier_under_issue_details_widget.dart';
+import 'package:eazyweigh/interface/under_issue_interface/list/hybrid_under_issue.dart';
+import 'package:eazyweigh/interface/under_issue_interface/list/list.dart';
 import 'package:eazyweigh/interface/under_issue_interface/under_issue_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,21 +41,30 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   int start = 0;
   int end = 2;
   bool isLoadingData = true;
+  bool isDataLoaded = false;
   ScrollController? scrollController;
   Map<String, Mat> materialMapping = {};
   Map<String, JobItem> jobItems = {};
   Map<String, Job> jobs = {};
   List<String> jobIDs = [];
+  List<Factory> factories = [];
   String previous = '{"action":"navigation", "data":{"type":"previous"}}';
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
   Map<String, List<UnderIssue>> jobMapping = {};
   Map<String, List<UnderIssue>> passedJobMapping = {};
+  List<HybridUnderIssue> underIssues = [];
+  late TextEditingController factoryController,
+      startDateController,
+      endDateController;
 
   @override
   void initState() {
     scannerListener.addListener(listenToScanner);
-    checkWeigher();
+    currentUser.userRole.role == "Weigher" ? checkWeigher() : getFactories();
+    factoryController = TextEditingController();
+    startDateController = TextEditingController();
+    endDateController = TextEditingController();
     super.initState();
   }
 
@@ -68,194 +83,221 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
     setState(() {});
   }
 
+  Future<dynamic> getFactories() async {
+    factories = [];
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      }
+    };
+    await appStore.factoryApp.list(conditions).then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+      } else {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              message: response["message"],
+              title: "Errors",
+            );
+          },
+        );
+      }
+    }).then((value) {
+      setState(() {
+        isLoadingData = false;
+      });
+    });
+  }
+
   Future<dynamic> checkWeigher() async {
     List<String> shiftIDs = [];
-    if (currentUser.userRole.role == "Operator") {
-      DateTime today = DateTime.now();
-      Map<String, dynamic> condition = {
-        "AND": [
-          {
-            "GREATEREQUAL": {
-              "Field": "date",
-              "Value": DateTime(today.year, today.month, today.day)
-                  .subtract(const Duration(days: 7))
-                  .toString(),
-            },
+    DateTime today = DateTime.now();
+    Map<String, dynamic> condition = {
+      "AND": [
+        {
+          "GREATEREQUAL": {
+            "Field": "date",
+            "Value": DateTime(today.year, today.month, today.day)
+                .subtract(const Duration(days: 7))
+                .toString(),
           },
-          {
-            "LESSEQUAL": {
-              "Field": "date",
-              "Value": DateTime(today.year, today.month, today.day)
-                  .add(const Duration(days: 7))
-                  .toString(),
-            },
+        },
+        {
+          "LESSEQUAL": {
+            "Field": "date",
+            "Value": DateTime(today.year, today.month, today.day)
+                .add(const Duration(days: 7))
+                .toString(),
           },
-          {
-            "EQUALS": {
-              "Field": "user_username",
-              "Value": currentUser.username,
-            },
+        },
+        {
+          "EQUALS": {
+            "Field": "user_username",
+            "Value": currentUser.username,
           },
-        ],
-      };
+        },
+      ],
+    };
 
-      await appStore.shiftScheduleApp.list(condition).then(
-        (value) async {
-          if (!value.containsKey("error")) {
-            if (value["status"]) {
-              for (var item in value["payload"]) {
-                shiftIDs.add(item["id"]);
-              }
-              if (shiftIDs.isNotEmpty) {
-                Map<String, dynamic> conditions = {
-                  "IN": {
-                    "Field": "shift_schedule_id",
-                    "Value": shiftIDs,
-                  },
-                };
-                await appStore.jobItemAssignmentApp
-                    .list(conditions)
-                    .then((response) async {
-                  if (response["status"]) {
-                    for (var item in response["payload"]) {
-                      JobItem jobItem = JobItem.fromJSON(item["job_item"]);
-                      jobItems[jobItem.id] = jobItem;
-                      if (!jobMapping.containsKey(item["job_item"]["job_id"])) {
-                        jobMapping[item["job_item"]["job_id"]] = [];
-                        jobIDs.add(item["job_item"]["job_id"]);
-                      }
+    await appStore.shiftScheduleApp.list(condition).then(
+      (value) async {
+        if (!value.containsKey("error")) {
+          if (value["status"]) {
+            for (var item in value["payload"]) {
+              shiftIDs.add(item["id"]);
+            }
+            if (shiftIDs.isNotEmpty) {
+              Map<String, dynamic> conditions = {
+                "IN": {
+                  "Field": "shift_schedule_id",
+                  "Value": shiftIDs,
+                },
+              };
+              await appStore.jobItemAssignmentApp
+                  .list(conditions)
+                  .then((response) async {
+                if (response["status"]) {
+                  for (var item in response["payload"]) {
+                    JobItem jobItem = JobItem.fromJSON(item["job_item"]);
+                    jobItems[jobItem.id] = jobItem;
+                    if (!jobMapping.containsKey(item["job_item"]["job_id"])) {
+                      jobMapping[item["job_item"]["job_id"]] = [];
+                      jobIDs.add(item["job_item"]["job_id"]);
                     }
-                    if (jobMapping.isNotEmpty) {
-                      Map<String, dynamic> jobConditions = {
-                        "IN": {
-                          "Field": "id",
-                          "Value": jobIDs,
-                        },
-                      };
-                      await appStore.jobApp
-                          .list(jobConditions)
-                          .then((value) async {
-                        if (value["status"]) {
-                          for (var job in value["payload"]) {
-                            Job thisJob = Job.fromJSON(job);
-                            jobs[job["id"]] = thisJob;
-                          }
-                          jobMapping.forEach((key, value) async {
-                            await appStore.underIssueApp
-                                .list(key)
-                                .then((underIssueReposnse) {
-                              if (underIssueReposnse.containsKey("status")) {
-                                if (underIssueReposnse["status"]) {
-                                  for (var item
-                                      in underIssueReposnse["payload"]) {
-                                    UnderIssue underIssue =
-                                        UnderIssue.fromJSON(item);
-                                    if (!underIssue.weighed) {
-                                      jobMapping[key]!.add(underIssue);
-                                    }
+                  }
+                  if (jobMapping.isNotEmpty) {
+                    Map<String, dynamic> jobConditions = {
+                      "IN": {
+                        "Field": "id",
+                        "Value": jobIDs,
+                      },
+                    };
+                    await appStore.jobApp
+                        .list(jobConditions)
+                        .then((value) async {
+                      if (value["status"]) {
+                        for (var job in value["payload"]) {
+                          Job thisJob = Job.fromJSON(job);
+                          jobs[job["id"]] = thisJob;
+                        }
+                        jobMapping.forEach((key, value) async {
+                          await appStore.underIssueApp
+                              .list(key)
+                              .then((underIssueReposnse) {
+                            if (underIssueReposnse.containsKey("status")) {
+                              if (underIssueReposnse["status"]) {
+                                for (var item
+                                    in underIssueReposnse["payload"]) {
+                                  UnderIssue underIssue =
+                                      UnderIssue.fromJSON(item);
+                                  if (!underIssue.weighed) {
+                                    jobMapping[key]!.add(underIssue);
                                   }
-                                  cleanJobMapping();
-                                } else {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: underIssueReposnse["message"],
-                                        title: "Error",
-                                      );
-                                    },
-                                  );
                                 }
+                                cleanJobMapping();
                               } else {
                                 Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const CustomDialog(
-                                      message: "Unable to Connect.",
+                                    return CustomDialog(
+                                      message: underIssueReposnse["message"],
                                       title: "Error",
                                     );
                                   },
                                 );
                               }
-                            });
-                          });
-                        } else {
-                          Navigator.of(context).pop();
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomDialog(
-                                message: value["message"],
-                                title: "Error",
+                            } else {
+                              Navigator.of(context).pop();
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const CustomDialog(
+                                    message: "Unable to Connect.",
+                                    title: "Error",
+                                  );
+                                },
                               );
-                            },
-                          );
-                        }
-                      });
-                    } else {}
-                  } else {
-                    Navigator.of(context).pop();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CustomDialog(
-                          message: response["message"],
-                          title: "Error",
+                            }
+                          });
+                        });
+                      } else {
+                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialog(
+                              message: value["message"],
+                              title: "Error",
+                            );
+                          },
                         );
-                      },
-                    );
-                  }
-                });
-              } else {
-                Navigator.of(context).pop();
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const CustomDialog(
-                      message: "No Shift Assignment Found.",
-                      title: "Error",
-                    );
-                  },
-                ).then((value) {
-                  logout(context);
-                });
-              }
+                      }
+                    });
+                  } else {}
+                } else {
+                  Navigator.of(context).pop();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomDialog(
+                        message: response["message"],
+                        title: "Error",
+                      );
+                    },
+                  );
+                }
+              });
             } else {
               Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return CustomDialog(
-                    message: value["message"],
+                  return const CustomDialog(
+                    message: "No Shift Assignment Found.",
                     title: "Error",
                   );
                 },
-              );
+              ).then((value) {
+                logout(context);
+              });
             }
           } else {
+            Navigator.of(context).pop();
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return const CustomDialog(
-                  message: "Unable to Connect to Server.",
+                return CustomDialog(
+                  message: value["message"],
                   title: "Error",
                 );
               },
             );
           }
-        },
-      ).then((value) {
-        setState(() {
-          isLoadingData = false;
-        });
-      });
-    } else {
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const CustomDialog(
+                message: "Unable to Connect to Server.",
+                title: "Error",
+              );
+            },
+          );
+        }
+      },
+    ).then((value) {
       setState(() {
         isLoadingData = false;
       });
-    }
+    });
   }
 
   dynamic listenToScanner(String data) {
@@ -648,13 +690,194 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
     );
   }
 
-//TODO
   Widget generalWidget() {
-    return Center(
-      child: Text(
-        currentUser.firstName,
-      ),
-    );
+    return isDataLoaded
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              underIssues.isEmpty
+                  ? const Text(
+                      "No Under Issued Found",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 20.0,
+                      ),
+                    )
+                  : const Text(
+                      "Under Issued Items",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 20.0,
+                      ),
+                    ),
+              UnderIssueList(underIssues: underIssues),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DropDownWidget(
+                disabled: false,
+                hint: "Select Factory",
+                controller: factoryController,
+                itemList: factories,
+              ),
+              DatePickerWidget(
+                dateController: startDateController,
+                hintText: "Created After",
+                labelText: "Created After",
+              ),
+              DatePickerWidget(
+                dateController: endDateController,
+                hintText: "Created Before",
+                labelText: "Created Before",
+              ),
+              const Divider(
+                color: Colors.transparent,
+              ),
+              Row(
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
+                      elevation: MaterialStateProperty.all<double>(5.0),
+                    ),
+                    onPressed: () async {
+                      underIssues = [];
+                      String errors = "";
+                      var factoryID = factoryController.text;
+                      var startDate = startDateController.text;
+                      var endDate = endDateController.text;
+                      Map<String, dynamic> conditions = {};
+
+                      if (factoryID.isEmpty || factoryID == "") {
+                        errors += "Factory Required.\n";
+                      }
+
+                      if (errors.isEmpty && errors == "") {
+                        Map<String, dynamic> factoryCondition = {
+                          "EQUALS": {
+                            "Field": "factory_id",
+                            "Value": factoryID,
+                          }
+                        };
+                        Map<String, dynamic> startDateCondition = {};
+                        Map<String, dynamic> endDateCondition = {};
+                        if (startDate.isNotEmpty) {
+                          startDateCondition = {
+                            "GREATEREQUAL": {
+                              "Field": "created_at",
+                              "Value": DateTime.parse(startDate)
+                                      .toString()
+                                      .substring(0, 10) +
+                                  "T00:00:00.0Z",
+                            }
+                          };
+                        }
+                        if (startDate.isNotEmpty) {
+                          endDateCondition = {
+                            "LESSEQUAL": {
+                              "Field": "created_at",
+                              "Value": DateTime.parse(endDate)
+                                      .toString()
+                                      .substring(0, 10) +
+                                  "T00:00:00.0Z",
+                            }
+                          };
+                        }
+                        if (startDateCondition.isNotEmpty ||
+                            endDateCondition.isNotEmpty) {
+                          conditions["AND"] = [factoryCondition];
+                          if (startDateCondition.isNotEmpty) {
+                            conditions["AND"].add(startDateCondition);
+                          }
+                          if (endDateCondition.isNotEmpty) {
+                            conditions["AND"].add(endDateCondition);
+                          }
+                        }
+
+                        setState(() {
+                          isLoadingData = true;
+                        });
+                        await appStore.jobApp
+                            .list(conditions)
+                            .then((value) async {
+                          if (value.containsKey("status") && value["status"]) {
+                            for (var item in value["payload"]) {
+                              Job job = Job.fromJSON(item);
+                              await appStore.underIssueApp
+                                  .list(job.id)
+                                  .then((response) {
+                                if (response.containsKey("status") &&
+                                    response["status"]) {
+                                  if (response["payload"].length != 0) {
+                                    for (var under in response["payload"]) {
+                                      UnderIssue underIssue =
+                                          UnderIssue.fromJSON(under);
+                                      underIssues.add(HybridUnderIssue(
+                                        job: job,
+                                        underIssue: underIssue,
+                                      ));
+                                    }
+                                  }
+                                }
+                              });
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CustomDialog(
+                                  message: "Unable to Get Data.",
+                                  title: "Info",
+                                );
+                              },
+                            );
+                          }
+                        }).then((value) {
+                          setState(() {
+                            isLoadingData = false;
+                            isDataLoaded = true;
+                          });
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialog(
+                              message: errors,
+                              title: "Errors",
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: checkButton(),
+                  ),
+                  const VerticalDivider(
+                    color: Colors.transparent,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
+                      elevation: MaterialStateProperty.all<double>(5.0),
+                    ),
+                    onPressed: () {
+                      navigationService.pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const UnderIssueListWidget(),
+                        ),
+                      );
+                    },
+                    child: clearButton(),
+                  ),
+                ],
+              ),
+            ],
+          );
   }
 
   Widget homeWidget() {
