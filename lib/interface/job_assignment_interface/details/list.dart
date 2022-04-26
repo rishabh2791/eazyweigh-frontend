@@ -104,6 +104,17 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                       a.shiftSchedule.shift.code.toString()));
         }
         break;
+      case 5:
+        if (ascending) {
+          widget.jobItemAssignments.sort((a, b) => a.jobItem.complete
+              .toString()
+              .compareTo(b.jobItem.complete.toString()));
+        } else {
+          widget.jobItemAssignments.sort((a, b) => b.jobItem.complete
+              .toString()
+              .compareTo(a.jobItem.complete.toString()));
+        }
+        break;
       default:
         break;
     }
@@ -226,6 +237,24 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                               onSortColum(columnIndex, ascending);
                             },
                           ),
+                          DataColumn(
+                            label: const Text(
+                              "Status",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
                         ],
                         source: _DataSource(context, widget.jobItemAssignments),
                         rowsPerPage: widget.jobItemAssignments.length > 25
@@ -333,6 +362,18 @@ class _DataSource extends DataTableSource {
               fontWeight: FontWeight.normal,
             ),
           ),
+        ),
+        DataCell(
+          jobItemAssignment.jobItem.complete
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                  size: 30.0,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
         ),
       ],
     );

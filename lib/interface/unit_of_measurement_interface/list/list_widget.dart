@@ -1,3 +1,5 @@
+import 'package:eazyweigh/interface/common/build_widget.dart';
+import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:flutter/material.dart';
 
 class UOMListWidget extends StatefulWidget {
@@ -8,8 +10,18 @@ class UOMListWidget extends StatefulWidget {
 }
 
 class _UOMListWidgetState extends State<UOMListWidget> {
+  //TODO complete this
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return SuperPage(
+      childWidget: buildWidget(
+        Container(),
+        context,
+        "Get UOM List",
+        () {
+          Navigator.of(context).pop();
+        },
+      ),
+    );
   }
 }

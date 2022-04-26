@@ -14,6 +14,7 @@ class UnderIssue {
   final User createdBy;
   final DateTime updatedAt;
   final User updatedBy;
+  final double weight;
 
   bool selected = false;
 
@@ -29,6 +30,7 @@ class UnderIssue {
     required this.weighed,
     required this.updatedAt,
     required this.updatedBy,
+    required this.weight,
   });
 
   Map<String, dynamic> toJSON() {
@@ -44,6 +46,7 @@ class UnderIssue {
       "unit_of_measurement": uom.toJSON(),
       "updated_at": updatedAt,
       "updated_by": updatedBy.toJSON(),
+      "weight": weight,
     };
   }
 
@@ -60,6 +63,7 @@ class UnderIssue {
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      weight: double.parse(jsonObject["weight"].toString()),
     );
     return underIssue;
   }

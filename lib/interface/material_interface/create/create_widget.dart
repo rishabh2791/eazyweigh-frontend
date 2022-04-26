@@ -505,7 +505,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
             childWidget: buildWidget(
               createWidget(),
               context,
-              "Create Unit Of Measure",
+              "Create Material",
               () {
                 Navigator.of(context).pop();
               },

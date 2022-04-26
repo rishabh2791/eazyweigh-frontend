@@ -1,28 +1,27 @@
-import 'package:eazyweigh/domain/entity/job.dart';
-import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
+import 'package:eazyweigh/domain/entity/job_item_weighing.dart';
+import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
-import 'package:eazyweigh/interface/job_interface/details/job_details_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class JobList extends StatefulWidget {
-  final List<Job> jobs;
-  const JobList({
+class JobWeighingList extends StatefulWidget {
+  final List<JobItemWeighing> jobWeighings;
+  const JobWeighingList({
     Key? key,
-    required this.jobs,
+    required this.jobWeighings,
   }) : super(key: key);
 
   @override
-  State<JobList> createState() => _JobListState();
+  State<JobWeighingList> createState() => _JobItemItemsListState();
 }
 
-class _JobListState extends State<JobList> {
+class _JobItemItemsListState extends State<JobWeighingList> {
   bool sort = true, ascending = true;
   int sortingColumnIndex = 0;
 
   @override
   void initState() {
+    printingService.initCommunication();
     super.initState();
   }
 
@@ -35,60 +34,59 @@ class _JobListState extends State<JobList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobs.sort(
-              (a, b) => a.jobCode.toString().compareTo(b.jobCode.toString()));
+          widget.jobWeighings
+              .sort((a, b) => a.id.toString().compareTo(b.id.toString()));
         } else {
-          widget.jobs.sort(
-              (a, b) => b.jobCode.toString().compareTo(a.jobCode.toString()));
+          widget.jobWeighings
+              .sort((a, b) => b.id.toString().compareTo(a.id.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobs.sort((a, b) =>
-              a.material.code.toString().compareTo(b.material.code.toString()));
+          widget.jobWeighings.sort((a, b) => a.jobItem.material.code
+              .toString()
+              .compareTo(b.jobItem.material.code.toString()));
         } else {
-          widget.jobs.sort((a, b) =>
-              b.material.code.toString().compareTo(a.material.code.toString()));
+          widget.jobWeighings.sort((a, b) => b.jobItem.material.code
+              .toString()
+              .compareTo(a.jobItem.material.code.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobs.sort((a, b) => a.material.description
+          widget.jobWeighings.sort((a, b) => a.jobItem.material.description
               .toString()
-              .compareTo(b.material.description.toString()));
+              .compareTo(b.jobItem.material.description.toString()));
         } else {
-          widget.jobs.sort((a, b) => b.material.description
+          widget.jobWeighings.sort((a, b) => b.jobItem.material.description
               .toString()
-              .compareTo(a.material.description.toString()));
+              .compareTo(a.jobItem.material.description.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobs.sort(
-              (a, b) => a.quantity.toString().compareTo(b.quantity.toString()));
+          widget.jobWeighings.sort(
+              (a, b) => a.weight.toString().compareTo(b.weight.toString()));
         } else {
-          widget.jobs.sort(
-              (a, b) => b.quantity.toString().compareTo(a.quantity.toString()));
+          widget.jobWeighings.sort(
+              (a, b) => b.weight.toString().compareTo(a.weight.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.jobs.sort((a, b) => a.jobItems.length
+          widget.jobWeighings.sort((a, b) => (a.createdBy.firstName +
+                  " " +
+                  a.createdBy.lastName)
               .toString()
-              .compareTo(b.jobItems.length.toString()));
+              .compareTo((b.createdBy.firstName + " " + b.createdBy.lastName)
+                  .toString()));
         } else {
-          widget.jobs.sort((a, b) => b.jobItems.length
+          widget.jobWeighings.sort((a, b) => (b.createdBy.firstName +
+                  " " +
+                  b.createdBy.lastName)
               .toString()
-              .compareTo(a.jobItems.length.toString()));
-        }
-        break;
-      case 5:
-        if (ascending) {
-          widget.jobs.sort(
-              (a, b) => a.complete.toString().compareTo(b.complete.toString()));
-        } else {
-          widget.jobs.sort(
-              (a, b) => b.complete.toString().compareTo(a.complete.toString()));
+              .compareTo((a.createdBy.firstName + " " + a.createdBy.lastName)
+                  .toString()));
         }
         break;
       default:
@@ -102,7 +100,8 @@ class _JobListState extends State<JobList> {
         return Container(
           padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
           width: sizeInfo.screenSize.width,
-          height: sizeInfo.screenSize.height,
+          height:
+              double.parse((150 + 56 * widget.jobWeighings.length).toString()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -125,7 +124,7 @@ class _JobListState extends State<JobList> {
                         columns: [
                           DataColumn(
                             label: const Text(
-                              "Job Code",
+                              "Weighing ID",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -143,7 +142,7 @@ class _JobListState extends State<JobList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Material",
+                              "Quantity",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -161,7 +160,7 @@ class _JobListState extends State<JobList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Material Name",
+                              "Weighed By",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -179,43 +178,7 @@ class _JobListState extends State<JobList> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Job Size",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Job Items",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Complete",
+                              "Verified",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -234,10 +197,11 @@ class _JobListState extends State<JobList> {
                         ],
                         source: _DataSource(
                           context,
-                          widget.jobs,
+                          widget.jobWeighings,
                         ),
-                        rowsPerPage:
-                            widget.jobs.length > 25 ? 25 : widget.jobs.length,
+                        rowsPerPage: widget.jobWeighings.length > 25
+                            ? 25
+                            : widget.jobWeighings.length,
                       )
                     ],
                   ),
@@ -260,39 +224,30 @@ class _JobListState extends State<JobList> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._jobs) {
-    _jobs = _jobs;
+  _DataSource(this.context, this._jobWeighings) {
+    _jobWeighings = _jobWeighings;
   }
 
   final BuildContext context;
-  List<Job> _jobs;
-  // ignore: unused_field
-  int _selectedCount = 0;
+  List<JobItemWeighing> _jobWeighings;
 
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    final job = _jobs[index];
+    final jobWeighing = _jobWeighings[index];
     return DataRow.byIndex(
+      color: MaterialStateColor.resolveWith(
+        (states) {
+          return jobWeighing.jobItem.complete
+              ? Colors.transparent
+              : Colors.blue;
+        },
+      ),
       index: index,
-      selected: job.selected,
-      onSelectChanged: (value) {
-        if (job.selected != value) {
-          _selectedCount += value! ? 1 : -1;
-          job.selected = value;
-          notifyListeners();
-          navigationService.pushReplacement(
-            CupertinoPageRoute(
-              builder: (BuildContext context) => JobDetailsWidget(
-                  jobCode: job.jobCode, jobItems: job.jobItems),
-            ),
-          );
-        }
-      },
       cells: [
         DataCell(
           Text(
-            job.jobCode,
+            jobWeighing.id,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -302,7 +257,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            job.material.code,
+            jobWeighing.weight.toString() + " " + jobWeighing.jobItem.uom.code,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -312,7 +267,9 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            job.material.description.toUpperCase(),
+            jobWeighing.createdBy.firstName +
+                " " +
+                jobWeighing.createdBy.lastName,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -321,31 +278,8 @@ class _DataSource extends DataTableSource {
           ),
         ),
         DataCell(
-          Text(
-            job.quantity.toString() + " " + job.uom.code,
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            job.jobItems.length.toString(),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        DataCell(
-          job.complete
-              ? const Icon(
-                  Icons.check,
-                  color: Colors.green,
-                )
+          jobWeighing.jobItem.verified
+              ? const Icon(Icons.check, color: Colors.green)
               : const Icon(
                   Icons.stop,
                   color: Colors.red,
@@ -356,7 +290,7 @@ class _DataSource extends DataTableSource {
   }
 
   @override
-  int get rowCount => _jobs.length;
+  int get rowCount => _jobWeighings.length;
 
   @override
   bool get isRowCountApproximate => false;

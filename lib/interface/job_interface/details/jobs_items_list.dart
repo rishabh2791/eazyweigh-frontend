@@ -333,36 +333,35 @@ class _DataSource extends DataTableSource {
             ),
           ),
         ),
+        DataCell(jobItem.assigned
+            ? const Icon(
+                Icons.check,
+                color: Colors.green,
+              )
+            : const Icon(
+                Icons.stop,
+                color: Colors.red,
+              )),
         DataCell(
-          Text(
-            jobItem.assigned.toString().toUpperCase(),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          jobItem.complete
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
         ),
-        DataCell(
-          Text(
-            jobItem.complete.toString().toUpperCase(),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            jobItem.verified.toString().toUpperCase(),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        DataCell(jobItem.verified
+            ? const Icon(
+                Icons.check,
+                color: Colors.green,
+              )
+            : const Icon(
+                Icons.stop,
+                color: Colors.red,
+              )),
         DataCell(
           Text(
             "Print Label",

@@ -171,7 +171,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                                   if (value.containsKey("status")) {
                                     if (value["status"]) {
                                       for (var item in value["payload"]) {
-                                        underIssueQty[item["job_item"]] =
+                                        underIssueQty[item["job_item_id"]] =
                                             double.parse(
                                                     item["actual"].toString()) -
                                                 double.parse(item["required"]

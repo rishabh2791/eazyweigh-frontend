@@ -100,7 +100,8 @@ class _UnderIssueItemDetailsWidgetState
           "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
-        if (actualWeight != 0) {
+        if (actualWeight >= requiredQty * .99 &&
+            actualWeight <= 1.01 * requiredQty) {
           await appStore.underIssueApp
               .update(widget.underIssue.id, update)
               .then((value) {

@@ -100,7 +100,8 @@ class _OverIssueItemDetailsWidgetState
           "job_code": widget.jobCode,
           "over_issue_id": widget.overIssue.id,
         };
-        if (actualWeight != 0) {
+        if (actualWeight >= requiredQty * .99 &&
+            actualWeight <= 1.01 * requiredQty) {
           await appStore.overIssueApp
               .update(widget.overIssue.id, update)
               .then((value) {
@@ -133,7 +134,7 @@ class _OverIssueItemDetailsWidgetState
             context: context,
             builder: (BuildContext context) {
               return const CustomDialog(
-                message: "Nothing to Weigh.",
+                message: "Weight Not Correct.",
                 title: "Errors",
               );
             },

@@ -1,20 +1,20 @@
-import 'package:eazyweigh/domain/entity/bom_item.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/over_issue_interface/list/hybrid_over_issue.dart';
 import 'package:flutter/material.dart';
 
-class BOMItemsListWidget extends StatefulWidget {
-  final List<BomItem> bomItems;
-  const BOMItemsListWidget({
+class OverIssueList extends StatefulWidget {
+  final List<HybridOverIssue> overIssues;
+  const OverIssueList({
     Key? key,
-    required this.bomItems,
+    required this.overIssues,
   }) : super(key: key);
 
   @override
-  State<BOMItemsListWidget> createState() => _BOMItemsListWidgetState();
+  State<OverIssueList> createState() => _OverIssueListState();
 }
 
-class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
+class _OverIssueListState extends State<OverIssueList> {
   bool sort = true, ascending = true;
   int sortingColumnIndex = 0;
 
@@ -32,70 +32,89 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.bomItems
-              .sort((a, b) => a.material.code.compareTo(b.material.code));
+          widget.overIssues.sort((a, b) => a.overIssue.createdAt
+              .toString()
+              .compareTo(b.overIssue.createdAt.toString()));
         } else {
-          widget.bomItems
-              .sort((a, b) => b.material.code.compareTo(a.material.code));
+          widget.overIssues.sort((a, b) => b.overIssue.createdAt
+              .toString()
+              .compareTo(a.overIssue.createdAt.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.bomItems.sort((a, b) =>
-              a.material.description.compareTo(b.material.description));
+          widget.overIssues.sort((a, b) =>
+              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
         } else {
-          widget.bomItems.sort((a, b) =>
-              b.material.description.compareTo(a.material.description));
+          widget.overIssues.sort((a, b) =>
+              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.bomItems.sort((a, b) => a.quantity.compareTo(b.quantity));
+          widget.overIssues.sort((a, b) => a.overIssue.jobItem.material.code
+              .toString()
+              .compareTo(b.overIssue.jobItem.material.code.toString()));
         } else {
-          widget.bomItems.sort((a, b) => b.quantity.compareTo(a.quantity));
+          widget.overIssues.sort((a, b) => b.overIssue.jobItem.material.code
+              .toString()
+              .compareTo(a.overIssue.jobItem.material.code.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.bomItems.sort((a, b) => a.uom.code.compareTo(b.uom.code));
+          widget.overIssues.sort((a, b) => a
+              .overIssue.jobItem.material.description
+              .toString()
+              .compareTo(b.overIssue.jobItem.material.description.toString()));
         } else {
-          widget.bomItems.sort((a, b) => b.uom.code.compareTo(a.uom.code));
+          widget.overIssues.sort((a, b) => b
+              .overIssue.jobItem.material.description
+              .toString()
+              .compareTo(a.overIssue.jobItem.material.description.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.bomItems
-              .sort((a, b) => a.upperTolerance.compareTo(b.upperTolerance));
+          widget.overIssues.sort((a, b) =>
+              a.overIssue.req.toString().compareTo(b.overIssue.req.toString()));
         } else {
-          widget.bomItems
-              .sort((a, b) => b.upperTolerance.compareTo(a.upperTolerance));
+          widget.overIssues.sort((a, b) =>
+              b.overIssue.req.toString().compareTo(a.overIssue.req.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.bomItems
-              .sort((a, b) => a.lowerTolerance.compareTo(b.lowerTolerance));
+          widget.overIssues.sort((a, b) => (a.overIssue.actual -
+                  a.overIssue.req)
+              .toString()
+              .compareTo((b.overIssue.actual - b.overIssue.req).toString()));
         } else {
-          widget.bomItems
-              .sort((a, b) => b.lowerTolerance.compareTo(a.lowerTolerance));
+          widget.overIssues.sort((a, b) => (b.overIssue.actual -
+                  b.overIssue.req)
+              .toString()
+              .compareTo((a.overIssue.actual - a.overIssue.req).toString()));
         }
         break;
       case 6:
         if (ascending) {
-          widget.bomItems.sort((a, b) =>
-              a.overIssue.toString().compareTo(b.overIssue.toString()));
+          widget.overIssues.sort((a, b) => (a.overIssue.createdBy.firstName +
+                  " " +
+                  a.overIssue.createdBy.lastName)
+              .toString()
+              .compareTo((b.overIssue.createdBy.firstName +
+                      " " +
+                      b.overIssue.createdBy.lastName)
+                  .toString()));
         } else {
-          widget.bomItems.sort((a, b) =>
-              b.overIssue.toString().compareTo(a.overIssue.toString()));
-        }
-        break;
-      case 7:
-        if (ascending) {
-          widget.bomItems.sort((a, b) =>
-              a.underIssue.toString().compareTo(b.underIssue.toString()));
-        } else {
-          widget.bomItems.sort((a, b) =>
-              b.underIssue.toString().compareTo(a.underIssue.toString()));
+          widget.overIssues.sort((a, b) => (b.overIssue.updatedBy.firstName +
+                  " " +
+                  b.overIssue.updatedBy.lastName)
+              .toString()
+              .compareTo((a.overIssue.updatedBy.firstName +
+                      " " +
+                      a.overIssue.updatedBy.lastName)
+                  .toString()));
         }
         break;
       default:
@@ -109,7 +128,8 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
         return Container(
           padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
           width: sizeInfo.screenSize.width,
-          height: sizeInfo.screenSize.height,
+          height:
+              double.parse((150 + 56 * widget.overIssues.length).toString()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -132,7 +152,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                         columns: [
                           DataColumn(
                             label: const Text(
-                              "Material Code",
+                              "ID",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -150,7 +170,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Material Description",
+                              "Required Qty",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -168,7 +188,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Quantity",
+                              "Over Issued Qty.",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -186,7 +206,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "UOM",
+                              "Weighed Qty",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -204,7 +224,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Upper Limit",
+                              "Weighed By",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -222,43 +242,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                           ),
                           DataColumn(
                             label: const Text(
-                              "Lower Limit",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Over Issue",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Under Issue",
+                              "Verified",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -275,10 +259,10 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.bomItems),
-                        rowsPerPage: widget.bomItems.length > 25
+                        source: _DataSource(context, widget.overIssues),
+                        rowsPerPage: widget.overIssues.length > 25
                             ? 25
-                            : widget.bomItems.length,
+                            : widget.overIssues.length,
                       )
                     ],
                   ),
@@ -301,23 +285,30 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._bomItems) {
-    _bomItems = _bomItems;
+  _DataSource(this.context, this._overIssues) {
+    _overIssues = _overIssues;
   }
 
   final BuildContext context;
-  List<BomItem> _bomItems;
+  List<HybridOverIssue> _overIssues;
 
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    final bomItem = _bomItems[index];
+    final overIssues = _overIssues[index];
     return DataRow.byIndex(
       index: index,
+      color: MaterialStateColor.resolveWith(
+        (states) {
+          return overIssues.overIssue.weighed
+              ? Colors.transparent
+              : Colors.blue;
+        },
+      ),
       cells: [
         DataCell(
           Text(
-            bomItem.material.code,
+            overIssues.overIssue.id,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -327,7 +318,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            bomItem.material.description,
+            overIssues.overIssue.req.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -337,7 +328,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            bomItem.quantity.toString(),
+            (overIssues.overIssue.actual - overIssues.overIssue.req).toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -347,7 +338,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            bomItem.uom.code,
+            overIssues.overIssue.weight.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -357,8 +348,11 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            (bomItem.quantity * (1 + bomItem.upperTolerance / 100))
-                .toStringAsFixed(6),
+            overIssues.overIssue.weighed
+                ? overIssues.overIssue.updatedBy.firstName +
+                    " " +
+                    overIssues.overIssue.updatedBy.lastName
+                : "Not Weighed",
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -367,29 +361,7 @@ class _DataSource extends DataTableSource {
           ),
         ),
         DataCell(
-          Text(
-            (bomItem.quantity * (1 - bomItem.lowerTolerance / 100))
-                .toStringAsFixed(6),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        DataCell(
-          bomItem.overIssue
-              ? const Icon(
-                  Icons.check,
-                  color: Colors.green,
-                )
-              : const Icon(
-                  Icons.stop,
-                  color: Colors.red,
-                ),
-        ),
-        DataCell(
-          bomItem.underIssue
+          overIssues.overIssue.verified
               ? const Icon(
                   Icons.check,
                   color: Colors.green,
@@ -404,7 +376,7 @@ class _DataSource extends DataTableSource {
   }
 
   @override
-  int get rowCount => _bomItems.length;
+  int get rowCount => _overIssues.length;
 
   @override
   bool get isRowCountApproximate => false;

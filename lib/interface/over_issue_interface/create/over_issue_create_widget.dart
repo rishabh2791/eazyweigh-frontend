@@ -212,7 +212,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                                   if (value.containsKey("status")) {
                                     if (value["status"]) {
                                       for (var item in value["payload"]) {
-                                        overIssueQty[item["job_item"]] =
+                                        overIssueQty[item["job_item_id"]] =
                                             double.parse(
                                                     item["actual"].toString()) -
                                                 double.parse(item["required"]

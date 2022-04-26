@@ -79,8 +79,8 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
     factories = [];
     Map<String, dynamic> conditions = {
       "EQUALS": {
-        "FIELD": "company_id",
-        "VALUE": companyID,
+        "Field": "company_id",
+        "Value": companyID,
       }
     };
     await appStore.factoryApp.list(conditions).then((response) async {
@@ -369,7 +369,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Upload JOB Items",
+                  "Create Multiple Jobs",
                   style: TextStyle(
                     color: formHintTextColor,
                     fontSize: 30.0,

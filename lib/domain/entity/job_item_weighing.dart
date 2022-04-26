@@ -52,7 +52,7 @@ class JobItemWeighing {
       startTime: DateTime.parse(jsonObject["start_time"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      weight: jsonObject["weight"],
+      weight: double.parse(jsonObject["weight"].toString()),
     );
     return jobItemWeighing;
   }
