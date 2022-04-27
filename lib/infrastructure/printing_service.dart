@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
-import 'package:f_logs/model/flog/flog.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:flutter/foundation.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 // Map<String, dynamic> printingData = {
 //   "job_code": "153847",
@@ -36,9 +36,8 @@ const String lineFeed = '\n';
 PrintingService printingService = PrintingService();
 
 class PrintingService extends ChangeNotifier {
-  late WebSocketChannel _printingChannel;
-  bool _isConnected = false;
-  int tries = 0;
+  late WebSocket webSocketChannel;
+  bool _isConnected = true;
   ObserverList<Function> listeners = ObserverList<Function>();
   static final PrintingService printingService = PrintingService._internal();
 
@@ -48,48 +47,6 @@ class PrintingService extends ChangeNotifier {
 
   PrintingService._internal();
 
-  initCommunication() async {
-    try {
-      _printingChannel = WebSocketChannel.connect(Uri.parse(PRINTER_URL));
-      _isConnected = true;
-      _printingChannel.stream.listen(
-        (event) {
-          _onReceptionOfMessageFromServer(event);
-        },
-        onDone: () async {
-          if (_isConnected) {
-            await initCommunication();
-          }
-        },
-        onError: (error) async {
-          tries += 1;
-          if (tries < 10) {
-            await initCommunication();
-          } else {
-            FLog.error(
-                text:
-                    "Unable to Connect to Printer. Too Many Attempts to Connect.");
-            _onReceptionOfMessageFromServer(
-                {"error": "Unable to Connect to Printer."});
-          }
-        },
-      );
-    } catch (ex) {
-      FLog.error(text: "Unable to Connect to Printer");
-    }
-  }
-
-  reset() {
-    _printingChannel.sink.close();
-    _isConnected = false;
-  }
-
-  send(String message) {
-    if (_isConnected) {
-      _printingChannel.sink.add(utf8.encode(message));
-    }
-  }
-
   @override
   addListener(Function listener) {
     listeners.add(listener);
@@ -98,17 +55,20 @@ class PrintingService extends ChangeNotifier {
   @override
   removeListener(Function listener) {
     listeners.remove(listener);
+    close();
   }
 
-  int printJobSheet(Map<String, dynamic> data) {
-    int done = 1;
-    String zplString = mapToZPLString(data);
-    send(zplString);
-    return done;
+  close() async {
+    try {
+      if (_isConnected) {
+        await webSocketChannel.close();
+      }
+    } catch (e) {
+      FLog.error(text: e.toString());
+    }
   }
 
-  Future<int> printJobItemLabel(Map<String, dynamic> data) async {
-    int done = 1;
+  Future<void> printJobItemLabel(Map<String, dynamic> data) async {
     String zplString = "^XA";
     zplString += "^CFA,15";
     zplString += "^FO30,30^FD Job Code: ^FS";
@@ -136,12 +96,26 @@ class PrintingService extends ChangeNotifier {
     zplString += "^CFA,30";
     zplString += "^FO50,325^FD" + data["material_description"] + "^FS";
     zplString += mapToZPLString(data) + "^XZ";
-    send(zplString);
-    return done;
+
+    try {
+      await WebSocket.connect(PRINTER_URL).then((webSocket) {
+        if (webSocket.readyState == 1) {
+          _isConnected = true;
+          webSocketChannel = webSocket;
+          webSocket.listen(listenToWebSocket);
+          webSocket.add(utf8.encode(zplString));
+        } else {
+          _isConnected = false;
+          listenToWebSocket("{'status':false}");
+        }
+      });
+    } catch (e) {
+      _isConnected = false;
+      listenToWebSocket("{'status':false}");
+    }
   }
 
-  _onReceptionOfMessageFromServer(message) {
-    _isConnected = true;
+  void listenToWebSocket(message) {
     for (var listener in listeners) {
       listener(message);
     }

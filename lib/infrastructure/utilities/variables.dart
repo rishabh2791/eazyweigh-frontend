@@ -19,6 +19,7 @@ import 'package:eazyweigh/interface/unit_of_measurement_interface/unit_of_measur
 import 'package:eazyweigh/interface/user_access/user_access_widget.dart';
 import 'package:eazyweigh/interface/user_interface/user_widget.dart';
 import 'package:eazyweigh/interface/user_role_interface/user_role_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late User currentUser;
@@ -26,7 +27,6 @@ List<UserRoleAccess> userRolePermissions = [];
 
 bool inSubMenu = false;
 bool isLoggedIn = false;
-bool isDarkTheme = true;
 bool isRefreshing = false;
 bool isLoadingServerData = false;
 SharedPreferences? storage;
@@ -35,6 +35,7 @@ String menuItemSelected = "Home";
 String companyID = "";
 String factoryID = "";
 late DateTime accessTokenExpiryTime;
+ValueNotifier themeChanged = ValueNotifier(true);
 
 Map<String, dynamic> menuWidgetMapping = {
   "Home": HomePage(username: currentUser.username),

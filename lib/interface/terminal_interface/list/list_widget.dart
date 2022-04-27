@@ -139,10 +139,12 @@ class _TerminalListWidgetState extends State<TerminalListWidget> {
         ),
         isDataLoaded
             ? terminals.isEmpty
-                ? const Text(
+                ? Text(
                     "No Terminals Found",
                     style: TextStyle(
-                      color: foregroundColor,
+                      color: themeChanged.value
+                          ? foregroundColor
+                          : backgroundColor,
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -155,19 +157,24 @@ class _TerminalListWidgetState extends State<TerminalListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              listWidget(),
-              context,
-              "Terminals List",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  listWidget(),
+                  context,
+                  "Terminals List",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

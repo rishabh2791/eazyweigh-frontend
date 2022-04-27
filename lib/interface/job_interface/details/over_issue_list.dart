@@ -1,4 +1,5 @@
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/over_issue_interface/list/hybrid_over_issue.dart';
 import 'package:flutter/material.dart';
@@ -136,10 +137,16 @@ class _OverIssueListState extends State<OverIssueList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
                     dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    textTheme: TextTheme(
+                      caption: TextStyle(
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
+                      ),
+                    ),
                   ),
                   child: ListView(
                     children: [
@@ -151,11 +158,13 @@ class _OverIssueListState extends State<OverIssueList> {
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "ID",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -169,11 +178,13 @@ class _OverIssueListState extends State<OverIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Required Qty",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -187,11 +198,13 @@ class _OverIssueListState extends State<OverIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Over Issued Qty.",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -205,11 +218,13 @@ class _OverIssueListState extends State<OverIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Weighed Qty",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -223,11 +238,13 @@ class _OverIssueListState extends State<OverIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Weighed By",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -241,11 +258,13 @@ class _OverIssueListState extends State<OverIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Verified",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -309,9 +328,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             overIssues.overIssue.id,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -319,9 +338,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             overIssues.overIssue.req.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -329,9 +348,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             (overIssues.overIssue.actual - overIssues.overIssue.req).toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -339,9 +358,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             overIssues.overIssue.weight.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -353,9 +372,9 @@ class _DataSource extends DataTableSource {
                     " " +
                     overIssues.overIssue.updatedBy.lastName
                 : "Not Weighed",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),

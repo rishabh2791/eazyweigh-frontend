@@ -61,7 +61,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   @override
   void initState() {
     scannerListener.addListener(listenToScanner);
-    currentUser.userRole.role == "Weigher" ? checkWeigher() : getFactories();
+    currentUser.userRole.role == "Operator" ? checkWeigher() : getFactories();
     factoryController = TextEditingController();
     startDateController = TextEditingController();
     endDateController = TextEditingController();
@@ -544,7 +544,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               child: QrImage(
                 data: back,
                 size: 150,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.red,
               ),
             ),
             const Text(
@@ -579,7 +579,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               child: QrImage(
                 data: previous,
                 size: 150,
-                backgroundColor: start == 0 ? Colors.transparent : Colors.green,
+                backgroundColor: start == 0 ? Colors.transparent : Colors.red,
                 foregroundColor: start == 0 ? backgroundColor : Colors.black,
               ),
             ),
@@ -615,7 +615,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                 backgroundColor: (end == passedJobMapping.length - 1 ||
                         passedJobMapping.length < 3)
                     ? Colors.transparent
-                    : Colors.green,
+                    : Colors.red,
                 foregroundColor: (end == passedJobMapping.length - 1 ||
                         passedJobMapping.length < 3)
                     ? backgroundColor
@@ -683,7 +683,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
           QrImage(
             data: back,
             size: 250,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red,
           ),
         ],
       ),

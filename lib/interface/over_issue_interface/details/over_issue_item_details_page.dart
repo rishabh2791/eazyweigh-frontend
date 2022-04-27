@@ -59,16 +59,41 @@ class _OverIssueItemDetailsWidgetState
     getAllData();
     startTime = DateTime.now();
     socketUtility.initCommunication();
-    printingService.initCommunication();
+    printingService.addListener(listenToPrintingService);
     scannerListener.addListener(listenToScanner);
     socketUtility.addListener(listenToWeighingScale);
   }
 
   @override
   void dispose() {
+    printingService.removeListener(listenToPrintingService);
     scannerListener.removeListener(listenToScanner);
     socketUtility.removeListener(listenToWeighingScale);
     super.dispose();
+  }
+
+  void listenToPrintingService(String message) {
+    Map<String, dynamic> scannerData = jsonDecode(message
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
+    if (!(scannerData.containsKey("status") && scannerData["status"])) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to Print.",
+            title: "Error",
+          );
+        },
+      );
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pop();
+      });
+    }
+    printingService.close();
   }
 
   dynamic listenToScanner(String data) async {
@@ -104,9 +129,10 @@ class _OverIssueItemDetailsWidgetState
             actualWeight <= 1.01 * requiredQty) {
           await appStore.overIssueApp
               .update(widget.overIssue.id, update)
-              .then((value) {
+              .then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
+
               setState(() {
                 widget.jobItem.requiredWeight =
                     widget.jobItem.requiredWeight - actualWeight;
@@ -573,7 +599,7 @@ class _OverIssueItemDetailsWidgetState
           QrImage(
             data: back,
             size: 250,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red,
           ),
         ],
       ),
@@ -595,7 +621,7 @@ class _OverIssueItemDetailsWidgetState
           QrImage(
             data: back,
             size: 250,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red,
           ),
         ],
       ),

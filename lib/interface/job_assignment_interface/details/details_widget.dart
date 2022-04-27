@@ -233,7 +233,9 @@ class _JobAssignmentDetailsWidgetState
             ),
           ],
         ),
-        const Divider(),
+        const Divider(
+          color: Colors.transparent,
+        ),
         isJobItemsLoaded
             ? jobItemAssignments.isEmpty
                 ? const Text(
@@ -269,19 +271,24 @@ class _JobAssignmentDetailsWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              detailsWidget(),
-              context,
-              "Job Assignment Details",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  detailsWidget(),
+                  context,
+                  "Job Assignment Details",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

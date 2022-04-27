@@ -37,6 +37,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   List<Factory> factories = [];
   List<JobItem> jobItems = [];
   late Job job;
+  int timeTaken = 0;
   Map<String, List<JobItemWeighing>> jobWeighings = {};
   Map<String, List<HybridOverIssue>> overIssues = {};
   Map<String, List<HybridUnderIssue>> underIssues = {};
@@ -61,6 +62,9 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           if (response.containsKey("status") && response["status"]) {
             for (var item in response["payload"]) {
               JobItemWeighing jobItemWeighing = JobItemWeighing.fromJSON(item);
+              timeTaken += jobItemWeighing.endTime
+                  .difference(jobItemWeighing.startTime)
+                  .inSeconds;
               if (jobWeighings.containsKey(jobItemID)) {
                 jobWeighings[jobItemID]!.add(jobItemWeighing);
               } else {
@@ -148,14 +152,253 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   }
 
   List<Widget> jobItemsWidget() {
+    var hr = (timeTaken / 3600).floor();
+    var min = ((timeTaken - hr * 60) / 60).floor();
+    var sec = timeTaken - hr * 3600 - min * 60;
     List<Widget> widgets = [
       Text(
         "Details for Job Code: " + jobCodeController.text,
-        style: const TextStyle(
-          color: formHintTextColor,
+        style: TextStyle(
+          color: themeChanged.value ? foregroundColor : backgroundColor,
           fontWeight: FontWeight.bold,
           fontSize: 30.0,
         ),
+      ),
+      const Divider(color: Colors.transparent),
+      Wrap(
+        direction: Axis.horizontal,
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4 - 40,
+              height: 200,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                color: Color(0xFFF1DDBF),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 5,
+                    color: shadowColor,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: jobWeighings.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " of ",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: jobItems.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Text(
+                    "Items Weighed",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4 - 40,
+              height: 200,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                color: Color(0xFFF1DDBF),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 5,
+                    color: shadowColor,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    underIssues.length.toString(),
+                    style: const TextStyle(
+                      fontSize: 100.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    "Under Issued Items",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4 - 40,
+              height: 200,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                color: Color(0xFFF1DDBF),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 5,
+                    color: shadowColor,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    overIssues.length.toString(),
+                    style: const TextStyle(
+                      fontSize: 100.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    "Over Issues Items",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4 - 40,
+              height: 200,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                color: Color(0xFFF1DDBF),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 5,
+                    color: shadowColor,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: hr.toString(),
+                          style: const TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " hr ",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: min.toString(),
+                          style: const TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " min ",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: sec.toString(),
+                          style: const TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " s",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Text(
+                    "Total Time Spent",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      const Divider(
+        color: Colors.transparent,
+        height: 30.0,
       ),
     ];
     for (var jobItem in jobItems) {
@@ -173,13 +416,13 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
         ),
       );
       widgets.add(
-        const Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
           child: Text(
             "Weighings: ",
             style: TextStyle(
               fontSize: 18.0,
-              color: menuItemColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -194,7 +437,8 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                   "No Weighings Found.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: isDarkTheme ? foregroundColor : backgroundColor,
+                    color:
+                        themeChanged.value ? foregroundColor : backgroundColor,
                   ),
                 ),
         ),
@@ -206,13 +450,13 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
         ),
       );
       widgets.add(
-        const Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
           child: Text(
             "Over Issued Items: ",
             style: TextStyle(
               fontSize: 18.0,
-              color: menuItemColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -227,7 +471,8 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                   "No Over Issues Found.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: isDarkTheme ? foregroundColor : backgroundColor,
+                    color:
+                        themeChanged.value ? foregroundColor : backgroundColor,
                   ),
                 ),
         ),
@@ -239,13 +484,13 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
         ),
       );
       widgets.add(
-        const Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
           child: Text(
             "Under Issued Items: ",
             style: TextStyle(
               fontSize: 18.0,
-              color: menuItemColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -260,7 +505,8 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                   "No Under Issues Found.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: isDarkTheme ? foregroundColor : backgroundColor,
+                    color:
+                        themeChanged.value ? foregroundColor : backgroundColor,
                   ),
                 ),
         ),
@@ -270,128 +516,138 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   }
 
   Widget detailsWidget() {
-    return isDataLoaded
-        ? jobItems.isEmpty
-            ? Text(
-                "No Job Details Found",
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: isDarkTheme ? foregroundColor : backgroundColor,
-                ),
-              )
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isDataLoaded
+            ? jobItems.isEmpty
+                ? Text(
+                    "No Job Details Found",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: themeChanged.value
+                          ? backgroundColor
+                          : foregroundColor,
+                    ),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: jobItemsWidget(),
+                  )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: jobItemsWidget(),
-              )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Get Job Details:",
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: isDarkTheme ? foregroundColor : backgroundColor,
-                ),
-              ),
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  DropDownWidget(
-                    disabled: false,
-                    hint: "Select Factory",
-                    controller: factoryController,
-                    itemList: factories,
-                  ),
-                  textField(
-                    false,
-                    jobCodeController,
-                    "Job Code",
-                    false,
-                  ),
-                  TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
-                      elevation: MaterialStateProperty.all<double>(5.0),
+                  Text(
+                    "Get Job Details:",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: themeChanged.value
+                          ? backgroundColor
+                          : foregroundColor,
                     ),
-                    onPressed: () async {
-                      String errors = "";
-                      jobItemIDs = [];
-                      jobItems = [];
-                      var factoryID = factoryController.text;
-                      var jobCode = jobCodeController.text;
+                  ),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      DropDownWidget(
+                        disabled: false,
+                        hint: "Select Factory",
+                        controller: factoryController,
+                        itemList: factories,
+                      ),
+                      textField(
+                        false,
+                        jobCodeController,
+                        "Job Code",
+                        false,
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(menuItemColor),
+                          elevation: MaterialStateProperty.all<double>(5.0),
+                        ),
+                        onPressed: () async {
+                          String errors = "";
+                          jobItemIDs = [];
+                          jobItems = [];
+                          var factoryID = factoryController.text;
+                          var jobCode = jobCodeController.text;
 
-                      if (factoryID.isEmpty || factoryID == "") {
-                        errors += "Factory Required\n";
-                      }
-
-                      if (jobCode == "" || jobCode.isEmpty) {
-                        errors += "Job Code Required.\n";
-                      }
-
-                      if (errors.isNotEmpty) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomDialog(
-                              message: errors,
-                              title: "Error",
-                            );
-                          },
-                        );
-                      } else {
-                        setState(() {
-                          isLoadingData = true;
-                        });
-                        Map<String, dynamic> conditions = {
-                          "AND": [
-                            {
-                              "EQUALS": {
-                                "Field": "job_code",
-                                "Value": jobCode,
-                              },
-                            },
-                            {
-                              "EQUALS": {
-                                "Field": "factory_id",
-                                "Value": factoryID,
-                              },
-                            },
-                          ],
-                        };
-                        await appStore.jobApp
-                            .list(conditions)
-                            .then((value) async {
-                          if (value.containsKey("status") && value["status"]) {
-                            if (value["payload"].isNotEmpty) {
-                              job = Job.fromJSON(value["payload"][0]);
-                              for (var item in value["payload"][0]
-                                  ["job_items"]) {
-                                JobItem jobItem = JobItem.fromJSON(item);
-                                jobItems.add(jobItem);
-                                jobItemIDs.add(jobItem.id);
-                              }
-                              await Future.forEach([
-                                await getJobItemWeighings(),
-                                await getJobItemOverIssues(),
-                                await getJobItemUnderIssues(),
-                              ], (element) {});
-                            }
+                          if (factoryID.isEmpty || factoryID == "") {
+                            errors += "Factory Required\n";
                           }
-                        }).then((value) {
-                          setState(() {
-                            isDataLoaded = true;
-                            isLoadingData = false;
-                          });
-                        });
-                      }
-                    },
-                    child: checkButton(),
+
+                          if (jobCode == "" || jobCode.isEmpty) {
+                            errors += "Job Code Required.\n";
+                          }
+
+                          if (errors.isNotEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialog(
+                                  message: errors,
+                                  title: "Error",
+                                );
+                              },
+                            );
+                          } else {
+                            setState(() {
+                              isLoadingData = true;
+                            });
+                            Map<String, dynamic> conditions = {
+                              "AND": [
+                                {
+                                  "EQUALS": {
+                                    "Field": "job_code",
+                                    "Value": jobCode,
+                                  },
+                                },
+                                {
+                                  "EQUALS": {
+                                    "Field": "factory_id",
+                                    "Value": factoryID,
+                                  },
+                                },
+                              ],
+                            };
+                            await appStore.jobApp
+                                .list(conditions)
+                                .then((value) async {
+                              if (value.containsKey("status") &&
+                                  value["status"]) {
+                                if (value["payload"].isNotEmpty) {
+                                  job = Job.fromJSON(value["payload"][0]);
+                                  for (var item in value["payload"][0]
+                                      ["job_items"]) {
+                                    JobItem jobItem = JobItem.fromJSON(item);
+                                    jobItems.add(jobItem);
+                                    jobItemIDs.add(jobItem.id);
+                                  }
+                                  await Future.forEach([
+                                    await getJobItemWeighings(),
+                                    await getJobItemOverIssues(),
+                                    await getJobItemUnderIssues(),
+                                  ], (element) {});
+                                }
+                              }
+                            }).then((value) {
+                              setState(() {
+                                isDataLoaded = true;
+                                isLoadingData = false;
+                              });
+                            });
+                          }
+                        },
+                        child: checkButton(),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
-          );
+              );
+      },
+    );
   }
 
   @override

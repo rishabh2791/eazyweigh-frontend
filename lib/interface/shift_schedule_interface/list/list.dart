@@ -1,6 +1,7 @@
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/shift_schedule.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:flutter/material.dart';
@@ -77,10 +78,18 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
-                    dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
+                    textTheme: TextTheme(
+                      caption: TextStyle(
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
+                      ),
+                    ),
                   ),
                   child: ListView(
                     children: [
@@ -92,11 +101,13 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Date",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -110,11 +121,13 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Shift",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -128,11 +141,13 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Weigher",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -146,11 +161,13 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               " ",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -207,9 +224,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             shiftSchedule.date.toLocal().toString().substring(0, 10),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -217,9 +234,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             shiftSchedule.shift.code,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -229,9 +246,9 @@ class _DataSource extends DataTableSource {
             shiftSchedule.weigher.firstName +
                 " " +
                 shiftSchedule.weigher.lastName,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -242,9 +259,9 @@ class _DataSource extends DataTableSource {
                     const Duration(seconds: 0)
                 ? "Delete"
                 : " ",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),

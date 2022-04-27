@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/job_item_weighing.dart';
 import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:flutter/material.dart';
 
 class JobItemsList extends StatefulWidget {
@@ -25,13 +29,38 @@ class _JobItemItemsListState extends State<JobItemsList> {
 
   @override
   void initState() {
-    printingService.initCommunication();
+    printingService.addListener(listenToPrintingService);
     super.initState();
   }
 
   @override
   void dispose() {
+    printingService.removeListener(listenToPrintingService);
     super.dispose();
+  }
+
+  void listenToPrintingService(String message) {
+    Map<String, dynamic> scannerData = jsonDecode(message
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
+    if (!(scannerData.containsKey("status") && scannerData["status"])) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to Print.",
+            title: "Error",
+          );
+        },
+      );
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pop();
+      });
+    }
+    printingService.close();
   }
 
   onSortColum(int columnIndex, bool ascending) {
@@ -112,10 +141,18 @@ class _JobItemItemsListState extends State<JobItemsList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
-                    dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
+                    textTheme: TextTheme(
+                      caption: TextStyle(
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
+                      ),
+                    ),
                   ),
                   child: ListView(
                     children: [
@@ -127,11 +164,13 @@ class _JobItemItemsListState extends State<JobItemsList> {
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Material",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -145,11 +184,13 @@ class _JobItemItemsListState extends State<JobItemsList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Material Name",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -163,11 +204,13 @@ class _JobItemItemsListState extends State<JobItemsList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Quantity",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -181,11 +224,13 @@ class _JobItemItemsListState extends State<JobItemsList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Assigned",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -199,11 +244,13 @@ class _JobItemItemsListState extends State<JobItemsList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Complete",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -217,11 +264,13 @@ class _JobItemItemsListState extends State<JobItemsList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Verified",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -234,12 +283,14 @@ class _JobItemItemsListState extends State<JobItemsList> {
                               onSortColum(columnIndex, ascending);
                             },
                           ),
-                          const DataColumn(
+                          DataColumn(
                             label: Text(
                               " ",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -250,6 +301,7 @@ class _JobItemItemsListState extends State<JobItemsList> {
                           context,
                           widget.jobs,
                           widget.jobCode,
+                          printingService,
                         ),
                         rowsPerPage:
                             widget.jobs.length > 25 ? 25 : widget.jobs.length,
@@ -270,19 +322,31 @@ class _JobItemItemsListState extends State<JobItemsList> {
 
   @override
   Widget build(BuildContext context) {
-    return listDetailsWidget();
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return listDetailsWidget();
+      },
+    );
   }
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._jobItems, this._jobCode) {
+  _DataSource(
+    this.context,
+    this._jobItems,
+    this._jobCode,
+    this._printingService,
+  ) {
     _jobItems = _jobItems;
     _jobCode = _jobCode;
+    _printingService = _printingService;
   }
 
   final BuildContext context;
   List<JobItem> _jobItems;
   String _jobCode;
+  PrintingService _printingService;
   // ignore: unused_field
   int _selectedCount = 0;
 
@@ -304,9 +368,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             jobItem.material.code,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -314,21 +378,21 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             jobItem.material.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         DataCell(
           Text(
-            jobItem.requiredWeight.toString() +
+            jobItem.requiredWeight.toStringAsFixed(3) +
                 " " +
                 jobItem.uom.code.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -375,7 +439,7 @@ class _DataSource extends DataTableSource {
             jobItem.complete
                 ? await appStore.jobWeighingApp
                     .list(jobItem.id)
-                    .then((response) {
+                    .then((response) async {
                     if (response.containsKey("status")) {
                       if (response["status"]) {
                         for (var item in response["payload"]) {
@@ -397,6 +461,7 @@ class _DataSource extends DataTableSource {
                             "job_item_id": jobItemWeighing.jobItem.id,
                             "job_item_weighing_id": jobItemWeighing.id,
                           };
+
                           printingService.printJobItemLabel(printingData);
                         }
                       }

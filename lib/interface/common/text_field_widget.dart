@@ -22,7 +22,7 @@ Widget textField(bool obscureText, TextEditingController controller,
               BoxShadow(
                 offset: Offset(0, 0),
                 blurRadius: 5,
-                color: shadowColor,
+                color: Colors.white,
               ),
             ],
           ),

@@ -283,7 +283,9 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
               },
               child: checkButton(),
             ),
-            const VerticalDivider(),
+            const VerticalDivider(
+              color: Colors.transparent,
+            ),
             TextButton(
               style: ButtonStyle(
                 backgroundColor:
@@ -364,7 +366,9 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
             ),
           ],
         ),
-        const Divider(),
+        const Divider(
+          color: Colors.transparent,
+        ),
         isJobItemsLoaded
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,7 +384,11 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                 ],
               )
             : Container(),
-        isJobItemsLoaded ? const Divider() : Container(),
+        isJobItemsLoaded
+            ? const Divider(
+                color: Colors.transparent,
+              )
+            : Container(),
         isJobItemsLoaded
             ? JobItemsListWidget(
                 jobItems: jobItems,
@@ -393,19 +401,24 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              homeWidget(),
-              context,
-              "Over Issue Material",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  homeWidget(),
+                  context,
+                  "Over Issue Material",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

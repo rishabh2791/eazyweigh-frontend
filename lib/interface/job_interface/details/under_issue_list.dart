@@ -1,4 +1,5 @@
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/under_issue_interface/list/hybrid_under_issue.dart';
 import 'package:flutter/material.dart';
@@ -138,10 +139,18 @@ class _UnderIssueListState extends State<UnderIssueList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
-                    dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
+                    textTheme: TextTheme(
+                      caption: TextStyle(
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
+                      ),
+                    ),
                   ),
                   child: ListView(
                     children: [
@@ -153,11 +162,13 @@ class _UnderIssueListState extends State<UnderIssueList> {
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "ID",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -171,11 +182,13 @@ class _UnderIssueListState extends State<UnderIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Required Qty",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -189,11 +202,13 @@ class _UnderIssueListState extends State<UnderIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Under Issued Qty.",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -207,11 +222,13 @@ class _UnderIssueListState extends State<UnderIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Weighed Qty",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -225,11 +242,13 @@ class _UnderIssueListState extends State<UnderIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Weighed By",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -243,11 +262,13 @@ class _UnderIssueListState extends State<UnderIssueList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Verified",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -311,9 +332,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             underIssues.underIssue.id,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -321,9 +342,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             underIssues.underIssue.req.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -332,9 +353,9 @@ class _DataSource extends DataTableSource {
           Text(
             (underIssues.underIssue.req - underIssues.underIssue.actual)
                 .toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -342,9 +363,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             underIssues.underIssue.weight.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -356,9 +377,9 @@ class _DataSource extends DataTableSource {
                     " " +
                     underIssues.underIssue.updatedBy.lastName
                 : "Not Weighed",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),

@@ -61,11 +61,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   @override
   void initState() {
     scannerListener.addListener(listenToScanner);
-    currentUser.userRole.role == "Weigher" ? checkWeigher() : getFactories();
+    currentUser.userRole.role == "Operator" ? checkWeigher() : getFactories();
     factoryController = TextEditingController();
     startDateController = TextEditingController();
     endDateController = TextEditingController();
-    checkWeigher();
     super.initState();
   }
 
@@ -552,7 +551,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
               child: QrImage(
                 data: back,
                 size: 150,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.red,
               ),
             ),
             const Text(
@@ -587,7 +586,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
               child: QrImage(
                 data: previous,
                 size: 150,
-                backgroundColor: start == 0 ? Colors.transparent : Colors.green,
+                backgroundColor: start == 0 ? Colors.transparent : Colors.red,
                 foregroundColor: start == 0 ? backgroundColor : Colors.black,
               ),
             ),
@@ -623,7 +622,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                 backgroundColor:
                     (end == jobMapping.length - 1 || jobMapping.length < 3)
                         ? Colors.transparent
-                        : Colors.green,
+                        : Colors.red,
                 foregroundColor:
                     (end == jobMapping.length - 1 || jobMapping.length < 3)
                         ? backgroundColor
@@ -650,11 +649,13 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "No Over Issues Found.",
                     style: TextStyle(
                       fontSize: 20.0,
-                      color: Colors.white,
+                      color: themeChanged.value
+                          ? foregroundColor
+                          : backgroundColor,
                     ),
                   ),
                   navigation,
@@ -682,17 +683,21 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               overIssues.isEmpty
-                  ? const Text(
+                  ? Text(
                       "No Over Issued Found",
                       style: TextStyle(
-                        color: foregroundColor,
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
                         fontSize: 20.0,
                       ),
                     )
-                  : const Text(
+                  : Text(
                       "Over Issued Items",
                       style: TextStyle(
-                        color: foregroundColor,
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
                         fontSize: 20.0,
                       ),
                     ),
@@ -870,10 +875,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     return Center(
       child: Column(
         children: [
-          const Text(
+          Text(
             "Please Scan Job Code to Proceed.",
             style: TextStyle(
-              color: Colors.white,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontSize: 50.0,
             ),
           ),
@@ -881,7 +886,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
           QrImage(
             data: back,
             size: 250,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red,
           ),
         ],
       ),
@@ -898,29 +903,34 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              homeWidget(),
-              context,
-              "Over Issue Materials",
-              currentUser.userRole.role == "Operator" ||
-                      currentUser.userRole.role == "Verifier"
-                  ? () {
-                      navigationService.pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const OperatorHomePage(),
-                        ),
-                      );
-                    }
-                  : () {
-                      Navigator.of(context).pop();
-                    },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  homeWidget(),
+                  context,
+                  "Over Issue Materials",
+                  currentUser.userRole.role == "Operator" ||
+                          currentUser.userRole.role == "Verifier"
+                      ? () {
+                          navigationService.pushReplacement(
+                            CupertinoPageRoute(
+                              builder: (BuildContext context) =>
+                                  const OperatorHomePage(),
+                            ),
+                          );
+                        }
+                      : () {
+                          Navigator.of(context).pop();
+                        },
+                ),
+              );
+      },
+    );
   }
 }

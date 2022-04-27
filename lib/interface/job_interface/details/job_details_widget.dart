@@ -7,6 +7,7 @@ import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
+import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
@@ -388,7 +389,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
               child: QrImage(
                 data: back,
                 size: 150,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.red,
               ),
             ),
             const Text(
@@ -423,7 +424,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
               child: QrImage(
                 data: previous,
                 size: 150,
-                backgroundColor: start == 0 ? Colors.transparent : Colors.green,
+                backgroundColor: start == 0 ? Colors.transparent : Colors.red,
                 foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
@@ -459,7 +460,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                 backgroundColor: (end == widget.jobItems.length ||
                         widget.jobItems.length < 3)
                     ? Colors.transparent
-                    : Colors.green,
+                    : Colors.red,
                 foregroundColor: (end == widget.jobItems.length ||
                         widget.jobItems.length < 3)
                     ? Colors.transparent
@@ -501,8 +502,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             children: [
               Text(
                 "Job Items for Job: " + widget.jobCode,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: themeChanged.value ? foregroundColor : backgroundColor,
                   fontSize: 50.0,
                 ),
               ),
@@ -516,23 +517,29 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              listWidget(),
-              context,
-              "All Job Items",
-              () {
-                navigationService.pushReplacement(
-                  CupertinoPageRoute(
-                    builder: (BuildContext context) => const JobListWidget(),
-                  ),
-                );
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  listWidget(),
+                  context,
+                  "All Job Items",
+                  () {
+                    navigationService.pushReplacement(
+                      CupertinoPageRoute(
+                        builder: (BuildContext context) =>
+                            const JobListWidget(),
+                      ),
+                    );
+                  },
+                ),
+              );
+      },
+    );
   }
 }

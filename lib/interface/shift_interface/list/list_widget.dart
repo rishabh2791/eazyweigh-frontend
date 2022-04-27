@@ -72,9 +72,9 @@ class _ShiftListWidgetState extends State<ShiftListWidget> {
             children: [
               Text(
                 shifts.isEmpty ? "Not Shifts Found" : "Found Shifts",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20.0,
-                  color: foregroundColor,
+                  color: themeChanged.value ? foregroundColor : backgroundColor,
                 ),
               ),
               shifts.isEmpty ? Container() : ShiftList(shifts: shifts),
@@ -138,19 +138,24 @@ class _ShiftListWidgetState extends State<ShiftListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              listWidget(),
-              context,
-              "Get Materials List",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  listWidget(),
+                  context,
+                  "Get Shifts List",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

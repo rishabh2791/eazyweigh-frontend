@@ -286,7 +286,9 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
             ),
           ],
         ),
-        const Divider(),
+        const Divider(
+          color: Colors.transparent,
+        ),
         isJobItemsLoaded
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +388,11 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                 ],
               )
             : Container(),
-        isJobItemsLoaded ? const Divider() : Container(),
+        isJobItemsLoaded
+            ? const Divider(
+                color: Colors.transparent,
+              )
+            : Container(),
         isJobItemsLoaded ? JobItemsListWidget(jobItems: jobItems) : Container(),
       ],
     );
@@ -394,19 +400,24 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              detailsWidget(),
-              context,
-              "Assign Job",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  detailsWidget(),
+                  context,
+                  "Assign Job",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

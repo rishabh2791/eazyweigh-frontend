@@ -45,141 +45,148 @@ class _SuperPageState extends State<SuperPage>
 
   @override
   Widget build(BuildContext context) {
-    return BaseWidget(
-      builder: (context, sizeInformation) {
-        return Scaffold(
-          backgroundColor: isDarkTheme ? backgroundColor : foregroundColor,
-          body: Stack(
-            children: [
-              menu.SuperMenuWidget(
-                context: context,
-                slideAnimation: slideAnimation,
-                animationController: animationController,
-              ),
-              SuperPageWidget(
-                scaleAnimation: scaleAnimation,
-                childWidget: widget.childWidget,
-                screenType: sizeInformation.screenType,
-              ),
-              isLoggedIn
-                  ? currentUser.userRole.role == "Operator" ||
-                          currentUser.userRole.role == "Verifier"
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return BaseWidget(
+          builder: (context, sizeInformation) {
+            return Scaffold(
+              backgroundColor:
+                  themeChanged.value ? backgroundColor : foregroundColor,
+              body: Stack(
+                children: [
+                  menu.SuperMenuWidget(
+                    context: context,
+                    slideAnimation: slideAnimation,
+                    animationController: animationController,
+                  ),
+                  SuperPageWidget(
+                    scaleAnimation: scaleAnimation,
+                    childWidget: widget.childWidget,
+                    screenType: sizeInformation.screenType,
+                  ),
+                  isLoggedIn
+                      ? currentUser.userRole.role == "Operator" ||
+                              currentUser.userRole.role == "Verifier"
+                          ? Positioned(
+                              left: 20,
+                              bottom: 100,
+                              child: Row(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      menu.logout(context);
+                                    },
+                                    child: QrImage(
+                                      data: logout,
+                                      size: 150.0,
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 16.0,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container()
+                      : Container(),
+                  isLoggedIn
                       ? Positioned(
                           left: 20,
-                          bottom: 100,
+                          bottom: 20,
                           child: Row(
                             children: [
-                              TextButton(
-                                onPressed: () {
-                                  menu.logout(context);
-                                },
-                                child: QrImage(
-                                  data: logout,
-                                  size: 150.0,
-                                  backgroundColor: foregroundColor,
+                              Tooltip(
+                                message: themeChanged.value
+                                    ? "Switch to Light Theme"
+                                    : "Switch to Dark Theme",
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      // themeChanged.value = !isDarkTheme;
+                                      themeChanged.value = !themeChanged.value;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        10.0, 10.0, 10.0, 10.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      color: themeChanged.value
+                                          ? foregroundColor
+                                          : backgroundColor,
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          offset: Offset(0, 0),
+                                          blurRadius: 5,
+                                          color: shadowColor,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      themeChanged.value
+                                          ? Icons.nightlight
+                                          : Icons.nightlight_outlined,
+                                      color: formHintTextColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(
                                 width: 16.0,
                               ),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    if (isMenuCollapsed) {
+                                      animationController.forward();
+                                    } else {
+                                      animationController.reverse();
+                                    }
+                                    isMenuCollapsed = !isMenuCollapsed;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      20.0, 6.0, 20.0, 6.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20.0)),
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 0),
+                                        blurRadius: 5,
+                                        color: shadowColor,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    menuItemSelected
+                                        .toUpperCase()
+                                        .replaceAll("_", " "),
+                                    style: TextStyle(
+                                      color: themeChanged.value
+                                          ? backgroundColor
+                                          : foregroundColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         )
-                      : Container()
-                  : Container(),
-              isLoggedIn
-                  ? Positioned(
-                      left: 20,
-                      bottom: 20,
-                      child: Row(
-                        children: [
-                          Tooltip(
-                            message: isDarkTheme
-                                ? "Switch to Light Theme"
-                                : "Switch to Dark Theme",
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  isDarkTheme = !isDarkTheme;
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.fromLTRB(
-                                    10.0, 10.0, 10.0, 10.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(20.0)),
-                                  color: isDarkTheme
-                                      ? foregroundColor
-                                      : backgroundColor,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      offset: Offset(0, 0),
-                                      blurRadius: 5,
-                                      color: shadowColor,
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  isDarkTheme
-                                      ? Icons.nightlight
-                                      : Icons.nightlight_outlined,
-                                  color: formHintTextColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 16.0,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                if (isMenuCollapsed) {
-                                  animationController.forward();
-                                } else {
-                                  animationController.reverse();
-                                }
-                                isMenuCollapsed = !isMenuCollapsed;
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.fromLTRB(
-                                  20.0, 6.0, 20.0, 6.0),
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(20.0)),
-                                color: isDarkTheme
-                                    ? foregroundColor
-                                    : backgroundColor,
-                                boxShadow: const [
-                                  BoxShadow(
-                                    offset: Offset(0, 0),
-                                    blurRadius: 5,
-                                    color: shadowColor,
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                menuItemSelected
-                                    .toUpperCase()
-                                    .replaceAll("_", " "),
-                                style: TextStyle(
-                                  color: isDarkTheme
-                                      ? backgroundColor
-                                      : foregroundColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
+                      : Container(),
+                ],
+              ),
+            );
+          },
         );
       },
     );

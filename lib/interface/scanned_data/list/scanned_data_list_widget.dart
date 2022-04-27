@@ -277,7 +277,17 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                             );
                           }
                         });
-                      } else {}
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialog(
+                              message: errors,
+                              title: "Error",
+                            );
+                          },
+                        );
+                      }
                     },
                     child: checkButton(),
                   ),
@@ -308,19 +318,24 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              listWidget(),
-              context,
-              "Get Scanned Data",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  listWidget(),
+                  context,
+                  "Get Scanned Data",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

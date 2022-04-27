@@ -133,9 +133,9 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
                 shiftSchedules.isEmpty
                     ? "Not Shift Schedule Found"
                     : "Found Shift Schedules",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20.0,
-                  color: foregroundColor,
+                  color: themeChanged.value ? foregroundColor : backgroundColor,
                 ),
               ),
               shiftSchedules.isEmpty
@@ -272,19 +272,24 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              listWidget(),
-              context,
-              "Get Materials List",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  listWidget(),
+                  context,
+                  "Get Shift Schedules",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

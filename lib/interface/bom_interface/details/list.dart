@@ -1,5 +1,6 @@
 import 'package:eazyweigh/domain/entity/bom_item.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -116,10 +117,15 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
-                    dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor:
+                        themeChanged.value ? foregroundColor : backgroundColor,
+                    textTheme: TextTheme(
+                        caption: TextStyle(
+                            color: themeChanged.value
+                                ? foregroundColor
+                                : backgroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -131,11 +137,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -149,11 +157,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Material Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -167,11 +177,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Quantity",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -185,11 +197,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "UOM",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -203,11 +217,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Upper Limit",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -221,11 +237,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Lower Limit",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -239,11 +257,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Over Issue",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -257,11 +277,13 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Under Issue",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -318,9 +340,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             bomItem.material.code,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -328,19 +350,19 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             bomItem.material.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
         ),
         DataCell(
           Text(
-            bomItem.quantity.toString(),
-            style: const TextStyle(
+            bomItem.quantity.toStringAsFixed(3),
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -348,9 +370,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             bomItem.uom.code,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -358,10 +380,10 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             (bomItem.quantity * (1 + bomItem.upperTolerance / 100))
-                .toStringAsFixed(6),
-            style: const TextStyle(
+                .toStringAsFixed(3),
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -369,10 +391,10 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             (bomItem.quantity * (1 - bomItem.lowerTolerance / 100))
-                .toStringAsFixed(6),
-            style: const TextStyle(
+                .toStringAsFixed(3),
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.normal,
             ),
           ),

@@ -504,7 +504,7 @@ class _JobListWidgetState extends State<JobListWidget> {
               child: QrImage(
                 data: back,
                 size: 150,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.red,
               ),
             ),
             const Text(
@@ -539,7 +539,7 @@ class _JobListWidgetState extends State<JobListWidget> {
               child: QrImage(
                 data: previous,
                 size: 150,
-                backgroundColor: start == 0 ? Colors.transparent : Colors.green,
+                backgroundColor: start == 0 ? Colors.transparent : Colors.red,
                 foregroundColor: start == 0 ? backgroundColor : Colors.black,
               ),
             ),
@@ -575,7 +575,7 @@ class _JobListWidgetState extends State<JobListWidget> {
                 backgroundColor:
                     (end == jobMapping.length - 1 || jobMapping.length < 3)
                         ? Colors.transparent
-                        : Colors.green,
+                        : Colors.red,
                 foregroundColor:
                     (end == jobMapping.length - 1 || jobMapping.length < 3)
                         ? backgroundColor
@@ -657,8 +657,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                 child: Text(
                   "No Job Found.",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 50.0,
+                    color: menuItemColor,
+                    fontSize: 30.0,
                   ),
                 ),
               )
@@ -668,8 +668,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                   const Text(
                     "Jobs Found",
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 50.0,
+                      color: menuItemColor,
+                      fontSize: 30.0,
                     ),
                   ),
                   JobList(jobs: jobs),

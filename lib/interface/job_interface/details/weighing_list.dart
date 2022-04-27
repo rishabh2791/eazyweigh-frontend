@@ -1,6 +1,6 @@
 import 'package:eazyweigh/domain/entity/job_item_weighing.dart';
-import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,6 @@ class _JobItemItemsListState extends State<JobWeighingList> {
 
   @override
   void initState() {
-    printingService.initCommunication();
     super.initState();
   }
 
@@ -95,123 +94,165 @@ class _JobItemItemsListState extends State<JobWeighingList> {
   }
 
   Widget listDetailsWidget() {
-    return BaseWidget(
-      builder: (context, sizeInfo) {
-        return Container(
-          padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-          width: sizeInfo.screenSize.width,
-          height:
-              double.parse((150 + 56 * widget.jobWeighings.length).toString()),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
-                    dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
-                  ),
-                  child: ListView(
-                    children: [
-                      PaginatedDataTable(
-                        showCheckboxColumn: false,
-                        showFirstLastButtons: true,
-                        sortAscending: sort,
-                        sortColumnIndex: sortingColumnIndex,
-                        columnSpacing: 20.0,
-                        columns: [
-                          DataColumn(
-                            label: const Text(
-                              "Weighing ID",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return BaseWidget(
+          builder: (context, sizeInfo) {
+            return Container(
+              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+              width: sizeInfo.screenSize.width,
+              height: double.parse(
+                  (150 + 56 * widget.jobWeighings.length).toString()),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        cardColor: themeChanged.value
+                            ? backgroundColor
+                            : foregroundColor,
+                        dividerColor: themeChanged.value
+                            ? foregroundColor.withOpacity(0.25)
+                            : backgroundColor.withOpacity(0.25),
+                        textTheme: TextTheme(
+                          caption: TextStyle(
+                            color: themeChanged.value
+                                ? foregroundColor
+                                : backgroundColor,
                           ),
-                          DataColumn(
-                            label: const Text(
-                              "Quantity",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Weighed By",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: const Text(
-                              "Verified",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: foregroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                        ],
-                        source: _DataSource(
-                          context,
-                          widget.jobWeighings,
                         ),
-                        rowsPerPage: widget.jobWeighings.length > 25
-                            ? 25
-                            : widget.jobWeighings.length,
-                      )
-                    ],
+                      ),
+                      child: ListView(
+                        children: [
+                          PaginatedDataTable(
+                            showCheckboxColumn: false,
+                            showFirstLastButtons: true,
+                            sortAscending: sort,
+                            sortColumnIndex: sortingColumnIndex,
+                            columnSpacing: 20.0,
+                            columns: [
+                              DataColumn(
+                                label: Text(
+                                  "Weighing ID",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Quantity",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Weighed By",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Time Taken (s)",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Verified",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                            ],
+                            source: _DataSource(
+                              context,
+                              widget.jobWeighings,
+                            ),
+                            rowsPerPage: widget.jobWeighings.length > 25
+                                ? 25
+                                : widget.jobWeighings.length,
+                          )
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 40.0,
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -248,9 +289,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             jobWeighing.id,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -258,9 +299,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             jobWeighing.weight.toString() + " " + jobWeighing.jobItem.uom.code,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -270,9 +311,22 @@ class _DataSource extends DataTableSource {
             jobWeighing.createdBy.firstName +
                 " " +
                 jobWeighing.createdBy.lastName,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            jobWeighing.endTime
+                .difference(jobWeighing.startTime)
+                .inSeconds
+                .toString(),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),

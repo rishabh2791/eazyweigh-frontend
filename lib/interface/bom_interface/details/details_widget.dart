@@ -170,7 +170,11 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
             ),
           ],
         ),
-        isBomItemsLoaded ? const Divider() : Container(),
+        isBomItemsLoaded
+            ? const Divider(
+                color: Colors.transparent,
+              )
+            : Container(),
         isBomItemsLoaded ? BOMItemsListWidget(bomItems: bomItems) : Container(),
       ],
     );
@@ -178,19 +182,24 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingData
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              detailsWidget(),
-              context,
-              "View Bill of Material",
-              () {
-                Navigator.of(context).pop();
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingData
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  detailsWidget(),
+                  context,
+                  "View Bill of Material",
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+      },
+    );
   }
 }

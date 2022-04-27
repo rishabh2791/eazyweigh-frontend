@@ -60,16 +60,41 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     requiredQty = widget.jobItem.requiredWeight - widget.jobItem.actualWeight;
     startTime = DateTime.now();
     socketUtility.initCommunication();
-    printingService.initCommunication();
+    printingService.addListener(listenToPrintingService);
     scannerListener.addListener(listenToScanner);
     socketUtility.addListener(listenToWeighingScale);
   }
 
   @override
   void dispose() {
+    printingService.removeListener(listenToPrintingService);
     scannerListener.removeListener(listenToScanner);
     socketUtility.removeListener(listenToWeighingScale);
     super.dispose();
+  }
+
+  void listenToPrintingService(String message) {
+    Map<String, dynamic> scannerData = jsonDecode(message
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
+    if (!(scannerData.containsKey("status") && scannerData["status"])) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to Print.",
+            title: "Error",
+          );
+        },
+      );
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pop();
+      });
+    }
+    printingService.close();
   }
 
   void getAllData() async {
@@ -232,11 +257,15 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
         };
         if (actualWeight != 0) {
-          await appStore.jobWeighingApp.create(jobItemWeighing).then((value) {
+          await appStore.jobWeighingApp
+              .create(jobItemWeighing)
+              .then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];
               printingData["job_item_weighing_id"] = id;
+
               printingService.printJobItemLabel(printingData);
+
               setState(() {
                 widget.jobItem.requiredWeight =
                     widget.jobItem.requiredWeight - actualWeight;
@@ -587,7 +616,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           QrImage(
             data: back,
             size: 250,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red,
           ),
         ],
       ),
@@ -609,7 +638,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           QrImage(
             data: back,
             size: 250,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red,
           ),
         ],
       ),

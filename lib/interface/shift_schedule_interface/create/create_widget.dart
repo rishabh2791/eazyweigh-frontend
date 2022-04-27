@@ -377,7 +377,9 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
               ],
             ),
           ),
-          const Divider(),
+          const Divider(
+            color: Colors.transparent,
+          ),
           Container(
             padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
             child: Column(

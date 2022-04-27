@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
-import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
@@ -12,7 +11,6 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
-import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_items_list_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,6 +32,7 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
   bool isLoadingData = true;
   List<JobItem> jobItems = [];
   late Job job;
+
   @override
   void initState() {
     getJobData();
@@ -156,20 +155,6 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
         });
       }
     }
-  }
-
-  void printJobSheet() {
-    Map<String, dynamic> jobSheet = {
-      "job_id": job.id,
-      "job_code": job.jobCode,
-      "job_items": jobItems,
-    };
-    printingService.printJobSheet(jobSheet);
-    navigationService.pushReplacement(
-      CupertinoPageRoute(
-        builder: (BuildContext context) => const OperatorHomePage(),
-      ),
-    );
   }
 
   int getVerifiedItems() {
