@@ -260,34 +260,33 @@ class _DataSource extends DataTableSource {
       index: index,
       selected: jobItem.selected,
       onSelectChanged: (value) {
-        if (jobItem.selected != value) {
-          _selectedCount += value! ? 1 : -1;
-          jobItem.selected = value;
-          notifyListeners();
+        if (!jobItem.assigned) {
+          if (jobItem.selected != value) {
+            _selectedCount += value! ? 1 : -1;
+            jobItem.selected = value;
+            notifyListeners();
+          }
         }
       },
       cells: [
         DataCell(
-          Text(
-            jobItem.assigned
-                ? true.toString().toUpperCase()
-                : jobItem.selected.toString().toUpperCase(),
-            style: TextStyle(
-              fontSize: 16.0,
-              color: themeChanged.value ? foregroundColor : backgroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          jobItem.selected
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.red,
+                )
+              : Container(),
         ),
         DataCell(
-          Text(
-            jobItem.assigned.toString().toUpperCase(),
-            style: TextStyle(
-              fontSize: 16.0,
-              color: themeChanged.value ? foregroundColor : backgroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          jobItem.assigned
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
         ),
         DataCell(
           Text(

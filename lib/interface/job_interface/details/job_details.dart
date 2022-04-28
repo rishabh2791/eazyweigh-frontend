@@ -194,10 +194,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                       children: [
                         TextSpan(
                           text: jobWeighings.length.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 100.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
                           ),
                         ),
                         const TextSpan(
@@ -210,10 +217,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                         ),
                         TextSpan(
                           text: jobItems.length.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 100.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -252,10 +266,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                 children: [
                   Text(
                     underIssues.length.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 100.0,
                       color: formHintTextColor,
                       fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.25),
+                          offset: const Offset(10, 10),
+                          blurRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
                   const Text(
@@ -291,10 +312,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                 children: [
                   Text(
                     overIssues.length.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 100.0,
                       color: formHintTextColor,
                       fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.25),
+                          offset: const Offset(10, 10),
+                          blurRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
                   const Text(
@@ -333,10 +361,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                       children: [
                         TextSpan(
                           text: hr.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 100.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
                           ),
                         ),
                         const TextSpan(
@@ -349,10 +384,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                         ),
                         TextSpan(
                           text: min.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 100.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
                           ),
                         ),
                         const TextSpan(
@@ -365,10 +407,17 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                         ),
                         TextSpan(
                           text: sec.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 100.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
                           ),
                         ),
                         const TextSpan(

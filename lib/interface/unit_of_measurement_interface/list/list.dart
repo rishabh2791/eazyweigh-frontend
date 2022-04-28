@@ -1,21 +1,21 @@
-import 'package:eazyweigh/domain/entity/shift.dart';
+import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
-class ShiftList extends StatefulWidget {
-  final List<Shift> shifts;
-  const ShiftList({
+class UOMList extends StatefulWidget {
+  final List<UnitOfMeasure> uoms;
+  const UOMList({
     Key? key,
-    required this.shifts,
+    required this.uoms,
   }) : super(key: key);
 
   @override
-  State<ShiftList> createState() => _ShiftListState();
+  State<UOMList> createState() => _UOMListState();
 }
 
-class _ShiftListState extends State<ShiftList> {
+class _UOMListState extends State<UOMList> {
   bool sort = true, ascending = true;
   int sortingColumnIndex = 0;
 
@@ -33,30 +33,20 @@ class _ShiftListState extends State<ShiftList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.shifts.sort((a, b) => a.code.compareTo(b.code));
+          widget.uoms
+              .sort((a, b) => a.code.toString().compareTo(b.code.toString()));
         } else {
-          widget.shifts.sort((a, b) => b.code.compareTo(a.code));
+          widget.uoms
+              .sort((a, b) => b.code.toString().compareTo(a.code.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.shifts.sort((a, b) => a.description.compareTo(b.description));
+          widget.uoms.sort((a, b) =>
+              a.description.toString().compareTo(b.description.toString()));
         } else {
-          widget.shifts.sort((a, b) => b.description.compareTo(a.description));
-        }
-        break;
-      case 2:
-        if (ascending) {
-          widget.shifts.sort((a, b) => a.startTime.compareTo(b.startTime));
-        } else {
-          widget.shifts.sort((a, b) => b.startTime.compareTo(a.startTime));
-        }
-        break;
-      case 3:
-        if (ascending) {
-          widget.shifts.sort((a, b) => a.endTime.compareTo(b.endTime));
-        } else {
-          widget.shifts.sort((a, b) => b.endTime.compareTo(a.endTime));
+          widget.uoms.sort((a, b) =>
+              b.description.toString().compareTo(a.description.toString()));
         }
         break;
       default:
@@ -69,8 +59,8 @@ class _ShiftListState extends State<ShiftList> {
       builder: (context, sizeInfo) {
         return Container(
           padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-          width: sizeInfo.screenSize.width,
-          height: 156 + widget.shifts.length * 56,
+          width: 500,
+          height: 156 + widget.uoms.length * 56,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -101,7 +91,7 @@ class _ShiftListState extends State<ShiftList> {
                         columns: [
                           DataColumn(
                             label: Text(
-                              "Shift Code",
+                              "Code",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: themeChanged.value
@@ -121,47 +111,7 @@ class _ShiftListState extends State<ShiftList> {
                           ),
                           DataColumn(
                             label: Text(
-                              "Shift Name",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Start Time",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                                sortingColumnIndex = columnIndex;
-                              });
-                              onSortColum(columnIndex, ascending);
-                            },
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "End Time",
+                              "Description",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: themeChanged.value
@@ -180,10 +130,12 @@ class _ShiftListState extends State<ShiftList> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.shifts),
-                        rowsPerPage: widget.shifts.length > 25
-                            ? 25
-                            : widget.shifts.length,
+                        source: _DataSource(
+                          context,
+                          widget.uoms,
+                        ),
+                        rowsPerPage:
+                            widget.uoms.length > 25 ? 25 : widget.uoms.length,
                       )
                     ],
                   ),
@@ -206,57 +158,37 @@ class _ShiftListState extends State<ShiftList> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._shifts) {
-    _shifts = _shifts;
+  _DataSource(this.context, this._uoms) {
+    _uoms = _uoms;
   }
 
   final BuildContext context;
-  List<Shift> _shifts;
+  List<UnitOfMeasure> _uoms;
 
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    final shift = _shifts[index];
+    final uom = _uoms[index];
     return DataRow.byIndex(
       index: index,
       cells: [
         DataCell(
           Text(
-            shift.code,
+            uom.code,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
         DataCell(
           Text(
-            shift.description,
+            uom.description,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            shift.startTime.toString(),
-            style: TextStyle(
-              fontSize: 16.0,
-              color: themeChanged.value ? foregroundColor : backgroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            shift.endTime.toString(),
-            style: TextStyle(
-              fontSize: 16.0,
-              color: themeChanged.value ? foregroundColor : backgroundColor,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -265,7 +197,7 @@ class _DataSource extends DataTableSource {
   }
 
   @override
-  int get rowCount => _shifts.length;
+  int get rowCount => _uoms.length;
 
   @override
   bool get isRowCountApproximate => false;

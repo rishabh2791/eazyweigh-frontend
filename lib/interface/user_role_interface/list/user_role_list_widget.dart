@@ -85,23 +85,29 @@ class _UserRoleListWidgetState extends State<UserRoleListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingPage
-        ? SuperPage(
-            childWidget: loader(context),
-          )
-        : SuperPage(
-            childWidget: buildWidget(
-              homeWidget(),
-              context,
-              "User Roles",
-              () {
-                Navigator.of(context).pushReplacement(
-                  CupertinoPageRoute(
-                    builder: (BuildContext context) => const UserRoleWidget(),
-                  ),
-                );
-              },
-            ),
-          );
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return isLoadingPage
+            ? SuperPage(
+                childWidget: loader(context),
+              )
+            : SuperPage(
+                childWidget: buildWidget(
+                  homeWidget(),
+                  context,
+                  "User Roles",
+                  () {
+                    Navigator.of(context).pushReplacement(
+                      CupertinoPageRoute(
+                        builder: (BuildContext context) =>
+                            const UserRoleWidget(),
+                      ),
+                    );
+                  },
+                ),
+              );
+      },
+    );
   }
 }

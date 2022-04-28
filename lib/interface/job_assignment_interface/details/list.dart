@@ -344,7 +344,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            jobItemAssignment.jobItem.requiredWeight.toString() +
+            jobItemAssignment.jobItem.requiredWeight.toStringAsFixed(3) +
                 " " +
                 jobItemAssignment.jobItem.uom.code,
             style: TextStyle(

@@ -328,57 +328,69 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                             }
                           }
 
-                          if (jobItemsAssigned.isEmpty) {
+                          if (shiftScheduleController.text.isEmpty) {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return const CustomDialog(
-                                  message:
-                                      "Please Select at least one Job Item",
+                                  message: "Assignee Required",
                                   title: "Errors",
                                 );
                               },
                             );
                           } else {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return loader(context);
-                              },
-                            );
-                            await appStore.jobItemAssignmentApp
-                                .createMultiple(jobItemsAssigned)
-                                .then(
-                              (response) async {
-                                if (response["status"]) {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const CustomDialog(
-                                        message: "Job Items Assigned.",
-                                        title: "Info",
-                                      );
-                                    },
+                            if (jobItemsAssigned.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const CustomDialog(
+                                    message:
+                                        "Please Select at least one Job Item",
+                                    title: "Errors",
                                   );
-                                  setState(() {
-                                    isJobItemsLoaded = false;
-                                  });
-                                } else {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: response["message"],
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                            );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return loader(context);
+                                },
+                              );
+                              await appStore.jobItemAssignmentApp
+                                  .createMultiple(jobItemsAssigned)
+                                  .then(
+                                (response) async {
+                                  if (response["status"]) {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const CustomDialog(
+                                          message: "Job Items Assigned.",
+                                          title: "Info",
+                                        );
+                                      },
+                                    );
+                                    setState(() {
+                                      isJobItemsLoaded = false;
+                                    });
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialog(
+                                          message: response["message"],
+                                          title: "Errors",
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                              );
+                            }
                           }
                         },
                         child: checkButton(),

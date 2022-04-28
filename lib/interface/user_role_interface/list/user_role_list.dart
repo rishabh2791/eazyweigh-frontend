@@ -1,5 +1,6 @@
 import 'package:eazyweigh/domain/entity/user_role.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -59,17 +60,25 @@ class _UserRoleListState extends State<UserRoleList> {
         return Container(
           padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
           width: sizeInfo.screenSize.width,
-          height: sizeInfo.screenSize.height,
+          height: 156 + widget.userRoles.length * 56,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: backgroundColor,
-                    dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
+                    textTheme: TextTheme(
+                      caption: TextStyle(
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
+                      ),
+                    ),
                   ),
                   child: ListView(
                     children: [
@@ -81,11 +90,13 @@ class _UserRoleListState extends State<UserRoleList> {
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Role",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -99,11 +110,13 @@ class _UserRoleListState extends State<UserRoleList> {
                             },
                           ),
                           DataColumn(
-                            label: const Text(
+                            label: Text(
                               "Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: foregroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -173,9 +186,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             userRole.role,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -183,9 +196,9 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             userRole.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16.0,
-              color: foregroundColor,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
               fontWeight: FontWeight.bold,
             ),
           ),

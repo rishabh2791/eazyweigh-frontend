@@ -52,7 +52,12 @@ class _UserRoleAccessListWidgetState extends State<UserRoleAccessListWidget> {
 
   Future<void> getUserRoles() async {
     userRoles = [];
-    Map<String, dynamic> conditions = {"company_id": companyID};
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "company_id",
+        "Value": companyID,
+      },
+    };
     await appStore.userRoleApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -74,6 +79,7 @@ class _UserRoleAccessListWidgetState extends State<UserRoleAccessListWidget> {
         );
       }
     });
+    userRoles.sort(((a, b) => a.description.compareTo(b.description)));
   }
 
   Future<void> getTables() async {

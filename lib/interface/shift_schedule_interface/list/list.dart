@@ -71,7 +71,7 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
         return Container(
           padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
           width: sizeInfo.screenSize.width,
-          height: sizeInfo.screenSize.height,
+          height: 156 + widget.shiftSchedules.length * 56,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

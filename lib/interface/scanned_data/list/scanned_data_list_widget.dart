@@ -132,25 +132,35 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
 
   Widget listWidget() {
     return isDataLoaded
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                scannedData.length.toString() +
-                    " instances of incorrect weighing in the period for " +
-                    getUserDetails(userController.text) +
-                    ".",
-                style: const TextStyle(
-                  color: foregroundColor,
+        ? scannedData.isEmpty
+            ? Text(
+                "No Scanned Data Records Found.",
+                style: TextStyle(
                   fontSize: 20.0,
+                  color: themeChanged.value ? foregroundColor : backgroundColor,
                 ),
-              ),
-              const Divider(
-                color: Colors.transparent,
-              ),
-              ScannedDataList(scannedData: scannedData),
-            ],
-          )
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    scannedData.length.toString() +
+                        " instances of incorrect weighing in the period for " +
+                        getUserDetails(userController.text) +
+                        ".",
+                    style: TextStyle(
+                      color: themeChanged.value
+                          ? foregroundColor
+                          : backgroundColor,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                  const Divider(
+                    color: Colors.transparent,
+                  ),
+                  ScannedDataList(scannedData: scannedData),
+                ],
+              )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -206,12 +216,6 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                       if (errors.isEmpty) {
                         Map<String, dynamic> conditions = {
                           "AND": [
-                            {
-                              "EQUALS": {
-                                "Field": "factory_id",
-                                "Value": factoryID,
-                              },
-                            },
                             {
                               "EQUALS": {
                                 "Field": "user_username",

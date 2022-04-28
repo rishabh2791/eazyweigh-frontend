@@ -110,18 +110,25 @@ class _UserActionButtonState extends State<UserActionButton> {
                     widget.table == "companies")) {
               widget.callback();
             } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const CustomDialog(
-                    message: "You are not Authorized.",
-                    title: "Errors",
-                  );
-                },
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  duration: const Duration(milliseconds: 500),
+                  backgroundColor:
+                      themeChanged.value ? foregroundColor : backgroundColor,
+                  content: Center(
+                    child: Text(
+                      "You are not Authorized.",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: themeChanged.value
+                            ? backgroundColor
+                            : foregroundColor,
+                      ),
+                    ),
+                  ),
+                ),
               );
-              await Future.delayed(const Duration(seconds: 3)).then((value) {
-                Navigator.of(context).pop();
-              });
             }
           },
           // onTap: widget.callback,

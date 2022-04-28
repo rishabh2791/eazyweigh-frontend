@@ -1,5 +1,6 @@
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,8 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
       children: [
         Text(
           widget.fact.name,
-          style: const TextStyle(
-            color: foregroundColor,
+          style: TextStyle(
+            color: themeChanged.value ? foregroundColor : backgroundColor,
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
           ),
@@ -32,10 +33,10 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
           color: Colors.transparent,
           height: 30.0,
         ),
-        const Text(
+        Text(
           "Located At",
           style: TextStyle(
-            color: foregroundColor,
+            color: themeChanged.value ? foregroundColor : backgroundColor,
           ),
         ),
         const Divider(
@@ -44,8 +45,8 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
         ),
         Text(
           widget.fact.address.line1,
-          style: const TextStyle(
-            color: foregroundColor,
+          style: TextStyle(
+            color: themeChanged.value ? foregroundColor : backgroundColor,
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
           ),
@@ -56,8 +57,8 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
         ),
         Text(
           widget.fact.address.line2,
-          style: const TextStyle(
-            color: foregroundColor,
+          style: TextStyle(
+            color: themeChanged.value ? foregroundColor : backgroundColor,
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
           ),
@@ -68,8 +69,8 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
         ),
         Text(
           widget.fact.address.city + " - " + widget.fact.address.zip.toString(),
-          style: const TextStyle(
-            color: foregroundColor,
+          style: TextStyle(
+            color: themeChanged.value ? foregroundColor : backgroundColor,
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
           ),
@@ -80,8 +81,8 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
         ),
         Text(
           widget.fact.address.state + ", " + widget.fact.address.country,
-          style: const TextStyle(
-            color: foregroundColor,
+          style: TextStyle(
+            color: themeChanged.value ? foregroundColor : backgroundColor,
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
           ),
@@ -92,15 +93,20 @@ class _FactoryDetailsWidgetState extends State<FactoryDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SuperPage(
-      childWidget: buildWidget(
-        detailsWidget(),
-        context,
-        "Factory Details",
-        () {
-          Navigator.of(context).pop();
-        },
-      ),
+    return ValueListenableBuilder(
+      valueListenable: themeChanged,
+      builder: (_, theme, child) {
+        return SuperPage(
+          childWidget: buildWidget(
+            detailsWidget(),
+            context,
+            "Factory Details",
+            () {
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+      },
     );
   }
 }

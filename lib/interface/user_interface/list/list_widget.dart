@@ -17,7 +17,7 @@ class _UserListWidgetState extends State<UserListWidget> {
       childWidget: buildWidget(
         Container(),
         context,
-        "Get Materials List",
+        "Get Users List",
         () {
           Navigator.of(context).pop();
         },
