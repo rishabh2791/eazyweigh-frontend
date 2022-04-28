@@ -262,7 +262,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                   if (value != 0) {
                     JobItem jobItem = getJobItem(key);
                     var underIssue = {
-                      "job_item": key,
+                      "job_item_id": key,
                       "unit_of_measurement_id": jobItem.uom.id,
                       "required": jobItem.requiredWeight,
                       "actual": jobItem.actualWeight == 0

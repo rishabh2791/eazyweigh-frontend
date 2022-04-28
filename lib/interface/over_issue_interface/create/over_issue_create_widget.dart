@@ -305,7 +305,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                   if (value != 0) {
                     JobItem jobItem = getJobItem(key);
                     var overIssue = {
-                      "job_item": key,
+                      "job_item_id": key,
                       "unit_of_measurement_id": jobItem.uom.id,
                       "required": jobItem.requiredWeight,
                       "actual": jobItem.actualWeight == 0

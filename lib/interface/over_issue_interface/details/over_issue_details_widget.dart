@@ -78,7 +78,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   Future<dynamic> getUOMConversions() async {
     uomConversions = [];
     Map<String, dynamic> conditions = {
-      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem])!
+      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem.id])!
           .material
           .factoryID,
     };
@@ -109,7 +109,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   Future<dynamic> getScales() async {
     terminals = [];
     Map<String, dynamic> conditions = {
-      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem])!
+      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem.id])!
           .material
           .factoryID,
     };
@@ -189,7 +189,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
           CupertinoPageRoute(
             builder: (BuildContext context) => OverIssueItemDetailsWidget(
               overIssue: passedOverIssueItem,
-              jobItem: widget.jobItems[passedOverIssueItem.jobItem]!,
+              jobItem: widget.jobItems[passedOverIssueItem.jobItem.id]!,
               jobCode: widget.jobCode,
             ),
           ),
@@ -344,7 +344,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
             CupertinoPageRoute(
               builder: (BuildContext context) => OverIssueItemDetailsWidget(
                 overIssue: overIssue,
-                jobItem: widget.jobItems[overIssue.jobItem]!,
+                jobItem: widget.jobItems[overIssue.jobItem.id]!,
                 jobCode: widget.jobCode,
               ),
             ),
@@ -377,7 +377,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: getRowWidget(widget.jobItems[overIssueItem.jobItem]!,
+            children: getRowWidget(widget.jobItems[overIssueItem.jobItem.id]!,
                 overIssueItem, screenSizeInformation),
           ),
         ),
