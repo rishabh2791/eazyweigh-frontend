@@ -495,21 +495,27 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Image(
-                    image: AssetImage("assets/img/wipro_logo.png"),
-                    width: 200.0,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  Image(
-                    image: AssetImage("assets/img/canway.png"),
-                    width: 200.0,
-                    fit: BoxFit.scaleDown,
-                  ),
-                ],
+              Text(
+                "EazyWeigh",
+                style: TextStyle(
+                  fontSize: 120.0,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  color: formHintTextColor,
+                  shadows: [
+                    Shadow(
+                      color: themeChanged.value
+                          ? foregroundColor.withOpacity(0.25)
+                          : backgroundColor.withOpacity(0.5),
+                      offset: const Offset(10, 10),
+                      blurRadius: 20,
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(
+                color: Colors.transparent,
+                height: 50.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -668,7 +674,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                           });
                                 },
                                 child: cardWidget(
-                                    "Jobs Scheduled",
+                                    "Jobs Completed",
                                     monthJobsComplete.toString() +
                                         " of " +
                                         monthJobIDs.length.toString())),
