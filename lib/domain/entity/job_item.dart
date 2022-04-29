@@ -13,7 +13,7 @@ class JobItem {
   double actualWeight;
   bool assigned;
   bool verified;
-  final bool complete;
+  bool complete;
   final DateTime createdAt;
   final User createdBy;
   final DateTime updatedAt;

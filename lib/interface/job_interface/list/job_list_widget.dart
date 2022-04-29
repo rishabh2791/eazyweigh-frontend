@@ -274,6 +274,8 @@ class _JobListWidgetState extends State<JobListWidget> {
               scannerData["data"]["data"].toString().replaceAll("_", "-");
           String jobCode = scannerData["data"]["job_code"].toString();
           // Selection to Navigate to Next Page
+          jobMapping[id]!.sort(((a, b) =>
+              a.complete.toString().compareTo(b.complete.toString())));
           navigationService.pushReplacement(
             CupertinoPageRoute(
               builder: (BuildContext context) => JobDetailsWidget(

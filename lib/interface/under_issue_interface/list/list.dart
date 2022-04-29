@@ -363,7 +363,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            underIssues.underIssue.req.toString(),
+            underIssues.underIssue.req.toStringAsFixed(2),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -374,7 +374,7 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             (underIssues.underIssue.req - underIssues.underIssue.actual)
-                .toString(),
+                .toStringAsFixed(2),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,

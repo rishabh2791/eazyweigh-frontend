@@ -223,6 +223,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         .replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "back":
+        widget.allJobItems.sort(
+            (a, b) => a.complete.toString().compareTo(b.complete.toString()));
         navigationService.pushReplacement(
           CupertinoPageRoute(
             builder: (BuildContext context) => JobDetailsWidget(
@@ -256,7 +258,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if (actualWeight != 0) {
+        if (actualWeight != 0 && actualWeight < widget.jobItem.upperBound) {
           await appStore.jobWeighingApp
               .create(jobItemWeighing)
               .then((value) async {
@@ -267,6 +269,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
               printingService.printJobItemLabel(printingData);
 
               setState(() {
+                widget.jobItem.complete = true;
                 widget.jobItem.requiredWeight =
                     widget.jobItem.requiredWeight - actualWeight;
                 widget.jobItem.actualWeight += actualWeight;

@@ -384,7 +384,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            overIssues.overIssue.req.toString(),
+            overIssues.overIssue.req.toStringAsFixed(2),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -394,7 +394,8 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            (overIssues.overIssue.actual - overIssues.overIssue.req).toString(),
+            (overIssues.overIssue.actual - overIssues.overIssue.req)
+                .toStringAsFixed(2),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

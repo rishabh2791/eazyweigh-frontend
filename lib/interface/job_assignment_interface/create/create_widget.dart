@@ -303,6 +303,37 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                   ),
                   Row(
                     children: [
+                      TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(menuItemColor),
+                          elevation: MaterialStateProperty.all<double>(5.0),
+                        ),
+                        onPressed: () {
+                          for (var jobItem in jobItems) {
+                            jobItem.selected = true;
+                          }
+                          setState(() {});
+                        },
+                        child: const Tooltip(
+                          decoration: BoxDecoration(
+                            color: foregroundColor,
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                          message: "Select All",
+                          child: Padding(
+                            padding:
+                                EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                            child: Icon(
+                              Icons.select_all,
+                              color: backgroundColor,
+                              size: 30.0,
+                            ),
+                          ),
+                        ),
+                      ),
                       DropDownWidget(
                         disabled: false,
                         hint: "Select Weigher",
@@ -394,6 +425,9 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                           }
                         },
                         child: checkButton(),
+                      ),
+                      const VerticalDivider(
+                        color: Colors.transparent,
                       ),
                     ],
                   ),

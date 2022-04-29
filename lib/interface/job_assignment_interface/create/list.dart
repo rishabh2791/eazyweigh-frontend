@@ -158,6 +158,26 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                           ),
                           DataColumn(
                             label: Text(
+                              "Completed",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
                               "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
@@ -279,6 +299,17 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           jobItem.assigned
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
+        ),
+        DataCell(
+          jobItem.complete
               ? const Icon(
                   Icons.check,
                   color: Colors.green,
