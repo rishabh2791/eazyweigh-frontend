@@ -1,7 +1,8 @@
 import 'package:eazyweigh/domain/entity/user.dart';
+import 'package:eazyweigh/domain/entity/user_role.dart';
 
 class UserRoleAccess {
-  final String userRoleRole;
+  final UserRole userRole;
   final String tableName;
   final String accessLevel;
   final DateTime createdAt;
@@ -16,12 +17,12 @@ class UserRoleAccess {
     required this.tableName,
     required this.updatedAt,
     required this.updatedBy,
-    required this.userRoleRole,
+    required this.userRole,
   });
 
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
-      "user_role_role": userRoleRole,
+      "user_role": userRole.toJSON(),
       "table_name": tableName,
       "access_level": accessLevel,
       "created_at": createdAt,
@@ -39,7 +40,7 @@ class UserRoleAccess {
       tableName: jsonObject["table_name"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      userRoleRole: jsonObject["user_role_role"],
+      userRole: UserRole.fromJSON(jsonObject["user_role_role"]),
     );
     return userRoleAccess;
   }

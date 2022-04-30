@@ -83,7 +83,7 @@ class _FactoryCreateWidgetState extends State<FactoryCreateWidget> {
                 textField(false, cityController, "City", false),
                 textField(false, stateController, "State", false),
                 textField(false, zipController, "ZIP Code", false),
-                textField(false, countryController, "Country Code", false),
+                textField(false, countryController, "Country", false),
                 const SizedBox(
                   height: 10.0,
                 ),

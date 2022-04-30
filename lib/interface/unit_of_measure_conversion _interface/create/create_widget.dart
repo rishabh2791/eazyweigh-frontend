@@ -262,9 +262,6 @@ class _UOMConversionCreateWidgetState extends State<UOMConversionCreateWidget> {
                                   );
                                 },
                               );
-                              uom1Controller.text = "";
-                              uom2Controller.text = "";
-                              factoryController.text = "";
                             } else {
                               Navigator.of(context).pop();
                               showDialog(

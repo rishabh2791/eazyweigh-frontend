@@ -55,7 +55,7 @@ class _SuperPageWidgetState extends State<SuperPageWidget> {
                     decoration: BoxDecoration(
                       borderRadius: isMenuCollapsed
                           ? const BorderRadius.all(Radius.circular(0.0))
-                          : const BorderRadius.all(Radius.circular(20.0)),
+                          : const BorderRadius.all(Radius.circular(40.0)),
                       color: themeChanged.value
                           ? backgroundColor
                           : foregroundColor,

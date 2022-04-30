@@ -66,7 +66,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
             "user_username": username,
           };
           await appStore.userCompanyApp.create(userCompany).then(
-            (value) {
+            (value) async {
               if (value["status"]) {
                 Navigator.of(context).pop();
                 showDialog(
@@ -286,42 +286,84 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                                 basicRole["id"];
                                           }
                                         }
-                                        if (profilePic.isNotEmpty) {
-                                          var url = baseURL + "image/upload/";
-                                          String? token = storage
-                                              ?.getString("access_token");
-                                          Map<String, String> headers = {
-                                            "Authorization": "accessToken " +
-                                                token.toString(),
-                                            "Content-Type":
-                                                "multipart/form-data",
-                                          };
-                                          var request = http.MultipartRequest(
-                                              "POST", Uri.parse(url));
-                                          var pic =
-                                              await http.MultipartFile.fromPath(
-                                                  "file",
-                                                  file!.files.single.path
-                                                      .toString());
-                                          request.headers.addAll(headers);
-                                          request.files.add(pic);
-                                          var response = await request.send();
-                                          var responseData =
-                                              await response.stream.toBytes();
-                                          var responseString =
-                                              String.fromCharCodes(
-                                                  responseData);
-                                          var responseJSON =
-                                              json.decode(responseString);
-                                          Navigator.of(context).pop();
-                                          user["profile_pic"] =
-                                              responseJSON["payload"];
-                                          handleUserCreation(
-                                              user, username, companyID);
-                                        } else {
-                                          handleUserCreation(
-                                              user, username, companyID);
-                                        }
+                                        List<Map<String, dynamic>> accesses =
+                                            [];
+                                        await appStore.commonApp
+                                            .getTables()
+                                            .then((tableResponse) async {
+                                          if (tableResponse
+                                                  .containsKey("status") &&
+                                              tableResponse["status"]) {
+                                            for (var table
+                                                in tableResponse["payload"]) {
+                                              if (!table
+                                                  .toString()
+                                                  .contains("comp")) {
+                                                Map<String, dynamic> access = {
+                                                  "user_role_id":
+                                                      user["user_role_id"],
+                                                  "table_name": table,
+                                                  "access_level": "1111",
+                                                };
+                                                accesses.add(access);
+                                              }
+                                            }
+                                            await appStore.userRoleAccessApp
+                                                .createMultiple(accesses)
+                                                .then((res) async {
+                                              if (res.containsKey("status") &&
+                                                  res["status"]) {
+                                                if (profilePic.isNotEmpty) {
+                                                  var url =
+                                                      baseURL + "image/upload/";
+                                                  String? token =
+                                                      storage?.getString(
+                                                          "access_token");
+                                                  Map<String, String> headers =
+                                                      {
+                                                    "Authorization":
+                                                        "accessToken " +
+                                                            token.toString(),
+                                                    "Content-Type":
+                                                        "multipart/form-data",
+                                                  };
+                                                  var request =
+                                                      http.MultipartRequest(
+                                                          "POST",
+                                                          Uri.parse(url));
+                                                  var pic =
+                                                      await http.MultipartFile
+                                                          .fromPath(
+                                                              "file",
+                                                              file!.files.single
+                                                                  .path
+                                                                  .toString());
+                                                  request.headers
+                                                      .addAll(headers);
+                                                  request.files.add(pic);
+                                                  var response =
+                                                      await request.send();
+                                                  var responseData =
+                                                      await response.stream
+                                                          .toBytes();
+                                                  var responseString =
+                                                      String.fromCharCodes(
+                                                          responseData);
+                                                  var responseJSON = json
+                                                      .decode(responseString);
+                                                  Navigator.of(context).pop();
+                                                  user["profile_pic"] =
+                                                      responseJSON["payload"];
+                                                  handleUserCreation(user,
+                                                      username, companyID);
+                                                } else {
+                                                  handleUserCreation(user,
+                                                      username, companyID);
+                                                }
+                                              }
+                                            });
+                                          }
+                                        });
                                       } catch (e) {
                                         Navigator.of(context).pop();
                                       }

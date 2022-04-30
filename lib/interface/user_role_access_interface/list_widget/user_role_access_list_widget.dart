@@ -156,23 +156,13 @@ class _UserRoleAccessListWidgetState extends State<UserRoleAccessListWidget> {
         isLoadingData = true;
       });
       await Future.forEach([
-        await getUserRoleAcces(getUserRole(userRoleController.text)),
+        await getUserRoleAcces(userRoleController.text),
       ], (element) {
         setState(() {
           isLoadingData = false;
         });
       });
     }
-  }
-
-  String getUserRole(String userRoleID) {
-    String userRole = "";
-    for (var userR in userRoles) {
-      if (userR.id == userRoleID) {
-        return userR.role;
-      }
-    }
-    return userRole;
   }
 
   Future<void> getUserRoleAcces(String userRole) async {

@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> getUserAuthorizations() async {
     userRolePermissions = [];
     await appStore.userRoleAccessApp
-        .list(currentUser.userRole.role)
+        .list(currentUser.userRole.id)
         .then((response) {
       if (response.containsKey("error")) {
         showDialog(

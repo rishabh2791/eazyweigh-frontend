@@ -159,23 +159,13 @@ class _UserRoleAccessCreateWidgetState
         isLoadingData = true;
       });
       await Future.forEach([
-        await getUserRoleAcces(getUserRole(userRoleController.text)),
+        await getUserRoleAcces(userRoleController.text),
       ], (element) {
         setState(() {
           isLoadingData = false;
         });
       });
     }
-  }
-
-  String getUserRole(String userRoleID) {
-    String userRole = "";
-    for (var userR in userRoles) {
-      if (userR.id == userRoleID) {
-        return userR.role;
-      }
-    }
-    return userRole;
   }
 
   Future<void> getUserRoleAcces(String userRole) async {
@@ -246,8 +236,6 @@ class _UserRoleAccessCreateWidgetState
                               "user_role_id": userRoleController.text,
                               "table_name": key,
                               "access_level": value.text,
-                              "user_role_role":
-                                  getUserRole(userRoleController.text),
                             });
                           });
 
