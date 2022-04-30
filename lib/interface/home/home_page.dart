@@ -6,6 +6,7 @@ import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
+import 'package:eazyweigh/interface/home/superuser_home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -86,34 +87,43 @@ class _HomePageState extends State<HomePage> {
             "Value": currentUser.username,
           }
         };
-        await appStore.userCompanyApp.get(userCondition).then((value) async {
-          companyID = value["payload"][0]["company_id"];
-          switch (currentUser.userRole.role) {
-            case "Operator":
-              menuItemSelected = "Job";
-              Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(
-                  builder: (BuildContext context) => const OperatorHomePage(),
-                ),
-              );
-              break;
-            case "Verifier":
-              menuItemSelected = "Job";
-              Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(
-                  builder: (BuildContext context) => const OperatorHomePage(),
-                ),
-              );
-              break;
-            default:
-              menuItemSelected = "Home";
-              Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(
-                  builder: (BuildContext context) => const GeneralHomeWidget(),
-                ),
-              );
-          }
-        });
+        if (currentUser.userRole.role != "Superuser") {
+          await appStore.userCompanyApp.get(userCondition).then((value) async {
+            companyID = value["payload"][0]["company_id"];
+            switch (currentUser.userRole.role) {
+              case "Operator":
+                menuItemSelected = "Job";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+                break;
+              case "Verifier":
+                menuItemSelected = "Job";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+                break;
+              default:
+                menuItemSelected = "Home";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) =>
+                        const GeneralHomeWidget(),
+                  ),
+                );
+            }
+          });
+        } else {
+          Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => const SuperUserHomePage(),
+            ),
+          );
+        }
       } else {
         showDialog(
           context: context,
