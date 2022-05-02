@@ -407,7 +407,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                         TextSpan(
                           text: value.split(" of ")[0].toString(),
                           style: TextStyle(
-                            fontSize: 100.0,
+                            fontSize: 60.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
                             shadows: [
@@ -437,7 +437,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                         TextSpan(
                           text: value.split(" of ")[1].toString(),
                           style: TextStyle(
-                            fontSize: 100.0,
+                            fontSize: 60.0,
                             color: formHintTextColor,
                             fontWeight: FontWeight.bold,
                             shadows: [
@@ -455,7 +455,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                 : Text(
                     value,
                     style: TextStyle(
-                      fontSize: 100.0,
+                      fontSize: 60.0,
                       color: formHintTextColor,
                       fontWeight: FontWeight.bold,
                       shadows: [

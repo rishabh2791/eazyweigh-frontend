@@ -139,29 +139,74 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
                   );
                 } else {
                   Map<String, dynamic> conditions = {
-                    "factory_id": factoryID.toString(),
-                    "material.code": materialCode.toString(),
-                    "revision": int.parse(revision),
-                  };
-                  await appStore.bomApp.list(conditions).then((response) async {
-                    if (response["status"]) {
-                      for (var item in response["payload"][0]["bom_items"]) {
-                        BomItem bomItem = BomItem.fromJSON(item);
-                        bomItems.add(bomItem);
-                      }
-                      setState(() {
-                        isBomItemsLoaded = true;
-                      });
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CustomDialog(
-                            message: response["message"],
-                            title: "Errors",
-                          );
+                    "AND": [
+                      {
+                        "EQUALS": {
+                          "Field": "factory_id",
+                          "Value": factoryID.toString(),
                         },
-                      );
+                      },
+                      {
+                        "EQUALS": {
+                          "Field": "code",
+                          "Value": materialCode.toString(),
+                        },
+                      },
+                    ]
+                  };
+                  bomItems = [];
+                  await appStore.materialApp
+                      .list(conditions)
+                      .then((value) async {
+                    if (value.containsKey("status") &&
+                        value["status"] &&
+                        value["payload"].isNotEmpty) {
+                      Map<String, dynamic> conditions = {
+                        "AND": [
+                          {
+                            "EQUALS": {
+                              "Field": "factory_id",
+                              "Value": factoryID.toString(),
+                            },
+                          },
+                          {
+                            "EQUALS": {
+                              "Field": "material_id",
+                              "Value": value["payload"][0]["id"],
+                            },
+                          },
+                          {
+                            "EQUALS": {
+                              "Field": "revision",
+                              "Value": int.parse(revision).toString(),
+                            },
+                          },
+                        ]
+                      };
+                      await appStore.bomApp
+                          .list(conditions)
+                          .then((response) async {
+                        if (response["status"]) {
+                          for (var item in response["payload"][0]
+                              ["bom_items"]) {
+                            BomItem bomItem = BomItem.fromJSON(item);
+                            bomItems.add(bomItem);
+                          }
+                          setState(() {
+                            isBomItemsLoaded = true;
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomDialog(
+                                message: response["message"],
+                                title: "Errors",
+                              );
+                            },
+                          );
+                        }
+                      });
                     }
                   });
                 }
@@ -175,7 +220,19 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
                 color: Colors.transparent,
               )
             : Container(),
-        isBomItemsLoaded ? BOMItemsListWidget(bomItems: bomItems) : Container(),
+        isBomItemsLoaded
+            ? bomItems.isNotEmpty
+                ? BOMItemsListWidget(bomItems: bomItems)
+                : const Center(
+                    child: Text(
+                      "No Data Found.",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: formHintTextColor,
+                      ),
+                    ),
+                  )
+            : Container(),
       ],
     );
   }
