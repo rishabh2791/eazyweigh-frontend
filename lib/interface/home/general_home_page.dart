@@ -115,6 +115,8 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         }
       }
     });
+    weekJobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+    monthJobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
   }
 
   Future<dynamic> getIncorrectWeighing(String period) async {

@@ -280,12 +280,10 @@ class _DataSource extends DataTableSource {
       index: index,
       selected: jobItem.selected,
       onSelectChanged: (value) {
-        if (!jobItem.assigned) {
-          if (jobItem.selected != value) {
-            _selectedCount += value! ? 1 : -1;
-            jobItem.selected = value;
-            notifyListeners();
-          }
+        if (jobItem.selected != value) {
+          _selectedCount += value! ? 1 : -1;
+          jobItem.selected = value;
+          notifyListeners();
         }
       },
       cells: [

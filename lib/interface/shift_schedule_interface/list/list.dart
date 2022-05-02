@@ -3,6 +3,7 @@ import 'package:eazyweigh/domain/entity/shift_schedule.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:flutter/material.dart';
 
@@ -273,8 +274,20 @@ class _DataSource extends DataTableSource {
               await appStore.shiftScheduleApp
                   .delete(shiftSchedule.id)
                   .then((value) {
-                _shiftSchedules
-                    .removeWhere((element) => element.id == shiftSchedule.id);
+                if (value.containsKey("status") && value["status"]) {
+                  _shiftSchedules
+                      .removeWhere((element) => element.id == shiftSchedule.id);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const CustomDialog(
+                        message: "Unable to Delete Shift Schedule.",
+                        title: "Error",
+                      );
+                    },
+                  );
+                }
               });
             }
           },
