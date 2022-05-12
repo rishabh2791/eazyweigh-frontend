@@ -253,7 +253,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": actualWeight,
+          "weight": actualWeight.toStringAsFixed(3),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
@@ -275,7 +275,17 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 widget.jobItem.actualWeight += actualWeight;
                 requiredQty = requiredQty - actualWeight;
                 actualWeight = 0;
+                requiredQty = 0;
               });
+
+              navigationService.pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => JobDetailsWidget(
+                    jobCode: widget.jobCode,
+                    jobItems: widget.allJobItems,
+                  ),
+                ),
+              );
             } else {
               showDialog(
                 context: context,

@@ -284,6 +284,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                           await appStore.jobApp.create(job).then(
                             (response) async {
                               if (response.containsKey("status")) {
+                                print(response);
                                 if (response["status"]) {
                                   Navigator.of(context).pop();
                                   showDialog(
