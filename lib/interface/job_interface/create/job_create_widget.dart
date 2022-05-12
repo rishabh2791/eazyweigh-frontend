@@ -272,6 +272,9 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                             "job_code": jobCode,
                             "quantity": double.parse(quantity),
                             "unit_of_measurement_id": uomID,
+                            "material": {
+                              "code": materialController.text.toString(),
+                            }
                           };
                           showDialog(
                             context: context,
@@ -284,7 +287,6 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                           await appStore.jobApp.create(job).then(
                             (response) async {
                               if (response.containsKey("status")) {
-                                print(response);
                                 if (response["status"]) {
                                   Navigator.of(context).pop();
                                   showDialog(
