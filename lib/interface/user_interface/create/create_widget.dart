@@ -15,6 +15,7 @@ import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class UserCreateWidget extends StatefulWidget {
   const UserCreateWidget({Key? key}) : super(key: key);
@@ -384,19 +385,34 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                                   "accessToken " + token.toString(),
                               "Content-Type": "multipart/form-data",
                             };
+                            // ignore: prefer_typing_uninitialized_variables
+                            var pic;
                             var request =
                                 http.MultipartRequest("POST", Uri.parse(url));
-                            var pic = await http.MultipartFile.fromPath(
-                                "file", file!.files.single.path.toString());
+                            if (foundation.kIsWeb) {
+                              var _bytesData =
+                                  List<int>.from(file!.files.single.bytes!);
+                              pic = http.MultipartFile.fromBytes(
+                                "file",
+                                _bytesData,
+                                filename: file!.files.single.name,
+                              );
+                            } else {
+                              pic = await http.MultipartFile.fromPath(
+                                  "file", file!.files.single.path.toString());
+                            }
                             request.headers.addAll(headers);
                             request.files.add(pic);
                             var response = await request.send();
-                            var responseData = await response.stream.toBytes();
-                            var responseString =
-                                String.fromCharCodes(responseData);
-                            var responseJSON = json.decode(responseString);
-                            user["profile_pic"] = responseJSON["payload"];
-                            handleCreation(user, username, factoryName);
+                            await response.stream
+                                .toBytes()
+                                .then((responseData) {
+                              var responseString =
+                                  String.fromCharCodes(responseData);
+                              var responseJSON = json.decode(responseString);
+                              user["profile_pic"] = responseJSON["payload"];
+                              handleCreation(user, username, factoryName);
+                            });
                           } else {
                             handleCreation(user, username, factoryName);
                           }

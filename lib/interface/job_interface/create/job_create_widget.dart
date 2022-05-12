@@ -461,6 +461,9 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                                       "job_code": element[0].toString(),
                                       "factory_id": factoryController.text,
                                       "unit_of_measurement_id": uomID,
+                                      "material": {
+                                        "code": element[1].toString(),
+                                      },
                                       "quantity":
                                           double.parse(element[2].toString()),
                                     },
