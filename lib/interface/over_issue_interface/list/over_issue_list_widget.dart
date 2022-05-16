@@ -189,7 +189,6 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                             jobs[job["id"]] = thisJob;
                           }
                         } else {
-                          Navigator.of(context).pop();
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -199,6 +198,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                               );
                             },
                           );
+                          Future.delayed(const Duration(seconds: 3))
+                              .then((value) {
+                            Navigator.of(context).pop();
+                          });
                         }
                       }).then((value) async {
                         jobMapping.forEach((key, value) async {
@@ -216,7 +219,6 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                 }
                                 cleanJobMapping();
                               } else {
-                                Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -226,9 +228,12 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                     );
                                   },
                                 );
+                                Future.delayed(const Duration(seconds: 3))
+                                    .then((value) {
+                                  Navigator.of(context).pop();
+                                });
                               }
                             } else {
-                              Navigator.of(context).pop();
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -238,13 +243,16 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                   );
                                 },
                               );
+                              Future.delayed(const Duration(seconds: 3))
+                                  .then((value) {
+                                Navigator.of(context).pop();
+                              });
                             }
                           });
                         });
                       });
                     } else {}
                   } else {
-                    Navigator.of(context).pop();
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -254,10 +262,12 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                         );
                       },
                     );
+                    Future.delayed(const Duration(seconds: 3)).then((value) {
+                      Navigator.of(context).pop();
+                    });
                   }
                 });
               } else {
-                Navigator.of(context).pop();
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -266,12 +276,12 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                       title: "Error",
                     );
                   },
-                ).then((value) {
-                  logout(context);
+                );
+                Future.delayed(const Duration(seconds: 3)).then((value) {
+                  Navigator.of(context).pop();
                 });
               }
             } else {
-              Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -281,6 +291,9 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   );
                 },
               );
+              Future.delayed(const Duration(seconds: 3)).then((value) {
+                Navigator.of(context).pop();
+              });
             }
           } else {
             showDialog(
@@ -292,6 +305,9 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                 );
               },
             );
+            Future.delayed(const Duration(seconds: 3)).then((value) {
+              Navigator.of(context).pop();
+            });
           }
         },
       ).then((value) {

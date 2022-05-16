@@ -98,7 +98,6 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
           factories.add(fact);
         }
       } else {
-        Navigator.of(context).pop();
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -108,6 +107,9 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             );
           },
         );
+        Future.delayed(const Duration(seconds: 3)).then((value) {
+          Navigator.of(context).pop();
+        });
       }
     }).then((value) {
       setState(() {
@@ -203,7 +205,6 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                 }
                                 cleanJobMapping();
                               } else {
-                                Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -213,9 +214,12 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                     );
                                   },
                                 );
+                                Future.delayed(const Duration(seconds: 3))
+                                    .then((value) {
+                                  Navigator.of(context).pop();
+                                });
                               }
                             } else {
-                              Navigator.of(context).pop();
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -225,11 +229,14 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                   );
                                 },
                               );
+                              Future.delayed(const Duration(seconds: 3))
+                                  .then((value) {
+                                Navigator.of(context).pop();
+                              });
                             }
                           });
                         });
                       } else {
-                        Navigator.of(context).pop();
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -239,11 +246,14 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                             );
                           },
                         );
+                        Future.delayed(const Duration(seconds: 3))
+                            .then((value) {
+                          Navigator.of(context).pop();
+                        });
                       }
                     });
                   } else {}
                 } else {
-                  Navigator.of(context).pop();
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -253,10 +263,12 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                       );
                     },
                   );
+                  Future.delayed(const Duration(seconds: 3)).then((value) {
+                    Navigator.of(context).pop();
+                  });
                 }
               });
             } else {
-              Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -265,12 +277,12 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                     title: "Error",
                   );
                 },
-              ).then((value) {
-                logout(context);
+              );
+              Future.delayed(const Duration(seconds: 3)).then((value) {
+                Navigator.of(context).pop();
               });
             }
           } else {
-            Navigator.of(context).pop();
             showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -280,6 +292,9 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                 );
               },
             );
+            Future.delayed(const Duration(seconds: 3)).then((value) {
+              Navigator.of(context).pop();
+            });
           }
         } else {
           showDialog(
@@ -291,6 +306,9 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               );
             },
           );
+          Future.delayed(const Duration(seconds: 3)).then((value) {
+            Navigator.of(context).pop();
+          });
         }
       },
     ).then((value) {

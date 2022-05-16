@@ -152,7 +152,6 @@ class _JobListWidgetState extends State<JobListWidget> {
                             jobsByID[job["id"]] = thisJob;
                           }
                         } else {
-                          Navigator.of(context).pop();
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -162,11 +161,14 @@ class _JobListWidgetState extends State<JobListWidget> {
                               );
                             },
                           );
+                          Future.delayed(const Duration(seconds: 3))
+                              .then((value) {
+                            Navigator.of(context).pop();
+                          });
                         }
                       });
                     }
                   } else {
-                    Navigator.of(context).pop();
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -176,10 +178,12 @@ class _JobListWidgetState extends State<JobListWidget> {
                         );
                       },
                     );
+                    Future.delayed(const Duration(seconds: 3)).then((value) {
+                      Navigator.of(context).pop();
+                    });
                   }
                 });
               } else {
-                Navigator.of(context).pop();
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -188,12 +192,12 @@ class _JobListWidgetState extends State<JobListWidget> {
                       title: "Error",
                     );
                   },
-                ).then((value) {
-                  logout(context);
+                );
+                Future.delayed(const Duration(seconds: 3)).then((value) {
+                  Navigator.of(context).pop();
                 });
               }
             } else {
-              Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -203,6 +207,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                   );
                 },
               );
+              Future.delayed(const Duration(seconds: 3)).then((value) {
+                Navigator.of(context).pop();
+              });
             }
           } else {
             showDialog(
@@ -214,6 +221,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                 );
               },
             );
+            Future.delayed(const Duration(seconds: 3)).then((value) {
+              Navigator.of(context).pop();
+            });
           }
         },
       ).then((value) {
@@ -246,7 +256,6 @@ class _JobListWidgetState extends State<JobListWidget> {
           isLoadingData = false;
         });
       } else {
-        Navigator.of(context).pop();
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -256,6 +265,9 @@ class _JobListWidgetState extends State<JobListWidget> {
             );
           },
         );
+        Future.delayed(const Duration(seconds: 3)).then((value) {
+          Navigator.of(context).pop();
+        });
       }
     });
   }
