@@ -12,6 +12,7 @@ class Mat {
   final User createdBy; //
   final DateTime updatedAt; //
   final User updatedBy; //
+  final bool isWeighed;
 
   Mat({
     required this.code,
@@ -24,6 +25,7 @@ class Mat {
     required this.uom,
     required this.updatedAt,
     required this.updatedBy,
+    required this.isWeighed,
   });
 
   Map<String, dynamic> toJSON() {
@@ -38,6 +40,7 @@ class Mat {
       "created_by": createdBy.toJSON(),
       "updated_at": updatedAt,
       "updated_by": updatedBy.toJSON(),
+      "is_weighed": isWeighed,
     };
   }
 
@@ -53,6 +56,7 @@ class Mat {
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      isWeighed: jsonObject["is_weighed"],
     );
     return material;
   }

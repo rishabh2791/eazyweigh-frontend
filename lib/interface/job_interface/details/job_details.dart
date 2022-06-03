@@ -671,8 +671,10 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                                   for (var item in value["payload"][0]
                                       ["job_items"]) {
                                     JobItem jobItem = JobItem.fromJSON(item);
-                                    jobItems.add(jobItem);
-                                    jobItemIDs.add(jobItem.id);
+                                    if (jobItem.material.isWeighed) {
+                                      jobItems.add(jobItem);
+                                      jobItemIDs.add(jobItem.id);
+                                    }
                                   }
                                   await Future.forEach([
                                     await getJobItemWeighings(),

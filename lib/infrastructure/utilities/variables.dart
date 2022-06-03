@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/user_role_access.dart';
 import 'package:eazyweigh/interface/address_interface/address_widget.dart';
@@ -24,6 +26,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 late User currentUser;
 List<UserRoleAccess> userRolePermissions = [];
+
+String baseURL = "http://10.19.1.211/backend/";
+String WEBSOCKET_SERVER_HOST = '10.19.0.210';
+int WEBSOCKET_PORT = 8001;
+String WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';
+
+String PRINTER_HOST = '10.19.1.89';
+int PRINTER_PORT = 8002;
+String PRINTER_URL = 'ws://$PRINTER_HOST:$PRINTER_PORT/';
 
 bool inSubMenu = false;
 bool isLoggedIn = false;

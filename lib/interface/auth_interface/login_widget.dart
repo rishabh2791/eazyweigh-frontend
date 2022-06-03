@@ -6,11 +6,13 @@ import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -20,6 +22,7 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
+  bool isLoading = true;
   late TextEditingController usernameController, passwordController;
   late BuildContext buildContext;
 
@@ -28,6 +31,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     usernameController = TextEditingController();
     passwordController = TextEditingController();
     scannerListener.addListener(listenToScanner);
+    init();
     super.initState();
   }
 
@@ -35,6 +39,35 @@ class _LoginWidgetState extends State<LoginWidget> {
   void dispose() {
     scannerListener.removeListener(listenToScanner);
     super.dispose();
+  }
+
+  void init() async {
+    await Future.forEach([await parseStringToMap()], (element) => null)
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  Future<void> parseStringToMap({String assetsFileName = '.env'}) async {
+    final lines = await rootBundle.loadString(assetsFileName);
+    Map<String, String> environment = {};
+    for (String line in lines.split('\n')) {
+      line = line.trim();
+      if (line.contains('=') //Set Key Value Pairs on lines separated by =
+          &&
+          !line.startsWith(RegExp(r'=|#'))) {
+        //No need to add emty keys and remove comments
+        List<String> contents = line.split('=');
+        environment[contents[0]] = contents.sublist(1).join('=');
+      }
+    }
+    baseURL = environment["baseURL"] ?? "http://10.19.1.211/backend/";
+    WEBSOCKET_SERVER_HOST =
+        environment["WEBSOCKET_SERVER_HOST"] ?? '10.19.0.210';
+    PRINTER_HOST = environment["PRINTER_HOST"] ?? '10.19.1.89';
+    print(baseURL);
   }
 
   dynamic listenToScanner(String data) {
@@ -140,78 +173,80 @@ class _LoginWidgetState extends State<LoginWidget> {
     buildContext = context;
     return Scaffold(
       backgroundColor: foregroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Image(
-                  image: AssetImage("assets/img/wipro_logo.png"),
-                  width: 200.0,
-                  fit: BoxFit.scaleDown,
-                ),
-                Image(
-                  image: AssetImage("assets/img/canway.png"),
-                  width: 200.0,
-                  fit: BoxFit.scaleDown,
-                ),
-              ],
-            ),
-            const Text(
-              "Scan your Login Card.",
-              style: TextStyle(
-                fontSize: 30.0,
-                color: backgroundColor,
-              ),
-            ),
-            const Divider(
-              color: Colors.transparent,
-            ),
-            const Text(
-              "or",
-              style: TextStyle(
-                fontSize: 16.0,
-                color: backgroundColor,
-              ),
-            ),
-            const Divider(
-              color: Colors.transparent,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                textField(false, usernameController, "Username", false),
-                const VerticalDivider(color: Colors.white),
-                textField(true, passwordController, "Password", false),
-              ],
-            ),
-            const Divider(
-              color: Colors.transparent,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    var username = usernameController.text;
-                    var password = passwordController.text;
-                    handleLogin(buildContext, username, password);
-                  },
-                  child: const Text(
-                    "Login",
+      body: isLoading
+          ? loader(context)
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Image(
+                        image: AssetImage("assets/img/wipro_logo.png"),
+                        width: 200.0,
+                        fit: BoxFit.scaleDown,
+                      ),
+                      Image(
+                        image: AssetImage("assets/img/canway.png"),
+                        width: 200.0,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ],
+                  ),
+                  const Text(
+                    "Scan your Login Card.",
                     style: TextStyle(
                       fontSize: 30.0,
+                      color: backgroundColor,
                     ),
                   ),
-                ),
-              ],
+                  const Divider(
+                    color: Colors.transparent,
+                  ),
+                  const Text(
+                    "or",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: backgroundColor,
+                    ),
+                  ),
+                  const Divider(
+                    color: Colors.transparent,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      textField(false, usernameController, "Username", false),
+                      const VerticalDivider(color: Colors.white),
+                      textField(true, passwordController, "Password", false),
+                    ],
+                  ),
+                  const Divider(
+                    color: Colors.transparent,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          var username = usernameController.text;
+                          var password = passwordController.text;
+                          handleLogin(buildContext, username, password);
+                        },
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(
+                            fontSize: 30.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

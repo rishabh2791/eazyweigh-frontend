@@ -242,7 +242,9 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                               if (value["status"]) {
                                 for (var item in value["payload"]) {
                                   JobItem jobItem = JobItem.fromJSON(item);
-                                  jobItems.add(jobItem);
+                                  if (jobItem.material.isWeighed) {
+                                    jobItems.add(jobItem);
+                                  }
                                 }
                                 Navigator.of(context).pop();
                                 setState(() {

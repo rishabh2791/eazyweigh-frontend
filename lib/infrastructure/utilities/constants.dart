@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-String baseURL = "http://10.19.1.211/backend/";
 const primaryColor = Color(0xFF2F2FA2);
 const backgroundColor = Color(0xFF161B40);
 const foregroundColor = Color(0xFFF9FAF4);
@@ -28,15 +27,6 @@ const desktopBreakPoint = 1368.0;
 const int defaultTimeOut = 7 * 24 * 60 * 60;
 
 const int listPageSize = 25;
-
-const WEBSOCKET_SERVER_HOST =
-    '192.168.138.131'; //TODO Change Weighing Scale IP Address
-const WEBSOCKET_PORT = 8001;
-const WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';
-
-const PRINTER_HOST = '192.168.138.131'; //TODO Change Printer IP Address
-const PRINTER_PORT = 8002;
-const PRINTER_URL = 'ws://$PRINTER_HOST:$PRINTER_PORT/';
 
 const Map<String, List<String>> menuItems = {
   "Home": [],

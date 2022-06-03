@@ -1,4 +1,4 @@
-import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:f_logs/f_logs.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';

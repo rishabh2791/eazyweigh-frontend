@@ -75,6 +75,17 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
               .sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
         }
         break;
+      case 5:
+        if (ascending) {
+          widget.jobItems.sort((a, b) => a.material.isWeighed
+              .toString()
+              .compareTo(b.material.isWeighed.toString()));
+        } else {
+          widget.jobItems.sort((a, b) => b.material.isWeighed
+              .toString()
+              .compareTo(a.material.isWeighed.toString()));
+        }
+        break;
       default:
         break;
     }
@@ -197,6 +208,24 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               onSortColum(columnIndex, ascending);
                             },
                           ),
+                          DataColumn(
+                            label: const Text(
+                              "Weighed Item",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
                         ],
                         source: _DataSource(context, widget.jobItems),
                         rowsPerPage: widget.jobItems.length > 25
@@ -297,6 +326,17 @@ class _DataSource extends DataTableSource {
               fontWeight: FontWeight.bold,
             ),
           ),
+        ),
+        DataCell(
+          jobItem.material.isWeighed
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
         ),
       ],
     );

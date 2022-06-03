@@ -129,11 +129,13 @@ class _JobListWidgetState extends State<JobListWidget> {
                   if (response["status"]) {
                     for (var item in response["payload"]) {
                       JobItem jobItem = JobItem.fromJSON(item["job_item"]);
-                      if (!jobIDs.contains(item["job_item"]["job_id"])) {
-                        jobIDs.add(item["job_item"]["job_id"]);
-                        jobMapping[item["job_item"]["job_id"]] = [jobItem];
-                      } else {
-                        jobMapping[item["job_item"]["job_id"]]?.add(jobItem);
+                      if (jobItem.material.isWeighed) {
+                        if (!jobIDs.contains(item["job_item"]["job_id"])) {
+                          jobIDs.add(item["job_item"]["job_id"]);
+                          jobMapping[item["job_item"]["job_id"]] = [jobItem];
+                        } else {
+                          jobMapping[item["job_item"]["job_id"]]?.add(jobItem);
+                        }
                       }
                     }
                     if (jobIDs.isNotEmpty) {

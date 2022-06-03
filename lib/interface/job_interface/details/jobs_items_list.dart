@@ -98,6 +98,17 @@ class _JobItemItemsListState extends State<JobItemsList> {
         break;
       case 3:
         if (ascending) {
+          widget.jobs.sort((a, b) => a.material.isWeighed
+              .toString()
+              .compareTo(b.material.isWeighed.toString()));
+        } else {
+          widget.jobs.sort((a, b) => b.material.isWeighed
+              .toString()
+              .compareTo(a.material.isWeighed.toString()));
+        }
+        break;
+      case 4:
+        if (ascending) {
           widget.jobs.sort(
               (a, b) => a.assigned.toString().compareTo(b.assigned.toString()));
         } else {
@@ -105,7 +116,7 @@ class _JobItemItemsListState extends State<JobItemsList> {
               (a, b) => b.assigned.toString().compareTo(a.assigned.toString()));
         }
         break;
-      case 4:
+      case 5:
         if (ascending) {
           widget.jobs.sort(
               (a, b) => a.complete.toString().compareTo(b.complete.toString()));
@@ -114,7 +125,7 @@ class _JobItemItemsListState extends State<JobItemsList> {
               (a, b) => b.complete.toString().compareTo(a.complete.toString()));
         }
         break;
-      case 5:
+      case 6:
         if (ascending) {
           widget.jobs.sort(
               (a, b) => a.verified.toString().compareTo(b.verified.toString()));
@@ -206,6 +217,26 @@ class _JobItemItemsListState extends State<JobItemsList> {
                           DataColumn(
                             label: Text(
                               "Quantity",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Weighed",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: themeChanged.value
@@ -357,6 +388,9 @@ class _DataSource extends DataTableSource {
     return DataRow.byIndex(
       index: index,
       selected: jobItem.selected,
+      color: jobItem.material.isWeighed
+          ? MaterialStateProperty.all(Colors.transparent)
+          : MaterialStateProperty.all(Colors.grey),
       onSelectChanged: (value) {
         if (jobItem.selected != value) {
           _selectedCount += value! ? 1 : -1;
@@ -397,15 +431,28 @@ class _DataSource extends DataTableSource {
             ),
           ),
         ),
-        DataCell(jobItem.assigned
-            ? const Icon(
-                Icons.check,
-                color: Colors.green,
-              )
-            : const Icon(
-                Icons.stop,
-                color: Colors.red,
-              )),
+        DataCell(
+          jobItem.material.isWeighed
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
+        ),
+        DataCell(
+          jobItem.assigned
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
+        ),
         DataCell(
           jobItem.complete
               ? const Icon(
@@ -417,15 +464,17 @@ class _DataSource extends DataTableSource {
                   color: Colors.red,
                 ),
         ),
-        DataCell(jobItem.verified
-            ? const Icon(
-                Icons.check,
-                color: Colors.green,
-              )
-            : const Icon(
-                Icons.stop,
-                color: Colors.red,
-              )),
+        DataCell(
+          jobItem.verified
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                )
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
+        ),
         DataCell(
           Text(
             "Print Label",
