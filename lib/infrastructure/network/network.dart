@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
 import 'package:eazyweigh/infrastructure/utilities/headers.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';

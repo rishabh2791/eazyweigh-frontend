@@ -66,8 +66,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     baseURL = environment["baseURL"] ?? "http://10.19.1.211/backend/";
     WEBSOCKET_SERVER_HOST =
         environment["WEBSOCKET_SERVER_HOST"] ?? '10.19.0.210';
-    PRINTER_HOST = environment["PRINTER_HOST"] ?? '10.19.1.89';
-    print(baseURL);
+    PRINTER_HOST = environment["PRINTER_HOST"] ?? '10.19.0.210';
   }
 
   dynamic listenToScanner(String data) {

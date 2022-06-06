@@ -51,6 +51,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   @override
   void initState() {
     getAllData();
+    end = min(3, widget.jobItems.length);
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
     super.initState();
@@ -72,6 +73,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         isLoadingData = false;
       });
     });
+    widget.jobItems
+        .sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
   }
 
   Future<dynamic> getUOMConversions() async {
