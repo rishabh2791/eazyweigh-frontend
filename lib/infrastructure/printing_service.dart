@@ -19,7 +19,7 @@ import 'package:flutter/foundation.dart';
 // printingService.printJobItemLabel(printingData);
 
 String mapToZPLString(Map<String, dynamic> data) {
-  String zplString = "^FO280,30^BQN,2,4^FH^FDMA _7B";
+  String zplString = "^FO420,30^BQN,2,4^FH^FDMA _7B";
   data.forEach((key, value) {
     zplString += "_22" +
         key.replaceAll("_", "_5F") +
