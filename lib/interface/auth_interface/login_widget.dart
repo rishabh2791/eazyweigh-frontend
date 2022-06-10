@@ -74,8 +74,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         .replaceAll(";", ":")
         .replaceAll("[", "{")
         .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+        .replaceAll("'", "\""));
     handleLogin(buildContext, scannerData["username"], scannerData["password"]);
   }
 
@@ -141,6 +140,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                 );
               },
             );
+            Future.delayed(const Duration(seconds: 3)).then((value) {
+              Navigator.of(context).pop();
+            });
           }
         } else {
           showDialog(
@@ -152,6 +154,9 @@ class _LoginWidgetState extends State<LoginWidget> {
               );
             },
           );
+          Future.delayed(const Duration(seconds: 3)).then((value) {
+            Navigator.of(context).pop();
+          });
         }
       });
     } else {
@@ -164,6 +169,9 @@ class _LoginWidgetState extends State<LoginWidget> {
           );
         },
       );
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pop();
+      });
     }
   }
 
