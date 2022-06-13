@@ -61,9 +61,19 @@ class Job {
 
   factory Job.fromJSON(Map<String, dynamic> jsonObject) {
     List<JobItem> jobItems = [];
+    bool complete = true;
     for (Map<String, dynamic> item in jsonObject["job_items"]) {
       JobItem jobItem = JobItem.fromJSON(item);
       jobItems.add(jobItem);
+      if (jobItem.material.isWeighed) {
+        if (!jobItem.complete) {
+          complete && false;
+        } else {
+          complete && true;
+        }
+      } else {
+        complete && true;
+      }
     }
     Job job = Job(
       createdAt: DateTime.parse(jsonObject["created_at"]),
@@ -73,7 +83,7 @@ class Job {
       jobCode: jsonObject["job_code"],
       material: Mat.fromJSON(jsonObject["material"]),
       processing: jsonObject["processing"],
-      complete: jsonObject["complete"],
+      complete: complete,
       quantity: double.parse(jsonObject["quantity"].toString()),
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),

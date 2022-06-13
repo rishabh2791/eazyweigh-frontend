@@ -244,8 +244,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "weight": actualWeight,
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
-          "start_time": startTime.toIso8601String() + "Z",
-          "end_time": DateTime.now().toIso8601String() + "Z",
+          "start_time": startTime.toLocal().toIso8601String() + "Z",
+          "end_time": DateTime.now().toLocal().toIso8601String() + "Z",
         };
         Map<String, dynamic> printingData = {
           "job_code": widget.jobCode,
@@ -258,7 +258,9 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if (actualWeight != 0 && actualWeight < widget.jobItem.upperBound) {
+        if (actualWeight != 0 &&
+            actualWeight + widget.jobItem.actualWeight <
+                widget.jobItem.upperBound) {
           await appStore.jobWeighingApp
               .create(jobItemWeighing)
               .then((value) async {
@@ -270,12 +272,9 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
 
               setState(() {
                 widget.jobItem.complete = true;
-                widget.jobItem.requiredWeight =
-                    widget.jobItem.requiredWeight - actualWeight;
                 widget.jobItem.actualWeight += actualWeight;
                 requiredQty = requiredQty - actualWeight;
                 actualWeight = 0;
-                requiredQty = 0;
               });
 
               navigationService.pushReplacement(
@@ -434,7 +433,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             ),
           ),
           Text(
-            jobItem.requiredWeight.toString() + " " + jobItem.uom.code,
+            requiredQty.toStringAsFixed(2) + " " + jobItem.uom.code,
             style: const TextStyle(
               fontSize: 30.0,
               color: Colors.white,
@@ -450,7 +449,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   Widget verifiedState() {
     JobItem jobItem = widget.jobItem;
     double upperLimit = jobItem.upperBound;
-    requiredQty = jobItem.requiredWeight - jobItem.actualWeight - actualWeight;
+    requiredQty = jobItem.requiredWeight - jobItem.actualWeight;
     double lowerLimit = jobItem.lowerBound;
     int precision = (upperLimit - requiredQty) >= 10
         ? 0

@@ -474,7 +474,7 @@ class _JobListWidgetState extends State<JobListWidget> {
         child: QrImage(
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
-          backgroundColor: Colors.green,
+          backgroundColor: job.complete ? backgroundColor : Colors.green,
           foregroundColor: job.complete ? backgroundColor : Colors.black,
         ),
       ),
