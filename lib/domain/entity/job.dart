@@ -67,12 +67,12 @@ class Job {
       jobItems.add(jobItem);
       if (jobItem.material.isWeighed) {
         if (!jobItem.complete) {
-          complete && false;
+          complete = complete && false;
         } else {
-          complete && true;
+          complete = complete && true;
         }
       } else {
-        complete && true;
+        complete = complete && true;
       }
     }
     Job job = Job(

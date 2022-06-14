@@ -117,6 +117,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
           Terminal terminal = Terminal.fromJSON(item);
           terminals.add(terminal);
         }
+        terminals.sort((a, b) => a.description.compareTo(b.description));
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -158,12 +159,11 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount < precision &&
-          req > 0.1 * terminal.capacity * scaleFactor) {
+      if (terminal.leastCount * scaleFactor < precision) {
         scales += terminal.description + "\n";
       }
     }
-    return scales.split("\n")[0];
+    return scales;
   }
 
   dynamic listenToScanner(String data) {
@@ -293,7 +293,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  (jobItem.requiredWeight - jobItem.actualWeight).toString(),
+                  (jobItem.requiredWeight - jobItem.actualWeight)
+                      .toStringAsFixed(2),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -340,11 +341,24 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             jobItem.id +
             '"}}';
     widgets.add(
-      QrImage(
-        data: jobItemData,
-        size: 250.0 * sizeInfo.screenSize.width / 1920,
-        backgroundColor: isComplete ? Colors.transparent : Colors.green,
-        foregroundColor: isComplete ? Colors.transparent : Colors.black,
+      TextButton(
+        onPressed: () {
+          navigationService.pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => JobItemDetailsWidget(
+                jobCode: widget.jobCode,
+                jobItem: jobItem,
+                allJobItems: widget.jobItems,
+              ),
+            ),
+          );
+        },
+        child: QrImage(
+          data: jobItemData,
+          size: 250.0 * sizeInfo.screenSize.width / 1920,
+          backgroundColor: isComplete ? Colors.transparent : Colors.green,
+          foregroundColor: isComplete ? Colors.transparent : Colors.black,
+        ),
       ),
     );
     return widgets;

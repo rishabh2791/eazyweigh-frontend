@@ -451,13 +451,13 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     double upperLimit = jobItem.upperBound;
     requiredQty = jobItem.requiredWeight - jobItem.actualWeight;
     double lowerLimit = jobItem.lowerBound;
-    int precision = (upperLimit - requiredQty) >= 10
-        ? 0
-        : (upperLimit - requiredQty) >= 1
-            ? 1
-            : (upperLimit - requiredQty) >= 0.1
-                ? 2
-                : 3;
+    // int precision = (upperLimit - requiredQty) >= 10
+    //     ? 0
+    //     : (upperLimit - requiredQty) >= 1
+    //         ? 1
+    //         : (upperLimit - requiredQty) >= 0.1
+    //             ? 2
+    //             : 3;
     return Column(
       children: [
         Container(
@@ -576,7 +576,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            currentWeight.toStringAsFixed(precision),
+                            currentWeight.toStringAsFixed(3),
                             style: TextStyle(
                                 fontSize: 300.0 *
                                     sizeInformation.screenSize.height /
@@ -667,7 +667,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 : unVerifiedState()
             : unScannedState(),
         context,
-        "All Job Items",
+        "Job Item Weighing",
         () {
           Navigator.of(context).pushReplacement(
             CupertinoPageRoute(

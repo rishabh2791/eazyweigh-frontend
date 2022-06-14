@@ -151,7 +151,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                         if (value["status"]) {
                           for (var job in value["payload"]) {
                             Job thisJob = Job.fromJSON(job);
-                            jobsByID[job["id"]] = thisJob;
+                            if (!thisJob.complete) {
+                              jobsByID[job["id"]] = thisJob;
+                            }
                           }
                         } else {
                           showDialog(
