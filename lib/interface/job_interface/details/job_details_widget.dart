@@ -159,7 +159,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount * scaleFactor < precision) {
+      if (terminal.leastCount * scaleFactor < precision &&
+          terminal.capacity > req) {
         scales += terminal.description + "\n";
       }
     }
