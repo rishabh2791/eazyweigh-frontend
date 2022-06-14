@@ -33,6 +33,11 @@ class JobApp implements JobAppInterface {
       String id, Map<String, dynamic> update) async {
     return jobRepository.update(id, update);
   }
+
+  @override
+  Future<Map<String, dynamic>> pullFromRemote(String factoryID) async {
+    return jobRepository.pullFromRemote(factoryID);
+  }
 }
 
 abstract class JobAppInterface {
@@ -41,4 +46,5 @@ abstract class JobAppInterface {
   Future<Map<String, dynamic>> get(String id);
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
   Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update);
+  Future<Map<String, dynamic>> pullFromRemote(String factoryID);
 }

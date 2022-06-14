@@ -43,4 +43,11 @@ class JobRepo implements JobRepository {
         await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
+
+  @override
+  Future<Map<String, dynamic>> pullFromRemote(String factoryID) async {
+    String url = "/job/remote/" + factoryID + "/";
+    var response = await networkAPIProvider.get(url, TokenType.accessToken);
+    return response;
+  }
 }

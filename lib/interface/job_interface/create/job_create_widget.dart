@@ -188,7 +188,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 50.0),
+            padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,11 +201,108 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                DropDownWidget(
-                  disabled: false,
-                  hint: "Select Factory",
-                  controller: factoryController,
-                  itemList: factories,
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
+                        children: [
+                          DropDownWidget(
+                            disabled: false,
+                            hint: "Select Factory",
+                            controller: factoryController,
+                            itemList: factories,
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              String errors = "";
+                              if (factoryController.text == "" ||
+                                  factoryController.text.isEmpty) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const CustomDialog(
+                                      message: "Factory Missing",
+                                      title: "Errors",
+                                    );
+                                  },
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return loader(context);
+                                  },
+                                );
+
+                                await appStore.jobApp
+                                    .pullFromRemote(factoryController.text)
+                                    .then((response) {
+                                  if (response.containsKey("status") &&
+                                      response["status"]) {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const CustomDialog(
+                                          message: "Job Created",
+                                          title: "Info",
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    if (response.containsKey("status")) {
+                                      Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomDialog(
+                                            message: response["message"],
+                                            title: "Errors",
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const CustomDialog(
+                                            message: "Unable to Create Jobs.",
+                                            title: "Errors",
+                                          );
+                                        },
+                                      );
+                                    }
+                                  }
+                                });
+                              }
+                            },
+                            child: const Text(
+                              "Pull From Syspro",
+                              style: TextStyle(
+                                color: formHintTextColor,
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10.0,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  color: Colors.transparent,
                 ),
                 const Text(
                   "Create New Job",
@@ -230,10 +327,6 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                 const SizedBox(
                   height: 10.0,
                 ),
-                const Divider(),
-                const SizedBox(
-                  height: 20.0,
-                ),
                 Row(
                   children: [
                     TextButton(
@@ -251,6 +344,10 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
 
                         if (jobCode.isEmpty || jobCode == "") {
                           errors += "Job Code Missing.\n";
+                        }
+
+                        if (factoryID.isEmpty || factoryID == "") {
+                          errors += "Factory Missing.\n";
                         }
 
                         if (materialController.text.isEmpty ||
@@ -364,7 +461,9 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
               ],
             ),
           ),
-          const Divider(),
+          const Divider(
+            color: Colors.transparent,
+          ),
           Container(
             padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 50.0),
             child: Column(
