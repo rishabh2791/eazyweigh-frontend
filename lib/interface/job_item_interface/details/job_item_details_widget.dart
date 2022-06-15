@@ -587,16 +587,16 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                                     : Colors.green),
                           ),
                           Icon(
-                            currentWeight < lowerLimit
+                            actualWeight + currentWeight < lowerLimit
                                 ? Icons.arrow_circle_up
-                                : currentWeight > upperLimit
+                                : actualWeight + currentWeight > upperLimit
                                     ? Icons.arrow_circle_down
                                     : Icons.check_circle,
                             size: 200.0 *
                                 sizeInformation.screenSize.height /
                                 1006,
-                            color: (currentWeight < lowerLimit ||
-                                    currentWeight > upperLimit)
+                            color: (actualWeight + currentWeight < lowerLimit ||
+                                    actualWeight + currentWeight > upperLimit)
                                 ? Colors.red
                                 : Colors.green,
                           ),
