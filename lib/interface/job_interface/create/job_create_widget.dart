@@ -34,12 +34,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
   List<Mat> materials = [];
   late FilePickerResult? file;
 
-  late TextEditingController factoryController,
-      uomController,
-      materialController,
-      quantityController,
-      codeController,
-      fileController;
+  late TextEditingController factoryController, uomController, materialController, quantityController, codeController, fileController;
 
   @override
   void initState() {
@@ -220,9 +215,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              String errors = "";
-                              if (factoryController.text == "" ||
-                                  factoryController.text.isEmpty) {
+                              if (factoryController.text == "" || factoryController.text.isEmpty) {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -241,11 +234,8 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                                   },
                                 );
 
-                                await appStore.jobApp
-                                    .pullFromRemote(factoryController.text)
-                                    .then((response) {
-                                  if (response.containsKey("status") &&
-                                      response["status"]) {
+                                await appStore.jobApp.pullFromRemote(factoryController.text).then((response) {
+                                  if (response.containsKey("status") && response["status"]) {
                                     Navigator.of(context).pop();
                                     showDialog(
                                       context: context,
@@ -331,8 +321,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -350,8 +339,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                           errors += "Factory Missing.\n";
                         }
 
-                        if (materialController.text.isEmpty ||
-                            materialController.text == "") {
+                        if (materialController.text.isEmpty || materialController.text == "") {
                           errors += "Material Code Missing.\n";
                         }
 
@@ -443,8 +431,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                     const VerticalDivider(),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {
@@ -491,14 +478,12 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
                         String errors = "";
-                        if (fileController.text.isEmpty ||
-                            fileController.text == "") {
+                        if (fileController.text.isEmpty || fileController.text == "") {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -509,8 +494,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                             },
                           );
                         } else {
-                          if (factoryController.text == "" ||
-                              factoryController.text.isEmpty) {
+                          if (factoryController.text == "" || factoryController.text.isEmpty) {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -525,14 +509,10 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                             // ignore: prefer_typing_uninitialized_variables
                             var csvData;
                             if (foundation.kIsWeb) {
-                              final bytes =
-                                  utf8.decode(file!.files.single.bytes!);
-                              csvData =
-                                  const CsvToListConverter().convert(bytes);
+                              final bytes = utf8.decode(file!.files.single.bytes!);
+                              csvData = const CsvToListConverter().convert(bytes);
                             } else {
-                              final csvFile =
-                                  File(file!.files.single.path.toString())
-                                      .openRead();
+                              final csvFile = File(file!.files.single.path.toString()).openRead();
                               csvData = await csvFile
                                   .transform(utf8.decoder)
                                   .transform(
@@ -551,9 +531,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                               (element) {
                                 String uomID = getUOMID(element[3]);
                                 if (uomID.isEmpty) {
-                                  errors += "Unit of Measure: " +
-                                      element[3] +
-                                      " not created.\n";
+                                  errors += "Unit of Measure: " + element[3] + " not created.\n";
                                 } else {
                                   jobs.add(
                                     {
@@ -563,8 +541,7 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                                       "material": {
                                         "code": element[1].toString(),
                                       },
-                                      "quantity":
-                                          double.parse(element[2].toString()),
+                                      "quantity": double.parse(element[2].toString()),
                                     },
                                   );
                                 }
@@ -574,21 +551,14 @@ class _JobCreateWidgetState extends State<JobCreateWidget> {
                             await appStore.jobApp.createMultiple(jobs).then(
                               (response) async {
                                 if (response["status"]) {
-                                  int created =
-                                      response["payload"]["models"].length;
-                                  int notCreated =
-                                      response["payload"]["errors"].length +
-                                          errors.length;
+                                  int created = response["payload"]["models"].length;
+                                  int notCreated = response["payload"]["errors"].length + errors.length;
                                   Navigator.of(context).pop();
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return CustomDialog(
-                                        message: "Created " +
-                                            created.toString() +
-                                            " job and found error in " +
-                                            notCreated.toString() +
-                                            " jobs.",
+                                        message: "Created " + created.toString() + " job and found error in " + notCreated.toString() + " jobs.",
                                         title: "Errors",
                                       );
                                     },
