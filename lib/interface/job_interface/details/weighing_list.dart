@@ -175,6 +175,26 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                               ),
                               DataColumn(
                                 label: Text(
+                                  "Batch",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
                                   "Weighed By",
                                   style: TextStyle(
                                     fontSize: 20.0,
@@ -299,6 +319,16 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             jobWeighing.weight.toString() + " " + jobWeighing.jobItem.uom.code,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            jobWeighing.batch,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

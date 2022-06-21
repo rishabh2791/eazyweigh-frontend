@@ -57,7 +57,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   void initState() {
     super.initState();
     getAllData();
-    requiredQty = widget.jobItem.requiredWeight - widget.jobItem.actualWeight;
+    requiredQty = widget.jobItem.requiredWeight;
+    actualWeight = widget.jobItem.actualWeight;
     startTime = DateTime.now();
     socketUtility.initCommunication();
     printingService.addListener(listenToPrintingService);
@@ -235,32 +236,31 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         );
         break;
       case "complete":
-        actualWeight = currentWeight;
         Map<String, dynamic> jobItemWeighing = {
           "job_code": widget.jobCode,
           "job_item_id": widget.jobItem.id,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": actualWeight,
+          "weight": currentWeight,
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "start_time": startTime.toLocal().toIso8601String() + "Z",
           "end_time": DateTime.now().toLocal().toIso8601String() + "Z",
         };
+        print(jobItemWeighing);
         Map<String, dynamic> printingData = {
           "job_code": widget.jobCode,
           "job_id": widget.jobItem.jobID,
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": actualWeight.toStringAsFixed(3),
+          "weight": currentWeight.toStringAsFixed(3),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if (actualWeight != 0 &&
-            actualWeight + widget.jobItem.actualWeight <
-                widget.jobItem.upperBound) {
+        if (currentWeight != 0 &&
+            actualWeight + currentWeight < widget.jobItem.upperBound) {
           await appStore.jobWeighingApp
               .create(jobItemWeighing)
               .then((value) async {
@@ -270,11 +270,15 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
 
               printingService.printJobItemLabel(printingData);
 
+              if (actualWeight + currentWeight > widget.jobItem.lowerBound) {
+                setState(() {
+                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
+                });
+              }
+
               setState(() {
-                widget.jobItem.complete = true;
-                widget.jobItem.actualWeight += actualWeight;
-                requiredQty = requiredQty - actualWeight;
-                actualWeight = 0;
+                widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += currentWeight;
+                currentWeight = 0;
               });
 
               navigationService.pushReplacement(
@@ -433,7 +437,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             ),
           ),
           Text(
-            requiredQty.toStringAsFixed(2) + " " + jobItem.uom.code,
+            requiredQty.toStringAsFixed(3) + " " + jobItem.uom.code,
             style: const TextStyle(
               fontSize: 30.0,
               color: Colors.white,
@@ -581,24 +585,34 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                                 fontSize: 300.0 *
                                     sizeInformation.screenSize.height /
                                     1006,
-                                color: (currentWeight > upperLimit ||
-                                        currentWeight < lowerLimit)
+                                color: (currentWeight +
+                                                widget.jobItem.actualWeight >
+                                            upperLimit ||
+                                        currentWeight +
+                                                widget.jobItem.actualWeight <
+                                            lowerLimit)
                                     ? Colors.red
                                     : Colors.green),
                           ),
                           Icon(
-                            actualWeight + currentWeight < lowerLimit
+                            currentWeight + widget.jobItem.actualWeight <
+                                    lowerLimit
                                 ? Icons.arrow_circle_up
-                                : actualWeight + currentWeight > upperLimit
+                                : currentWeight + widget.jobItem.actualWeight >
+                                        upperLimit
                                     ? Icons.arrow_circle_down
                                     : Icons.check_circle,
                             size: 200.0 *
                                 sizeInformation.screenSize.height /
                                 1006,
-                            color: (actualWeight + currentWeight < lowerLimit ||
-                                    actualWeight + currentWeight > upperLimit)
-                                ? Colors.red
-                                : Colors.green,
+                            color:
+                                (currentWeight + widget.jobItem.actualWeight <
+                                            lowerLimit ||
+                                        currentWeight +
+                                                widget.jobItem.actualWeight >
+                                            upperLimit)
+                                    ? Colors.red
+                                    : Colors.green,
                           ),
                         ],
                       ),

@@ -51,9 +51,14 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   @override
   void initState() {
     getAllData();
-    end = min(3, widget.jobItems.length);
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
+    if (currentUser.userRole.role == "Operator") {
+      widget.jobItems.removeWhere((element) => element.complete);
+    }
+    end = min(3, widget.jobItems.length);
+    widget.jobItems
+        .sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
     super.initState();
   }
 
@@ -73,8 +78,6 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         isLoadingData = false;
       });
     });
-    widget.jobItems
-        .sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
   }
 
   Future<dynamic> getUOMConversions() async {
@@ -295,7 +298,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                 ),
                 Text(
                   (jobItem.requiredWeight - jobItem.actualWeight)
-                      .toStringAsFixed(2),
+                      .toStringAsFixed(3),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -367,6 +370,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   List<Widget> getJobItems(ScreenSizeInformation screenSizeInformation) {
     List<Widget> list = [];
+    print(start);
+    print(end);
     for (var i = start; i < end; i++) {
       JobItem jobItem = widget.jobItems[i];
       Widget wid = SizedBox(

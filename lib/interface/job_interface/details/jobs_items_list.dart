@@ -29,6 +29,7 @@ class _JobItemItemsListState extends State<JobItemsList> {
 
   @override
   void initState() {
+    widget.jobs.removeWhere((element) => element.complete);
     printingService.addListener(listenToPrintingService);
     super.initState();
   }

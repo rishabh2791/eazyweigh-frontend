@@ -30,12 +30,10 @@ class OverIssueItemDetailsWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<OverIssueItemDetailsWidget> createState() =>
-      _OverIssueItemDetailsWidgetState();
+  State<OverIssueItemDetailsWidget> createState() => _OverIssueItemDetailsWidgetState();
 }
 
-class _OverIssueItemDetailsWidgetState
-    extends State<OverIssueItemDetailsWidget> {
+class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget> {
   bool isLoadingData = true;
   double currentWeight = 0;
   double taredWeight = 0;
@@ -73,12 +71,8 @@ class _OverIssueItemDetailsWidgetState
   }
 
   void listenToPrintingService(String message) {
-    Map<String, dynamic> scannerData = jsonDecode(message
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(message.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (!(scannerData.containsKey("status") && scannerData["status"])) {
       showDialog(
         context: context,
@@ -97,18 +91,13 @@ class _OverIssueItemDetailsWidgetState
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "back":
         Navigator.of(context).pop();
         break;
       case "complete":
-        actualWeight = currentWeight;
         Map<String, dynamic> update = {
           "weighed": true,
           "weight": actualWeight,
@@ -118,27 +107,22 @@ class _OverIssueItemDetailsWidgetState
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": actualWeight,
+          "weight": currentWeight,
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
           "job_code": widget.jobCode,
           "over_issue_id": widget.overIssue.id,
         };
-        if (actualWeight >= requiredQty * .99 &&
-            actualWeight <= 1.01 * requiredQty) {
-          await appStore.overIssueApp
-              .update(widget.overIssue.id, update)
-              .then((value) async {
+        if (currentWeight >= requiredQty * .99 && currentWeight <= 1.01 * requiredQty) {
+          await appStore.overIssueApp.update(widget.overIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
 
               setState(() {
-                widget.jobItem.requiredWeight =
-                    widget.jobItem.requiredWeight - actualWeight;
-                widget.jobItem.actualWeight += actualWeight;
-                requiredQty = requiredQty - actualWeight;
-                actualWeight = 0;
+                widget.jobItem.actualWeight += currentWeight;
+                requiredQty = requiredQty - currentWeight;
+                currentWeight = 0;
               });
             } else {
               showDialog(
@@ -185,12 +169,8 @@ class _OverIssueItemDetailsWidgetState
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
-    Map<String, dynamic> jsonData = jsonDecode(scannerData
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> jsonData =
+        jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("code")) {
       String matCode = jsonData["code"];
@@ -218,12 +198,8 @@ class _OverIssueItemDetailsWidgetState
   }
 
   dynamic listenToWeighingScale(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     try {
       if (scannerData.containsKey("error")) {
         showDialog(
@@ -240,9 +216,7 @@ class _OverIssueItemDetailsWidgetState
         });
       } else {
         setState(() {
-          currentWeight =
-              double.parse((scannerData["data"]).toString()) * scaleFactor -
-                  taredWeight;
+          currentWeight = double.parse((scannerData["data"]).toString()) * scaleFactor - taredWeight;
         });
       }
     } catch (e) {
@@ -284,20 +258,17 @@ class _OverIssueItemDetailsWidgetState
           thisTerminal.add(terminal);
         }
       }
-      scaleFactor =
-          getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
+      scaleFactor = getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
     }
   }
 
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode &&
-            uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
-            uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -310,13 +281,10 @@ class _OverIssueItemDetailsWidgetState
     Map<String, dynamic> conditions = {
       "factory_id": widget.jobItem.material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp
-        .list(conditions)
-        .then((response) async {
+    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion =
-              UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -391,16 +359,14 @@ class _OverIssueItemDetailsWidgetState
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
-            "Required Quantity",
+            "Required",
             style: TextStyle(
               fontSize: 18.0,
               color: Colors.white,
             ),
           ),
           Text(
-            (widget.overIssue.actual - widget.overIssue.req).toString() +
-                " " +
-                widget.jobItem.uom.code,
+            (widget.overIssue.actual - widget.overIssue.req).toString() + " " + widget.jobItem.uom.code,
             style: const TextStyle(
               fontSize: 30.0,
               color: Colors.white,
@@ -418,13 +384,6 @@ class _OverIssueItemDetailsWidgetState
     double upperLimit = (widget.overIssue.actual - widget.overIssue.req) * 1.01;
     requiredQty = widget.overIssue.actual - widget.overIssue.req;
     double lowerLimit = (widget.overIssue.actual - widget.overIssue.req) * 0.99;
-    int precision = (upperLimit - requiredQty) >= 10
-        ? 0
-        : (upperLimit - requiredQty) >= 1
-            ? 1
-            : (upperLimit - requiredQty) >= 0.1
-                ? 2
-                : 3;
     return Column(
       children: [
         Container(
@@ -547,15 +506,10 @@ class _OverIssueItemDetailsWidgetState
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            currentWeight.toStringAsFixed(precision),
+                            currentWeight.toStringAsFixed(3),
                             style: TextStyle(
-                                fontSize: 300.0 *
-                                    sizeInformation.screenSize.height /
-                                    1006,
-                                color: (currentWeight > upperLimit ||
-                                        currentWeight < lowerLimit)
-                                    ? Colors.red
-                                    : Colors.green),
+                                fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
+                                color: (currentWeight > upperLimit || currentWeight < lowerLimit) ? Colors.red : Colors.green),
                           ),
                           Icon(
                             currentWeight < lowerLimit
@@ -563,13 +517,8 @@ class _OverIssueItemDetailsWidgetState
                                 : currentWeight > upperLimit
                                     ? Icons.arrow_circle_down
                                     : Icons.check_circle,
-                            size: 200.0 *
-                                sizeInformation.screenSize.height /
-                                1006,
-                            color: (currentWeight < lowerLimit ||
-                                    currentWeight > upperLimit)
-                                ? Colors.red
-                                : Colors.green,
+                            size: 200.0 * sizeInformation.screenSize.height / 1006,
+                            color: (currentWeight < lowerLimit || currentWeight > upperLimit) ? Colors.red : Colors.green,
                           ),
                         ],
                       ),
