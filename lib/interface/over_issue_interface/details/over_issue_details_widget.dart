@@ -373,7 +373,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
               child: QrImage(
                 data: back,
                 size: 150,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.red,
               ),
             ),
             const Text(
@@ -397,7 +397,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
               child: QrImage(
                 data: previous,
                 size: 150,
-                backgroundColor: start == 0 ? Colors.transparent : Colors.green,
+                backgroundColor: start == 0 ? Colors.transparent : Colors.red,
                 foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
@@ -430,7 +430,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.green,
+                backgroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.red,
                 foregroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),

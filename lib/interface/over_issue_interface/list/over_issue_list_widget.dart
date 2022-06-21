@@ -386,88 +386,86 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
 
   List<Widget> getRowWidget(Job job, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
-    if (!job.complete) {
-      widgets.add(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: sizeInfo.screenSize.width - 1200,
-              child: Column(
-                children: [
-                  const Text(
-                    "Material",
-                    style: TextStyle(
-                      fontSize: 9.0,
-                      color: Colors.white,
-                    ),
+    widgets.add(
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: sizeInfo.screenSize.width - 1200,
+            child: Column(
+              children: [
+                const Text(
+                  "Material",
+                  style: TextStyle(
+                    fontSize: 9.0,
+                    color: Colors.white,
                   ),
-                  Text(
-                    job.material.code + " - " + job.material.description,
-                    style: const TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                Text(
+                  job.material.code + " - " + job.material.description,
+                  style: const TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(
+            color: Colors.transparent,
+            height: 10.0,
+          ),
+          Column(
+            children: [
+              const Text(
+                "Job Size",
+                style: TextStyle(
+                  fontSize: 9.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const Divider(
-              color: Colors.transparent,
-              height: 10.0,
-            ),
-            Column(
-              children: [
-                const Text(
-                  "Job Size",
-                  style: TextStyle(
-                    fontSize: 9.0,
-                    color: Colors.white,
-                  ),
+              Text(
+                job.quantity.toString() + " " + job.uom.code,
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                Text(
-                  job.quantity.toString() + " " + job.uom.code,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+              ),
+            ],
+          ),
+          const Divider(
+            color: Colors.transparent,
+            height: 10.0,
+          ),
+          Column(
+            children: [
+              const Text(
+                "Items",
+                style: TextStyle(
+                  fontSize: 9.0,
+                  color: Colors.white,
                 ),
-              ],
-            ),
-            const Divider(
-              color: Colors.transparent,
-              height: 10.0,
-            ),
-            Column(
-              children: [
-                const Text(
-                  "Items",
-                  style: TextStyle(
-                    fontSize: 9.0,
-                    color: Colors.white,
-                  ),
+              ),
+              Text(
+                (passedJobMapping[job.id]?.length).toString(),
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                Text(
-                  (passedJobMapping[job.id]?.length).toString(),
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(
-              color: Colors.transparent,
-              height: 10.0,
-            ),
-          ],
-        ),
-      );
-    }
+              ),
+            ],
+          ),
+          const Divider(
+            color: Colors.transparent,
+            height: 10.0,
+          ),
+        ],
+      ),
+    );
 
     String jobItemData = '{"action": "selection","data": {"type": "job","job_code":"' + job.jobCode + '", "data": "' + job.id + '"}}';
     widgets.add(
