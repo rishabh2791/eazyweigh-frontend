@@ -39,7 +39,7 @@ class OverIssueDetailsWidget extends StatefulWidget {
 class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   bool isLoadingData = true;
   int start = 0;
-  int end = 3;
+  int end = 2;
   bool isLoading = true;
   ScrollController? scrollController;
   List<Terminal> terminals = [];
@@ -51,7 +51,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   @override
   void initState() {
     getAllData();
-    end = min(end, widget.overIssueItems.length);
+    end = min(end, widget.overIssueItems.length - 1);
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
     super.initState();
@@ -78,17 +78,12 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   Future<dynamic> getUOMConversions() async {
     uomConversions = [];
     Map<String, dynamic> conditions = {
-      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem.id])!
-          .material
-          .factoryID,
+      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem.id])!.material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp
-        .list(conditions)
-        .then((response) async {
+    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion =
-              UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -109,9 +104,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   Future<dynamic> getScales() async {
     terminals = [];
     Map<String, dynamic> conditions = {
-      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem.id])!
-          .material
-          .factoryID,
+      "factory_id": (widget.jobItems[widget.overIssueItems[0].jobItem.id])!.material.factoryID,
     };
     await appStore.terminalApp.list(conditions).then((value) async {
       if (value["status"]) {
@@ -137,12 +130,10 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode &&
-            uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
-            uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -160,8 +151,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
     double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount < precision &&
-          req > 0.1 * terminal.capacity * scaleFactor) {
+      if (terminal.leastCount < precision && req > 0.1 * terminal.capacity * scaleFactor) {
         scales += terminal.description + "\n";
       }
     }
@@ -169,12 +159,8 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
         late OverIssue passedOverIssueItem;
@@ -209,31 +195,20 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= widget.overIssueItems.length) {
-            start += 3;
-            if (end + 3 > widget.overIssueItems.length) {
-              end = widget.overIssueItems.length - 1;
-            } else {
-              end += 3;
-            }
+          if (start + 3 <= widget.overIssueItems.length - 1) {
+            start = start + 3;
+          }
+          if (end + 3 <= widget.overIssueItems.length - 1) {
+            end = end + 3;
+          } else {
+            end = widget.overIssueItems.length - 1;
           }
         });
         break;
       case "previous":
         setState(() {
-          if (start - 3 >= 0) {
-            if (end == widget.overIssueItems.length - 1) {
-              start -= 3;
-              end = start + 2;
-            } else {
-              end -= 3;
-              if (start - 3 < 0) {
-                start = 0;
-              } else {
-                start -= 3;
-              }
-            }
-          }
+          start = 0;
+          end = min(2, widget.overIssueItems.length - 1);
         });
         break;
       case "back":
@@ -247,8 +222,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
     }
   }
 
-  List<Widget> getRowWidget(
-      JobItem jobItem, OverIssue overIssue, ScreenSizeInformation sizeInfo) {
+  List<Widget> getRowWidget(JobItem jobItem, OverIssue overIssue, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
 
     widgets.add(
@@ -315,8 +289,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                 ),
               ),
               Text(
-                assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
-                    jobItem.lowerBound, jobItem.uom.code),
+                assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -333,10 +306,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
       ),
     );
 
-    String jobItemData =
-        '{"action": "selection","data": {"type": "over_issue_item", "data": "' +
-            overIssue.id +
-            '"}}';
+    String jobItemData = '{"action": "selection","data": {"type": "over_issue_item", "data": "' + overIssue.id + '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
@@ -363,7 +333,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
 
   List<Widget> getJobItems(ScreenSizeInformation screenSizeInformation) {
     List<Widget> list = [];
-    for (var i = start; i < end; i++) {
+    for (var i = start; i <= end; i++) {
       OverIssue overIssueItem = widget.overIssueItems[i];
       Widget wid = SizedBox(
         width: screenSizeInformation.screenSize.width / 3 - 20,
@@ -377,8 +347,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: getRowWidget(widget.jobItems[overIssueItem.jobItem.id]!,
-                overIssueItem, screenSizeInformation),
+            children: getRowWidget(widget.jobItems[overIssueItem.jobItem.id]!, overIssueItem, screenSizeInformation),
           ),
         ),
       );
@@ -397,8 +366,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
               onPressed: () {
                 navigationService.pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) =>
-                        const OverIssueListWidget(),
+                    builder: (BuildContext context) => const OverIssueListWidget(),
                   ),
                 );
               },
@@ -422,19 +390,8 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start - 3 >= 0) {
-                    if (end == widget.overIssueItems.length - 1) {
-                      start -= 3;
-                      end = start + 2;
-                    } else {
-                      end -= 3;
-                      if (start - 3 < 0) {
-                        start = 0;
-                      } else {
-                        start -= 3;
-                      }
-                    }
-                  }
+                  start = 0;
+                  end = min(2, widget.overIssueItems.length - 1);
                 });
               },
               child: QrImage(
@@ -460,31 +417,24 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 < widget.overIssueItems.length) {
-                    start += 3;
-                    if (end + 3 > widget.overIssueItems.length) {
-                      end = widget.overIssueItems.length - 1;
-                    } else {
-                      end += 3;
-                    }
+                  if (start + 3 <= widget.overIssueItems.length - 1) {
+                    start = start + 3;
+                  }
+                  if (end + 3 <= widget.overIssueItems.length - 1) {
+                    end = end + 3;
+                  } else {
+                    end = widget.overIssueItems.length - 1;
                   }
                 });
               },
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.overIssueItems.length ||
-                        widget.overIssueItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.green,
-                foregroundColor: (end == widget.overIssueItems.length ||
-                        widget.overIssueItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.black,
+                backgroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.green,
+                foregroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
-            (end == widget.overIssueItems.length ||
-                    widget.overIssueItems.length < 3)
+            (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3)
                 ? Container()
                 : const Text(
                     "Next",
@@ -529,8 +479,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
               () {
                 navigationService.pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) =>
-                        const OverIssueListWidget(),
+                    builder: (BuildContext context) => const OverIssueListWidget(),
                   ),
                 );
               },

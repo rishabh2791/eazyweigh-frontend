@@ -33,14 +33,13 @@ class UnderIssueDetailsWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<UnderIssueDetailsWidget> createState() =>
-      _UnderIssueDetailsWidgetState();
+  State<UnderIssueDetailsWidget> createState() => _UnderIssueDetailsWidgetState();
 }
 
 class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   bool isLoadingData = true;
   int start = 0;
-  int end = 3;
+  int end = 2;
   bool isLoading = true;
   ScrollController? scrollController;
   List<Terminal> terminals = [];
@@ -52,7 +51,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   @override
   void initState() {
     getAllData();
-    end = min(end, widget.underIssueItems.length);
+    end = min(end, widget.underIssueItems.length - 1);
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
     super.initState();
@@ -79,17 +78,12 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   Future<dynamic> getUOMConversions() async {
     uomConversions = [];
     Map<String, dynamic> conditions = {
-      "factory_id": (widget.jobItems[widget.underIssueItems[0].jobItem.id])!
-          .material
-          .factoryID,
+      "factory_id": (widget.jobItems[widget.underIssueItems[0].jobItem.id])!.material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp
-        .list(conditions)
-        .then((response) async {
+    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion =
-              UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -110,9 +104,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   Future<dynamic> getScales() async {
     terminals = [];
     Map<String, dynamic> conditions = {
-      "factory_id": (widget.jobItems[widget.underIssueItems[0].jobItem.id])!
-          .material
-          .factoryID,
+      "factory_id": (widget.jobItems[widget.underIssueItems[0].jobItem.id])!.material.factoryID,
     };
     await appStore.terminalApp.list(conditions).then((value) async {
       if (value["status"]) {
@@ -138,12 +130,10 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode &&
-            uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
-            uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -161,8 +151,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
     double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount < precision &&
-          req > 0.1 * terminal.capacity * scaleFactor) {
+      if (terminal.leastCount < precision && req > 0.1 * terminal.capacity * scaleFactor) {
         scales += terminal.description + "\n";
       }
     }
@@ -170,12 +159,8 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
         late UnderIssue passedUnderIssueItem;
@@ -210,31 +195,20 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= widget.underIssueItems.length) {
-            start += 3;
-            if (end + 3 > widget.underIssueItems.length) {
-              end = widget.underIssueItems.length - 1;
-            } else {
-              end += 3;
-            }
+          if (start + 3 <= widget.underIssueItems.length - 1) {
+            start = start + 3;
+          }
+          if (end + 3 <= widget.underIssueItems.length - 1) {
+            end = end + 3;
+          } else {
+            end = widget.underIssueItems.length - 1;
           }
         });
         break;
       case "previous":
         setState(() {
-          if (start - 3 >= 0) {
-            if (end == widget.underIssueItems.length - 1) {
-              start -= 3;
-              end = start + 2;
-            } else {
-              end -= 3;
-              if (start - 3 < 0) {
-                start = 0;
-              } else {
-                start -= 3;
-              }
-            }
-          }
+          start = 0;
+          end = min(2, widget.underIssueItems.length - 1);
         });
         break;
       case "back":
@@ -248,8 +222,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
     }
   }
 
-  List<Widget> getRowWidget(
-      JobItem jobItem, UnderIssue underIssue, ScreenSizeInformation sizeInfo) {
+  List<Widget> getRowWidget(JobItem jobItem, UnderIssue underIssue, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
 
     widgets.add(
@@ -316,8 +289,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
                 ),
               ),
               Text(
-                assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
-                    jobItem.lowerBound, jobItem.uom.code),
+                assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -334,10 +306,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
       ),
     );
 
-    String jobItemData =
-        '{"action": "selection","data": {"type": "under_issue_item", "data": "' +
-            underIssue.id +
-            '"}}';
+    String jobItemData = '{"action": "selection","data": {"type": "under_issue_item", "data": "' + underIssue.id + '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
@@ -364,7 +333,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
 
   List<Widget> getJobItems(ScreenSizeInformation screenSizeInformation) {
     List<Widget> list = [];
-    for (var i = start; i < end; i++) {
+    for (var i = start; i <= end; i++) {
       UnderIssue underIssueItem = widget.underIssueItems[i];
       Widget wid = SizedBox(
         width: screenSizeInformation.screenSize.width / 3 - 20,
@@ -378,8 +347,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: getRowWidget(widget.jobItems[underIssueItem.jobItem.id]!,
-                underIssueItem, screenSizeInformation),
+            children: getRowWidget(widget.jobItems[underIssueItem.jobItem.id]!, underIssueItem, screenSizeInformation),
           ),
         ),
       );
@@ -398,8 +366,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
               onPressed: () {
                 navigationService.pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) =>
-                        const UnderIssueListWidget(),
+                    builder: (BuildContext context) => const UnderIssueListWidget(),
                   ),
                 );
               },
@@ -423,19 +390,8 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start - 3 >= 0) {
-                    if (end == widget.underIssueItems.length - 1) {
-                      start -= 3;
-                      end = start + 2;
-                    } else {
-                      end -= 3;
-                      if (start - 3 < 0) {
-                        start = 0;
-                      } else {
-                        start -= 3;
-                      }
-                    }
-                  }
+                  start = 0;
+                  end = min(2, widget.underIssueItems.length - 1);
                 });
               },
               child: QrImage(
@@ -461,31 +417,24 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 < widget.underIssueItems.length) {
-                    start += 3;
-                    if (end + 3 > widget.underIssueItems.length) {
-                      end = widget.underIssueItems.length - 1;
-                    } else {
-                      end += 3;
-                    }
+                  if (start + 3 <= widget.underIssueItems.length - 1) {
+                    start = start + 3;
+                  }
+                  if (end + 3 <= widget.underIssueItems.length - 1) {
+                    end = end + 3;
+                  } else {
+                    end = widget.underIssueItems.length - 1;
                   }
                 });
               },
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.underIssueItems.length ||
-                        widget.underIssueItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.green,
-                foregroundColor: (end == widget.underIssueItems.length ||
-                        widget.underIssueItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.black,
+                backgroundColor: (end == widget.underIssueItems.length - 1 || widget.underIssueItems.length < 3) ? Colors.transparent : Colors.green,
+                foregroundColor: (end == widget.underIssueItems.length - 1 || widget.underIssueItems.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
-            (end == widget.underIssueItems.length ||
-                    widget.underIssueItems.length < 3)
+            (end == widget.underIssueItems.length - 1 || widget.underIssueItems.length < 3)
                 ? Container()
                 : const Text(
                     "Next",
@@ -530,8 +479,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
               () {
                 navigationService.pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) =>
-                        const UnderIssueListWidget(),
+                    builder: (BuildContext context) => const UnderIssueListWidget(),
                   ),
                 );
               },

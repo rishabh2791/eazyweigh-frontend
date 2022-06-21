@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
@@ -54,9 +55,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   Map<String, List<UnderIssue>> jobMapping = {};
   Map<String, List<UnderIssue>> passedJobMapping = {};
   List<HybridUnderIssue> underIssues = [];
-  late TextEditingController factoryController,
-      startDateController,
-      endDateController;
+  late TextEditingController factoryController, startDateController, endDateController;
 
   @override
   void initState() {
@@ -126,17 +125,13 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
         {
           "GREATEREQUAL": {
             "Field": "date",
-            "Value": DateTime(today.year, today.month, today.day)
-                .subtract(const Duration(days: 7))
-                .toString(),
+            "Value": DateTime(today.year, today.month, today.day).subtract(const Duration(days: 7)).toString(),
           },
         },
         {
           "LESSEQUAL": {
             "Field": "date",
-            "Value": DateTime(today.year, today.month, today.day)
-                .add(const Duration(days: 7))
-                .toString(),
+            "Value": DateTime(today.year, today.month, today.day).add(const Duration(days: 7)).toString(),
           },
         },
         {
@@ -162,9 +157,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   "Value": shiftIDs,
                 },
               };
-              await appStore.jobItemAssignmentApp
-                  .list(conditions)
-                  .then((response) async {
+              await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                 if (response["status"]) {
                   for (var item in response["payload"]) {
                     JobItem jobItem = JobItem.fromJSON(item["job_item"]);
@@ -181,24 +174,18 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                         "Value": jobIDs,
                       },
                     };
-                    await appStore.jobApp
-                        .list(jobConditions)
-                        .then((value) async {
+                    await appStore.jobApp.list(jobConditions).then((value) async {
                       if (value["status"]) {
                         for (var job in value["payload"]) {
                           Job thisJob = Job.fromJSON(job);
                           jobs[job["id"]] = thisJob;
                         }
                         jobMapping.forEach((key, value) async {
-                          await appStore.underIssueApp
-                              .list(key)
-                              .then((underIssueReposnse) {
+                          await appStore.underIssueApp.list(key).then((underIssueReposnse) {
                             if (underIssueReposnse.containsKey("status")) {
                               if (underIssueReposnse["status"]) {
-                                for (var item
-                                    in underIssueReposnse["payload"]) {
-                                  UnderIssue underIssue =
-                                      UnderIssue.fromJSON(item);
+                                for (var item in underIssueReposnse["payload"]) {
+                                  UnderIssue underIssue = UnderIssue.fromJSON(item);
                                   if (!underIssue.weighed) {
                                     jobMapping[key]!.add(underIssue);
                                   }
@@ -214,8 +201,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                     );
                                   },
                                 );
-                                Future.delayed(const Duration(seconds: 3))
-                                    .then((value) {
+                                Future.delayed(const Duration(seconds: 3)).then((value) {
                                   Navigator.of(context).pop();
                                 });
                               }
@@ -229,8 +215,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                   );
                                 },
                               );
-                              Future.delayed(const Duration(seconds: 3))
-                                  .then((value) {
+                              Future.delayed(const Duration(seconds: 3)).then((value) {
                                 Navigator.of(context).pop();
                               });
                             }
@@ -246,8 +231,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                             );
                           },
                         );
-                        Future.delayed(const Duration(seconds: 3))
-                            .then((value) {
+                        Future.delayed(const Duration(seconds: 3)).then((value) {
                           Navigator.of(context).pop();
                         });
                       }
@@ -319,17 +303,12 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "selection":
-          String id =
-              scannerData["data"]["data"].toString().replaceAll("_", "-");
+          String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
           String jobCode = scannerData["data"]["job_code"].toString();
           // Selection to Navigate to Next Page
           navigationService.pushReplacement(
@@ -366,31 +345,20 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= jobMapping.length) {
-            start += 3;
-            if (end + 3 > jobMapping.length) {
-              end = jobMapping.length - 1;
-            } else {
-              end += 3;
-            }
+          if (start + 3 <= passedJobMapping.length - 1) {
+            start = start + 3;
+          }
+          if (end + 3 <= passedJobMapping.length - 1) {
+            end = end + 3;
+          } else {
+            end = passedJobMapping.length - 1;
           }
         });
         break;
       case "previous":
         setState(() {
-          if (start - 3 >= 0) {
-            if (end == jobMapping.length - 1) {
-              start -= 3;
-              end = start + 2;
-            } else {
-              end -= 3;
-              if (start - 3 < 0) {
-                start = 0;
-              } else {
-                start -= 3;
-              }
-            }
-          }
+          start = 0;
+          end = min(2, passedJobMapping.length - 1);
         });
         break;
       case "back":
@@ -495,21 +463,14 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
       );
     }
 
-    String jobItemData =
-        '{"action": "selection","data": {"type": "job","job_code":"' +
-            job.jobCode +
-            '", "data": "' +
-            job.id +
-            '"}}';
+    String jobItemData = '{"action": "selection","data": {"type": "job","job_code":"' + job.jobCode + '", "data": "' + job.id + '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) => UnderIssueDetailsWidget(
-                  jobCode: job.jobCode,
-                  underIssueItems: passedJobMapping[job.id]!,
-                  jobItems: jobItems),
+              builder: (BuildContext context) =>
+                  UnderIssueDetailsWidget(jobCode: job.jobCode, underIssueItems: passedJobMapping[job.id]!, jobItems: jobItems),
             ),
           );
         },
@@ -579,19 +540,8 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start - 3 >= 0) {
-                    if (end == passedJobMapping.length) {
-                      start -= 3;
-                      end = start + 3;
-                    } else {
-                      end -= 3;
-                      if (start - 3 < 0) {
-                        start = 0;
-                      } else {
-                        start -= 3;
-                      }
-                    }
-                  }
+                  start = 0;
+                  end = min(2, passedJobMapping.length - 1);
                 });
               },
               child: QrImage(
@@ -617,27 +567,21 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 <= passedJobMapping.length) {
-                    start += 3;
-                    if (end + 3 >= passedJobMapping.length) {
-                      end = passedJobMapping.length;
-                    } else {
-                      end += 3;
-                    }
+                  if (start + 3 <= passedJobMapping.length - 1) {
+                    start = start + 3;
+                  }
+                  if (end + 3 <= passedJobMapping.length - 1) {
+                    end = end + 3;
+                  } else {
+                    end = passedJobMapping.length - 1;
                   }
                 });
               },
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == passedJobMapping.length - 1 ||
-                        passedJobMapping.length < 3)
-                    ? Colors.transparent
-                    : Colors.red,
-                foregroundColor: (end == passedJobMapping.length - 1 ||
-                        passedJobMapping.length < 3)
-                    ? backgroundColor
-                    : Colors.black,
+                backgroundColor: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? Colors.transparent : Colors.red,
+                foregroundColor: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? backgroundColor : Colors.black,
               ),
             ),
             (end == passedJobMapping.length - 1 || passedJobMapping.length < 3)
@@ -757,8 +701,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                 children: [
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
@@ -786,10 +729,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                           startDateCondition = {
                             "GREATEREQUAL": {
                               "Field": "created_at",
-                              "Value": DateTime.parse(startDate)
-                                      .toString()
-                                      .substring(0, 10) +
-                                  "T00:00:00.0Z",
+                              "Value": DateTime.parse(startDate).toString().substring(0, 10) + "T00:00:00.0Z",
                             }
                           };
                         }
@@ -797,15 +737,11 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                           endDateCondition = {
                             "LESSEQUAL": {
                               "Field": "created_at",
-                              "Value": DateTime.parse(endDate)
-                                      .toString()
-                                      .substring(0, 10) +
-                                  "T00:00:00.0Z",
+                              "Value": DateTime.parse(endDate).toString().substring(0, 10) + "T00:00:00.0Z",
                             }
                           };
                         }
-                        if (startDateCondition.isNotEmpty ||
-                            endDateCondition.isNotEmpty) {
+                        if (startDateCondition.isNotEmpty || endDateCondition.isNotEmpty) {
                           conditions["AND"] = [factoryCondition];
                           if (startDateCondition.isNotEmpty) {
                             conditions["AND"].add(startDateCondition);
@@ -818,21 +754,15 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                         setState(() {
                           isLoadingData = true;
                         });
-                        await appStore.jobApp
-                            .list(conditions)
-                            .then((value) async {
+                        await appStore.jobApp.list(conditions).then((value) async {
                           if (value.containsKey("status") && value["status"]) {
                             for (var item in value["payload"]) {
                               Job job = Job.fromJSON(item);
-                              await appStore.underIssueApp
-                                  .list(job.id)
-                                  .then((response) {
-                                if (response.containsKey("status") &&
-                                    response["status"]) {
+                              await appStore.underIssueApp.list(job.id).then((response) {
+                                if (response.containsKey("status") && response["status"]) {
                                   if (response["payload"].length != 0) {
                                     for (var under in response["payload"]) {
-                                      UnderIssue underIssue =
-                                          UnderIssue.fromJSON(under);
+                                      UnderIssue underIssue = UnderIssue.fromJSON(under);
                                       underIssues.add(HybridUnderIssue(
                                         job: job,
                                         underIssue: underIssue,
@@ -878,15 +808,13 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const UnderIssueListWidget(),
+                          builder: (BuildContext context) => const UnderIssueListWidget(),
                         ),
                       );
                     },
@@ -917,13 +845,11 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               homeWidget(),
               context,
               "Under Issue Materials",
-              currentUser.userRole.role == "Operator" ||
-                      currentUser.userRole.role == "Verifier"
+              currentUser.userRole.role == "Operator" || currentUser.userRole.role == "Verifier"
                   ? () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const OperatorHomePage(),
+                          builder: (BuildContext context) => const OperatorHomePage(),
                         ),
                       );
                     }

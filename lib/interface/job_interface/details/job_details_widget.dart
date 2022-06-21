@@ -39,7 +39,7 @@ class JobDetailsWidget extends StatefulWidget {
 class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   bool isLoadingData = true;
   int start = 0;
-  int end = 3;
+  int end = 0;
   bool isLoading = true;
   ScrollController? scrollController;
   List<Terminal> terminals = [];
@@ -56,9 +56,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     if (currentUser.userRole.role == "Operator") {
       widget.jobItems.removeWhere((element) => element.complete);
     }
-    end = min(3, widget.jobItems.length);
-    widget.jobItems
-        .sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
+    end = min(2, widget.jobItems.length);
+    widget.jobItems.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
     super.initState();
   }
 
@@ -85,13 +84,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     Map<String, dynamic> conditions = {
       "factory_id": widget.jobItems[0].material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp
-        .list(conditions)
-        .then((response) async {
+    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion =
-              UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -139,12 +135,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode &&
-            uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
-            uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -159,11 +153,9 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     String uomCode,
   ) {
     String scales = "";
-    double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount * scaleFactor < req &&
-          terminal.capacity * scaleFactor > req) {
+      if (terminal.leastCount * scaleFactor < req && terminal.capacity * scaleFactor > req) {
         scales += terminal.description + "\n";
       }
     }
@@ -171,12 +163,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
         late JobItem passedJobItem;
@@ -211,31 +199,20 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= widget.jobItems.length) {
-            start += 3;
-            if (end + 3 > widget.jobItems.length) {
-              end = widget.jobItems.length - 1;
-            } else {
-              end += 3;
-            }
+          if (start + 3 <= widget.jobItems.length - 1) {
+            start = start + 3;
+          }
+          if (end + 3 <= widget.jobItems.length - 1) {
+            end = end + 3;
+          } else {
+            end = widget.jobItems.length - 1;
           }
         });
         break;
       case "previous":
         setState(() {
-          if (start - 3 >= 0) {
-            if (end == widget.jobItems.length - 1) {
-              start -= 3;
-              end = start + 2;
-            } else {
-              end -= 3;
-              if (start - 3 < 0) {
-                start = 0;
-              } else {
-                start -= 3;
-              }
-            }
-          }
+          start = 0;
+          end = min(2, widget.jobItems.length - 1);
         });
         break;
       case "back":
@@ -251,8 +228,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   List<Widget> getRowWidget(JobItem jobItem, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
-    bool isComplete = jobItem.actualWeight <= jobItem.upperBound &&
-        jobItem.actualWeight >= jobItem.lowerBound;
+    bool isComplete = jobItem.actualWeight <= jobItem.upperBound && jobItem.actualWeight >= jobItem.lowerBound;
     if (!isComplete) {
       widgets.add(
         Column(
@@ -271,9 +247,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                     ),
                   ),
                   Text(
-                    jobItem.material.code +
-                        " - " +
-                        jobItem.material.description,
+                    jobItem.material.code + " - " + jobItem.material.description,
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -297,8 +271,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  (jobItem.requiredWeight - jobItem.actualWeight)
-                      .toStringAsFixed(3),
+                  (jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(3),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -321,8 +294,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
-                      jobItem.lowerBound, jobItem.uom.code),
+                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -340,10 +312,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       );
     }
 
-    String jobItemData =
-        '{"action": "selection","data": {"type": "job_item", "data": "' +
-            jobItem.id +
-            '"}}';
+    String jobItemData = '{"action": "selection","data": {"type": "job_item", "data": "' + jobItem.id + '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
@@ -370,9 +339,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   List<Widget> getJobItems(ScreenSizeInformation screenSizeInformation) {
     List<Widget> list = [];
-    print(start);
-    print(end);
-    for (var i = start; i < end; i++) {
+    for (var i = start; i <= end; i++) {
       JobItem jobItem = widget.jobItems[i];
       Widget wid = SizedBox(
         width: screenSizeInformation.screenSize.width / 3 - 20,
@@ -429,19 +396,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start - 3 >= 0) {
-                    if (end == widget.jobItems.length) {
-                      start -= 3;
-                      end = start + 3;
-                    } else {
-                      end -= 3;
-                      if (start - 3 < 0) {
-                        start = 0;
-                      } else {
-                        start -= 3;
-                      }
-                    }
-                  }
+                  start = 0;
+                  end = min(2, widget.jobItems.length - 1);
                 });
               },
               child: QrImage(
@@ -467,30 +423,24 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 < widget.jobItems.length) {
-                    start += 3;
-                    if (end + 3 > widget.jobItems.length) {
-                      end = widget.jobItems.length;
-                    } else {
-                      end += 3;
-                    }
+                  if (start + 3 <= widget.jobItems.length - 1) {
+                    start = start + 3;
+                  }
+                  if (end + 3 <= widget.jobItems.length - 1) {
+                    end = end + 3;
+                  } else {
+                    end = widget.jobItems.length - 1;
                   }
                 });
               },
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.jobItems.length ||
-                        widget.jobItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.red,
-                foregroundColor: (end == widget.jobItems.length ||
-                        widget.jobItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.black,
+                backgroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.red,
+                foregroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
-            (end == widget.jobItems.length || widget.jobItems.length < 3)
+            (end == widget.jobItems.length - 1 || widget.jobItems.length < 3)
                 ? Container()
                 : const Text(
                     "Next",
@@ -555,8 +505,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   () {
                     navigationService.pushReplacement(
                       CupertinoPageRoute(
-                        builder: (BuildContext context) =>
-                            const JobListWidget(),
+                        builder: (BuildContext context) => const JobListWidget(),
                       ),
                     );
                   },

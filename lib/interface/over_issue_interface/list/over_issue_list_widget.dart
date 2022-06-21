@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
@@ -54,9 +55,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   Map<String, List<OverIssue>> jobMapping = {};
   Map<String, List<OverIssue>> passedJobMapping = {};
   List<HybridOverIssue> overIssues = [];
-  late TextEditingController factoryController,
-      startDateController,
-      endDateController;
+  late TextEditingController factoryController, startDateController, endDateController;
 
   @override
   void initState() {
@@ -125,17 +124,13 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
           {
             "GREATEREQUAL": {
               "Field": "date",
-              "Value": DateTime(today.year, today.month, today.day)
-                  .subtract(const Duration(days: 7))
-                  .toString(),
+              "Value": DateTime(today.year, today.month, today.day).subtract(const Duration(days: 7)).toString(),
             },
           },
           {
             "LESSEQUAL": {
               "Field": "date",
-              "Value": DateTime(today.year, today.month, today.day)
-                  .add(const Duration(days: 7))
-                  .toString(),
+              "Value": DateTime(today.year, today.month, today.day).add(const Duration(days: 7)).toString(),
             },
           },
           {
@@ -161,9 +156,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                     "Value": shiftIDs,
                   },
                 };
-                await appStore.jobItemAssignmentApp
-                    .list(conditions)
-                    .then((response) async {
+                await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                   if (response["status"]) {
                     for (var item in response["payload"]) {
                       JobItem jobItem = JobItem.fromJSON(item["job_item"]);
@@ -180,9 +173,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                           "Value": jobIDs,
                         },
                       };
-                      await appStore.jobApp
-                          .list(jobConditions)
-                          .then((value) async {
+                      await appStore.jobApp.list(jobConditions).then((value) async {
                         if (value["status"]) {
                           for (var job in value["payload"]) {
                             Job thisJob = Job.fromJSON(job);
@@ -198,21 +189,17 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                               );
                             },
                           );
-                          Future.delayed(const Duration(seconds: 3))
-                              .then((value) {
+                          Future.delayed(const Duration(seconds: 3)).then((value) {
                             Navigator.of(context).pop();
                           });
                         }
                       }).then((value) async {
                         jobMapping.forEach((key, value) async {
-                          await appStore.overIssueApp
-                              .list(key)
-                              .then((overIssueReposnse) {
+                          await appStore.overIssueApp.list(key).then((overIssueReposnse) {
                             if (overIssueReposnse.containsKey("status")) {
                               if (overIssueReposnse["status"]) {
                                 for (var item in overIssueReposnse["payload"]) {
-                                  OverIssue overIssue =
-                                      OverIssue.fromJSON(item);
+                                  OverIssue overIssue = OverIssue.fromJSON(item);
                                   if (!overIssue.weighed) {
                                     jobMapping[key]!.add(overIssue);
                                   }
@@ -228,8 +215,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                     );
                                   },
                                 );
-                                Future.delayed(const Duration(seconds: 3))
-                                    .then((value) {
+                                Future.delayed(const Duration(seconds: 3)).then((value) {
                                   Navigator.of(context).pop();
                                 });
                               }
@@ -243,8 +229,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                   );
                                 },
                               );
-                              Future.delayed(const Duration(seconds: 3))
-                                  .then((value) {
+                              Future.delayed(const Duration(seconds: 3)).then((value) {
                                 Navigator.of(context).pop();
                               });
                             }
@@ -323,18 +308,13 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "selection":
-          String id =
-              scannerData["data"]["data"].toString().replaceAll("_", "-");
+          String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
           String jobCode = scannerData["data"]["job_code"].toString();
           // Selection to Navigate to Next Page
           navigationService.pushReplacement(
@@ -371,31 +351,20 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     switch (data["type"]) {
       case "next":
         setState(() {
-          if (start + 3 <= passedJobMapping.length) {
-            start += 3;
-            if (end + 3 > passedJobMapping.length) {
-              end = passedJobMapping.length - 1;
-            } else {
-              end += 3;
-            }
+          if (start + 3 <= passedJobMapping.length - 1) {
+            start = start + 3;
+          }
+          if (end + 3 <= passedJobMapping.length - 1) {
+            end = end + 3;
+          } else {
+            end = passedJobMapping.length - 1;
           }
         });
         break;
       case "previous":
         setState(() {
-          if (start - 3 >= 0) {
-            if (end == passedJobMapping.length - 1) {
-              start -= 3;
-              end = start + 2;
-            } else {
-              end -= 3;
-              if (start - 3 < 0) {
-                start = 0;
-              } else {
-                start -= 3;
-              }
-            }
-          }
+          start = 0;
+          end = min(2, passedJobMapping.length - 1);
         });
         break;
       case "back":
@@ -500,21 +469,14 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
       );
     }
 
-    String jobItemData =
-        '{"action": "selection","data": {"type": "job","job_code":"' +
-            job.jobCode +
-            '", "data": "' +
-            job.id +
-            '"}}';
+    String jobItemData = '{"action": "selection","data": {"type": "job","job_code":"' + job.jobCode + '", "data": "' + job.id + '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) => OverIssueDetailsWidget(
-                  jobCode: job.jobCode,
-                  overIssueItems: passedJobMapping[job.id]!,
-                  jobItems: jobItems),
+              builder: (BuildContext context) =>
+                  OverIssueDetailsWidget(jobCode: job.jobCode, overIssueItems: passedJobMapping[job.id]!, jobItems: jobItems),
             ),
           );
         },
@@ -584,19 +546,8 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start - 3 >= 0) {
-                    if (end == jobMapping.length) {
-                      start -= 3;
-                      end = start + 3;
-                    } else {
-                      end -= 3;
-                      if (start - 3 < 0) {
-                        start = 0;
-                      } else {
-                        start -= 3;
-                      }
-                    }
-                  }
+                  start = 0;
+                  end = min(2, passedJobMapping.length - 1);
                 });
               },
               child: QrImage(
@@ -622,27 +573,21 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  if (start + 3 <= jobMapping.length) {
-                    start += 3;
-                    if (end + 3 >= jobMapping.length) {
-                      end = jobMapping.length;
-                    } else {
-                      end += 3;
-                    }
+                  if (start + 3 <= passedJobMapping.length - 1) {
+                    start = start + 3;
+                  }
+                  if (end + 3 <= passedJobMapping.length - 1) {
+                    end = end + 3;
+                  } else {
+                    end = passedJobMapping.length - 1;
                   }
                 });
               },
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor:
-                    (end == jobMapping.length - 1 || jobMapping.length < 3)
-                        ? Colors.transparent
-                        : Colors.red,
-                foregroundColor:
-                    (end == jobMapping.length - 1 || jobMapping.length < 3)
-                        ? backgroundColor
-                        : Colors.black,
+                backgroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? Colors.transparent : Colors.red,
+                foregroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? backgroundColor : Colors.black,
               ),
             ),
             (end == jobMapping.length - 1 || jobMapping.length < 3)
@@ -669,9 +614,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                     "No Over Issues Found.",
                     style: TextStyle(
                       fontSize: 20.0,
-                      color: themeChanged.value
-                          ? foregroundColor
-                          : backgroundColor,
+                      color: themeChanged.value ? foregroundColor : backgroundColor,
                     ),
                   ),
                   navigation,
@@ -702,18 +645,14 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   ? Text(
                       "No Over Issued Found",
                       style: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                         fontSize: 20.0,
                       ),
                     )
                   : Text(
                       "Over Issued Items",
                       style: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                         fontSize: 20.0,
                       ),
                     ),
@@ -746,8 +685,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                 children: [
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
@@ -775,10 +713,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                           startDateCondition = {
                             "GREATEREQUAL": {
                               "Field": "created_at",
-                              "Value": DateTime.parse(startDate)
-                                      .toString()
-                                      .substring(0, 10) +
-                                  "T00:00:00.0Z",
+                              "Value": DateTime.parse(startDate).toString().substring(0, 10) + "T00:00:00.0Z",
                             }
                           };
                         }
@@ -786,15 +721,11 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                           endDateCondition = {
                             "LESSEQUAL": {
                               "Field": "created_at",
-                              "Value": DateTime.parse(endDate)
-                                      .toString()
-                                      .substring(0, 10) +
-                                  "T00:00:00.0Z",
+                              "Value": DateTime.parse(endDate).toString().substring(0, 10) + "T00:00:00.0Z",
                             }
                           };
                         }
-                        if (startDateCondition.isNotEmpty ||
-                            endDateCondition.isNotEmpty) {
+                        if (startDateCondition.isNotEmpty || endDateCondition.isNotEmpty) {
                           conditions["AND"] = [factoryCondition];
                           if (startDateCondition.isNotEmpty) {
                             conditions["AND"].add(startDateCondition);
@@ -807,21 +738,15 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                         setState(() {
                           isLoadingData = true;
                         });
-                        await appStore.jobApp
-                            .list(conditions)
-                            .then((value) async {
+                        await appStore.jobApp.list(conditions).then((value) async {
                           if (value.containsKey("status") && value["status"]) {
                             for (var item in value["payload"]) {
                               Job job = Job.fromJSON(item);
-                              await appStore.overIssueApp
-                                  .list(job.id)
-                                  .then((response) {
-                                if (response.containsKey("status") &&
-                                    response["status"]) {
+                              await appStore.overIssueApp.list(job.id).then((response) {
+                                if (response.containsKey("status") && response["status"]) {
                                   if (response["payload"].length != 0) {
                                     for (var under in response["payload"]) {
-                                      OverIssue overIssue =
-                                          OverIssue.fromJSON(under);
+                                      OverIssue overIssue = OverIssue.fromJSON(under);
                                       overIssues.add(HybridOverIssue(
                                         job: job,
                                         overIssue: overIssue,
@@ -867,15 +792,13 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const OverIssueListWidget(),
+                          builder: (BuildContext context) => const OverIssueListWidget(),
                         ),
                       );
                     },
@@ -931,13 +854,11 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   homeWidget(),
                   context,
                   "Over Issue Materials",
-                  currentUser.userRole.role == "Operator" ||
-                          currentUser.userRole.role == "Verifier"
+                  currentUser.userRole.role == "Operator" || currentUser.userRole.role == "Verifier"
                       ? () {
                           navigationService.pushReplacement(
                             CupertinoPageRoute(
-                              builder: (BuildContext context) =>
-                                  const OperatorHomePage(),
+                              builder: (BuildContext context) => const OperatorHomePage(),
                             ),
                           );
                         }
