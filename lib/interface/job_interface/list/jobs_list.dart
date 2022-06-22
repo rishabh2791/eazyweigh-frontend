@@ -36,60 +36,44 @@ class _JobListState extends State<JobList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobs.sort(
-              (a, b) => a.jobCode.toString().compareTo(b.jobCode.toString()));
+          widget.jobs.sort((a, b) => a.jobCode.toString().compareTo(b.jobCode.toString()));
         } else {
-          widget.jobs.sort(
-              (a, b) => b.jobCode.toString().compareTo(a.jobCode.toString()));
+          widget.jobs.sort((a, b) => b.jobCode.toString().compareTo(a.jobCode.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobs.sort((a, b) =>
-              a.material.code.toString().compareTo(b.material.code.toString()));
+          widget.jobs.sort((a, b) => a.material.code.toString().compareTo(b.material.code.toString()));
         } else {
-          widget.jobs.sort((a, b) =>
-              b.material.code.toString().compareTo(a.material.code.toString()));
+          widget.jobs.sort((a, b) => b.material.code.toString().compareTo(a.material.code.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobs.sort((a, b) => a.material.description
-              .toString()
-              .compareTo(b.material.description.toString()));
+          widget.jobs.sort((a, b) => a.material.description.toString().compareTo(b.material.description.toString()));
         } else {
-          widget.jobs.sort((a, b) => b.material.description
-              .toString()
-              .compareTo(a.material.description.toString()));
+          widget.jobs.sort((a, b) => b.material.description.toString().compareTo(a.material.description.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobs.sort(
-              (a, b) => a.quantity.toString().compareTo(b.quantity.toString()));
+          widget.jobs.sort((a, b) => a.quantity.toString().compareTo(b.quantity.toString()));
         } else {
-          widget.jobs.sort(
-              (a, b) => b.quantity.toString().compareTo(a.quantity.toString()));
+          widget.jobs.sort((a, b) => b.quantity.toString().compareTo(a.quantity.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.jobs.sort((a, b) => a.jobItems.length
-              .toString()
-              .compareTo(b.jobItems.length.toString()));
+          widget.jobs.sort((a, b) => a.jobItems.length.toString().compareTo(b.jobItems.length.toString()));
         } else {
-          widget.jobs.sort((a, b) => b.jobItems.length
-              .toString()
-              .compareTo(a.jobItems.length.toString()));
+          widget.jobs.sort((a, b) => b.jobItems.length.toString().compareTo(a.jobItems.length.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.jobs.sort(
-              (a, b) => a.complete.toString().compareTo(b.complete.toString()));
+          widget.jobs.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
         } else {
-          widget.jobs.sort(
-              (a, b) => b.complete.toString().compareTo(a.complete.toString()));
+          widget.jobs.sort((a, b) => b.complete.toString().compareTo(a.complete.toString()));
         }
         break;
       default:
@@ -113,17 +97,9 @@ class _JobListState extends State<JobList> {
                   Expanded(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        cardColor: themeChanged.value
-                            ? backgroundColor
-                            : foregroundColor,
-                        dividerColor: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
-                        textTheme: TextTheme(
-                            caption: TextStyle(
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor)),
+                        cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                        dividerColor: themeChanged.value ? foregroundColor : backgroundColor,
+                        textTheme: TextTheme(caption: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor)),
                       ),
                       child: ListView(
                         children: [
@@ -139,9 +115,7 @@ class _JobListState extends State<JobList> {
                                   "Job Code",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -159,9 +133,7 @@ class _JobListState extends State<JobList> {
                                   "Material",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -179,9 +151,7 @@ class _JobListState extends State<JobList> {
                                   "Material Name",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -199,9 +169,7 @@ class _JobListState extends State<JobList> {
                                   "Job Size",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -219,9 +187,7 @@ class _JobListState extends State<JobList> {
                                   "Job Items",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -239,9 +205,7 @@ class _JobListState extends State<JobList> {
                                   "Complete",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -259,9 +223,7 @@ class _JobListState extends State<JobList> {
                               context,
                               widget.jobs,
                             ),
-                            rowsPerPage: widget.jobs.length > 25
-                                ? 25
-                                : widget.jobs.length,
+                            rowsPerPage: widget.jobs.length > 25 ? 25 : widget.jobs.length,
                           )
                         ],
                       ),
@@ -309,8 +271,7 @@ class _DataSource extends DataTableSource {
           notifyListeners();
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) => JobDetailsWidget(
-                  jobCode: job.jobCode, jobItems: job.jobItems),
+              builder: (BuildContext context) => JobDetailsWidget(jobCode: job.jobCode, jobItems: job.jobItems),
             ),
           );
         }

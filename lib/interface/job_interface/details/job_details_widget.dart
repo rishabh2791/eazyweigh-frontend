@@ -228,7 +228,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   List<Widget> getRowWidget(JobItem jobItem, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
-    bool isComplete = jobItem.actualWeight <= jobItem.upperBound && jobItem.actualWeight >= jobItem.lowerBound;
+    bool isComplete = jobItem.complete;
     if (!isComplete) {
       widgets.add(
         Column(
