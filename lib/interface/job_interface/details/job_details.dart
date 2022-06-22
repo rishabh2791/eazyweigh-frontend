@@ -37,7 +37,9 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   List<Factory> factories = [];
   List<JobItem> jobItems = [];
   late Job job;
-  int timeTaken = 0;
+  int timeTaken = 0, totalTimeTaken = 0;
+  DateTime firstStartTime = DateTime(2099, 1, 1).toLocal(),
+      lastEndTime = DateTime(1900, 1, 1).toLocal();
   Map<String, List<JobItemWeighing>> jobWeighings = {};
   Map<String, List<HybridOverIssue>> overIssues = {};
   Map<String, List<HybridUnderIssue>> underIssues = {};
@@ -62,6 +64,20 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           if (response.containsKey("status") && response["status"]) {
             for (var item in response["payload"]) {
               JobItemWeighing jobItemWeighing = JobItemWeighing.fromJSON(item);
+              if (jobItemWeighing.startTime
+                      .toLocal()
+                      .difference(firstStartTime.toLocal())
+                      .inSeconds <
+                  0) {
+                firstStartTime = jobItemWeighing.startTime.toLocal();
+              }
+              if (jobItemWeighing.endTime
+                      .toLocal()
+                      .difference(lastEndTime.toLocal())
+                      .inSeconds >
+                  0) {
+                lastEndTime = jobItemWeighing.endTime.toLocal();
+              }
               timeTaken += jobItemWeighing.endTime
                   .difference(jobItemWeighing.startTime)
                   .inSeconds;
@@ -152,9 +168,14 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   }
 
   List<Widget> jobItemsWidget() {
+    totalTimeTaken =
+        lastEndTime.toLocal().difference(firstStartTime.toLocal()).inSeconds;
     var hr = (timeTaken / 3600).floor();
     var min = ((timeTaken - hr * 60) / 60).floor();
     var sec = timeTaken - hr * 3600 - min * 60;
+    var totalhr = (totalTimeTaken / 3600).floor();
+    var totalmin = ((totalTimeTaken - totalhr * 60) / 60).floor();
+    var totalsec = totalTimeTaken - totalhr * 3600 - totalmin * 60;
     List<Widget> widgets = [
       Text(
         "Details for Job Code: " + jobCodeController.text,
@@ -173,7 +194,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: MediaQuery.of(context).size.width / 4 - 40,
+              width: MediaQuery.of(context).size.width / 3 - 40,
               height: 200,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -248,7 +269,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: MediaQuery.of(context).size.width / 4 - 40,
+              width: MediaQuery.of(context).size.width / 3 - 40,
               height: 200,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -294,7 +315,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: MediaQuery.of(context).size.width / 4 - 40,
+              width: MediaQuery.of(context).size.width / 3 - 40,
               height: 200,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -340,7 +361,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: MediaQuery.of(context).size.width / 4 - 40,
+              width: MediaQuery.of(context).size.width / 3 - 40,
               height: 200,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -407,6 +428,112 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                         ),
                         TextSpan(
                           text: sec.toString(),
+                          style: TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " s",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Text(
+                    "Weighing Time Spent",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: formHintTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 3 - 40,
+              height: 200,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                color: Color(0xFFF1DDBF),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 5,
+                    color: shadowColor,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: totalhr.toString(),
+                          style: TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " hr ",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: totalmin.toString(),
+                          style: TextStyle(
+                            fontSize: 100.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(10, 10),
+                                blurRadius: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const TextSpan(
+                          text: " min ",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: formHintTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: totalsec.toString(),
                           style: TextStyle(
                             fontSize: 100.0,
                             color: formHintTextColor,

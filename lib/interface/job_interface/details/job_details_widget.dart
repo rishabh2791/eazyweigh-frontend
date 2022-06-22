@@ -53,11 +53,6 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     getAllData();
     scrollController = ScrollController();
     scannerListener.addListener(listenToScanner);
-    if (currentUser.userRole.role == "Operator") {
-      widget.jobItems.removeWhere((element) => element.complete);
-    }
-    end = min(2, widget.jobItems.length);
-    widget.jobItems.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
     super.initState();
   }
 
@@ -69,14 +64,26 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   }
 
   void getAllData() async {
-    await Future.forEach([
-      await getUOMConversions(),
-      await getScales(),
-    ], (element) {
+    if (currentUser.userRole.role == "Operator") {
+      widget.jobItems.removeWhere((element) => element.complete);
+    }
+    end = min(2, widget.jobItems.length - 1);
+    widget.jobItems
+        .sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
+    if (widget.jobItems.isNotEmpty) {
+      await Future.forEach([
+        await getUOMConversions(),
+        await getScales(),
+      ], (element) {
+        setState(() {
+          isLoadingData = false;
+        });
+      });
+    } else {
       setState(() {
         isLoadingData = false;
       });
-    });
+    }
   }
 
   Future<dynamic> getUOMConversions() async {
@@ -84,10 +91,13 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     Map<String, dynamic> conditions = {
       "factory_id": widget.jobItems[0].material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
+    await appStore.unitOfMeasurementConversionApp
+        .list(conditions)
+        .then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion =
+              UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -135,10 +145,12 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode &&
+            uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
+            uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -155,7 +167,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     String scales = "";
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount * scaleFactor < req && terminal.capacity * scaleFactor > req) {
+      if (terminal.leastCount * scaleFactor < req &&
+          terminal.capacity * scaleFactor > req) {
         scales += terminal.description + "\n";
       }
     }
@@ -163,8 +176,12 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
         late JobItem passedJobItem;
@@ -247,7 +264,9 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                     ),
                   ),
                   Text(
-                    jobItem.material.code + " - " + jobItem.material.description,
+                    jobItem.material.code +
+                        " - " +
+                        jobItem.material.description,
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -271,7 +290,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  (jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(3),
+                  (jobItem.requiredWeight - jobItem.actualWeight)
+                      .toStringAsFixed(3),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -294,7 +314,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
+                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
+                      jobItem.lowerBound, jobItem.uom.code),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -312,7 +333,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       );
     }
 
-    String jobItemData = '{"action": "selection","data": {"type": "job_item", "data": "' + jobItem.id + '"}}';
+    String jobItemData =
+        '{"action": "selection","data": {"type": "job_item", "data": "' +
+            jobItem.id +
+            '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
@@ -436,8 +460,14 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.red,
-                foregroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.black,
+                backgroundColor: (end == widget.jobItems.length - 1 ||
+                        widget.jobItems.length < 3)
+                    ? Colors.transparent
+                    : Colors.red,
+                foregroundColor: (end == widget.jobItems.length - 1 ||
+                        widget.jobItems.length < 3)
+                    ? Colors.transparent
+                    : Colors.black,
               ),
             ),
             (end == widget.jobItems.length - 1 || widget.jobItems.length < 3)
@@ -461,9 +491,26 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: getJobItems(screenSizeInfo),
-                    ),
+                    getJobItems(screenSizeInfo).isEmpty
+                        ? const Center(
+                            child: Text(
+                              "Job Completed.",
+                              style: TextStyle(
+                                fontSize: 80.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Row(
+                            children: getJobItems(screenSizeInfo),
+                          ),
+                    getJobItems(screenSizeInfo).isEmpty
+                        ? const Image(
+                            image: AssetImage("assets/img/fireworks.gif"),
+                            width: 800.0,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(),
                     navigation
                   ],
                 ),
@@ -505,7 +552,8 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   () {
                     navigationService.pushReplacement(
                       CupertinoPageRoute(
-                        builder: (BuildContext context) => const JobListWidget(),
+                        builder: (BuildContext context) =>
+                            const JobListWidget(),
                       ),
                     );
                   },

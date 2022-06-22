@@ -48,7 +48,12 @@ class _JobListWidgetState extends State<JobListWidget> {
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
   Map<String, Job> jobsByID = {};
-  late TextEditingController createdStart, createdEnd, factoryController, completeController, jobCodeStartController, jobCodeEndController;
+  late TextEditingController createdStart,
+      createdEnd,
+      factoryController,
+      completeController,
+      jobCodeStartController,
+      jobCodeEndController;
 
   @override
   void initState() {
@@ -83,13 +88,17 @@ class _JobListWidgetState extends State<JobListWidget> {
           {
             "GREATEREQUAL": {
               "Field": "date",
-              "Value": DateTime(today.year, today.month, today.day).subtract(const Duration(days: 7)).toString(),
+              "Value": DateTime(today.year, today.month, today.day)
+                  .subtract(const Duration(days: 7))
+                  .toString(),
             },
           },
           {
             "LESSEQUAL": {
               "Field": "date",
-              "Value": DateTime(today.year, today.month, today.day).add(const Duration(days: 7)).toString(),
+              "Value": DateTime(today.year, today.month, today.day)
+                  .add(const Duration(days: 7))
+                  .toString(),
             },
           },
           {
@@ -115,7 +124,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                     "Value": shiftIDs,
                   },
                 };
-                await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
+                await appStore.jobItemAssignmentApp
+                    .list(conditions)
+                    .then((response) async {
                   if (response["status"]) {
                     for (var item in response["payload"]) {
                       JobItem jobItem = JobItem.fromJSON(item["job_item"]);
@@ -135,7 +146,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                           "Value": jobIDs,
                         },
                       };
-                      await appStore.jobApp.list(jobConditions).then((value) async {
+                      await appStore.jobApp
+                          .list(jobConditions)
+                          .then((value) async {
                         if (value["status"]) {
                           for (var job in value["payload"]) {
                             Job thisJob = Job.fromJSON(job);
@@ -153,7 +166,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                               );
                             },
                           );
-                          Future.delayed(const Duration(seconds: 3)).then((value) {
+                          Future.delayed(const Duration(seconds: 3))
+                              .then((value) {
                             Navigator.of(context).pop();
                           });
                         }
@@ -264,15 +278,21 @@ class _JobListWidgetState extends State<JobListWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "selection":
-          String id = scannerData["data"]["data"].toString().replaceAll("_", "-");
+          String id =
+              scannerData["data"]["data"].toString().replaceAll("_", "-");
           String jobCode = scannerData["data"]["job_code"].toString();
           // Selection to Navigate to Next Page
-          jobMapping[id]!.sort(((a, b) => a.complete.toString().compareTo(b.complete.toString())));
+          jobMapping[id]!.sort(((a, b) =>
+              a.complete.toString().compareTo(b.complete.toString())));
           navigationService.pushReplacement(
             CupertinoPageRoute(
               builder: (BuildContext context) => JobDetailsWidget(
@@ -323,7 +343,8 @@ class _JobListWidgetState extends State<JobListWidget> {
         });
         break;
       case "back":
-        currentUser.userRole.role == "Operator" || currentUser.userRole.role == "Verifier"
+        currentUser.userRole.role == "Operator" ||
+                currentUser.userRole.role == "Verifier"
             ? navigationService.pushReplacement(
                 CupertinoPageRoute(
                   builder: (BuildContext context) => const OperatorHomePage(),
@@ -424,7 +445,12 @@ class _JobListWidgetState extends State<JobListWidget> {
       );
     }
 
-    String jobItemData = '{"action": "selection","data": {"type": "job","job_code":"' + job.jobCode + '", "data": "' + job.id + '"}}';
+    String jobItemData =
+        '{"action": "selection","data": {"type": "job","job_code":"' +
+            job.jobCode +
+            '", "data": "' +
+            job.id +
+            '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
@@ -504,7 +530,7 @@ class _JobListWidgetState extends State<JobListWidget> {
               onPressed: () {
                 setState(() {
                   start = 0;
-                  end = min(0, jobsByID.length - 1);
+                  end = min(2, jobsByID.length - 1);
                 });
               },
               child: QrImage(
@@ -543,8 +569,14 @@ class _JobListWidgetState extends State<JobListWidget> {
               child: QrImage(
                 data: next,
                 size: 150,
-                backgroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? Colors.transparent : Colors.red,
-                foregroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? backgroundColor : Colors.black,
+                backgroundColor:
+                    (end == jobMapping.length - 1 || jobMapping.length < 3)
+                        ? Colors.transparent
+                        : Colors.red,
+                foregroundColor:
+                    (end == jobMapping.length - 1 || jobMapping.length < 3)
+                        ? backgroundColor
+                        : Colors.black,
               ),
             ),
             (end == jobMapping.length - 1 || jobMapping.length < 3)
@@ -561,18 +593,23 @@ class _JobListWidgetState extends State<JobListWidget> {
       ],
     );
     return BaseWidget(builder: (context, screenSizeInfo) {
-      return jobMapping.isEmpty
+      return jobsByID.isEmpty
           ? SizedBox(
               height: screenSizeInfo.screenSize.height - 200,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "No Jobs Found.",
+                    "No Incomplete Jobs Found.",
                     style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 80.0,
                       color: Colors.white,
                     ),
+                  ),
+                  const Image(
+                    image: AssetImage("assets/img/fireworks.gif"),
+                    width: 800.0,
+                    fit: BoxFit.cover,
                   ),
                   navigation,
                 ],
@@ -674,7 +711,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                       ),
                     ),
                   ),
-                  textField(false, jobCodeStartController, "Job Code Start", false),
+                  textField(
+                      false, jobCodeStartController, "Job Code Start", false),
                   textField(false, jobCodeEndController, "Job Code End", false),
                 ],
               ),
@@ -698,13 +736,20 @@ class _JobListWidgetState extends State<JobListWidget> {
                 children: [
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
                       var factoryID = factoryController.text;
-                      var startDate = createdStart.text != "" && createdStart.text.isEmpty ? DateTime.parse(createdStart.text) : "";
-                      var endDate = createdEnd.text != "" && createdEnd.text.isEmpty ? DateTime.parse(createdEnd.text) : "";
+                      var startDate =
+                          createdStart.text != "" && createdStart.text.isEmpty
+                              ? DateTime.parse(createdStart.text)
+                              : "";
+                      var endDate =
+                          createdEnd.text != "" && createdEnd.text.isEmpty
+                              ? DateTime.parse(createdEnd.text)
+                              : "";
                       var jobStart = jobCodeStartController.text;
                       var jobEnd = jobCodeEndController.text;
                       var listOfConditions = [];
@@ -748,7 +793,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                           }
                         });
                       }
-                      Map<String, dynamic> conditions = listOfConditions.isEmpty ? {} : {"AND": listOfConditions};
+                      Map<String, dynamic> conditions = listOfConditions.isEmpty
+                          ? {}
+                          : {"AND": listOfConditions};
                       if (factoryID.isNotEmpty) {
                         setState(() {
                           isLoadingData = true;
@@ -760,7 +807,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                                 Job thisJob = Job.fromJSON(item);
                                 jobs.add(thisJob);
                               }
-                              jobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+                              jobs.sort(
+                                  ((a, b) => a.jobCode.compareTo(b.jobCode)));
                             }
                           }
                           setState(() {
@@ -785,7 +833,8 @@ class _JobListWidgetState extends State<JobListWidget> {
                   const VerticalDivider(),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () {
@@ -818,11 +867,13 @@ class _JobListWidgetState extends State<JobListWidget> {
                       : listWidget(),
               context,
               "All Jobs",
-              currentUser.userRole.role == "Operator" || currentUser.userRole.role == "Verifier"
+              currentUser.userRole.role == "Operator" ||
+                      currentUser.userRole.role == "Verifier"
                   ? () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const OperatorHomePage(),
+                          builder: (BuildContext context) =>
+                              const OperatorHomePage(),
                         ),
                       );
                     }
