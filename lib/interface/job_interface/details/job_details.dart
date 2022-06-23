@@ -173,9 +173,14 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
     var hr = (timeTaken / 3600).floor();
     var min = ((timeTaken - hr * 60) / 60).floor();
     var sec = timeTaken - hr * 3600 - min * 60;
-    var totalhr = (totalTimeTaken / 3600).floor();
-    var totalmin = ((totalTimeTaken - totalhr * 60) / 60).floor();
-    var totalsec = totalTimeTaken - totalhr * 3600 - totalmin * 60;
+    var totalhr = 0;
+    var totalmin = 0;
+    var totalsec = 0;
+    if (jobWeighings.isNotEmpty) {
+      totalhr = (totalTimeTaken / 3600).floor();
+      totalmin = ((totalTimeTaken - totalhr * 60) / 60).floor();
+      totalsec = totalTimeTaken - totalhr * 3600 - totalmin * 60;
+    }
     List<Widget> widgets = [
       Text(
         "Details for Job Code: " + jobCodeController.text,
