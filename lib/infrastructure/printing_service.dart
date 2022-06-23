@@ -21,7 +21,11 @@ import 'package:flutter/foundation.dart';
 String mapToZPLString(Map<String, dynamic> data) {
   String zplString = "^FO420,30^BQN,2,4^FH^FDMA _7B";
   data.forEach((key, value) {
-    zplString += "_22" + key.replaceAll("_", "_5F") + "_22_3A _22" + value.toString() + "_22,";
+    zplString += "_22" +
+        key.replaceAll("_", "_5F") +
+        "_22_3A _22" +
+        value.toString() +
+        "_22,";
   });
   zplString = zplString.substring(0, zplString.length - 1);
   zplString += "_7D^FS";
@@ -73,7 +77,8 @@ class PrintingService extends ChangeNotifier {
     zplString += "^CFA,15";
     zplString += "^FO30,85^FD Weight: ^FS";
     zplString += "^CFA,30";
-    zplString += "^FO50,105^FD" + data["weight"].toString() + " " + data["uom"] + "^FS";
+    zplString +=
+        "^FO50,105^FD" + data["weight"].toString() + " " + data["uom"] + "^FS";
     zplString += "^CFA,15";
     zplString += "^FO30,140^FD Weighed By: ^FS";
     zplString += "^CFA,30";

@@ -37,6 +37,7 @@ class JobItemDetailsWidget extends StatefulWidget {
 
 class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   bool isLoadingData = true;
+  bool isCheckingCompletion = false;
   double currentWeight = 0;
   double taredWeight = 0;
   double actualWeight = 0;
@@ -49,6 +50,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   List<UnitOfMeasurementConversion> uomConversions = [];
   String back = '{"action":"back"}';
   String tare = '{"action":"tare"}';
+  String preComplete = '{"action":"pre_complete"}';
+  String cancel = '{"action":"cancel"}';
   String complete = '{"action":"complete"}';
   Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
@@ -230,6 +233,16 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             ),
           ),
         );
+        break;
+      case "pre_complete":
+        setState(() {
+          isCheckingCompletion = true;
+        });
+        break;
+      case "cancel":
+        setState(() {
+          isCheckingCompletion = false;
+        });
         break;
       case "complete":
         Map<String, dynamic> jobItemWeighing = {
@@ -450,173 +463,185 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   Widget verifiedState() {
-    JobItem jobItem = widget.jobItem;
-    double upperLimit = jobItem.upperBound;
-    requiredQty = jobItem.requiredWeight - jobItem.actualWeight;
-    double lowerLimit = jobItem.lowerBound;
-    return Column(
-      children: [
-        Container(
-          height: 100.0,
-          padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: getRowWidget(jobItem),
+    if (isCheckingCompletion) {
+      return checkCompletion();
+    } else {
+      JobItem jobItem = widget.jobItem;
+      double upperLimit = jobItem.upperBound;
+      requiredQty = jobItem.requiredWeight - jobItem.actualWeight;
+      double lowerLimit = jobItem.lowerBound;
+      return Column(
+        children: [
+          Container(
+            height: 100.0,
+            padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: getRowWidget(jobItem),
+            ),
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 3 - 50,
-                  child: Center(
-                    child: QrImage(
-                      data: tare,
-                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  child: Center(
-                    child: Text(
-                      "Tare",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Divider(
-              color: Colors.transparent,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 3 - 50,
-                  child: Center(
-                    child: QrImage(
-                      data: complete,
-                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  child: Center(
-                    child: Text(
-                      "Complete",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Divider(
-              color: Colors.transparent,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 3 - 50,
-                  child: Center(
-                    child: QrImage(
-                      data: back,
-                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  child: Center(
-                    child: Text(
-                      "Back",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        BaseWidget(
-          builder: (context, sizeInformation) {
-            return SizedBox(
-              width: sizeInformation.screenSize.width,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            currentWeight.toStringAsFixed(3),
-                            style: TextStyle(
-                                fontSize: 300.0 *
-                                    sizeInformation.screenSize.height /
-                                    1006,
-                                color: (currentWeight +
-                                                widget.jobItem.actualWeight >
-                                            upperLimit ||
-                                        currentWeight +
-                                                widget.jobItem.actualWeight <
-                                            lowerLimit)
-                                    ? Colors.red
-                                    : Colors.green),
-                          ),
-                          Icon(
-                            currentWeight + widget.jobItem.actualWeight <
-                                    lowerLimit
-                                ? Icons.arrow_circle_up
-                                : currentWeight + widget.jobItem.actualWeight >
-                                        upperLimit
-                                    ? Icons.arrow_circle_down
-                                    : Icons.check_circle,
-                            size: 200.0 *
-                                sizeInformation.screenSize.height /
-                                1006,
-                            color:
-                                (currentWeight + widget.jobItem.actualWeight <
-                                            lowerLimit ||
-                                        currentWeight +
-                                                widget.jobItem.actualWeight >
-                                            upperLimit)
-                                    ? Colors.red
-                                    : Colors.green,
-                          ),
-                        ],
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 3 - 50,
+                    child: Center(
+                      child: QrImage(
+                        data: tare,
+                        size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                        backgroundColor: Colors.white,
                       ),
-                    ],
+                    ),
+                  ),
+                  const SizedBox(
+                    child: Center(
+                      child: Text(
+                        "Tare",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ],
-    );
+              const Divider(
+                color: Colors.transparent,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 3 - 50,
+                    child: Center(
+                      child: QrImage(
+                        data: complete,
+                        size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isCheckingCompletion = true;
+                      });
+                    },
+                    child: const SizedBox(
+                      child: Center(
+                        child: Text(
+                          "Complete",
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(
+                color: Colors.transparent,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 3 - 50,
+                    child: Center(
+                      child: QrImage(
+                        data: back,
+                        size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    child: Center(
+                      child: Text(
+                        "Back",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          BaseWidget(
+            builder: (context, sizeInformation) {
+              return SizedBox(
+                width: sizeInformation.screenSize.width,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              currentWeight.toStringAsFixed(3),
+                              style: TextStyle(
+                                  fontSize: 300.0 *
+                                      sizeInformation.screenSize.height /
+                                      1006,
+                                  color: (currentWeight +
+                                                  widget.jobItem.actualWeight >
+                                              upperLimit ||
+                                          currentWeight +
+                                                  widget.jobItem.actualWeight <
+                                              lowerLimit)
+                                      ? Colors.red
+                                      : Colors.green),
+                            ),
+                            Icon(
+                              currentWeight + widget.jobItem.actualWeight <
+                                      lowerLimit
+                                  ? Icons.arrow_circle_up
+                                  : currentWeight +
+                                              widget.jobItem.actualWeight >
+                                          upperLimit
+                                      ? Icons.arrow_circle_down
+                                      : Icons.check_circle,
+                              size: 200.0 *
+                                  sizeInformation.screenSize.height /
+                                  1006,
+                              color:
+                                  (currentWeight + widget.jobItem.actualWeight <
+                                              lowerLimit ||
+                                          currentWeight +
+                                                  widget.jobItem.actualWeight >
+                                              upperLimit)
+                                      ? Colors.red
+                                      : Colors.green,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      );
+    }
   }
 
   Widget unScannedState(JobItem jobItem) {
@@ -688,6 +713,100 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     );
   }
 
+  Widget checkCompletion() {
+    Widget widget = Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 40.0),
+          child: const Center(
+            child: Text(
+              "Sure to Complete?",
+              style: TextStyle(
+                fontSize: 30.0,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3 - 50,
+                  child: Center(
+                    child: QrImage(
+                      data: complete,
+                      size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  child: Center(
+                    child: Text(
+                      "Complete",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isCheckingCompletion = false;
+                      isVerified = true;
+                    });
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 3 - 50,
+                    child: Center(
+                      child: QrImage(
+                        data: cancel,
+                        size: 200.0 * MediaQuery.of(context).size.width / 1920,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isCheckingCompletion = false;
+                    });
+                  },
+                  child: const SizedBox(
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
+      ],
+    );
+    return widget;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SuperPage(
@@ -697,6 +816,11 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 ? verifiedState()
                 : unVerifiedState()
             : unScannedState(widget.jobItem),
+        // isMaterialScanned
+        //     ? isVerified
+        //         ? verifiedState()
+        //         : verifiedState()
+        //     : verifiedState(),
         context,
         "Job Item Weighing",
         () {

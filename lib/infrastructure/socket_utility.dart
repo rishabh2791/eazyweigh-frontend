@@ -35,7 +35,8 @@ class WebSocketUtility {
             await initCommunication();
           } else {
             _onReceptionOfMessageFromServer(
-                {"error": "Unable to Connect to Weighing Scale."});
+                '{"error": "Unable to Connect to Weighing Scale."}');
+            _isConnected = false;
           }
         },
       );

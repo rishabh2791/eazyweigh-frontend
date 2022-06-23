@@ -607,9 +607,9 @@ class _JobListWidgetState extends State<JobListWidget> {
                     ),
                   ),
                   const Image(
-                    image: AssetImage("assets/img/fireworks.gif"),
-                    width: 800.0,
-                    fit: BoxFit.cover,
+                    image: AssetImage("assets/img/fireworks_transparent.gif"),
+                    height: 400.0,
+                    fit: BoxFit.scaleDown,
                   ),
                   navigation,
                 ],
