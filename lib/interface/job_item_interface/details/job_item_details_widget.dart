@@ -521,7 +521,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
                       child: QrImage(
-                        data: complete,
+                        data: preComplete,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
                       ),
