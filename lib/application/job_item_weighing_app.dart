@@ -6,8 +6,7 @@ class JobItemWeighingApp implements JobItemWeighingAppInterface {
   JobItemWeighingApp({required this.jobItemWeighingRepository});
 
   @override
-  Future<Map<String, dynamic>> create(
-      Map<String, dynamic> jobItemWeighing) async {
+  Future<Map<String, dynamic>> create(Map<String, dynamic> jobItemWeighing) async {
     return jobItemWeighingRepository.create(jobItemWeighing);
   }
 
@@ -15,9 +14,15 @@ class JobItemWeighingApp implements JobItemWeighingAppInterface {
   Future<Map<String, dynamic>> list(String jobItemID) async {
     return jobItemWeighingRepository.list(jobItemID);
   }
+
+  @override
+  Future<Map<String, dynamic>> update(String jobItemWeighingID, Map<String, dynamic> update) async {
+    return jobItemWeighingRepository.update(jobItemWeighingID, update);
+  }
 }
 
 abstract class JobItemWeighingAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> jobItemWeighing);
   Future<Map<String, dynamic>> list(String jobItemID);
+  Future<Map<String, dynamic>> update(String jobItemWeighingID, Map<String, dynamic> update);
 }

@@ -12,6 +12,7 @@ class JobItemWeighing {
   final DateTime createdAt;
   final User updatedBy;
   final DateTime updatedAt;
+  bool verified;
 
   JobItemWeighing({
     required this.createdAt,
@@ -24,6 +25,7 @@ class JobItemWeighing {
     required this.updatedAt,
     required this.updatedBy,
     required this.weight,
+    this.verified = false,
   });
 
   Map<String, dynamic> toJSON() {
@@ -38,6 +40,7 @@ class JobItemWeighing {
       "created_at": createdAt,
       "updated_by": updatedBy.toJSON(),
       "updated_at": updatedAt,
+      "verified": verified,
     };
   }
 
@@ -53,6 +56,7 @@ class JobItemWeighing {
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       weight: double.parse(jsonObject["weight"].toString()),
+      verified: jsonObject["verified"],
     );
     return jobItemWeighing;
   }

@@ -107,22 +107,23 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": currentWeight,
+          "weight": (currentWeight - taredWeight),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
           "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
-        if (currentWeight >= requiredQty * .99 && currentWeight <= 1.01 * requiredQty) {
+        if ((currentWeight - taredWeight) >= requiredQty * .99 && (currentWeight - taredWeight) <= 1.01 * requiredQty) {
           await appStore.underIssueApp.update(widget.underIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
               setState(() {
-                widget.jobItem.actualWeight += currentWeight;
-                requiredQty = requiredQty - currentWeight;
+                widget.jobItem.actualWeight += (currentWeight - taredWeight);
+                requiredQty = requiredQty - (currentWeight - taredWeight);
                 currentWeight = 0;
               });
+              Navigator.of(context).pop();
             } else {
               showDialog(
                 context: context,
@@ -215,7 +216,7 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
         });
       } else {
         setState(() {
-          currentWeight = double.parse((scannerData["data"]).toString()) * scaleFactor - taredWeight;
+          currentWeight = double.parse((scannerData["data"]).toString()) * scaleFactor;
         });
       }
     } catch (e) {
@@ -505,19 +506,23 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            currentWeight.toStringAsFixed(3),
+                            (currentWeight - taredWeight).toStringAsFixed(3),
                             style: TextStyle(
                                 fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
-                                color: (currentWeight > upperLimit || currentWeight < lowerLimit) ? Colors.red : Colors.green),
+                                color: ((currentWeight - taredWeight) > upperLimit || (currentWeight - taredWeight) < lowerLimit)
+                                    ? Colors.red
+                                    : Colors.green),
                           ),
                           Icon(
-                            currentWeight < lowerLimit
+                            (currentWeight - taredWeight) < lowerLimit
                                 ? Icons.arrow_circle_up
-                                : currentWeight > upperLimit
+                                : (currentWeight - taredWeight) > upperLimit
                                     ? Icons.arrow_circle_down
                                     : Icons.check_circle,
                             size: 200.0 * sizeInformation.screenSize.height / 1006,
-                            color: (currentWeight < lowerLimit || currentWeight > upperLimit) ? Colors.red : Colors.green,
+                            color: ((currentWeight - taredWeight) < lowerLimit || (currentWeight - taredWeight) > upperLimit)
+                                ? Colors.red
+                                : Colors.green,
                           ),
                         ],
                       ),

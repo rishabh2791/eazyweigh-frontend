@@ -6,12 +6,10 @@ class JobAssignmentUpdateWidget extends StatefulWidget {
   const JobAssignmentUpdateWidget({Key? key}) : super(key: key);
 
   @override
-  State<JobAssignmentUpdateWidget> createState() =>
-      _JobAssignmentUpdateWidgetState();
+  State<JobAssignmentUpdateWidget> createState() => _JobAssignmentUpdateWidgetState();
 }
 
 class _JobAssignmentUpdateWidgetState extends State<JobAssignmentUpdateWidget> {
-  //TODO complete this
   @override
   Widget build(BuildContext context) {
     return SuperPage(

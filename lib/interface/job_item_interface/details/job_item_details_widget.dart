@@ -79,8 +79,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
 
   void listenToPrintingService(String message) {
     Map<String, dynamic> scannerData = jsonDecode(message);
-    if (!(scannerData.containsKey("status") &&
-        scannerData["status"] == "done")) {
+    if (!(scannerData.containsKey("status") && scannerData["status"] == "done")) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -138,20 +137,17 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           thisTerminal.add(terminal);
         }
       }
-      scaleFactor =
-          getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
+      scaleFactor = getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
     }
   }
 
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode &&
-            uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
-            uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -164,13 +160,10 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     Map<String, dynamic> conditions = {
       "factory_id": widget.jobItem.material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp
-        .list(conditions)
-        .then((response) async {
+    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion =
-              UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -215,16 +208,11 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "back":
-        widget.allJobItems.sort(
-            (a, b) => a.complete.toString().compareTo(b.complete.toString()));
+        widget.allJobItems.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
         navigationService.pushReplacement(
           CupertinoPageRoute(
             builder: (BuildContext context) => JobDetailsWidget(
@@ -250,7 +238,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": currentWeight,
+          "weight": currentWeight - taredWeight,
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "start_time": startTime.toLocal().toIso8601String() + "Z",
@@ -262,34 +250,30 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": currentWeight.toStringAsFixed(3),
+          "weight": (currentWeight - taredWeight).toStringAsFixed(3),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if (currentWeight != 0 &&
-            actualWeight + currentWeight < widget.jobItem.upperBound) {
-          await appStore.jobWeighingApp
-              .create(jobItemWeighing)
-              .then((value) async {
+        if ((currentWeight - taredWeight) != 0 && actualWeight + (currentWeight - taredWeight) < widget.jobItem.upperBound) {
+          await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];
               printingData["job_item_weighing_id"] = id;
+              if (actualWeight + (currentWeight - taredWeight) >= widget.jobItem.lowerBound) {
+                printingData["complete"] = true;
+              }
 
               printingService.printJobItemLabel(printingData);
 
-              if (actualWeight + currentWeight > widget.jobItem.lowerBound) {
+              if (actualWeight + (currentWeight - taredWeight) > widget.jobItem.lowerBound) {
                 setState(() {
-                  widget.allJobItems
-                      .firstWhere((element) => element.id == widget.jobItem.id)
-                      .complete = true;
+                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
                 });
               }
 
               setState(() {
-                widget.allJobItems
-                    .firstWhere((element) => element.id == widget.jobItem.id)
-                    .actualWeight += currentWeight;
+                widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += (currentWeight - taredWeight);
                 currentWeight = 0;
               });
 
@@ -321,7 +305,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             context: context,
             builder: (BuildContext context) {
               return const CustomDialog(
-                message: "Nothing to Weigh.",
+                message: "Invalid Weighing.",
                 title: "Errors",
               );
             },
@@ -346,12 +330,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   dynamic listenToWeighingScale(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     try {
       if (scannerData.containsKey("error")) {
         showDialog(
@@ -368,9 +348,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         });
       } else {
         setState(() {
-          currentWeight =
-              double.parse((scannerData["data"]).toString()) * scaleFactor -
-                  taredWeight;
+          currentWeight = double.parse((scannerData["data"]).toString()) * scaleFactor;
         });
       }
     } catch (e) {
@@ -379,12 +357,8 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
-    Map<String, dynamic> jsonData = jsonDecode(scannerData
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> jsonData =
+        jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("code")) {
       String matCode = jsonData["code"];
@@ -595,40 +569,25 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              currentWeight.toStringAsFixed(3),
+                              (currentWeight - taredWeight).toStringAsFixed(3),
                               style: TextStyle(
-                                  fontSize: 300.0 *
-                                      sizeInformation.screenSize.height /
-                                      1006,
-                                  color: (currentWeight +
-                                                  widget.jobItem.actualWeight >
-                                              upperLimit ||
-                                          currentWeight +
-                                                  widget.jobItem.actualWeight <
-                                              lowerLimit)
+                                  fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
+                                  color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit ||
+                                          (currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit)
                                       ? Colors.red
                                       : Colors.green),
                             ),
                             Icon(
-                              currentWeight + widget.jobItem.actualWeight <
-                                      lowerLimit
+                              (currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit
                                   ? Icons.arrow_circle_up
-                                  : currentWeight +
-                                              widget.jobItem.actualWeight >
-                                          upperLimit
+                                  : (currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit
                                       ? Icons.arrow_circle_down
                                       : Icons.check_circle,
-                              size: 200.0 *
-                                  sizeInformation.screenSize.height /
-                                  1006,
-                              color:
-                                  (currentWeight + widget.jobItem.actualWeight <
-                                              lowerLimit ||
-                                          currentWeight +
-                                                  widget.jobItem.actualWeight >
-                                              upperLimit)
-                                      ? Colors.red
-                                      : Colors.green,
+                              size: 200.0 * sizeInformation.screenSize.height / 1006,
+                              color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit ||
+                                      (currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit)
+                                  ? Colors.red
+                                  : Colors.green,
                             ),
                           ],
                         ),

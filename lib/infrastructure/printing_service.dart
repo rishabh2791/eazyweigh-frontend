@@ -5,27 +5,10 @@ import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:f_logs/f_logs.dart';
 import 'package:flutter/foundation.dart';
 
-// Map<String, dynamic> printingData = {
-//   "job_code": "153847",
-//   "job_id": "a2a41b82-a6a9-4e2f-966c-550675ae7fcf",
-//   "weigher": "Operator First",
-//   "material_code": "110196",
-//   "material_description": "LIPO EGMS/ SP CITHROL EGMS MB",
-//   "weight": 0.8,
-//   "uom": "KG",
-//   "batch": "123456",
-//   "job_item_id": "b476e722-5eb5-4aa1-9f85-e4825bb69676",
-// };
-// printingService.printJobItemLabel(printingData);
-
 String mapToZPLString(Map<String, dynamic> data) {
   String zplString = "^FO420,30^BQN,2,4^FH^FDMA _7B";
   data.forEach((key, value) {
-    zplString += "_22" +
-        key.replaceAll("_", "_5F") +
-        "_22_3A _22" +
-        value.toString() +
-        "_22,";
+    zplString += "_22" + key.replaceAll("_", "_5F") + "_22_3A _22" + value.toString() + "_22,";
   });
   zplString = zplString.substring(0, zplString.length - 1);
   zplString += "_7D^FS";
@@ -70,6 +53,10 @@ class PrintingService extends ChangeNotifier {
 
   Future<void> printJobItemLabel(Map<String, dynamic> data) async {
     String zplString = "^XA";
+    if (data.containsKey("complete")) {
+      zplString += "^FO10,10^GB792,386,3^FS";
+      data.remove("complete");
+    }
     zplString += "^CFA,15";
     zplString += "^FO30,30^FD Job Code: ^FS";
     zplString += "^CFA,30";
@@ -77,8 +64,7 @@ class PrintingService extends ChangeNotifier {
     zplString += "^CFA,15";
     zplString += "^FO30,85^FD Weight: ^FS";
     zplString += "^CFA,30";
-    zplString +=
-        "^FO50,105^FD" + data["weight"].toString() + " " + data["uom"] + "^FS";
+    zplString += "^FO50,105^FD" + data["weight"].toString() + " " + data["uom"] + "^FS";
     zplString += "^CFA,15";
     zplString += "^FO30,140^FD Weighed By: ^FS";
     zplString += "^CFA,30";
@@ -121,3 +107,47 @@ class PrintingService extends ChangeNotifier {
     }
   }
 }
+
+
+// ^XA
+
+// ^FO10,10^GB792,386,3^FS
+
+// ^CFA,15
+// ^FO30,30^FD Job Code: ^FS
+// ^CFA,30
+// ^FO50,50^FD158543^FS
+// ^CFA,15
+// ^FO30,85^FD Weight: ^FS
+// ^CFA,30
+// ^FO50,105^FD10 KG^FS
+// ^CFA,15
+// ^FO30,140^FD Weighed By: ^FS
+// ^CFA,30
+// ^FO50,160^FDWeigher^FS
+// ^CFA,15
+// ^FO30,195^FD Material Code: ^FS
+// ^CFA,30
+// ^FO50,215^FD123456^FS
+// ^CFA,15
+// ^FO30,250^FD Batch: ^FS
+// ^CFA,30";
+// ^FO50,270^FD123456BA^FS
+// ^CFA,15
+// ^FO30,305^FD Material Name: ^FS
+// ^CFA,30
+// ^FO50,325^FDRaw Material 1^FS";
+
+// ^FO420,30^BQN,2,4^FH^FDMA _7B_7D
+// _22job_5Fcode_22_3A _22158543_22,
+//           _22job_5Fid_22_3A _22abcd_22,
+//           _22weigher_22_3A _22Rishabh Kumar_22,
+//           _22material_5Fcode_22_3A _22123456_22,
+//           _22material_5Fdescription_22_3A _22Raw Material 1_22,
+//           _22weight_22_3A _2210_22,
+//           _22uom_22_3A _22KG_22,
+//           _22batch_22_3A _22123456BA_22,
+//           _22job_5Fitem_5Fid_22_3A _22abcdefgh_22,
+// ^FS
+
+// ^XZ

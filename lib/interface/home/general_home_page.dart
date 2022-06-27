@@ -22,13 +22,8 @@ class GeneralHomeWidget extends StatefulWidget {
 
 class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
   bool isLoadingPage = true;
-  late DateTime thisWeekStart,
-      thisMonthStart,
-      thisWeekEnd,
-      thisMonthEnd,
-      today = DateTime.parse(DateTime.now().toString().substring(0, 10));
-  Map<String, List<ScannedData>> weekIncorrectWeighing = {},
-      monthIncorrectWeighing = {};
+  late DateTime thisWeekStart, thisMonthStart, thisWeekEnd, thisMonthEnd, today = DateTime.parse(DateTime.now().toString().substring(0, 10));
+  Map<String, List<ScannedData>> weekIncorrectWeighing = {}, monthIncorrectWeighing = {};
   List<String> weekJobIDs = [], monthJobIDs = [];
   List<Job> weekJobs = [], monthJobs = [];
   double weekJobWeights = 0, monthJobWeights = 0;
@@ -51,22 +46,12 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
 
   Future<dynamic> getAllDetails() async {
     var dayOfWeek = today.weekday;
-    thisWeekStart = DateTime.parse(today
-        .subtract(Duration(days: dayOfWeek - 1))
-        .toString()
-        .substring(0, 10));
-    thisWeekEnd = DateTime.parse(
-        today.add(Duration(days: 7 - dayOfWeek)).toString().substring(0, 10));
-    thisMonthStart = DateTime.parse(
-        DateTime(today.year, today.month, 1, 0, 0, 0, 0, 0)
-            .toString()
-            .substring(0, 10));
+    thisWeekStart = DateTime.parse(today.subtract(Duration(days: dayOfWeek - 1)).toString().substring(0, 10));
+    thisWeekEnd = DateTime.parse(today.add(Duration(days: 7 - dayOfWeek)).toString().substring(0, 10));
+    thisMonthStart = DateTime.parse(DateTime(today.year, today.month, 1, 0, 0, 0, 0, 0).toString().substring(0, 10));
     DateTime nextMonth = DateTime(today.year, today.month + 1, today.day);
     int daysLeftInMonth = nextMonth.difference(today).inDays - today.day;
-    thisMonthEnd = DateTime.parse(DateTime(
-            today.year, today.month, today.day + daysLeftInMonth, 0, 0, 0, 0, 0)
-        .toString()
-        .substring(0, 10));
+    thisMonthEnd = DateTime.parse(DateTime(today.year, today.month, today.day + daysLeftInMonth, 0, 0, 0, 0, 0).toString().substring(0, 10));
     Future.forEach([
       await getWeekSummary(),
       await getMonthSummary(),
@@ -135,12 +120,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
             {
               "LESSEQUAL": {
                 "Field": "created_at",
-                "Value": DateTime.parse(thisMonthEnd
-                            .add(const Duration(days: 1))
-                            .toString()
-                            .substring(0, 10))
-                        .toString() +
-                    "T00:00:00.0Z",
+                "Value": DateTime.parse(thisMonthEnd.add(const Duration(days: 1)).toString().substring(0, 10)).toString() + "T00:00:00.0Z",
               },
             }
           ]
@@ -158,12 +138,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
             {
               "LESSEQUAL": {
                 "Field": "created_at",
-                "Value": DateTime.parse(thisWeekEnd
-                            .add(const Duration(days: 1))
-                            .toString()
-                            .substring(0, 10))
-                        .toString() +
-                    "T00:00:00.0Z",
+                "Value": DateTime.parse(thisWeekEnd.add(const Duration(days: 1)).toString().substring(0, 10)).toString() + "T00:00:00.0Z",
               },
             }
           ]
@@ -176,17 +151,10 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
       if (response.containsKey("status") && response["status"]) {
         for (var item in response["payload"]) {
           ScannedData scannedData = ScannedData.fromJSON(item);
-          if (incorrectWeighing.containsKey(scannedData.weigher.firstName +
-              " " +
-              scannedData.weigher.lastName)) {
-            incorrectWeighing[scannedData.weigher.firstName +
-                    " " +
-                    scannedData.weigher.lastName]!
-                .add(scannedData);
+          if (incorrectWeighing.containsKey(scannedData.weigher.firstName + " " + scannedData.weigher.lastName)) {
+            incorrectWeighing[scannedData.weigher.firstName + " " + scannedData.weigher.lastName]!.add(scannedData);
           } else {
-            incorrectWeighing[scannedData.weigher.firstName +
-                " " +
-                scannedData.weigher.lastName] = [scannedData];
+            incorrectWeighing[scannedData.weigher.firstName + " " + scannedData.weigher.lastName] = [scannedData];
           }
         }
       }
@@ -237,12 +205,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         {
           "LESSEQUAL": {
             "Field": "date",
-            "Value": DateTime.parse(thisWeekEnd
-                        .add(const Duration(days: 1))
-                        .toString()
-                        .substring(0, 10))
-                    .toString() +
-                "T00:00:00.0Z",
+            "Value": DateTime.parse(thisWeekEnd.add(const Duration(days: 1)).toString().substring(0, 10)).toString() + "T00:00:00.0Z",
           },
         }
       ]
@@ -261,40 +224,29 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
             "Value": shiftScheduleIDs,
           }
         };
-        await appStore.jobItemAssignmentApp
-            .list(shiftCondition)
-            .then((response) {
-          if (response.containsKey("status") && response["status"]) {
-            for (var item in response["payload"]) {
-              JobItemAssignment jobItemAssignment =
-                  JobItemAssignment.fromJSON(item);
-              if (!weekJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
-                weekJobIDs.add(jobItemAssignment.jobItem.jobID);
-              }
-              weekJobWeights += jobItemAssignment.jobItem.requiredWeight;
-              if (weekOperatorWeight.containsKey(
-                  jobItemAssignment.shiftSchedule.weigher.firstName +
-                      " " +
-                      jobItemAssignment.shiftSchedule.weigher.lastName)) {
-                weekOperatorWeight[
-                        jobItemAssignment.shiftSchedule.weigher.firstName +
-                            " " +
-                            jobItemAssignment.shiftSchedule.weigher.lastName] =
-                    weekOperatorWeight[jobItemAssignment
-                                .shiftSchedule.weigher.firstName +
-                            " " +
-                            jobItemAssignment.shiftSchedule.weigher.lastName]! +
-                        jobItemAssignment.jobItem.requiredWeight;
-              } else {
-                weekOperatorWeight[
-                        jobItemAssignment.shiftSchedule.weigher.firstName +
-                            " " +
-                            jobItemAssignment.shiftSchedule.weigher.lastName] =
-                    jobItemAssignment.jobItem.requiredWeight;
+        if (shiftScheduleIDs.isNotEmpty) {
+          await appStore.jobItemAssignmentApp.list(shiftCondition).then((response) {
+            if (response.containsKey("status") && response["status"]) {
+              for (var item in response["payload"]) {
+                JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
+                if (!weekJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
+                  weekJobIDs.add(jobItemAssignment.jobItem.jobID);
+                }
+                weekJobWeights += jobItemAssignment.jobItem.requiredWeight;
+                if (weekOperatorWeight
+                    .containsKey(jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName)) {
+                  weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] =
+                      weekOperatorWeight[
+                              jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName]! +
+                          jobItemAssignment.jobItem.requiredWeight;
+                } else {
+                  weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] =
+                      jobItemAssignment.jobItem.requiredWeight;
+                }
               }
             }
-          }
-        });
+          });
+        }
       }
     }).then((value) async {
       weekIncorrectWeighing = await getIncorrectWeighing("week");
@@ -316,12 +268,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         {
           "LESSEQUAL": {
             "Field": "date",
-            "Value": DateTime.parse(thisMonthEnd
-                        .add(const Duration(days: 1))
-                        .toString()
-                        .substring(0, 10))
-                    .toString() +
-                "T00:00:00.0Z",
+            "Value": DateTime.parse(thisMonthEnd.add(const Duration(days: 1)).toString().substring(0, 10)).toString() + "T00:00:00.0Z",
           },
         }
       ]
@@ -339,40 +286,29 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
             "Value": shiftScheduleIDs,
           }
         };
-        await appStore.jobItemAssignmentApp
-            .list(shiftCondition)
-            .then((response) {
-          if (response.containsKey("status") && response["status"]) {
-            for (var item in response["payload"]) {
-              JobItemAssignment jobItemAssignment =
-                  JobItemAssignment.fromJSON(item);
-              monthJobWeights += jobItemAssignment.jobItem.requiredWeight;
-              if (!monthJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
-                monthJobIDs.add(jobItemAssignment.jobItem.jobID);
-              }
-              if (monthOperatorWeight.containsKey(
-                  jobItemAssignment.shiftSchedule.weigher.firstName +
-                      " " +
-                      jobItemAssignment.shiftSchedule.weigher.lastName)) {
-                monthOperatorWeight[
-                        jobItemAssignment.shiftSchedule.weigher.firstName +
-                            " " +
-                            jobItemAssignment.shiftSchedule.weigher.lastName] =
-                    monthOperatorWeight[jobItemAssignment
-                                .shiftSchedule.weigher.firstName +
-                            " " +
-                            jobItemAssignment.shiftSchedule.weigher.lastName]! +
-                        jobItemAssignment.jobItem.requiredWeight;
-              } else {
-                monthOperatorWeight[
-                        jobItemAssignment.shiftSchedule.weigher.firstName +
-                            " " +
-                            jobItemAssignment.shiftSchedule.weigher.lastName] =
-                    jobItemAssignment.jobItem.requiredWeight;
+        if (shiftScheduleIDs.isNotEmpty) {
+          await appStore.jobItemAssignmentApp.list(shiftCondition).then((response) {
+            if (response.containsKey("status") && response["status"]) {
+              for (var item in response["payload"]) {
+                JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
+                monthJobWeights += jobItemAssignment.jobItem.requiredWeight;
+                if (!monthJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
+                  monthJobIDs.add(jobItemAssignment.jobItem.jobID);
+                }
+                if (monthOperatorWeight
+                    .containsKey(jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName)) {
+                  monthOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] =
+                      monthOperatorWeight[
+                              jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName]! +
+                          jobItemAssignment.jobItem.requiredWeight;
+                } else {
+                  monthOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] =
+                      jobItemAssignment.jobItem.requiredWeight;
+                }
               }
             }
-          }
-        });
+          });
+        }
       }
     }).then((value) async {
       monthIncorrectWeighing = await getIncorrectWeighing("month");
@@ -506,9 +442,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                   color: formHintTextColor,
                   shadows: [
                     Shadow(
-                      color: themeChanged.value
-                          ? foregroundColor.withOpacity(0.25)
-                          : backgroundColor.withOpacity(0.5),
+                      color: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.5),
                       offset: const Offset(10, 10),
                       blurRadius: 20,
                     ),
@@ -529,9 +463,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                         "Week Summary",
                         style: TextStyle(
                           fontSize: 30.0,
-                          color: themeChanged.value
-                              ? foregroundColor
-                              : backgroundColor,
+                          color: themeChanged.value ? foregroundColor : backgroundColor,
                         ),
                       ),
                       const Divider(
@@ -555,25 +487,19 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                     : showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return const CustomDialog(
-                                              title: "Info",
-                                              message: "No Jobs Found");
+                                          return const CustomDialog(title: "Info", message: "No Jobs Found");
                                         });
                               },
                               child: cardWidget(
                                 "Jobs Completed",
-                                weekJobsCompleted.toString() +
-                                    " of " +
-                                    weekJobIDs.length.toString(),
+                                weekJobsCompleted.toString() + " of " + weekJobIDs.length.toString(),
                               ),
                             ),
                             TextButton(
                               onPressed: () {
                                 List<OperatorWeighing> weighings = [];
                                 weekOperatorWeight.forEach((key, value) {
-                                  OperatorWeighing operatorWeighing =
-                                      OperatorWeighing(
-                                          name: key, weight: value);
+                                  OperatorWeighing operatorWeighing = OperatorWeighing(name: key, weight: value);
                                   weighings.add(operatorWeighing);
                                 });
                                 weighings.isNotEmpty
@@ -594,19 +520,15 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                           );
                                         });
                               },
-                              child: cardWidget("Weight of Jobs",
-                                  weekJobWeights.toStringAsFixed(2)),
+                              child: cardWidget("Weight of Jobs", weekJobWeights.toStringAsFixed(2)),
                             ),
-                            cardWidget("Over Issued Items",
-                                weekOverIssuedItems.length.toString()),
-                            cardWidget("Under Issued Items",
-                                weekUnderIssuedItem.length.toString()),
+                            cardWidget("Over Issued Items", weekOverIssuedItems.length.toString()),
+                            cardWidget("Under Issued Items", weekUnderIssuedItem.length.toString()),
                             TextButton(
                               onPressed: () {
                                 List<OperatorWeighing> weighings = [];
                                 weekIncorrectWeighing.forEach((key, value) {
-                                  OperatorWeighing operatorWeighing =
-                                      OperatorWeighing(
+                                  OperatorWeighing operatorWeighing = OperatorWeighing(
                                     name: key,
                                     weight: value.length.toDouble(),
                                   );
@@ -630,8 +552,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                           );
                                         });
                               },
-                              child: cardWidget("Incorrect Scans",
-                                  weekIncorrectScans.toString()),
+                              child: cardWidget("Incorrect Scans", weekIncorrectScans.toString()),
                             ),
                           ],
                         ),
@@ -644,9 +565,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                         "Month Summary",
                         style: TextStyle(
                           fontSize: 30.0,
-                          color: themeChanged.value
-                              ? foregroundColor
-                              : backgroundColor,
+                          color: themeChanged.value ? foregroundColor : backgroundColor,
                         ),
                       ),
                       const Divider(
@@ -670,23 +589,15 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                       : showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return const CustomDialog(
-                                                title: "Info",
-                                                message: "No Jobs Found");
+                                            return const CustomDialog(title: "Info", message: "No Jobs Found");
                                           });
                                 },
-                                child: cardWidget(
-                                    "Jobs Completed",
-                                    monthJobsComplete.toString() +
-                                        " of " +
-                                        monthJobIDs.length.toString())),
+                                child: cardWidget("Jobs Completed", monthJobsComplete.toString() + " of " + monthJobIDs.length.toString())),
                             TextButton(
                                 onPressed: () {
                                   List<OperatorWeighing> weighings = [];
                                   monthOperatorWeight.forEach((key, value) {
-                                    OperatorWeighing operatorWeighing =
-                                        OperatorWeighing(
-                                            name: key, weight: value);
+                                    OperatorWeighing operatorWeighing = OperatorWeighing(name: key, weight: value);
                                     weighings.add(operatorWeighing);
                                   });
                                   weighings.isNotEmpty
@@ -707,18 +618,14 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                             );
                                           });
                                 },
-                                child: cardWidget("Weight of Jobs",
-                                    monthJobWeights.toStringAsFixed(2))),
-                            cardWidget("Over Issued Items",
-                                monthOverIssuedItems.length.toString()),
-                            cardWidget("Under Issued Items",
-                                monthUnderIssuedItem.length.toString()),
+                                child: cardWidget("Weight of Jobs", monthJobWeights.toStringAsFixed(2))),
+                            cardWidget("Over Issued Items", monthOverIssuedItems.length.toString()),
+                            cardWidget("Under Issued Items", monthUnderIssuedItem.length.toString()),
                             TextButton(
                               onPressed: () {
                                 List<OperatorWeighing> weighings = [];
                                 monthIncorrectWeighing.forEach((key, value) {
-                                  OperatorWeighing operatorWeighing =
-                                      OperatorWeighing(
+                                  OperatorWeighing operatorWeighing = OperatorWeighing(
                                     name: key,
                                     weight: value.length.toDouble(),
                                   );
@@ -742,8 +649,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                           );
                                         });
                               },
-                              child: cardWidget("Incorrect Scans",
-                                  monthIncorrectScans.toString()),
+                              child: cardWidget("Incorrect Scans", monthIncorrectScans.toString()),
                             ),
                           ],
                         ),
@@ -846,15 +752,9 @@ class _OperatorWeighingList extends State<OperatorWeighingList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor:
-                        themeChanged.value ? foregroundColor : backgroundColor,
-                    textTheme: TextTheme(
-                        caption: TextStyle(
-                            color: themeChanged.value
-                                ? foregroundColor
-                                : backgroundColor)),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor : backgroundColor,
+                    textTheme: TextTheme(caption: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -870,9 +770,7 @@ class _OperatorWeighingList extends State<OperatorWeighingList> {
                               "Operator",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -890,9 +788,7 @@ class _OperatorWeighingList extends State<OperatorWeighingList> {
                               widget.label,
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -907,9 +803,7 @@ class _OperatorWeighingList extends State<OperatorWeighingList> {
                           ),
                         ],
                         source: _DataSource(context, widget.weighings),
-                        rowsPerPage: widget.weighings.length > 25
-                            ? 25
-                            : widget.weighings.length,
+                        rowsPerPage: widget.weighings.length > 25 ? 25 : widget.weighings.length,
                       )
                     ],
                   ),
