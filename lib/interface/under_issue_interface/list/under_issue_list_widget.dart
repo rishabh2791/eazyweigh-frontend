@@ -334,6 +334,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
       navigationService.pushReplacement(
         CupertinoPageRoute(
           builder: (BuildContext context) => VerifierUnderIssueDetailsWidget(
+            job: jobs[jobID]!,
             jobID: jobID,
           ),
         ),

@@ -4,9 +4,11 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/job_item_weighing.dart';
+import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
@@ -37,13 +39,34 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
   void initState() {
     getJobData();
     scannerListener.addListener(listenToScanner);
+    printingService.addListener(listenToPrintingService);
     super.initState();
   }
 
   @override
   void dispose() {
     scannerListener.removeListener(listenToScanner);
+    printingService.removeListener(listenToPrintingService);
     super.dispose();
+  }
+
+  void listenToPrintingService(String message) {
+    Map<String, dynamic> scannerData = jsonDecode(message);
+    if (!(scannerData.containsKey("status") && scannerData["status"] == "done")) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to Print.",
+            title: "Error",
+          );
+        },
+      );
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pop();
+      });
+    }
+    printingService.close();
   }
 
   Future<dynamic> getJobData() async {
@@ -140,6 +163,14 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
             .update(scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
           updateJobItems(scannerData["job_item_id"], scannerData["job_item_weighing_id"]);
           if (checkAllItemsVerified()) {
+            Map<String, dynamic> printingData = {
+              "job_code": widget.jobCode,
+              "job_id": job.id,
+              "verifier": currentUser.firstName + " " + currentUser.lastName,
+              "material_code": job.material.code,
+              "material_description": job.material.description,
+            };
+            printingService.printVerificationLabel(printingData);
             showDialog(
               context: context,
               builder: (BuildContext context) {

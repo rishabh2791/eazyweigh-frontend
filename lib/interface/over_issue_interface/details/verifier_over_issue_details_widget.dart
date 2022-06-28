@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/over_issue.dart';
+import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
+import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
@@ -18,18 +21,18 @@ import 'package:flutter/material.dart';
 
 class VerifierOverIssueDetailsWidget extends StatefulWidget {
   final String jobID;
+  final Job job;
   const VerifierOverIssueDetailsWidget({
     Key? key,
     required this.jobID,
+    required this.job,
   }) : super(key: key);
 
   @override
-  State<VerifierOverIssueDetailsWidget> createState() =>
-      _VerifierOverIssueDetailsWidgetState();
+  State<VerifierOverIssueDetailsWidget> createState() => _VerifierOverIssueDetailsWidgetState();
 }
 
-class _VerifierOverIssueDetailsWidgetState
-    extends State<VerifierOverIssueDetailsWidget> {
+class _VerifierOverIssueDetailsWidgetState extends State<VerifierOverIssueDetailsWidget> {
   bool isLoadingData = false;
   List<OverIssue> overIssueItems = [];
   Map<String, JobItem> jobItems = {};
@@ -38,13 +41,34 @@ class _VerifierOverIssueDetailsWidgetState
   void initState() {
     getOverIssueItems();
     scannerListener.addListener(listenToScanner);
+    printingService.addListener(listenToPrintingService);
     super.initState();
   }
 
   @override
   void dispose() {
     scannerListener.removeListener(listenToScanner);
+    printingService.removeListener(listenToPrintingService);
     super.dispose();
+  }
+
+  void listenToPrintingService(String message) {
+    Map<String, dynamic> scannerData = jsonDecode(message);
+    if (!(scannerData.containsKey("status") && scannerData["status"] == "done")) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to Print.",
+            title: "Error",
+          );
+        },
+      );
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        Navigator.of(context).pop();
+      });
+    }
+    printingService.close();
   }
 
   Future<void> getOverIssueItems() async {
@@ -59,9 +83,7 @@ class _VerifierOverIssueDetailsWidgetState
                 "Value": overIssue.jobItem,
               },
             };
-            await appStore.jobItemApp
-                .get(widget.jobID, condition)
-                .then((value) {
+            await appStore.jobItemApp.get(widget.jobID, condition).then((value) {
               if (value.containsKey("status")) {
                 if (value["status"]) {
                   JobItem jobItem = JobItem.fromJSON(value["payload"][0]);
@@ -120,12 +142,8 @@ class _VerifierOverIssueDetailsWidgetState
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "logout":
@@ -135,11 +153,17 @@ class _VerifierOverIssueDetailsWidgetState
       }
     } else {
       if (scannerData.containsKey("over_issue_id")) {
-        await appStore.overIssueApp.update(
-            scannerData["over_issue_id"].toString().replaceAll("_", "-"),
-            {"verified": true}).then((response) async {
+        await appStore.overIssueApp.update(scannerData["over_issue_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
           updateOverIssueItems(scannerData["over_issue_id"]);
           if (checkAllItemsVerified()) {
+            Map<String, dynamic> printingData = {
+              "job_code": widget.job.jobCode,
+              "job_id": widget.jobID,
+              "verifier": currentUser.firstName + " " + currentUser.lastName,
+              "material_code": widget.job.material.code,
+              "material_description": widget.job.material.description,
+            };
+            printingService.printVerificationLabel(printingData);
             showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -173,10 +197,7 @@ class _VerifierOverIssueDetailsWidgetState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          getVerifiedItems().toString() +
-              " item(s) of " +
-              overIssueItems.length.toString() +
-              " Items Verified.",
+          getVerifiedItems().toString() + " item(s) of " + overIssueItems.length.toString() + " Items Verified.",
           style: const TextStyle(
             color: formHintTextColor,
             fontSize: 30.0,
@@ -216,8 +237,7 @@ class _VerifierOverIssueDetailsWidgetState
               () {
                 navigationService.pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) =>
-                        const OverIssueListWidget(),
+                    builder: (BuildContext context) => const OverIssueListWidget(),
                   ),
                 );
               },

@@ -101,53 +101,48 @@ class PrintingService extends ChangeNotifier {
     }
   }
 
+  Future<void> printVerificationLabel(Map<String, dynamic> data) async {
+    String zplString = "^XA";
+    zplString += "^FO10,10^GB792,386,3^FS";
+    zplString += "^CFA,15";
+    zplString += "^FO30,30^FD Job Code: ^FS";
+    zplString += "^CFA,30";
+    zplString += "^FO50,50^FD" + data["job_code"] + "^FS";
+    zplString += "^CFA,15";
+    zplString += "^FO30,85^FD Verified By: ^FS";
+    zplString += "^CFA,30";
+    zplString += "^FO50,105^FD" + data["verifier"] + "^FS";
+    zplString += "^CFA,15";
+    zplString += "^FO30,140^FD Material Code: ^FS";
+    zplString += "^CFA,30";
+    zplString += "^FO50,160^FD" + data["material_code"] + "^FS";
+    zplString += "^CFA,15";
+    zplString += "^FO30,195^FD Material Name: ^FS";
+    zplString += "^CFA,30";
+    zplString += "^FO50,215^FD" + data["material_description"] + "^FS";
+    zplString += mapToZPLString(data) + "^XZ";
+
+    try {
+      await WebSocket.connect(PRINTER_URL).then((webSocket) {
+        if (webSocket.readyState == 1) {
+          _isConnected = true;
+          webSocketChannel = webSocket;
+          webSocket.listen(listenToWebSocket);
+          webSocket.add(utf8.encode(zplString));
+        } else {
+          _isConnected = false;
+          listenToWebSocket("{'status':'Done'}");
+        }
+      });
+    } catch (e) {
+      _isConnected = false;
+      listenToWebSocket("{'status':'Not Done'}");
+    }
+  }
+
   void listenToWebSocket(message) {
     for (var listener in listeners) {
       listener(message);
     }
   }
 }
-
-
-// ^XA
-
-// ^FO10,10^GB792,386,3^FS
-
-// ^CFA,15
-// ^FO30,30^FD Job Code: ^FS
-// ^CFA,30
-// ^FO50,50^FD158543^FS
-// ^CFA,15
-// ^FO30,85^FD Weight: ^FS
-// ^CFA,30
-// ^FO50,105^FD10 KG^FS
-// ^CFA,15
-// ^FO30,140^FD Weighed By: ^FS
-// ^CFA,30
-// ^FO50,160^FDWeigher^FS
-// ^CFA,15
-// ^FO30,195^FD Material Code: ^FS
-// ^CFA,30
-// ^FO50,215^FD123456^FS
-// ^CFA,15
-// ^FO30,250^FD Batch: ^FS
-// ^CFA,30";
-// ^FO50,270^FD123456BA^FS
-// ^CFA,15
-// ^FO30,305^FD Material Name: ^FS
-// ^CFA,30
-// ^FO50,325^FDRaw Material 1^FS";
-
-// ^FO420,30^BQN,2,4^FH^FDMA _7B_7D
-// _22job_5Fcode_22_3A _22158543_22,
-//           _22job_5Fid_22_3A _22abcd_22,
-//           _22weigher_22_3A _22Rishabh Kumar_22,
-//           _22material_5Fcode_22_3A _22123456_22,
-//           _22material_5Fdescription_22_3A _22Raw Material 1_22,
-//           _22weight_22_3A _2210_22,
-//           _22uom_22_3A _22KG_22,
-//           _22batch_22_3A _22123456BA_22,
-//           _22job_5Fitem_5Fid_22_3A _22abcdefgh_22,
-// ^FS
-
-// ^XZ

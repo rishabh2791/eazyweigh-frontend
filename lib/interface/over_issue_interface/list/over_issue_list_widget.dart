@@ -340,6 +340,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
       navigationService.pushReplacement(
         CupertinoPageRoute(
           builder: (BuildContext context) => VerifierOverIssueDetailsWidget(
+            job: jobs[jobID]!,
             jobID: jobID,
           ),
         ),
