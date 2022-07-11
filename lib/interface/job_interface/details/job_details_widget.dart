@@ -165,10 +165,19 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     String uomCode,
   ) {
     String scales = "";
+    // for (var terminal in terminals) {
+    //   double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
+    //   if (terminal.leastCount * scaleFactor < req &&
+    //       terminal.capacity * scaleFactor > req) {
+    //     scales += terminal.description + "\n";
+    //   }
+    // }
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount * scaleFactor < req &&
-          terminal.capacity * scaleFactor > req) {
+      var lc1000 = 1000 * terminal.leastCount * scaleFactor;
+      var weight1000 = 1000 * double.parse(req.toStringAsFixed(3));
+      var remainder = weight1000 % lc1000;
+      if (remainder == 0 && terminal.capacity * scaleFactor > req) {
         scales += terminal.description + "\n";
       }
     }
