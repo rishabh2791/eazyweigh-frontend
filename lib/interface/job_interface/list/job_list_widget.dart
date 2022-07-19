@@ -145,6 +145,7 @@ class _JobListWidgetState extends State<JobListWidget> {
                               jobsByID[job["id"]] = thisJob;
                             }
                           }
+                          end = min(2, operatorJobs.length - 1);
                         } else {
                           showDialog(
                             context: context,
@@ -349,6 +350,32 @@ class _JobListWidgetState extends State<JobListWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              width: sizeInfo.screenSize.width - 1200,
+              child: Column(
+                children: [
+                  const Text(
+                    "Job Code",
+                    style: TextStyle(
+                      fontSize: 9.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    job.jobCode,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 10.0,
+            ),
             SizedBox(
               width: sizeInfo.screenSize.width - 1200,
               child: Column(

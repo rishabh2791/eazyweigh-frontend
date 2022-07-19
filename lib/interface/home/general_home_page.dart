@@ -199,18 +199,17 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         {
           "GREATEREQUAL": {
             "Field": "date",
-            "Value": thisWeekStart.toString() + "T00:00:00.0Z",
+            "Value": thisWeekStart.toUtc().toString().substring(0, 10) + "T00:00:00.0Z",
           },
         },
         {
           "LESSEQUAL": {
             "Field": "date",
-            "Value": DateTime.parse(thisWeekEnd.add(const Duration(days: 1)).toString().substring(0, 10)).toString() + "T00:00:00.0Z",
+            "Value": DateTime.parse(thisWeekEnd.add(const Duration(days: 1)).toString()).toUtc().toString().substring(0, 10) + "T00:00:00.0Z",
           },
         }
       ]
     };
-
     await appStore.shiftScheduleApp.list(dateConditions).then((response) async {
       if (response.containsKey("status") && response["status"]) {
         for (var item in response["payload"]) {
@@ -262,13 +261,13 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         {
           "GREATEREQUAL": {
             "Field": "date",
-            "Value": thisMonthStart.toString() + "T00:00:00.0Z",
+            "Value": thisMonthStart.toUtc().toString().substring(0, 10) + "T00:00:00.0Z",
           },
         },
         {
           "LESSEQUAL": {
             "Field": "date",
-            "Value": DateTime.parse(thisMonthEnd.add(const Duration(days: 1)).toString().substring(0, 10)).toString() + "T00:00:00.0Z",
+            "Value": DateTime.parse(thisMonthEnd.add(const Duration(days: 1)).toString()).toUtc().toString() + "T00:00:00.0Z",
           },
         }
       ]

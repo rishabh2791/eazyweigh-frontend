@@ -22,8 +22,7 @@ class DatePickerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) =>
-          DatePickerBloc()..add(DatePickerLoaded()),
+      create: (BuildContext context) => DatePickerBloc()..add(DatePickerLoaded()),
       child: DatePicker(
         labelText: labelText,
         hintText: hintText,
@@ -68,15 +67,12 @@ class _DatePickerState extends State<DatePicker> {
     }
   }
 
-  Widget _dateWidget(ScreenSizeInformation sizeInfo, String labelText, hintText,
-      TextEditingController controller) {
+  Widget _dateWidget(ScreenSizeInformation sizeInfo, String labelText, hintText, TextEditingController controller) {
     return Row(
       children: [
         Container(
           margin: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
-          width: sizeInfo.screenType == ScreenType.mobile
-              ? sizeInfo.localWidgetSize.width - 20
-              : sizeInfo.localWidgetSize.width - 20,
+          width: sizeInfo.screenType == ScreenType.mobile ? sizeInfo.localWidgetSize.width - 20 : sizeInfo.localWidgetSize.width - 20,
           child: Container(
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -95,7 +91,10 @@ class _DatePickerState extends State<DatePicker> {
               readOnly: true,
               obscureText: false,
               controller: controller,
-              style: const TextStyle(color: formLabelTextColor),
+              style: const TextStyle(
+                color: formLabelTextColor,
+                fontWeight: FontWeight.bold,
+              ),
               onTap: () async {
                 _selectDate(widget.dateController);
               },
@@ -143,8 +142,7 @@ class _DatePickerState extends State<DatePicker> {
           constraints: const BoxConstraints(maxWidth: 400, minWidth: 300),
           child: BaseWidget(
             builder: (context, sizeInfo) {
-              return _dateWidget(sizeInfo, widget.labelText, widget.hintText,
-                  widget.dateController);
+              return _dateWidget(sizeInfo, widget.labelText, widget.hintText, widget.dateController);
             },
           ),
         );

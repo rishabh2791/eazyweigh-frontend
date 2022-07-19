@@ -386,6 +386,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   List<Widget> getJobSummary(ScreenSizeInformation screenSizeInformation) {
     List<Widget> list = [];
+    widget.jobItems.sort((a, b) => a.material.code.compareTo(b.material.code));
     for (var jobItem in widget.jobItems) {
       Widget wid = Container(
         padding: const EdgeInsets.all(10.0),

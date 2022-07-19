@@ -207,6 +207,14 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     });
   }
 
+  bool checkAllComplete() {
+    bool isComplete = true;
+    for (var item in widget.allJobItems) {
+      isComplete = isComplete & item.complete;
+    }
+    return isComplete;
+  }
+
   dynamic listenToScanner(String data) async {
     Map<String, dynamic> scannerData =
         jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
@@ -255,7 +263,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if ((currentWeight - taredWeight) != 0 && actualWeight + (currentWeight - taredWeight) < widget.jobItem.upperBound) {
+        if ((currentWeight - taredWeight) > 0 && actualWeight + (currentWeight - taredWeight) < widget.jobItem.upperBound) {
           await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];
@@ -277,14 +285,31 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 currentWeight = 0;
               });
 
-              navigationService.pushReplacement(
-                CupertinoPageRoute(
-                  builder: (BuildContext context) => JobDetailsWidget(
-                    jobCode: widget.jobCode,
-                    jobItems: widget.allJobItems,
+              if (checkAllComplete()) {
+                Map<String, dynamic> update = {
+                  "complete": true,
+                };
+
+                await appStore.jobApp.update(widget.jobItem.jobID, update).then((updateResponse) {
+                  navigationService.pushReplacement(
+                    CupertinoPageRoute(
+                      builder: (BuildContext context) => JobDetailsWidget(
+                        jobCode: widget.jobCode,
+                        jobItems: widget.allJobItems,
+                      ),
+                    ),
+                  );
+                });
+              } else {
+                navigationService.pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => JobDetailsWidget(
+                      jobCode: widget.jobCode,
+                      jobItems: widget.allJobItems,
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             } else {
               showDialog(
                 context: context,

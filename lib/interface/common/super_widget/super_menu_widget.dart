@@ -9,12 +9,7 @@ class SuperMenuWidget extends StatefulWidget {
   final BuildContext context;
   final Animation<Offset> slideAnimation;
   final AnimationController animationController;
-  const SuperMenuWidget(
-      {Key? key,
-      required this.context,
-      required this.animationController,
-      required this.slideAnimation})
-      : super(key: key);
+  const SuperMenuWidget({Key? key, required this.context, required this.animationController, required this.slideAnimation}) : super(key: key);
 
   @override
   State<SuperMenuWidget> createState() => _SuperMenuWidgetState();
@@ -38,21 +33,16 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
             menuItemSelected = key;
             isMenuCollapsed = true;
             Navigator.of(widget.context).pushAndRemoveUntil(
-              CupertinoPageRoute(
-                  builder: (BuildContext context) =>
-                      menuWidgetMapping[menuItemSelected]),
+              CupertinoPageRoute(builder: (BuildContext context) => menuWidgetMapping[menuItemSelected]),
               (route) => false,
             );
           },
           child: Text(
             key.toUpperCase().replaceAll("_", " "),
             style: TextStyle(
-              color: menuItemSelected == key
-                  ? menuItemColor
-                  : menuItemColor.withOpacity(0.5),
+              color: menuItemSelected == key ? menuItemColor : menuItemColor.withOpacity(0.5),
               fontSize: 20.0,
-              fontWeight:
-                  menuItemSelected == key ? FontWeight.bold : FontWeight.w600,
+              fontWeight: menuItemSelected == key ? FontWeight.bold : FontWeight.w600,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -86,16 +76,10 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 10,
-                                  color: Colors.black,
-                                  spreadRadius: 5)
-                            ],
+                            boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black, spreadRadius: 5)],
                           ),
                           child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(baseURL + currentUser.profilePic),
+                            backgroundImage: NetworkImage(baseURL + currentUser.profilePic),
                             radius: 50,
                           ),
                         )
