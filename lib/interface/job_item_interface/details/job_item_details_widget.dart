@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/terminals.dart';
@@ -246,7 +247,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": currentWeight - taredWeight,
+          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(3)),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "start_time": startTime.toLocal().toIso8601String() + "Z",
@@ -263,18 +264,19 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if ((currentWeight - taredWeight) > 0 && actualWeight + (currentWeight - taredWeight) < widget.jobItem.upperBound) {
+        if ((currentWeight - taredWeight) > 0 &&
+            actualWeight + (currentWeight - taredWeight) < double.parse(widget.jobItem.upperBound.toStringAsFixed(3))) {
           await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];
               printingData["job_item_weighing_id"] = id;
-              if (actualWeight + (currentWeight - taredWeight) >= widget.jobItem.lowerBound) {
+              if (actualWeight + (currentWeight - taredWeight) >= double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
                 printingData["complete"] = true;
               }
 
               printingService.printJobItemLabel(printingData);
 
-              if (actualWeight + (currentWeight - taredWeight) > widget.jobItem.lowerBound) {
+              if (actualWeight + (currentWeight - taredWeight) > double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
                 setState(() {
                   widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
                 });
@@ -342,7 +344,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         break;
       case "tare":
         setState(() {
-          taredWeight = currentWeight * scaleFactor;
+          taredWeight = double.parse((currentWeight * scaleFactor).toStringAsFixed(3));
           currentWeight = 0;
         });
         break;
@@ -373,12 +375,18 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         });
       } else {
         setState(() {
-          currentWeight = double.parse((scannerData["data"]).toString()) * scaleFactor;
+          currentWeight = double.parse((double.parse((scannerData["data"]).toString()) * scaleFactor).toStringAsFixed(3));
         });
       }
     } catch (e) {
       FLog.info(text: "Unable to Connect to Scale");
     }
+  }
+
+  Future<void> playAudio() async {
+    AudioPlayer audioPlayer = AudioPlayer();
+    String audioAsset = "audio/siren.wav";
+    await audioPlayer.play(AssetSource(audioAsset));
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
@@ -398,6 +406,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           isVerified = true;
         });
       } else {
+        playAudio();
         Map<String, dynamic> scannedData = {
           "job_id": widget.jobItem.jobID,
           "actual_code": matCode,
@@ -466,9 +475,9 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
       return checkCompletion();
     } else {
       JobItem jobItem = widget.jobItem;
-      double upperLimit = jobItem.upperBound;
-      requiredQty = jobItem.requiredWeight - jobItem.actualWeight;
-      double lowerLimit = jobItem.lowerBound;
+      double upperLimit = double.parse(jobItem.upperBound.toStringAsFixed(3));
+      requiredQty = double.parse((jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(3));
+      double lowerLimit = double.parse(jobItem.lowerBound.toStringAsFixed(3));
       return Column(
         children: [
           Container(

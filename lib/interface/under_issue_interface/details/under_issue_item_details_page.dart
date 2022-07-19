@@ -100,27 +100,28 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
       case "complete":
         Map<String, dynamic> update = {
           "weighed": true,
-          "weight": actualWeight,
+          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(3)),
         };
         Map<String, dynamic> printingData = {
           "job_id": widget.jobItem.jobID,
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": (currentWeight - taredWeight),
+          "weight": (currentWeight - taredWeight).toStringAsFixed(3),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
           "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
-        if ((currentWeight - taredWeight) >= requiredQty * .99 && (currentWeight - taredWeight) <= 1.01 * requiredQty) {
+        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .998).toStringAsFixed(3)) &&
+            (currentWeight - taredWeight) <= double.parse((1.002 * requiredQty).toStringAsFixed(3))) {
           await appStore.underIssueApp.update(widget.underIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
               setState(() {
-                widget.jobItem.actualWeight += (currentWeight - taredWeight);
-                requiredQty = requiredQty - (currentWeight - taredWeight);
+                widget.jobItem.actualWeight += double.parse((currentWeight - taredWeight).toStringAsFixed(3));
+                requiredQty = double.parse((requiredQty - (currentWeight - taredWeight)).toStringAsFixed(3));
                 currentWeight = 0;
               });
               Navigator.of(context).pop();
@@ -156,7 +157,7 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
         break;
       case "tare":
         setState(() {
-          taredWeight = currentWeight * scaleFactor;
+          taredWeight = double.parse((currentWeight * scaleFactor).toStringAsFixed(3));
           currentWeight = 0;
         });
         break;
