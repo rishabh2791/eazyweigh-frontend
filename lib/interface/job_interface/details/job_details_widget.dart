@@ -649,11 +649,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   context,
                   "All Job Items",
                   () {
-                    navigationService.pushReplacement(
-                      CupertinoPageRoute(
-                        builder: (BuildContext context) => const JobListWidget(),
-                      ),
-                    );
+                    Navigator.of(context).pop();
                   },
                 ),
               );

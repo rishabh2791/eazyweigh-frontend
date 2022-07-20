@@ -265,7 +265,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
         };
         if ((currentWeight - taredWeight) > 0 &&
-            actualWeight + (currentWeight - taredWeight) < double.parse(widget.jobItem.upperBound.toStringAsFixed(3))) {
+            actualWeight + (currentWeight - taredWeight) <= double.parse(widget.jobItem.upperBound.toStringAsFixed(3))) {
           await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];
@@ -276,7 +276,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
 
               printingService.printJobItemLabel(printingData);
 
-              if (actualWeight + (currentWeight - taredWeight) > double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
+              if (actualWeight + (currentWeight - taredWeight) >= double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
                 setState(() {
                   widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
                 });

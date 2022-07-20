@@ -16,7 +16,6 @@ import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/job_interface/list/jobs_list.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:eazyweigh/interface/common/helper/mobile.dart' if (dart.library.html) 'package:eazyweigh/interface/common/helper/web.dart' as helper;
 
 class JobWeighingWidget extends StatefulWidget {

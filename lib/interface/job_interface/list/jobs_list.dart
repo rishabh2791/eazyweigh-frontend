@@ -269,7 +269,7 @@ class _DataSource extends DataTableSource {
           _selectedCount += value! ? 1 : -1;
           job.selected = value;
           notifyListeners();
-          navigationService.pushReplacement(
+          navigationService.push(
             CupertinoPageRoute(
               builder: (BuildContext context) => JobDetailsWidget(jobCode: job.jobCode, jobItems: job.jobItems),
             ),
