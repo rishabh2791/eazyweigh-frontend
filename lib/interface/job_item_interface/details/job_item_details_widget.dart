@@ -265,18 +265,21 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
         };
         if ((currentWeight - taredWeight) > 0 &&
-            actualWeight + (currentWeight - taredWeight) <= double.parse(widget.jobItem.upperBound.toStringAsFixed(3))) {
+            double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(3)) <=
+                double.parse(widget.jobItem.upperBound.toStringAsFixed(3))) {
           await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];
               printingData["job_item_weighing_id"] = id;
-              if (actualWeight + (currentWeight - taredWeight) >= double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
+              if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(3)) >=
+                  double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
                 printingData["complete"] = true;
               }
 
               printingService.printJobItemLabel(printingData);
 
-              if (actualWeight + (currentWeight - taredWeight) >= double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
+              if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(3)) >=
+                  double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
                 setState(() {
                   widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
                 });
@@ -344,7 +347,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         break;
       case "tare":
         setState(() {
-          taredWeight = double.parse((currentWeight * scaleFactor).toStringAsFixed(3));
+          taredWeight = currentWeight;
           currentWeight = 0;
         });
         break;
@@ -375,7 +378,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         });
       } else {
         setState(() {
-          currentWeight = double.parse((double.parse((scannerData["data"]).toString()) * scaleFactor).toStringAsFixed(3));
+          currentWeight = double.parse((scannerData["data"]).toString()) * scaleFactor;
         });
       }
     } catch (e) {

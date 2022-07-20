@@ -114,8 +114,8 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
           "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
-        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .998).toStringAsFixed(3)) &&
-            (currentWeight - taredWeight) <= double.parse((1.002 * requiredQty).toStringAsFixed(3))) {
+        if (double.parse((currentWeight - taredWeight).toStringAsFixed(3)) >= double.parse((requiredQty * .998).toStringAsFixed(3)) &&
+            double.parse((currentWeight - taredWeight).toStringAsFixed(3)) <= double.parse((1.002 * requiredQty).toStringAsFixed(3))) {
           await appStore.underIssueApp.update(widget.underIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
@@ -157,7 +157,7 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
         break;
       case "tare":
         setState(() {
-          taredWeight = double.parse((currentWeight * scaleFactor).toStringAsFixed(3));
+          taredWeight = currentWeight;
           currentWeight = 0;
         });
         break;
