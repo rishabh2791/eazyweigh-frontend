@@ -33,33 +33,23 @@ class _UOMConversionListState extends State<UOMConversionList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.uomConversions.sort((a, b) => a.unitOfMeasure1.code
-              .toString()
-              .compareTo(b.unitOfMeasure1.code.toString()));
+          widget.uomConversions.sort((a, b) => a.unitOfMeasure1.code.toString().compareTo(b.unitOfMeasure1.code.toString()));
         } else {
-          widget.uomConversions.sort((a, b) => b.unitOfMeasure1.code
-              .toString()
-              .compareTo(a.unitOfMeasure1.code.toString()));
+          widget.uomConversions.sort((a, b) => b.unitOfMeasure1.code.toString().compareTo(a.unitOfMeasure1.code.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.uomConversions.sort(
-              (a, b) => a.value2.toString().compareTo(b.value2.toString()));
+          widget.uomConversions.sort((a, b) => a.value2.toString().compareTo(b.value2.toString()));
         } else {
-          widget.uomConversions.sort(
-              (a, b) => b.value2.toString().compareTo(a.value2.toString()));
+          widget.uomConversions.sort((a, b) => b.value2.toString().compareTo(a.value2.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.uomConversions.sort((a, b) => a.unitOfMeasure2.code
-              .toString()
-              .compareTo(b.unitOfMeasure2.code.toString()));
+          widget.uomConversions.sort((a, b) => a.unitOfMeasure2.code.toString().compareTo(b.unitOfMeasure2.code.toString()));
         } else {
-          widget.uomConversions.sort((a, b) => b.unitOfMeasure2.code
-              .toString()
-              .compareTo(a.unitOfMeasure2.code.toString()));
+          widget.uomConversions.sort((a, b) => b.unitOfMeasure2.code.toString().compareTo(a.unitOfMeasure2.code.toString()));
         }
         break;
       default:
@@ -80,16 +70,11 @@ class _UOMConversionListState extends State<UOMConversionList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value
-                        ? foregroundColor.withOpacity(0.25)
-                        : backgroundColor.withOpacity(0.25),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
                   ),
@@ -101,15 +86,14 @@ class _UOMConversionListState extends State<UOMConversionList> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
+                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "1 Unit Of",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -127,9 +111,7 @@ class _UOMConversionListState extends State<UOMConversionList> {
                               "Equals",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -147,9 +129,7 @@ class _UOMConversionListState extends State<UOMConversionList> {
                               "Units Of",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -164,9 +144,7 @@ class _UOMConversionListState extends State<UOMConversionList> {
                           ),
                         ],
                         source: _DataSource(context, widget.uomConversions),
-                        rowsPerPage: widget.uomConversions.length > 25
-                            ? 25
-                            : widget.uomConversions.length,
+                        rowsPerPage: widget.uomConversions.length > 25 ? 25 : widget.uomConversions.length,
                       )
                     ],
                   ),

@@ -33,20 +33,16 @@ class _UOMListState extends State<UOMList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.uoms
-              .sort((a, b) => a.code.toString().compareTo(b.code.toString()));
+          widget.uoms.sort((a, b) => a.code.toString().compareTo(b.code.toString()));
         } else {
-          widget.uoms
-              .sort((a, b) => b.code.toString().compareTo(a.code.toString()));
+          widget.uoms.sort((a, b) => b.code.toString().compareTo(a.code.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.uoms.sort((a, b) =>
-              a.description.toString().compareTo(b.description.toString()));
+          widget.uoms.sort((a, b) => a.description.toString().compareTo(b.description.toString()));
         } else {
-          widget.uoms.sort((a, b) =>
-              b.description.toString().compareTo(a.description.toString()));
+          widget.uoms.sort((a, b) => b.description.toString().compareTo(a.description.toString()));
         }
         break;
       default:
@@ -67,16 +63,11 @@ class _UOMListState extends State<UOMList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value
-                        ? foregroundColor.withOpacity(0.25)
-                        : backgroundColor.withOpacity(0.25),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
                   ),
@@ -88,15 +79,14 @@ class _UOMListState extends State<UOMList> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
+                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -114,9 +104,7 @@ class _UOMListState extends State<UOMList> {
                               "Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -134,8 +122,7 @@ class _UOMListState extends State<UOMList> {
                           context,
                           widget.uoms,
                         ),
-                        rowsPerPage:
-                            widget.uoms.length > 25 ? 25 : widget.uoms.length,
+                        rowsPerPage: widget.uoms.length > 25 ? 25 : widget.uoms.length,
                       )
                     ],
                   ),

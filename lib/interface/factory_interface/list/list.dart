@@ -43,11 +43,9 @@ class _FactoriesListWidgetState extends State<FactoriesListWidget> {
         break;
       case 1:
         if (ascending) {
-          widget.factories
-              .sort((a, b) => a.address.line1.compareTo(b.address.line1));
+          widget.factories.sort((a, b) => a.address.line1.compareTo(b.address.line1));
         } else {
-          widget.factories
-              .sort((a, b) => b.address.line1.compareTo(a.address.line1));
+          widget.factories.sort((a, b) => b.address.line1.compareTo(a.address.line1));
         }
         break;
       default:
@@ -68,15 +66,11 @@ class _FactoriesListWidgetState extends State<FactoriesListWidget> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor:
-                        themeChanged.value ? foregroundColor : backgroundColor,
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor : backgroundColor,
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
                   ),
@@ -88,15 +82,14 @@ class _FactoriesListWidgetState extends State<FactoriesListWidget> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
+                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Factory Name",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -114,9 +107,7 @@ class _FactoriesListWidgetState extends State<FactoriesListWidget> {
                               "Address",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -131,9 +122,7 @@ class _FactoriesListWidgetState extends State<FactoriesListWidget> {
                           ),
                         ],
                         source: _DataSource(context, widget.factories),
-                        rowsPerPage: widget.factories.length > 25
-                            ? 25
-                            : widget.factories.length,
+                        rowsPerPage: widget.factories.length > 25 ? 25 : widget.factories.length,
                       )
                     ],
                   ),

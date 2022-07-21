@@ -43,22 +43,18 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
         break;
       case 1:
         if (ascending) {
-          widget.shiftSchedules
-              .sort((a, b) => a.shift.code.compareTo(b.shift.code));
+          widget.shiftSchedules.sort((a, b) => a.shift.code.compareTo(b.shift.code));
         } else {
-          widget.shiftSchedules
-              .sort((a, b) => b.shift.code.compareTo(a.shift.code));
+          widget.shiftSchedules.sort((a, b) => b.shift.code.compareTo(a.shift.code));
         }
         break;
       case 2:
         if (ascending) {
-          widget.shiftSchedules.sort((a, b) =>
-              (a.weigher.firstName + " " + a.weigher.lastName)
-                  .compareTo((b.weigher.firstName + " " + b.weigher.lastName)));
+          widget.shiftSchedules
+              .sort((a, b) => (a.weigher.firstName + " " + a.weigher.lastName).compareTo((b.weigher.firstName + " " + b.weigher.lastName)));
         } else {
-          widget.shiftSchedules.sort((a, b) =>
-              (b.weigher.firstName + " " + b.weigher.lastName)
-                  .compareTo((a.weigher.firstName + " " + a.weigher.lastName)));
+          widget.shiftSchedules
+              .sort((a, b) => (b.weigher.firstName + " " + b.weigher.lastName).compareTo((a.weigher.firstName + " " + a.weigher.lastName)));
         }
         break;
       default:
@@ -79,16 +75,11 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value
-                        ? foregroundColor.withOpacity(0.25)
-                        : backgroundColor.withOpacity(0.25),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
                   ),
@@ -100,15 +91,14 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
+                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Date",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -126,9 +116,7 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                               "Shift",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -146,9 +134,7 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                               "Weigher",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -166,9 +152,7 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                               " ",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -183,9 +167,7 @@ class _ShiftScheduleListState extends State<ShiftScheduleList> {
                           ),
                         ],
                         source: _DataSource(context, widget.shiftSchedules),
-                        rowsPerPage: widget.shiftSchedules.length > 25
-                            ? 25
-                            : widget.shiftSchedules.length,
+                        rowsPerPage: widget.shiftSchedules.length > 25 ? 25 : widget.shiftSchedules.length,
                       )
                     ],
                   ),
@@ -244,9 +226,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            shiftSchedule.weigher.firstName +
-                " " +
-                shiftSchedule.weigher.lastName,
+            shiftSchedule.weigher.firstName + " " + shiftSchedule.weigher.lastName,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -256,10 +236,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            shiftSchedule.date.difference(DateTime.now()) >
-                    const Duration(seconds: 0)
-                ? "Delete"
-                : " ",
+            shiftSchedule.date.difference(DateTime.now()) > const Duration(seconds: 0) ? "Delete" : " ",
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -268,15 +245,10 @@ class _DataSource extends DataTableSource {
           ),
           onTap: () async {
             String accessCode = getAccessCode("shift_schedules", "create");
-            if (accessCode == "1" &&
-                shiftSchedule.date.difference(DateTime.now()) >
-                    const Duration(seconds: 0)) {
-              await appStore.shiftScheduleApp
-                  .delete(shiftSchedule.id)
-                  .then((value) {
+            if (accessCode == "1" && shiftSchedule.date.difference(DateTime.now()) > const Duration(seconds: 0)) {
+              await appStore.shiftScheduleApp.delete(shiftSchedule.id).then((value) {
                 if (value.containsKey("status") && value["status"]) {
-                  _shiftSchedules
-                      .removeWhere((element) => element.id == shiftSchedule.id);
+                  _shiftSchedules.removeWhere((element) => element.id == shiftSchedule.id);
                 } else {
                   showDialog(
                     context: context,
