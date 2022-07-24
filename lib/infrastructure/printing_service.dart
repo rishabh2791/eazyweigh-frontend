@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:f_logs/f_logs.dart';
@@ -20,6 +21,7 @@ PrintingService printingService = PrintingService();
 
 class PrintingService extends ChangeNotifier {
   late WebSocket webSocketChannel;
+  late WebSocketChannel webWebSocketChannel;
   bool _isConnected = true;
   ObserverList<Function> listeners = ObserverList<Function>();
   static final PrintingService printingService = PrintingService._internal();
@@ -84,17 +86,26 @@ class PrintingService extends ChangeNotifier {
     zplString += mapToZPLString(data) + "^XZ";
 
     try {
-      await WebSocket.connect(PRINTER_URL).then((webSocket) {
-        if (webSocket.readyState == 1) {
-          _isConnected = true;
-          webSocketChannel = webSocket;
-          webSocket.listen(listenToWebSocket);
-          webSocket.add(utf8.encode(zplString));
-        } else {
-          _isConnected = false;
-          listenToWebSocket("{'status':'Done'}");
-        }
-      });
+      if (kIsWeb) {
+        webWebSocketChannel = WebSocketChannel.connect(Uri.parse(PRINTER_URL));
+        webWebSocketChannel.sink.add(utf8.encode(zplString));
+        webWebSocketChannel.stream.listen((event) {
+          listenToWebSocket(event);
+        });
+        webWebSocketChannel.sink.close();
+      } else {
+        await WebSocket.connect(PRINTER_URL).then((webSocket) {
+          if (webSocket.readyState == 1) {
+            _isConnected = true;
+            webSocketChannel = webSocket;
+            webSocket.listen(listenToWebSocket);
+            webSocket.add(utf8.encode(zplString));
+          } else {
+            _isConnected = false;
+            listenToWebSocket("{'status':'Done'}");
+          }
+        });
+      }
     } catch (e) {
       _isConnected = false;
       listenToWebSocket("{'status':'Not Done'}");
@@ -123,17 +134,26 @@ class PrintingService extends ChangeNotifier {
     zplString += mapToZPLString(data) + "^XZ";
 
     try {
-      await WebSocket.connect(PRINTER_URL).then((webSocket) {
-        if (webSocket.readyState == 1) {
-          _isConnected = true;
-          webSocketChannel = webSocket;
-          webSocket.listen(listenToWebSocket);
-          webSocket.add(utf8.encode(zplString));
-        } else {
-          _isConnected = false;
-          listenToWebSocket("{'status':'Done'}");
-        }
-      });
+      if (kIsWeb) {
+        webWebSocketChannel = WebSocketChannel.connect(Uri.parse(PRINTER_URL));
+        webWebSocketChannel.sink.add(utf8.encode(zplString));
+        webWebSocketChannel.stream.listen((event) {
+          listenToWebSocket(event);
+        });
+        webWebSocketChannel.sink.close();
+      } else {
+        await WebSocket.connect(PRINTER_URL).then((webSocket) {
+          if (webSocket.readyState == 1) {
+            _isConnected = true;
+            webSocketChannel = webSocket;
+            webSocket.listen(listenToWebSocket);
+            webSocket.add(utf8.encode(zplString));
+          } else {
+            _isConnected = false;
+            listenToWebSocket("{'status':'Done'}");
+          }
+        });
+      }
     } catch (e) {
       _isConnected = false;
       listenToWebSocket("{'status':'Not Done'}");

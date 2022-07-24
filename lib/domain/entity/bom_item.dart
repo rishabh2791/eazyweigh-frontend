@@ -54,7 +54,7 @@ class BomItem {
   factory BomItem.fromJSON(Map<String, dynamic> jsonObject) {
     BomItem bomItem = BomItem(
       bomID: jsonObject["bom_id"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
       material: Mat.fromJSON(jsonObject["material"]),
@@ -64,7 +64,7 @@ class BomItem {
       lowerTolerance: double.parse(jsonObject["lower_tolerance"].toString()),
       underIssue: jsonObject["under_issue"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return bomItem;

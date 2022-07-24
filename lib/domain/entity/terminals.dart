@@ -54,7 +54,7 @@ class Terminal {
     Terminal terminal = Terminal(
       apiKey: jsonObject["api_key"],
       capacity: double.parse(jsonObject["capacity"].toString()),
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       description: jsonObject["description"],
       factoryID: jsonObject["factory_id"],
@@ -63,7 +63,7 @@ class Terminal {
       macAddress: jsonObject["mac_address"],
       occupied: jsonObject["occupied"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return terminal;

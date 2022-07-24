@@ -44,7 +44,7 @@ class BOM {
 
   factory BOM.fromJSON(Map<String, dynamic> jsonObject) {
     BOM bom = BOM(
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_at"]),
       id: jsonObject["id"],
       factoryID: jsonObject["factory_id"],
@@ -52,7 +52,7 @@ class BOM {
       revision: jsonObject["revision"],
       unitSize: jsonObject["unit_size"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: jsonObject["updated_by"],
     );
     return bom;

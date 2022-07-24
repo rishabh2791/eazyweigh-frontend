@@ -1,9 +1,12 @@
 import 'package:eazyweigh/infrastructure/persistance/address_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/auth_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/batch_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/bom_item_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/bom_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/common_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/company_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/device_data_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/device_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/factory_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/job_item_assignment_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/job_item_repo.dart';
@@ -11,9 +14,12 @@ import 'package:eazyweigh/infrastructure/persistance/job_item_weighing_repo.dart
 import 'package:eazyweigh/infrastructure/persistance/job_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/material_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/over_issue_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/process_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/scanned_data_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/shift_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/shift_schedule_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/step_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/step_type_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/terminal_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/under_issue_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/unit_of_measurement_conversion_repo.dart';
@@ -26,16 +32,20 @@ import 'package:eazyweigh/infrastructure/persistance/user_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_role_access_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_role_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/user_terminal_access.dart';
+import 'package:eazyweigh/infrastructure/persistance/vessel_repo.dart';
 
 RepoStore repoStore = RepoStore();
 
 class RepoStore {
   final addressRepo = AddressRepo();
   final authRepo = AuthRepo();
+  final batchRepo = BatchRepo();
   final bomRepo = BOMRepo();
   final bomItemRepo = BOMItemRepo();
   final companyRepo = CompanyRepo();
   final commonRepo = CommonRepo();
+  final deviceRepo = DeviceRepo();
+  final deviceDataRepo = DeviceDataRepo();
   final factoryRepo = FactoryRepo();
   final jobRepo = JobRepo();
   final jobItemRepo = JobItemRepo();
@@ -43,9 +53,12 @@ class RepoStore {
   final jobWeighingRepo = JobItemWeighingRepo();
   final materialRepo = MaterialRepo();
   final overIssueRepo = OverIssueRepo();
+  final processRepo = ProcessRepo();
   final scannedDataRepo = ScannedDataRepo();
   final shiftRepo = ShiftRepo();
   final shiftScheduleRepo = ShiftScheduleRepo();
+  final stepRepo = StepRepo();
+  final stepTypeRepo = StepTypeRepo();
   final terminalRepo = TerminalRepo();
   final underIssueRepo = UnderIssueRepo();
   final uomRepo = UnitOfMeasurementRepo();
@@ -58,4 +71,5 @@ class RepoStore {
   final userTerminalAccessRepo = UserTerminalAccessRepo();
   final userCompanyRepo = UserCompanyRepo();
   final userFactoryRepo = UserFactoryRepo();
+  final vesselRepo = VesselRepo();
 }
