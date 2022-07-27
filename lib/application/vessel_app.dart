@@ -1,5 +1,4 @@
 import 'package:eazyweigh/domain/repository/vessel_repository.dart';
-import 'package:eazyweigh/infrastructure/persistance/vessel_repo.dart';
 
 class VesselApp implements VesselAppInterface {
   final VesselRepository vesselRepository;

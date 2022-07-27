@@ -4,7 +4,7 @@ import 'package:eazyweigh/domain/entity/user.dart';
 class Vessel {
   final String id;
   final Factory fact;
-  final String name;
+  String name;
   final User createdBy;
   final DateTime createdAt;
   final User updatedBy;
@@ -43,7 +43,7 @@ class Vessel {
       createdBy: User.fromJSON(jsonObject["created_by"]),
       fact: Factory.fromJSON(jsonObject["factory"]),
       id: jsonObject["id"],
-      name: jsonObject["name"],
+      name: jsonObject["description"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );

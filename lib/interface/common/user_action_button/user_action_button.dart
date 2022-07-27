@@ -13,6 +13,7 @@ class UserActionButton extends StatefulWidget {
   final String table;
   final String accessType;
   final VoidCallback callback;
+  final bool showQRCode;
   const UserActionButton({
     Key? key,
     required this.accessType,
@@ -20,6 +21,7 @@ class UserActionButton extends StatefulWidget {
     required this.icon,
     required this.label,
     required this.table,
+    this.showQRCode = true,
   }) : super(key: key);
 
   @override
@@ -71,12 +73,8 @@ class _UserActionButtonState extends State<UserActionButton> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(
+        data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "navigation":
         break;
@@ -86,102 +84,130 @@ class _UserActionButtonState extends State<UserActionButton> {
 
   @override
   Widget build(BuildContext context) {
-    String qrImageData = '{"action":"navigation", "table":"' +
-        widget.table +
-        '", "access_type":"' +
-        widget.accessType +
-        '" }';
-    return SizedBox(
-      width: 200.0,
-      height: 250.0,
-      child: Tooltip(
-        message: widget.label,
-        child: InkWell(
-          onTap: () async {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return const LoadingWidget();
-              },
-            );
-            if (getAccessCode(widget.table, widget.accessType) == "1" ||
-                (currentUser.userRole.role == "Superuser" &&
-                    widget.table == "companies")) {
-              widget.callback();
-            } else {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  duration: const Duration(milliseconds: 500),
-                  backgroundColor:
-                      themeChanged.value ? foregroundColor : backgroundColor,
-                  content: Center(
-                    child: Text(
-                      "You are not Authorized.",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        color: themeChanged.value
-                            ? backgroundColor
-                            : foregroundColor,
+    String qrImageData =
+        '{"action":"navigation", "table":"' + widget.table + '", "access_type":"' + widget.accessType + '" }';
+    return widget.showQRCode
+        ? SizedBox(
+            width: 200.0,
+            height: 250.0,
+            child: Tooltip(
+              message: widget.label,
+              child: InkWell(
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const LoadingWidget();
+                    },
+                  );
+                  if (getAccessCode(widget.table, widget.accessType) == "1" ||
+                      (currentUser.userRole.role == "Superuser" && widget.table == "companies")) {
+                    widget.callback();
+                  } else {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(milliseconds: 500),
+                        backgroundColor: themeChanged.value ? foregroundColor : backgroundColor,
+                        content: Center(
+                          child: Text(
+                            "You are not Authorized.",
+                            style: TextStyle(
+                              fontSize: 30.0,
+                              color: themeChanged.value ? backgroundColor : foregroundColor,
+                            ),
+                          ),
+                        ),
                       ),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    height: 230.0,
+                    width: 180.0,
+                    decoration: const BoxDecoration(
+                      color: menuItemColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: shadowColor,
+                          spreadRadius: 5.0,
+                          blurRadius: 10.0,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        QrImage(
+                          data: qrImageData,
+                          size: 180,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              widget.icon,
+                              color: Colors.black,
+                              size: 30.0,
+                            ),
+                            const VerticalDivider(
+                              color: Colors.transparent,
+                            ),
+                            Text(
+                              widget.label,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            }
-          },
-          // onTap: widget.callback,
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 230.0,
-              width: 180.0,
-              decoration: const BoxDecoration(
-                color: menuItemColor,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: shadowColor,
-                    spreadRadius: 5.0,
-                    blurRadius: 10.0,
-                  )
-                ],
-              ),
-              child: Column(
-                children: [
-                  QrImage(
-                    data: qrImageData,
-                    size: 180,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        widget.icon,
-                        color: Colors.black,
-                        size: 30.0,
-                      ),
-                      const VerticalDivider(
-                        color: Colors.transparent,
-                      ),
-                      Text(
-                        widget.label,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          )
+        : TextButton(
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const LoadingWidget();
+                },
+              );
+              if (getAccessCode(widget.table, widget.accessType) == "1" ||
+                  (currentUser.userRole.role == "Superuser" && widget.table == "companies")) {
+                widget.callback();
+              } else {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    duration: const Duration(milliseconds: 500),
+                    backgroundColor: themeChanged.value ? foregroundColor : backgroundColor,
+                    content: Center(
+                      child: Text(
+                        "You are not Authorized.",
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          color: themeChanged.value ? backgroundColor : foregroundColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text(
+              "Update",
+              style: TextStyle(fontSize: 16.0, color: menuItemColor),
+            ),
+          );
   }
 }
