@@ -6,14 +6,17 @@ class JobRepo implements JobRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> job) async {
     String url = "job/create/";
-    var response = await networkAPIProvider.post(url, job, TokenType.accessToken);
+    var response =
+        await networkAPIProvider.post(url, job, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> jobs) async {
+  Future<Map<String, dynamic>> createMultiple(
+      List<Map<String, dynamic>> jobs) async {
     String url = "job/create/multi/";
-    var response = await networkAPIProvider.post(url, jobs, TokenType.accessToken);
+    var response =
+        await networkAPIProvider.post(url, jobs, TokenType.accessToken);
     return response;
   }
 
@@ -27,20 +30,23 @@ class JobRepo implements JobRepository {
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "job/";
-    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response =
+        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(
+      String id, Map<String, dynamic> update) async {
     String url = "job/" + id + "/";
-    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response =
+        await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 
   @override
   Future<Map<String, dynamic>> pullFromRemote(String factoryID) async {
-    String url = "job/remote/" + factoryID + "/";
+    String url = "/job/remote/" + factoryID + "/";
     var response = await networkAPIProvider.get(url, TokenType.accessToken);
     return response;
   }

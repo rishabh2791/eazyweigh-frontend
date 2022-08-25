@@ -33,16 +33,20 @@ class _UserRoleListState extends State<UserRoleList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.userRoles.sort((a, b) => a.role.toString().compareTo(b.role.toString()));
+          widget.userRoles
+              .sort((a, b) => a.role.toString().compareTo(b.role.toString()));
         } else {
-          widget.userRoles.sort((a, b) => b.role.toString().compareTo(a.role.toString()));
+          widget.userRoles
+              .sort((a, b) => b.role.toString().compareTo(a.role.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.userRoles.sort((a, b) => a.description.toString().compareTo(b.description.toString()));
+          widget.userRoles.sort((a, b) =>
+              a.description.toString().compareTo(b.description.toString()));
         } else {
-          widget.userRoles.sort((a, b) => b.description.toString().compareTo(a.description.toString()));
+          widget.userRoles.sort((a, b) =>
+              b.description.toString().compareTo(a.description.toString()));
         }
         break;
       default:
@@ -63,11 +67,16 @@ class _UserRoleListState extends State<UserRoleList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value ? foregroundColor : backgroundColor,
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
                       ),
                     ),
                   ),
@@ -79,14 +88,15 @@ class _UserRoleListState extends State<UserRoleList> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
-                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Role",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -104,7 +114,9 @@ class _UserRoleListState extends State<UserRoleList> {
                               "Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -122,7 +134,9 @@ class _UserRoleListState extends State<UserRoleList> {
                           context,
                           widget.userRoles,
                         ),
-                        rowsPerPage: widget.userRoles.length > 25 ? 25 : widget.userRoles.length,
+                        rowsPerPage: widget.userRoles.length > 25
+                            ? 25
+                            : widget.userRoles.length,
                       )
                     ],
                   ),

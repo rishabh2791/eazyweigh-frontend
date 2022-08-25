@@ -33,23 +33,29 @@ class _TerminalListState extends State<TerminalList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.terminals.sort((a, b) => a.description.toString().compareTo(b.description.toString()));
+          widget.terminals.sort((a, b) =>
+              a.description.toString().compareTo(b.description.toString()));
         } else {
-          widget.terminals.sort((a, b) => b.description.toString().compareTo(a.description.toString()));
+          widget.terminals.sort((a, b) =>
+              b.description.toString().compareTo(a.description.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.terminals.sort((a, b) => a.capacity.toString().compareTo(b.capacity.toString()));
+          widget.terminals.sort(
+              (a, b) => a.capacity.toString().compareTo(b.capacity.toString()));
         } else {
-          widget.terminals.sort((a, b) => b.capacity.toString().compareTo(a.capacity.toString()));
+          widget.terminals.sort(
+              (a, b) => b.capacity.toString().compareTo(a.capacity.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.terminals.sort((a, b) => a.leastCount.toString().compareTo(b.leastCount.toString()));
+          widget.terminals.sort((a, b) =>
+              a.leastCount.toString().compareTo(b.leastCount.toString()));
         } else {
-          widget.terminals.sort((a, b) => b.leastCount.toString().compareTo(a.leastCount.toString()));
+          widget.terminals.sort((a, b) =>
+              b.leastCount.toString().compareTo(a.leastCount.toString()));
         }
         break;
       default:
@@ -70,11 +76,16 @@ class _TerminalListState extends State<TerminalList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value ? foregroundColor : backgroundColor,
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
                       ),
                     ),
                   ),
@@ -86,14 +97,15 @@ class _TerminalListState extends State<TerminalList> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
-                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Name",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -111,7 +123,9 @@ class _TerminalListState extends State<TerminalList> {
                               "Capacity",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -129,7 +143,9 @@ class _TerminalListState extends State<TerminalList> {
                               "Least Count",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -147,7 +163,9 @@ class _TerminalListState extends State<TerminalList> {
                               "API Key",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -162,7 +180,9 @@ class _TerminalListState extends State<TerminalList> {
                           ),
                         ],
                         source: _DataSource(context, widget.terminals),
-                        rowsPerPage: widget.terminals.length > 25 ? 25 : widget.terminals.length,
+                        rowsPerPage: widget.terminals.length > 25
+                            ? 25
+                            : widget.terminals.length,
                       )
                     ],
                   ),

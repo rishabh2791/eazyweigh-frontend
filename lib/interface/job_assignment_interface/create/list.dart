@@ -33,37 +33,47 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobItems.sort((a, b) => a.selected.toString().compareTo(b.selected.toString()));
+          widget.jobItems.sort(
+              (a, b) => a.selected.toString().compareTo(b.selected.toString()));
         } else {
-          widget.jobItems.sort((a, b) => b.selected.toString().compareTo(a.selected.toString()));
+          widget.jobItems.sort(
+              (a, b) => b.selected.toString().compareTo(a.selected.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobItems.sort((a, b) => a.assigned.toString().compareTo(b.assigned.toString()));
+          widget.jobItems.sort(
+              (a, b) => a.assigned.toString().compareTo(b.assigned.toString()));
         } else {
-          widget.jobItems.sort((a, b) => b.assigned.toString().compareTo(a.assigned.toString()));
+          widget.jobItems.sort(
+              (a, b) => b.assigned.toString().compareTo(a.assigned.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobItems.sort((a, b) => a.material.code.compareTo(b.material.code));
+          widget.jobItems
+              .sort((a, b) => a.material.code.compareTo(b.material.code));
         } else {
-          widget.jobItems.sort((a, b) => b.material.code.compareTo(a.material.code));
+          widget.jobItems
+              .sort((a, b) => b.material.code.compareTo(a.material.code));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobItems.sort((a, b) => a.material.description.compareTo(b.material.description));
+          widget.jobItems.sort((a, b) =>
+              a.material.description.compareTo(b.material.description));
         } else {
-          widget.jobItems.sort((a, b) => b.material.description.compareTo(a.material.description));
+          widget.jobItems.sort((a, b) =>
+              b.material.description.compareTo(a.material.description));
         }
         break;
       case 4:
         if (ascending) {
-          widget.jobItems.sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
+          widget.jobItems
+              .sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
         } else {
-          widget.jobItems.sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
+          widget.jobItems
+              .sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
         }
         break;
       default:
@@ -84,11 +94,16 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value ? foregroundColor : backgroundColor,
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
                       ),
                     ),
                   ),
@@ -100,14 +115,15 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
-                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Selected",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -125,7 +141,9 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               "Assigned",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -143,7 +161,9 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               "Completed",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -161,7 +181,9 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -179,7 +201,9 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               "Material Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -197,7 +221,9 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               "Quantity",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -212,7 +238,9 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                           ),
                         ],
                         source: _DataSource(context, widget.jobItems),
-                        rowsPerPage: widget.jobItems.length > 25 ? 25 : widget.jobItems.length,
+                        rowsPerPage: widget.jobItems.length > 25
+                            ? 25
+                            : widget.jobItems.length,
                       )
                     ],
                   ),

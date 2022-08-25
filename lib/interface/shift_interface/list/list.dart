@@ -77,11 +77,16 @@ class _ShiftListState extends State<ShiftList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value ? foregroundColor : backgroundColor,
+                        color: themeChanged.value
+                            ? foregroundColor
+                            : backgroundColor,
                       ),
                     ),
                   ),
@@ -93,14 +98,15 @@ class _ShiftListState extends State<ShiftList> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
-                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Shift Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -118,7 +124,9 @@ class _ShiftListState extends State<ShiftList> {
                               "Shift Name",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -136,7 +144,9 @@ class _ShiftListState extends State<ShiftList> {
                               "Start Time",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -154,7 +164,9 @@ class _ShiftListState extends State<ShiftList> {
                               "End Time",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -169,7 +181,9 @@ class _ShiftListState extends State<ShiftList> {
                           ),
                         ],
                         source: _DataSource(context, widget.shifts),
-                        rowsPerPage: widget.shifts.length > 25 ? 25 : widget.shifts.length,
+                        rowsPerPage: widget.shifts.length > 25
+                            ? 25
+                            : widget.shifts.length,
                       )
                     ],
                   ),

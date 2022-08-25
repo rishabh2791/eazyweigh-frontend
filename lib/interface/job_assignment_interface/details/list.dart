@@ -12,7 +12,8 @@ class JobAssignmentListWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<JobAssignmentListWidget> createState() => _JobAssignmentListWidgetState();
+  State<JobAssignmentListWidget> createState() =>
+      _JobAssignmentListWidgetState();
 }
 
 class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
@@ -33,48 +34,86 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobItemAssignments.sort((a, b) => a.jobItem.material.code.toString().compareTo(b.jobItem.material.code.toString()));
+          widget.jobItemAssignments.sort((a, b) => a.jobItem.material.code
+              .toString()
+              .compareTo(b.jobItem.material.code.toString()));
         } else {
-          widget.jobItemAssignments.sort((a, b) => b.jobItem.material.code.toString().compareTo(a.jobItem.material.code.toString()));
+          widget.jobItemAssignments.sort((a, b) => b.jobItem.material.code
+              .toString()
+              .compareTo(a.jobItem.material.code.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobItemAssignments.sort((a, b) => a.jobItem.material.description.toString().compareTo(b.jobItem.material.description.toString()));
+          widget.jobItemAssignments.sort((a, b) => a
+              .jobItem.material.description
+              .toString()
+              .compareTo(b.jobItem.material.description.toString()));
         } else {
-          widget.jobItemAssignments.sort((a, b) => b.jobItem.material.description.toString().compareTo(a.jobItem.material.description.toString()));
+          widget.jobItemAssignments.sort((a, b) => b
+              .jobItem.material.description
+              .toString()
+              .compareTo(a.jobItem.material.description.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobItemAssignments.sort((a, b) => a.jobItem.requiredWeight.toString().compareTo(b.jobItem.requiredWeight.toString()));
+          widget.jobItemAssignments.sort((a, b) => a.jobItem.requiredWeight
+              .toString()
+              .compareTo(b.jobItem.requiredWeight.toString()));
         } else {
-          widget.jobItemAssignments.sort((a, b) => b.jobItem.requiredWeight.toString().compareTo(a.jobItem.requiredWeight.toString()));
+          widget.jobItemAssignments.sort((a, b) => b.jobItem.requiredWeight
+              .toString()
+              .compareTo(a.jobItem.requiredWeight.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobItemAssignments.sort((a, b) => (a.shiftSchedule.weigher.firstName + " " + a.shiftSchedule.weigher.lastName)
-              .compareTo(b.shiftSchedule.weigher.firstName + " " + b.shiftSchedule.weigher.lastName));
+          widget.jobItemAssignments.sort((a, b) =>
+              (a.shiftSchedule.weigher.firstName +
+                      " " +
+                      a.shiftSchedule.weigher.lastName)
+                  .compareTo(b.shiftSchedule.weigher.firstName +
+                      " " +
+                      b.shiftSchedule.weigher.lastName));
         } else {
-          widget.jobItemAssignments.sort((a, b) => (b.shiftSchedule.weigher.firstName + " " + b.shiftSchedule.weigher.lastName)
-              .compareTo(a.shiftSchedule.weigher.firstName + " " + a.shiftSchedule.weigher.lastName));
+          widget.jobItemAssignments.sort((a, b) =>
+              (b.shiftSchedule.weigher.firstName +
+                      " " +
+                      b.shiftSchedule.weigher.lastName)
+                  .compareTo(a.shiftSchedule.weigher.firstName +
+                      " " +
+                      a.shiftSchedule.weigher.lastName));
         }
         break;
       case 4:
         if (ascending) {
-          widget.jobItemAssignments.sort((a, b) => (a.shiftSchedule.date.toString().substring(0, 10) + " " + a.shiftSchedule.shift.code.toString())
-              .compareTo(b.shiftSchedule.date.toString().substring(0, 10) + " " + b.shiftSchedule.shift.code.toString()));
+          widget.jobItemAssignments.sort((a, b) =>
+              (a.shiftSchedule.date.toString().substring(0, 10) +
+                      " " +
+                      a.shiftSchedule.shift.code.toString())
+                  .compareTo(b.shiftSchedule.date.toString().substring(0, 10) +
+                      " " +
+                      b.shiftSchedule.shift.code.toString()));
         } else {
-          widget.jobItemAssignments.sort((a, b) => (b.shiftSchedule.date.toString().substring(0, 10) + " " + b.shiftSchedule.shift.code.toString())
-              .compareTo(a.shiftSchedule.date.toString().substring(0, 10) + " " + a.shiftSchedule.shift.code.toString()));
+          widget.jobItemAssignments.sort((a, b) =>
+              (b.shiftSchedule.date.toString().substring(0, 10) +
+                      " " +
+                      b.shiftSchedule.shift.code.toString())
+                  .compareTo(a.shiftSchedule.date.toString().substring(0, 10) +
+                      " " +
+                      a.shiftSchedule.shift.code.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.jobItemAssignments.sort((a, b) => a.jobItem.complete.toString().compareTo(b.jobItem.complete.toString()));
+          widget.jobItemAssignments.sort((a, b) => a.jobItem.complete
+              .toString()
+              .compareTo(b.jobItem.complete.toString()));
         } else {
-          widget.jobItemAssignments.sort((a, b) => b.jobItem.complete.toString().compareTo(a.jobItem.complete.toString()));
+          widget.jobItemAssignments.sort((a, b) => b.jobItem.complete
+              .toString()
+              .compareTo(a.jobItem.complete.toString()));
         }
         break;
       default:
@@ -95,9 +134,13 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(caption: TextStyle(color: foregroundColor)),
+                    cardColor:
+                        themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value
+                        ? foregroundColor.withOpacity(0.25)
+                        : backgroundColor.withOpacity(0.25),
+                    textTheme: const TextTheme(
+                        caption: TextStyle(color: foregroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -107,14 +150,15 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
-                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: Text(
                               "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -132,7 +176,9 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                               "Material Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -150,7 +196,9 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                               "Quantity",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -168,7 +216,9 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                               "Assigned To",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -186,7 +236,9 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                               "Shift",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -204,7 +256,9 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                               "Status",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                color: themeChanged.value
+                                    ? foregroundColor
+                                    : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -219,7 +273,9 @@ class _JobAssignmentListWidgetState extends State<JobAssignmentListWidget> {
                           ),
                         ],
                         source: _DataSource(context, widget.jobItemAssignments),
-                        rowsPerPage: widget.jobItemAssignments.length > 25 ? 25 : widget.jobItemAssignments.length,
+                        rowsPerPage: widget.jobItemAssignments.length > 25
+                            ? 25
+                            : widget.jobItemAssignments.length,
                       )
                     ],
                   ),
@@ -288,7 +344,9 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            jobItemAssignment.jobItem.requiredWeight.toStringAsFixed(3) + " " + jobItemAssignment.jobItem.uom.code,
+            jobItemAssignment.jobItem.requiredWeight.toStringAsFixed(3) +
+                " " +
+                jobItemAssignment.jobItem.uom.code,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -298,7 +356,9 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName,
+            jobItemAssignment.shiftSchedule.weigher.firstName +
+                " " +
+                jobItemAssignment.shiftSchedule.weigher.lastName,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -308,7 +368,10 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            jobItemAssignment.shiftSchedule.date.toString().substring(0, 10) + " " + jobItemAssignment.shiftSchedule.shift.code + " Shift",
+            jobItemAssignment.shiftSchedule.date.toString().substring(0, 10) +
+                " " +
+                jobItemAssignment.shiftSchedule.shift.code +
+                " Shift",
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

@@ -1,7 +1,6 @@
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/under_issue.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
-import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,8 @@ class UnderIssueItemsListWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<UnderIssueItemsListWidget> createState() => _UnderIssueItemsListWidgetState();
+  State<UnderIssueItemsListWidget> createState() =>
+      _UnderIssueItemsListWidgetState();
 }
 
 class _UnderIssueItemsListWidgetState extends State<UnderIssueItemsListWidget> {
@@ -36,37 +36,49 @@ class _UnderIssueItemsListWidgetState extends State<UnderIssueItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.underIssues.sort((a, b) => a.weighed.toString().compareTo(b.weighed.toString()));
+          widget.underIssues.sort(
+              (a, b) => a.weighed.toString().compareTo(b.weighed.toString()));
         } else {
-          widget.underIssues.sort((a, b) => b.weighed.toString().compareTo(a.weighed.toString()));
+          widget.underIssues.sort(
+              (a, b) => b.weighed.toString().compareTo(a.weighed.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.underIssues.sort((a, b) => a.verified.toString().compareTo(b.verified.toString()));
+          widget.underIssues.sort(
+              (a, b) => a.verified.toString().compareTo(b.verified.toString()));
         } else {
-          widget.underIssues.sort((a, b) => b.verified.toString().compareTo(a.verified.toString()));
+          widget.underIssues.sort(
+              (a, b) => b.verified.toString().compareTo(a.verified.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.underIssues.sort((a, b) => widget.jobItems[a.id]!.material.code.compareTo(widget.jobItems[b.id]!.material.code));
+          widget.underIssues.sort((a, b) => widget.jobItems[a.id]!.material.code
+              .compareTo(widget.jobItems[b.id]!.material.code));
         } else {
-          widget.underIssues.sort((a, b) => widget.jobItems[b.id]!.material.code.compareTo(widget.jobItems[a.id]!.material.code));
+          widget.underIssues.sort((a, b) => widget.jobItems[b.id]!.material.code
+              .compareTo(widget.jobItems[a.id]!.material.code));
         }
         break;
       case 3:
         if (ascending) {
-          widget.underIssues.sort((a, b) => widget.jobItems[a.id]!.material.description.compareTo(widget.jobItems[b.id]!.material.description));
+          widget.underIssues.sort((a, b) => widget
+              .jobItems[a.id]!.material.description
+              .compareTo(widget.jobItems[b.id]!.material.description));
         } else {
-          widget.underIssues.sort((a, b) => widget.jobItems[b.id]!.material.description.compareTo(widget.jobItems[a.id]!.material.description));
+          widget.underIssues.sort((a, b) => widget
+              .jobItems[b.id]!.material.description
+              .compareTo(widget.jobItems[a.id]!.material.description));
         }
         break;
       case 4:
         if (ascending) {
-          widget.underIssues.sort((a, b) => (a.req - a.actual).compareTo(b.req - b.actual));
+          widget.underIssues
+              .sort((a, b) => (a.req - a.actual).compareTo(b.req - b.actual));
         } else {
-          widget.underIssues.sort((a, b) => (b.req - b.actual).compareTo(a.req - a.actual));
+          widget.underIssues
+              .sort((a, b) => (b.req - b.actual).compareTo(a.req - a.actual));
         }
         break;
       default:
@@ -89,7 +101,8 @@ class _UnderIssueItemsListWidgetState extends State<UnderIssueItemsListWidget> {
                   data: Theme.of(context).copyWith(
                     cardColor: backgroundColor,
                     dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(caption: TextStyle(color: foregroundColor)),
+                    textTheme: const TextTheme(
+                        caption: TextStyle(color: foregroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -99,7 +112,6 @@ class _UnderIssueItemsListWidgetState extends State<UnderIssueItemsListWidget> {
                         sortAscending: sort,
                         sortColumnIndex: sortingColumnIndex,
                         columnSpacing: 20.0,
-                        arrowHeadColor: themeChanged.value ? foregroundColor : backgroundColor,
                         columns: [
                           DataColumn(
                             label: const Text(
@@ -192,8 +204,11 @@ class _UnderIssueItemsListWidgetState extends State<UnderIssueItemsListWidget> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.underIssues, widget.jobItems),
-                        rowsPerPage: widget.underIssues.length > 25 ? 25 : widget.underIssues.length,
+                        source: _DataSource(
+                            context, widget.underIssues, widget.jobItems),
+                        rowsPerPage: widget.underIssues.length > 25
+                            ? 25
+                            : widget.underIssues.length,
                       )
                     ],
                   ),

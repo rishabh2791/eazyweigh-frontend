@@ -56,6 +56,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   String complete = '{"action":"complete"}';
   Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
+  bool isPosting = false;
 
   @override
   void initState() {
@@ -265,37 +266,51 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
         };
         if ((currentWeight - taredWeight) > 0 &&
-            double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(3)) <=
-                double.parse(widget.jobItem.upperBound.toStringAsFixed(3))) {
-          await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
-            if (value["status"]) {
-              String id = value["payload"]["id"];
-              printingData["job_item_weighing_id"] = id;
-              if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(3)) >=
-                  double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
-                printingData["complete"] = true;
-              }
+            double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) <=
+                double.parse(widget.jobItem.upperBound.toStringAsFixed(4))) {
+          if (!isPosting) {
+            setState(() {
+              isPosting = true;
+            });
+            await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
+              if (value["status"]) {
+                String id = value["payload"]["id"];
+                printingData["job_item_weighing_id"] = id;
+                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
+                    double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
+                  printingData["complete"] = true;
+                }
 
-              printingService.printJobItemLabel(printingData);
+                printingService.printJobItemLabel(printingData);
 
-              if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(3)) >=
-                  double.parse(widget.jobItem.lowerBound.toStringAsFixed(3))) {
+                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
+                    double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
+                  setState(() {
+                    widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
+                  });
+                }
+
                 setState(() {
-                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
+                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += (currentWeight - taredWeight);
+                  currentWeight = 0;
                 });
-              }
 
-              setState(() {
-                widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += (currentWeight - taredWeight);
-                currentWeight = 0;
-              });
+                if (checkAllComplete()) {
+                  Map<String, dynamic> update = {
+                    "complete": true,
+                  };
 
-              if (checkAllComplete()) {
-                Map<String, dynamic> update = {
-                  "complete": true,
-                };
-
-                await appStore.jobApp.update(widget.jobItem.jobID, update).then((updateResponse) {
+                  await appStore.jobApp.update(widget.jobItem.jobID, update).then((updateResponse) {
+                    navigationService.pushReplacement(
+                      CupertinoPageRoute(
+                        builder: (BuildContext context) => JobDetailsWidget(
+                          jobCode: widget.jobCode,
+                          jobItems: widget.allJobItems,
+                        ),
+                      ),
+                    );
+                  });
+                } else {
                   navigationService.pushReplacement(
                     CupertinoPageRoute(
                       builder: (BuildContext context) => JobDetailsWidget(
@@ -304,32 +319,23 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                       ),
                     ),
                   );
-                });
+                }
               } else {
-                navigationService.pushReplacement(
-                  CupertinoPageRoute(
-                    builder: (BuildContext context) => JobDetailsWidget(
-                      jobCode: widget.jobCode,
-                      jobItems: widget.allJobItems,
-                    ),
-                  ),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CustomDialog(
+                      message: value["message"],
+                      title: "Errors",
+                    );
+                  },
                 );
+                Future.delayed(const Duration(seconds: 3)).then((value) {
+                  Navigator.of(context).pop();
+                });
               }
-            } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return CustomDialog(
-                    message: value["message"],
-                    title: "Errors",
-                  );
-                },
-              );
-              Future.delayed(const Duration(seconds: 3)).then((value) {
-                Navigator.of(context).pop();
-              });
-            }
-          });
+            });
+          }
         } else {
           showDialog(
             context: context,
