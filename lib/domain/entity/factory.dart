@@ -48,9 +48,9 @@ class Factory {
       name: jsonObject["name"],
       address: Address.fromJSON(jsonObject["address"]),
       companyID: jsonObject["company_id"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return fact;

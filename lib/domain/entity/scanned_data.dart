@@ -41,8 +41,8 @@ class ScannedData {
       job: Job.fromJSON(jsonObject["job"]),
       weigher: User.fromJSON(jsonObject["user"]),
       terminal: Terminal.fromJSON(jsonObject["terminal"]),
-      createdAt: DateTime.parse(jsonObject["created_at"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
     );
     return scannedData;
   }

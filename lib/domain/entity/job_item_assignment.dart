@@ -37,12 +37,12 @@ class JobItemAssignment {
 
   factory JobItemAssignment.fromJSON(Map<String, dynamic> jsonObject) {
     JobItemAssignment jobAssignment = JobItemAssignment(
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
       jobItem: JobItem.fromJSON(jsonObject["job_item"]),
       shiftSchedule: ShiftSchedule.fromJSON(jsonObject["shift_schedule"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return jobAssignment;

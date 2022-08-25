@@ -76,7 +76,7 @@ class Job {
       }
     }
     Job job = Job(
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
       fact: Factory.fromJSON(jsonObject["factory"]),
@@ -86,7 +86,7 @@ class Job {
       complete: complete,
       quantity: double.parse(jsonObject["quantity"].toString()),
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       jobItems: jobItems,
     );

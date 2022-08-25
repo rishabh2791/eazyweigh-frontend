@@ -51,7 +51,7 @@ class Address {
     Address address = Address(
       city: jsonObject["city"],
       country: jsonObject["country"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: jsonObject["created_by_username"],
       headOffice: jsonObject["head_office"],
       id: jsonObject["id"],
@@ -59,7 +59,7 @@ class Address {
       line2: jsonObject["line2"],
       state: jsonObject["state"],
       companyID: jsonObject["company_id"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: jsonObject["updated_by_username"],
       zip: jsonObject["zip"],
     );

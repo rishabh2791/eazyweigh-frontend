@@ -1,9 +1,12 @@
 import 'package:eazyweigh/application/address_app.dart';
 import 'package:eazyweigh/application/auth_app.dart';
+import 'package:eazyweigh/application/batch_app.dart';
 import 'package:eazyweigh/application/bom_app.dart';
 import 'package:eazyweigh/application/bom_item_app.dart';
 import 'package:eazyweigh/application/common_app.dart';
 import 'package:eazyweigh/application/company_app.dart';
+import 'package:eazyweigh/application/device_app.dart';
+import 'package:eazyweigh/application/device_data_app.dart';
 import 'package:eazyweigh/application/factory_app.dart';
 import 'package:eazyweigh/application/job_app.dart';
 import 'package:eazyweigh/application/job_item_assignment_app.dart';
@@ -11,9 +14,12 @@ import 'package:eazyweigh/application/job_item_app.dart';
 import 'package:eazyweigh/application/job_item_weighing_app.dart';
 import 'package:eazyweigh/application/material_app.dart';
 import 'package:eazyweigh/application/over_issue_app.dart';
+import 'package:eazyweigh/application/process_app.dart';
 import 'package:eazyweigh/application/scanned_data_app.dart';
 import 'package:eazyweigh/application/shift_app.dart';
 import 'package:eazyweigh/application/shift_schedule_app.dart';
+import 'package:eazyweigh/application/step_app.dart';
+import 'package:eazyweigh/application/step_type_app.dart';
 import 'package:eazyweigh/application/terminal_app.dart';
 import 'package:eazyweigh/application/under_issue_app.dart';
 import 'package:eazyweigh/application/unit_of_measure_app.dart';
@@ -26,6 +32,7 @@ import 'package:eazyweigh/application/user_factory_app.dart';
 import 'package:eazyweigh/application/user_role_access_app.dart';
 import 'package:eazyweigh/application/user_role_app.dart';
 import 'package:eazyweigh/application/user_terminal_access_app.dart';
+import 'package:eazyweigh/application/vessel_app.dart';
 import 'package:eazyweigh/infrastructure/persistance/repo_store.dart';
 
 AppStore appStore = AppStore();
@@ -33,44 +40,38 @@ AppStore appStore = AppStore();
 class AppStore {
   final addressApp = AddressApp(addressRepository: repoStore.addressRepo);
   final authApp = AuthApp(authRepository: repoStore.authRepo);
+  final batchApp = BatchApp(batchRepository: repoStore.batchRepo);
   final bomApp = BOMApp(bomRepository: repoStore.bomRepo);
   final bomItemApp = BOMItemApp(bomItemRepository: repoStore.bomItemRepo);
   final companyApp = CompanyApp(companyRepository: repoStore.companyRepo);
   final commonApp = CommonApp(commonRepository: repoStore.commonRepo);
+  final deviceApp = DeviceApp(deviceRepository: repoStore.deviceRepo);
+  final deviceDataApp = DeviceDataApp(deviceDataRepository: repoStore.deviceDataRepo);
   final factoryApp = FactoryApp(factoryRepository: repoStore.factoryRepo);
   final jobApp = JobApp(jobRepository: repoStore.jobRepo);
   final jobItemApp = JobItemApp(jobItemRepository: repoStore.jobItemRepo);
-  final jobItemAssignmentApp = JobItemAssignmentApp(
-      jobItemAssignmentRepository: repoStore.jobItemAssignmentRepo);
-  final jobWeighingApp =
-      JobItemWeighingApp(jobItemWeighingRepository: repoStore.jobWeighingRepo);
+  final jobItemAssignmentApp = JobItemAssignmentApp(jobItemAssignmentRepository: repoStore.jobItemAssignmentRepo);
+  final jobWeighingApp = JobItemWeighingApp(jobItemWeighingRepository: repoStore.jobWeighingRepo);
   final materialApp = MaterialApp(materialRepository: repoStore.materialRepo);
-  final overIssueApp =
-      OverIssueApp(overIssueRepository: repoStore.overIssueRepo);
+  final overIssueApp = OverIssueApp(overIssueRepository: repoStore.overIssueRepo);
+  final processApp = ProcessApp(processRepository: repoStore.processRepo);
   final shiftApp = ShiftApp(shiftRepository: repoStore.shiftRepo);
-  final shiftScheduleApp =
-      ShiftScheduleApp(shiftScheduleRepository: repoStore.shiftScheduleRepo);
-  final scannedDataApp =
-      ScannedDataApp(scannedDataRepository: repoStore.scannedDataRepo);
+  final shiftScheduleApp = ShiftScheduleApp(shiftScheduleRepository: repoStore.shiftScheduleRepo);
+  final scannedDataApp = ScannedDataApp(scannedDataRepository: repoStore.scannedDataRepo);
+  final stepApp = StepApp(stepRepository: repoStore.stepRepo);
+  final stepTypeApp = StepTypeApp(stepTypeRepository: repoStore.stepTypeRepo);
   final terminalApp = TerminalApp(terminalRepository: repoStore.terminalRepo);
-  final underIssueApp =
-      UnderIssueApp(underIssueRepository: repoStore.underIssueRepo);
-  final unitOfMeasurementApp =
-      UnitOfMeasurementApp(unitOfMeasurementRepository: repoStore.uomRepo);
-  final unitOfMeasurementConversionApp = UnitOfMeasurementConversionApp(
-      unitOfMeasurementConversionRepository: repoStore.uomConversionRepo);
+  final underIssueApp = UnderIssueApp(underIssueRepository: repoStore.underIssueRepo);
+  final unitOfMeasurementApp = UnitOfMeasurementApp(unitOfMeasurementRepository: repoStore.uomRepo);
+  final unitOfMeasurementConversionApp =
+      UnitOfMeasurementConversionApp(unitOfMeasurementConversionRepository: repoStore.uomConversionRepo);
   final userApp = UserApp(userRepository: repoStore.userRepo);
   final userRoleApp = UserRoleApp(userRoleRepository: repoStore.userRoleRepo);
-  final userCompanyAccessApp = UserCompanyAccessApp(
-      userCompanyAccessRepository: repoStore.userCompanyAccessRepo);
-  final userFactoryAccessApp = UserFactoryAccessApp(
-      userFactoryAccessRepository: repoStore.userFactoryAccessRepo);
-  final userTerminalAccessApp = UserTerminalAccessApp(
-      userTerminalAccessRepository: repoStore.userTerminalAccessRepo);
-  final userRoleAccessApp =
-      UserRoleAccessApp(userRoleAccessRepository: repoStore.userRoleAccessRepo);
-  final userCompanyApp =
-      UserCompanyApp(userCompanyRepository: repoStore.userCompanyRepo);
-  final userFactoryApp =
-      UserFactoryApp(userFactoryRepository: repoStore.userFactoryRepo);
+  final userCompanyAccessApp = UserCompanyAccessApp(userCompanyAccessRepository: repoStore.userCompanyAccessRepo);
+  final userFactoryAccessApp = UserFactoryAccessApp(userFactoryAccessRepository: repoStore.userFactoryAccessRepo);
+  final userTerminalAccessApp = UserTerminalAccessApp(userTerminalAccessRepository: repoStore.userTerminalAccessRepo);
+  final userRoleAccessApp = UserRoleAccessApp(userRoleAccessRepository: repoStore.userRoleAccessRepo);
+  final userCompanyApp = UserCompanyApp(userCompanyRepository: repoStore.userCompanyRepo);
+  final userFactoryApp = UserFactoryApp(userFactoryRepository: repoStore.userFactoryRepo);
+  final vesselApp = VesselApp(vesselRepository: repoStore.vesselRepo);
 }

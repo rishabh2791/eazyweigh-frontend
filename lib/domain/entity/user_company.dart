@@ -27,8 +27,8 @@ class UserCompany {
     UserCompany userCompany = UserCompany(
       fact: Company.fromJSON(jsonObject["company"]),
       user: User.fromJSON(jsonObject["user"]),
-      createdAt: DateTime.parse(jsonObject["created_at"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
     );
     return userCompany;
   }

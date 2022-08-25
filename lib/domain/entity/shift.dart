@@ -49,14 +49,14 @@ class Shift {
   factory Shift.fromJSON(Map<String, dynamic> jsonObject) {
     Shift shift = Shift(
       code: jsonObject["code"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       description: jsonObject["description"],
       endTime: jsonObject["end_time"],
       fact: Factory.fromJSON(jsonObject["factory"]),
       id: jsonObject["id"],
       startTime: jsonObject["start_time"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return shift;

@@ -134,17 +134,26 @@ class PrintingService extends ChangeNotifier {
     zplString += mapToZPLString(data) + "^XZ";
 
     try {
-      await WebSocket.connect(PRINTER_URL).then((webSocket) {
-        if (webSocket.readyState == 1) {
-          _isConnected = true;
-          webSocketChannel = webSocket;
-          webSocket.listen(listenToWebSocket);
-          webSocket.add(utf8.encode(zplString));
-        } else {
-          _isConnected = false;
-          listenToWebSocket("{'status':'Done'}");
-        }
-      });
+      if (kIsWeb) {
+        webWebSocketChannel = WebSocketChannel.connect(Uri.parse(PRINTER_URL));
+        webWebSocketChannel.sink.add(utf8.encode(zplString));
+        webWebSocketChannel.stream.listen((event) {
+          listenToWebSocket(event);
+        });
+        webWebSocketChannel.sink.close();
+      } else {
+        await WebSocket.connect(PRINTER_URL).then((webSocket) {
+          if (webSocket.readyState == 1) {
+            _isConnected = true;
+            webSocketChannel = webSocket;
+            webSocket.listen(listenToWebSocket);
+            webSocket.add(utf8.encode(zplString));
+          } else {
+            _isConnected = false;
+            listenToWebSocket("{'status':'Done'}");
+          }
+        });
+      }
     } catch (e) {
       _isConnected = false;
       listenToWebSocket("{'status':'Not Done'}");

@@ -54,14 +54,14 @@ class OverIssue {
     OverIssue overIssue = OverIssue(
       actual: jsonObject["actual"],
       verified: jsonObject["verified"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
       jobItem: JobItem.fromJSON(jsonObject["job_item"]),
       req: jsonObject["required"],
       weighed: jsonObject["weighed"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       weight: double.parse(jsonObject["weight"].toString()),
     );
