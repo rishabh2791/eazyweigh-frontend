@@ -265,16 +265,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-<<<<<<< HEAD
-        if ((currentWeight - taredWeight) != 0 && actualWeight + (currentWeight - taredWeight) <= widget.jobItem.upperBound) {
-          await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
-            if (value["status"]) {
-              String id = value["payload"]["id"];
-              printingData["job_item_weighing_id"] = id;
-              if (actualWeight + (currentWeight - taredWeight) >= widget.jobItem.lowerBound) {
-                printingData["complete"] = true;
-              }
-=======
         if ((currentWeight - taredWeight) > 0 &&
             double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) <=
                 double.parse(widget.jobItem.upperBound.toStringAsFixed(4))) {
@@ -292,7 +282,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 }
 
                 printingService.printJobItemLabel(printingData);
->>>>>>> 492579ba8483a73d11a7959329bd3fa0518058f0
 
                 if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
                     double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
