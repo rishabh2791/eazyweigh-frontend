@@ -255,7 +255,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if ((currentWeight - taredWeight) != 0 && actualWeight + (currentWeight - taredWeight) < widget.jobItem.upperBound) {
+        if ((currentWeight - taredWeight) != 0 && actualWeight + (currentWeight - taredWeight) <= widget.jobItem.upperBound) {
           await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
               String id = value["payload"]["id"];

@@ -52,11 +52,10 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
     DateTime nextMonth = DateTime(today.year, today.month + 1, today.day);
     int daysLeftInMonth = nextMonth.difference(today).inDays - today.day;
     thisMonthEnd = DateTime.parse(DateTime(today.year, today.month, today.day + daysLeftInMonth, 0, 0, 0, 0, 0).toString().substring(0, 10));
-    Future.forEach([
-      await getWeekSummary(),
-      await getMonthSummary(),
-    ], (element) {})
-        .then((value) {
+    Future.wait([
+      getWeekSummary(),
+      getMonthSummary(),
+    ]).then((value) {
       weekIncorrectWeighing.forEach(((key, value) {
         weekIncorrectScans += value.length;
       }));
