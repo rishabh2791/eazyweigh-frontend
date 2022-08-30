@@ -40,10 +40,12 @@ dependencies:
   file_picker: ^4.0.1
   charts_flutter: ^0.11.0
   qr_flutter: ^4.0.0
-  flutter_barcode_listener: 
   visibility_detector: ^0.2.2
   web_socket_channel: ^2.1.0
   f_logs: ^2.0.0
+  open_file: ^3.2.1
+  syncfusion_flutter_xlsio: ^20.2.39-beta
+  audioplayers: ^1.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -79,6 +81,7 @@ flutter:
   assets:
     - assets/
     - assets/img/
+    - assets/audio/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

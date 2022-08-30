@@ -1,3 +1,4 @@
+import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/scanned_data.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
@@ -6,9 +7,11 @@ import 'package:flutter/material.dart';
 
 class ScannedDataList extends StatefulWidget {
   final List<ScannedData> scannedData;
+  final List<Mat> materials;
   const ScannedDataList({
     Key? key,
     required this.scannedData,
+    required this.materials,
   }) : super(key: key);
 
   @override
@@ -33,66 +36,44 @@ class _ScannedDataListState extends State<ScannedDataList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(0, 10)
-              .compareTo(b.createdAt.toString().substring(0, 10)));
+          widget.scannedData.sort((a, b) => a.createdAt.toString().substring(0, 10).compareTo(b.createdAt.toString().substring(0, 10)));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(0, 10)
-              .compareTo(a.createdAt.toString().substring(0, 10)));
+          widget.scannedData.sort((a, b) => b.createdAt.toString().substring(0, 10).compareTo(a.createdAt.toString().substring(0, 10)));
         }
         break;
       case 1:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(b.createdAt.toString().substring(11, 16)));
+          widget.scannedData.sort((a, b) => a.createdAt.toString().substring(11, 16).compareTo(b.createdAt.toString().substring(11, 16)));
         } else {
-          widget.scannedData.sort((a, b) => b.createdAt
-              .toString()
-              .substring(11, 16)
-              .compareTo(a.createdAt.toString().substring(11, 16)));
+          widget.scannedData.sort((a, b) => b.createdAt.toString().substring(11, 16).compareTo(a.createdAt.toString().substring(11, 16)));
         }
         break;
       case 2:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.expectedCode.toString().compareTo(b.expectedCode.toString()));
+          widget.scannedData.sort((a, b) => a.expectedCode.toString().compareTo(b.expectedCode.toString()));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.expectedCode.toString().compareTo(a.expectedCode.toString()));
+          widget.scannedData.sort((a, b) => b.expectedCode.toString().compareTo(a.expectedCode.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.actualCode.toString().compareTo(b.actualCode.toString()));
+          widget.scannedData.sort((a, b) => a.actualCode.toString().compareTo(b.actualCode.toString()));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.actualCode.toString().compareTo(a.actualCode.toString()));
+          widget.scannedData.sort((a, b) => b.actualCode.toString().compareTo(a.actualCode.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.scannedData.sort((a, b) => a.terminal.description
-              .toString()
-              .compareTo(b.terminal.description.toString()));
+          widget.scannedData.sort((a, b) => a.terminal.description.toString().compareTo(b.terminal.description.toString()));
         } else {
-          widget.scannedData.sort((a, b) => b.terminal.description
-              .toString()
-              .compareTo(a.terminal.description.toString()));
+          widget.scannedData.sort((a, b) => b.terminal.description.toString().compareTo(a.terminal.description.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.scannedData.sort((a, b) =>
-              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
+          widget.scannedData.sort((a, b) => a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
         } else {
-          widget.scannedData.sort((a, b) =>
-              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
+          widget.scannedData.sort((a, b) => b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
         }
         break;
       default:
@@ -113,16 +94,11 @@ class _ScannedDataListState extends State<ScannedDataList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value
-                        ? foregroundColor.withOpacity(0.25)
-                        : backgroundColor.withOpacity(0.25),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
                       caption: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
                   ),
@@ -140,9 +116,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                               "Date",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -160,9 +134,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                               "Time",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -180,9 +152,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                               "Job Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -200,9 +170,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                               "Terminal",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -220,9 +188,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                               "Expected Data",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -240,9 +206,7 @@ class _ScannedDataListState extends State<ScannedDataList> {
                               "Actual Data",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -256,10 +220,8 @@ class _ScannedDataListState extends State<ScannedDataList> {
                             },
                           ),
                         ],
-                        source: _DataSource(context, widget.scannedData),
-                        rowsPerPage: widget.scannedData.length > 25
-                            ? 25
-                            : widget.scannedData.length,
+                        source: _DataSource(context, widget.scannedData, widget.materials),
+                        rowsPerPage: widget.scannedData.length > 25 ? 25 : widget.scannedData.length,
                       )
                     ],
                   ),
@@ -282,12 +244,14 @@ class _ScannedDataListState extends State<ScannedDataList> {
 }
 
 class _DataSource extends DataTableSource {
-  _DataSource(this.context, this._scannedData) {
+  _DataSource(this.context, this._scannedData, this._materials) {
     _scannedData = _scannedData;
+    _materials = _materials;
   }
 
   final BuildContext context;
   List<ScannedData> _scannedData;
+  List<Mat> _materials;
 
   @override
   DataRow getRow(int index) {
@@ -338,7 +302,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.expectedCode,
+            scannedData.expectedCode + " - " + _materials.firstWhere((element) => element.code == scannedData.expectedCode).description,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -348,7 +312,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            scannedData.actualCode,
+            scannedData.actualCode + " - " + _materials.firstWhere((element) => element.code == scannedData.actualCode).description,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

@@ -4,6 +4,7 @@ import 'package:eazyweigh/interface/common/user_action_button/user_action_button
 import 'package:eazyweigh/interface/job_interface/create/job_create_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
+import 'package:eazyweigh/interface/job_interface/weighing/job_weighing_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,8 +32,7 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const JobCreateWidget(),
+                          builder: (BuildContext context) => const JobCreateWidget(),
                         ),
                       );
                     },
@@ -45,12 +45,11 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const FullJobDetailsWidget(),
+                          builder: (BuildContext context) => const FullJobDetailsWidget(),
                         ),
                       );
                     },
-                    icon: Icons.create,
+                    icon: Icons.details,
                     label: "Details",
                     table: "jobs",
                     accessType: "view",
@@ -59,13 +58,25 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const JobListWidget(),
+                          builder: (BuildContext context) => const JobListWidget(),
                         ),
                       );
                     },
                     icon: Icons.list,
                     label: "List",
+                    table: "jobs",
+                    accessType: "view",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) => const JobWeighingWidget(),
+                        ),
+                      );
+                    },
+                    icon: Icons.list,
+                    label: "Weighing",
                     table: "jobs",
                     accessType: "view",
                   ),

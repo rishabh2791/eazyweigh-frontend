@@ -30,17 +30,15 @@ class UnitOfMeasurementConversion {
     return <String, dynamic>{};
   }
 
-  factory UnitOfMeasurementConversion.fromJSON(
-      Map<String, dynamic> jsonObject) {
-    UnitOfMeasurementConversion unitOfMeasurementConversion =
-        UnitOfMeasurementConversion(
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+  factory UnitOfMeasurementConversion.fromJSON(Map<String, dynamic> jsonObject) {
+    UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion(
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       factoryID: jsonObject["factory_id"],
       id: jsonObject["id"],
       unitOfMeasure1: UnitOfMeasure.fromJSON(jsonObject["unit1"]),
       unitOfMeasure2: UnitOfMeasure.fromJSON(jsonObject["unit2"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       value1: double.parse(jsonObject["value1"].toString()),
       value2: double.parse(jsonObject["value2"].toString()),

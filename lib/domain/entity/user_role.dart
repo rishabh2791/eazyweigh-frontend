@@ -41,10 +41,10 @@ class UserRole {
       id: jsonObject["id"],
       active: jsonObject["active"],
       companyID: jsonObject["company_id"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       description: jsonObject["description"],
       role: jsonObject["role"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
     );
     return userRole;
   }

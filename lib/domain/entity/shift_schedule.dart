@@ -24,11 +24,7 @@ class ShiftSchedule {
 
   @override
   String toString() {
-    return date.toString().substring(0, 10) +
-        " - " +
-        shift.description +
-        " - " +
-        weigher.username;
+    return date.toString().substring(0, 10) + " - " + shift.description + " - " + weigher.username;
   }
 
   Map<String, dynamic> toJSON() {
@@ -46,12 +42,12 @@ class ShiftSchedule {
 
   factory ShiftSchedule.fromJSON(Map<String, dynamic> jsonObject) {
     ShiftSchedule shiftSchedule = ShiftSchedule(
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       date: DateTime.parse(jsonObject["date"]),
       id: jsonObject["id"],
       shift: Shift.fromJSON(jsonObject["shift"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       weigher: User.fromJSON(jsonObject["user"]),
     );

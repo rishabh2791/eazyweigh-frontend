@@ -1,5 +1,6 @@
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
+import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/scanned_data.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
@@ -29,10 +30,8 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
   List<ScannedData> scannedData = [];
   List<Factory> factories = [];
   List<User> weighers = [];
-  late TextEditingController factoryController,
-      userController,
-      startDateController,
-      endDateController;
+  List<Mat> materials = [];
+  late TextEditingController factoryController, userController, startDateController, endDateController;
 
   @override
   void initState() {
@@ -130,6 +129,24 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
     return details;
   }
 
+  Future<void> getMaterial(String factoryID) async {
+    materials = [];
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryID,
+      }
+    };
+    await appStore.materialApp.list(conditions).then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          Mat mat = Mat.fromJSON(item);
+          materials.add(mat);
+        }
+      }
+    });
+  }
+
   Widget listWidget() {
     return isDataLoaded
         ? scannedData.isEmpty
@@ -144,21 +161,19 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    scannedData.length.toString() +
-                        " instances of incorrect weighing in the period for " +
-                        getUserDetails(userController.text) +
-                        ".",
+                    scannedData.length.toString() + " instances of incorrect weighing in the period for " + getUserDetails(userController.text) + ".",
                     style: TextStyle(
-                      color: themeChanged.value
-                          ? foregroundColor
-                          : backgroundColor,
+                      color: themeChanged.value ? foregroundColor : backgroundColor,
                       fontSize: 20.0,
                     ),
                   ),
                   const Divider(
                     color: Colors.transparent,
                   ),
-                  ScannedDataList(scannedData: scannedData),
+                  ScannedDataList(
+                    scannedData: scannedData,
+                    materials: materials,
+                  ),
                 ],
               )
         : Column(
@@ -194,8 +209,7 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                 children: [
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
@@ -229,10 +243,7 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                             {
                               "GREATEREQUAL": {
                                 "Field": "created_at",
-                                "Value": DateTime.parse(startDate)
-                                        .toString()
-                                        .substring(0, 10) +
-                                    "T00:00:00.0Z",
+                                "Value": DateTime.parse(startDate).toString().substring(0, 10) + "T00:00:00.0Z",
                               }
                             },
                           );
@@ -242,10 +253,7 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                             {
                               "LESSEQUAL": {
                                 "Field": "created_at",
-                                "Value": DateTime.parse(endDate)
-                                        .toString()
-                                        .substring(0, 10) +
-                                    "T00:00:00.0Z",
+                                "Value": DateTime.parse(endDate).toString().substring(0, 10) + "T00:00:00.0Z",
                               }
                             },
                           );
@@ -253,33 +261,31 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                         setState(() {
                           isLoadingData = true;
                         });
-                        await appStore.scannedDataApp
-                            .list(conditions)
-                            .then((response) {
-                          setState(() {
-                            isLoadingData = false;
-                          });
-                          if (response.containsKey("status") &&
-                              response["status"]) {
-                            for (var item in response["payload"]) {
-                              ScannedData thisScannedData =
-                                  ScannedData.fromJSON(item);
-                              scannedData.add(thisScannedData);
-                            }
+                        await getMaterial(factoryID).then((value) async {
+                          await appStore.scannedDataApp.list(conditions).then((response) {
                             setState(() {
-                              isDataLoaded = true;
+                              isLoadingData = false;
                             });
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const CustomDialog(
-                                  message: "Unable to Get Data.",
-                                  title: "Info",
-                                );
-                              },
-                            );
-                          }
+                            if (response.containsKey("status") && response["status"]) {
+                              for (var item in response["payload"]) {
+                                ScannedData thisScannedData = ScannedData.fromJSON(item);
+                                scannedData.add(thisScannedData);
+                              }
+                              setState(() {
+                                isDataLoaded = true;
+                              });
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const CustomDialog(
+                                    message: "Unable to Get Data.",
+                                    title: "Info",
+                                  );
+                                },
+                              );
+                            }
+                          });
                         });
                       } else {
                         showDialog(
@@ -300,15 +306,13 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () {
                       navigationService.pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const ScannedDataListWidget(),
+                          builder: (BuildContext context) => const ScannedDataListWidget(),
                         ),
                       );
                     },

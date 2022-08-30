@@ -38,8 +38,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   List<JobItem> jobItems = [];
   late Job job;
   int timeTaken = 0, totalTimeTaken = 0;
-  DateTime firstStartTime = DateTime(2099, 1, 1).toLocal(),
-      lastEndTime = DateTime(1900, 1, 1).toLocal();
+  DateTime firstStartTime = DateTime(2099, 1, 1).toLocal(), lastEndTime = DateTime(1900, 1, 1).toLocal();
   Map<String, List<JobItemWeighing>> jobWeighings = {};
   Map<String, List<HybridOverIssue>> overIssues = {};
   Map<String, List<HybridUnderIssue>> underIssues = {};
@@ -64,23 +63,13 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           if (response.containsKey("status") && response["status"]) {
             for (var item in response["payload"]) {
               JobItemWeighing jobItemWeighing = JobItemWeighing.fromJSON(item);
-              if (jobItemWeighing.startTime
-                      .toLocal()
-                      .difference(firstStartTime.toLocal())
-                      .inSeconds <
-                  0) {
+              if (jobItemWeighing.startTime.toLocal().difference(firstStartTime.toLocal()).inSeconds < 0) {
                 firstStartTime = jobItemWeighing.startTime.toLocal();
               }
-              if (jobItemWeighing.endTime
-                      .toLocal()
-                      .difference(lastEndTime.toLocal())
-                      .inSeconds >
-                  0) {
+              if (jobItemWeighing.endTime.toLocal().difference(lastEndTime.toLocal()).inSeconds > 0) {
                 lastEndTime = jobItemWeighing.endTime.toLocal();
               }
-              timeTaken += jobItemWeighing.endTime
-                  .difference(jobItemWeighing.startTime)
-                  .inSeconds;
+              timeTaken += jobItemWeighing.endTime.difference(jobItemWeighing.startTime).inSeconds;
               if (jobWeighings.containsKey(jobItemID)) {
                 jobWeighings[jobItemID]!.add(jobItemWeighing);
               } else {
@@ -101,12 +90,9 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           for (var item in response["payload"]) {
             OverIssue overIssue = OverIssue.fromJSON(item);
             if (overIssues.containsKey(overIssue.jobItem.id)) {
-              overIssues[overIssue.jobItem.id]!
-                  .add(HybridOverIssue(job: job, overIssue: overIssue));
+              overIssues[overIssue.jobItem.id]!.add(HybridOverIssue(job: job, overIssue: overIssue));
             } else {
-              overIssues[overIssue.jobItem.id] = [
-                HybridOverIssue(job: job, overIssue: overIssue)
-              ];
+              overIssues[overIssue.jobItem.id] = [HybridOverIssue(job: job, overIssue: overIssue)];
             }
           }
         }
@@ -122,12 +108,9 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
           for (var item in response["payload"]) {
             UnderIssue underIssue = UnderIssue.fromJSON(item);
             if (underIssues.containsKey(underIssue.jobItem.id)) {
-              underIssues[underIssue.jobItem.id]!
-                  .add(HybridUnderIssue(job: job, underIssue: underIssue));
+              underIssues[underIssue.jobItem.id]!.add(HybridUnderIssue(job: job, underIssue: underIssue));
             } else {
-              underIssues[underIssue.jobItem.id] = [
-                HybridUnderIssue(job: job, underIssue: underIssue)
-              ];
+              underIssues[underIssue.jobItem.id] = [HybridUnderIssue(job: job, underIssue: underIssue)];
             }
           }
         }
@@ -168,17 +151,16 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
   }
 
   List<Widget> jobItemsWidget() {
-    totalTimeTaken =
-        lastEndTime.toLocal().difference(firstStartTime.toLocal()).inSeconds;
+    totalTimeTaken = lastEndTime.toLocal().difference(firstStartTime.toLocal()).inSeconds;
     var hr = (timeTaken / 3600).floor();
-    var min = ((timeTaken - hr * 60) / 60).floor();
+    var min = ((timeTaken - hr * 3600) / 60).floor();
     var sec = timeTaken - hr * 3600 - min * 60;
     var totalhr = 0;
     var totalmin = 0;
     var totalsec = 0;
     if (jobWeighings.isNotEmpty) {
       totalhr = (totalTimeTaken / 3600).floor();
-      totalmin = ((totalTimeTaken - totalhr * 60) / 60).floor();
+      totalmin = ((totalTimeTaken - totalhr * 3600) / 60).floor();
       totalsec = totalTimeTaken - totalhr * 3600 - totalmin * 60;
     }
     List<Widget> widgets = [
@@ -618,8 +600,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                   "No Weighings Found.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color:
-                        themeChanged.value ? foregroundColor : backgroundColor,
+                    color: themeChanged.value ? foregroundColor : backgroundColor,
                   ),
                 ),
         ),
@@ -652,8 +633,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                   "No Over Issues Found.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color:
-                        themeChanged.value ? foregroundColor : backgroundColor,
+                    color: themeChanged.value ? foregroundColor : backgroundColor,
                   ),
                 ),
         ),
@@ -686,8 +666,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                   "No Under Issues Found.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color:
-                        themeChanged.value ? foregroundColor : backgroundColor,
+                    color: themeChanged.value ? foregroundColor : backgroundColor,
                   ),
                 ),
         ),
@@ -706,9 +685,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                     "No Job Details Found",
                     style: TextStyle(
                       fontSize: 20.0,
-                      color: themeChanged.value
-                          ? backgroundColor
-                          : foregroundColor,
+                      color: themeChanged.value ? backgroundColor : foregroundColor,
                     ),
                   )
                 : Column(
@@ -722,9 +699,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                     "Get Job Details:",
                     style: TextStyle(
                       fontSize: 20.0,
-                      color: themeChanged.value
-                          ? backgroundColor
-                          : foregroundColor,
+                      color: themeChanged.value ? backgroundColor : foregroundColor,
                     ),
                   ),
                   Wrap(
@@ -744,8 +719,7 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                       ),
                       TextButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(menuItemColor),
+                          backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                           elevation: MaterialStateProperty.all<double>(5.0),
                         ),
                         onPressed: () async {
@@ -793,15 +767,11 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                                 },
                               ],
                             };
-                            await appStore.jobApp
-                                .list(conditions)
-                                .then((value) async {
-                              if (value.containsKey("status") &&
-                                  value["status"]) {
+                            await appStore.jobApp.list(conditions).then((value) async {
+                              if (value.containsKey("status") && value["status"]) {
                                 if (value["payload"].isNotEmpty) {
                                   job = Job.fromJSON(value["payload"][0]);
-                                  for (var item in value["payload"][0]
-                                      ["job_items"]) {
+                                  for (var item in value["payload"][0]["job_items"]) {
                                     JobItem jobItem = JobItem.fromJSON(item);
                                     if (jobItem.material.isWeighed) {
                                       jobItems.add(jobItem);

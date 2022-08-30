@@ -42,8 +42,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   void init() async {
-    await Future.forEach([await parseStringToMap()], (element) => null)
-        .then((value) {
+    await Future.forEach([await parseStringToMap()], (element) => null).then((value) {
       setState(() {
         isLoading = false;
       });
@@ -64,17 +63,12 @@ class _LoginWidgetState extends State<LoginWidget> {
       }
     }
     baseURL = environment["baseURL"] ?? "http://10.19.1.211/backend/";
-    WEBSOCKET_SERVER_HOST =
-        environment["WEBSOCKET_SERVER_HOST"] ?? '10.19.0.210';
+    WEBSOCKET_SERVER_HOST = environment["WEBSOCKET_SERVER_HOST"] ?? '10.19.0.210';
     PRINTER_HOST = environment["PRINTER_HOST"] ?? '10.19.0.210';
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\""));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\""));
     handleLogin(buildContext, scannerData["username"], scannerData["password"]);
   }
 
@@ -100,10 +94,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           return const LoadingWidget();
         },
       );
-      Map<String, String> loginDetails = {
-        "username": username,
-        "password": password
-      };
+      Map<String, String> loginDetails = {"username": username, "password": password};
       await appStore.authApp.login(loginDetails).then((response) async {
         Navigator.of(ctx, rootNavigator: true).pop('dialog');
         if (!response.containsKey("error")) {
@@ -121,8 +112,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             await storage!.setInt("access_validity", payload["ATDuration"]);
             await storage!.setBool("logged_in", true);
             isLoggedIn = true;
-            accessTokenExpiryTime = DateTime.now().add(
-                Duration(seconds: int.parse(payload["ATDuration"].toString())));
+            accessTokenExpiryTime = DateTime.now().add(Duration(seconds: int.parse(payload["ATDuration"].toString())));
 
             scannerListener.removeListener(listenToScanner);
             navigationService.pushReplacement(

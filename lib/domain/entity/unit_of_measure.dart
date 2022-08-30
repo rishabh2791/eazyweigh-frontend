@@ -43,12 +43,12 @@ class UnitOfMeasure {
   factory UnitOfMeasure.fromJSON(Map<String, dynamic> jsonObject) {
     UnitOfMeasure uom = UnitOfMeasure(
       code: jsonObject["code"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       description: jsonObject["description"],
       fact: Factory.fromJSON(jsonObject["factory"]),
       id: jsonObject["id"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
     );
     return uom;

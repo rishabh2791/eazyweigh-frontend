@@ -54,14 +54,14 @@ class User {
   factory User.fromJSON(Map<String, dynamic> jsonObject) {
     User user = User(
       active: jsonObject["active"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdByUsername: jsonObject["created_by_username"],
       email: jsonObject["email"],
       firstName: jsonObject["first_name"],
       lastName: jsonObject["last_name"] ?? jsonObject["first_name"],
       password: jsonObject["password"],
       profilePic: jsonObject["profile_pic"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedByUsername: jsonObject["updated_by_username"],
       userRole: UserRole.fromJSON(jsonObject["user_role"]),
       username: jsonObject["username"],

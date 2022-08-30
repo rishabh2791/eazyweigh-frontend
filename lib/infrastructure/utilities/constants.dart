@@ -46,6 +46,16 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
+  "Device": [
+    "Create",
+    "Details",
+    "List",
+    "Update",
+  ],
+  "Device Data": [
+    "Create",
+    "List",
+  ],
   "Factory": [
     "Create",
     "Details",
@@ -74,6 +84,12 @@ const Map<String, List<String>> menuItems = {
     "List",
     "Update",
   ],
+  "Process": [
+    "Create",
+    "Details",
+    "List",
+    "Update",
+  ],
   "Scanned Data": [
     "List",
   ],
@@ -83,6 +99,12 @@ const Map<String, List<String>> menuItems = {
     "List",
   ],
   "Shift Schedule": [
+    "Create",
+    "Details",
+    "List",
+    "Update",
+  ],
+  "Step Type": [
     "Create",
     "Details",
     "List",
@@ -128,5 +150,11 @@ const Map<String, List<String>> menuItems = {
     "Role Access",
     "Factory Access",
     "Terminal Access",
+  ],
+  "Vessel": [
+    "Create",
+    "Details",
+    "List",
+    "Update",
   ],
 };

@@ -41,6 +41,7 @@ class _JobListWidgetState extends State<JobListWidget> {
   bool isLoadingData = true;
   bool isQueried = false;
   List<Job> jobs = [];
+  List<Job> operatorJobs = [];
   List<Factory> factories = [];
   ScrollController? scrollController;
   Map<String, List<JobItem>> jobMapping = {};
@@ -140,9 +141,11 @@ class _JobListWidgetState extends State<JobListWidget> {
                           for (var job in value["payload"]) {
                             Job thisJob = Job.fromJSON(job);
                             if (!thisJob.complete) {
+                              operatorJobs.add(thisJob);
                               jobsByID[job["id"]] = thisJob;
                             }
                           }
+                          end = min(2, operatorJobs.length - 1);
                         } else {
                           showDialog(
                             context: context,
@@ -352,6 +355,32 @@ class _JobListWidgetState extends State<JobListWidget> {
               child: Column(
                 children: [
                   const Text(
+                    "Job Code",
+                    style: TextStyle(
+                      fontSize: 9.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    job.jobCode,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 10.0,
+            ),
+            SizedBox(
+              width: sizeInfo.screenSize.width - 1200,
+              child: Column(
+                children: [
+                  const Text(
                     "Material",
                     style: TextStyle(
                       fontSize: 9.0,
@@ -450,11 +479,11 @@ class _JobListWidgetState extends State<JobListWidget> {
 
   List<Widget> getJobs(ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
-    jobsByID.forEach((key, value) {
+    for (var i = start; i <= end; i++) {
       Widget widget = Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: getRowWidget(value, sizeInfo),
+        children: getRowWidget(operatorJobs[i], sizeInfo),
       );
       widgets.add(
         SizedBox(
@@ -465,7 +494,7 @@ class _JobListWidgetState extends State<JobListWidget> {
           ),
         ),
       );
-    });
+    }
     return widgets;
   }
 

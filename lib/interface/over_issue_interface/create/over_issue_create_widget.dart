@@ -185,87 +185,74 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                           },
                         );
                       } else {
-                        if (response["payload"][0]["complete"]) {
-                          Navigator.of(context).pop();
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const CustomDialog(
-                                message: "Job Complete.",
-                                title: "Errors",
-                              );
-                            },
-                          );
-                        } else {
-                          String jobID = response["payload"][0]["id"];
-                          await appStore.jobItemApp.get(jobID, {}).then(
-                            (value) async {
-                              if (value["status"]) {
-                                for (var item in value["payload"]) {
-                                  JobItem jobItem = JobItem.fromJSON(item);
-                                  jobItems.add(jobItem);
-                                  overIssueQty[jobItem.id] = 0;
-                                }
-                                await appStore.overIssueApp
-                                    .list(jobItems[0].jobID)
-                                    .then((value) {
-                                  if (value.containsKey("status")) {
-                                    if (value["status"]) {
-                                      for (var item in value["payload"]) {
-                                        overIssueQty[item["job_item_id"]] =
-                                            double.parse(
-                                                    item["actual"].toString()) -
-                                                double.parse(item["required"]
-                                                    .toString());
-                                      }
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        isJobItemsLoaded = true;
-                                      });
-                                    } else {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            message: value["message"],
-                                            title: "Errors",
-                                          );
-                                        },
-                                      );
+                        String jobID = response["payload"][0]["id"];
+                        await appStore.jobItemApp.get(jobID, {}).then(
+                          (value) async {
+                            if (value["status"]) {
+                              for (var item in value["payload"]) {
+                                JobItem jobItem = JobItem.fromJSON(item);
+                                jobItems.add(jobItem);
+                                overIssueQty[jobItem.id] = 0;
+                              }
+                              await appStore.overIssueApp
+                                  .list(jobItems[0].jobID)
+                                  .then((value) {
+                                if (value.containsKey("status")) {
+                                  if (value["status"]) {
+                                    for (var item in value["payload"]) {
+                                      overIssueQty[item["job_item_id"]] =
+                                          double.parse(
+                                                  item["actual"].toString()) -
+                                              double.parse(
+                                                  item["required"].toString());
                                     }
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      isJobItemsLoaded = true;
+                                    });
                                   } else {
                                     Navigator.of(context).pop();
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return const CustomDialog(
-                                          message: "Unable to connect.",
+                                        return CustomDialog(
+                                          message: value["message"],
                                           title: "Errors",
                                         );
                                       },
                                     );
                                   }
-                                });
-                              } else {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: value["message"],
-                                      title: "Errors",
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                          ).then((value) {
-                            setState(() {
-                              isJobItemsLoaded = true;
-                            });
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const CustomDialog(
+                                        message: "Unable to connect.",
+                                        title: "Errors",
+                                      );
+                                    },
+                                  );
+                                }
+                              });
+                            } else {
+                              Navigator.of(context).pop();
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialog(
+                                    message: value["message"],
+                                    title: "Errors",
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ).then((value) {
+                          setState(() {
+                            isJobItemsLoaded = true;
                           });
-                        }
+                        });
                       }
                     } else {
                       showDialog(

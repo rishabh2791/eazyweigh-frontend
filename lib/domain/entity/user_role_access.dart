@@ -35,10 +35,10 @@ class UserRoleAccess {
   factory UserRoleAccess.fromJSON(Map<String, dynamic> jsonObject) {
     UserRoleAccess userRoleAccess = UserRoleAccess(
       accessLevel: jsonObject["access_level"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       tableName: jsonObject["table_name"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       userRole: UserRole.fromJSON(jsonObject["user_role_role"]),
     );

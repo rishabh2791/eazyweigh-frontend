@@ -47,13 +47,13 @@ class JobItemWeighing {
   factory JobItemWeighing.fromJSON(Map<String, dynamic> jsonObject) {
     JobItemWeighing jobItemWeighing = JobItemWeighing(
       batch: jsonObject["batch"].toString(),
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       endTime: DateTime.parse(jsonObject["end_time"]).toLocal(),
       id: jsonObject["id"],
       jobItem: JobItem.fromJSON(jsonObject["job_item"]),
       startTime: DateTime.parse(jsonObject["start_time"]).toLocal(),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       weight: double.parse(jsonObject["weight"].toString()),
       verified: jsonObject["verified"],

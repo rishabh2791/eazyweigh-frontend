@@ -148,14 +148,16 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
     String uomCode,
   ) {
     String scales = "";
-    double precision = min(upperBound - req, req - lowerBound);
     for (var terminal in terminals) {
       double scaleFactor = getScaleFactor(terminal.uom.code, uomCode);
-      if (terminal.leastCount < precision && req > 0.1 * terminal.capacity * scaleFactor) {
+      var lc1000 = 1000 * terminal.leastCount * scaleFactor;
+      var weight1000 = 1000 * double.parse(req.toStringAsFixed(3));
+      var remainder = weight1000 % lc1000;
+      if (remainder == 0 && terminal.capacity * scaleFactor > req) {
         scales += terminal.description + "\n";
       }
     }
-    return scales.split("\n")[0];
+    return scales;
   }
 
   dynamic listenToScanner(String data) {
@@ -225,24 +227,49 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   List<Widget> getRowWidget(JobItem jobItem, OverIssue overIssue, ScreenSizeInformation sizeInfo) {
     List<Widget> widgets = [];
 
-    widgets.add(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: sizeInfo.screenSize.width - 1200,
-            child: Column(
+    if (!overIssue.weighed) {
+      widgets.add(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: sizeInfo.screenSize.width - 1200,
+              child: Column(
+                children: [
+                  const Text(
+                    "Material",
+                    style: TextStyle(
+                      fontSize: 9.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    jobItem.material.code + " - " + jobItem.material.description,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 10.0,
+            ),
+            Column(
               children: [
                 const Text(
-                  "Material",
+                  "Required",
                   style: TextStyle(
                     fontSize: 9.0,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  jobItem.material.code + " - " + jobItem.material.description,
+                  (overIssue.actual - overIssue.req).toString(),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -251,60 +278,37 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                 ),
               ],
             ),
-          ),
-          const Divider(
-            color: Colors.transparent,
-            height: 10.0,
-          ),
-          Column(
-            children: [
-              const Text(
-                "Required",
-                style: TextStyle(
-                  fontSize: 9.0,
-                  color: Colors.white,
+            const Divider(
+              color: Colors.transparent,
+              height: 10.0,
+            ),
+            Column(
+              children: [
+                const Text(
+                  "Suggested Scale",
+                  style: TextStyle(
+                    fontSize: 9.0,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              Text(
-                (overIssue.actual - overIssue.req).toString(),
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                Text(
+                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Divider(
-            color: Colors.transparent,
-            height: 10.0,
-          ),
-          Column(
-            children: [
-              const Text(
-                "Suggested Scale",
-                style: TextStyle(
-                  fontSize: 9.0,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          const Divider(
-            color: Colors.transparent,
-            height: 10.0,
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+              height: 10.0,
+            ),
+          ],
+        ),
+      );
+    }
 
     String jobItemData = '{"action": "selection","data": {"type": "over_issue_item", "data": "' + overIssue.id + '"}}';
     widgets.add(

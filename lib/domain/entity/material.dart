@@ -47,14 +47,14 @@ class Mat {
   factory Mat.fromJSON(Map<String, dynamic> jsonObject) {
     Mat material = Mat(
       code: jsonObject["code"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       description: jsonObject["description"],
       factoryID: jsonObject["factory_id"],
       id: jsonObject["id"],
       type: jsonObject["type"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       isWeighed: jsonObject["is_weighed"],
     );

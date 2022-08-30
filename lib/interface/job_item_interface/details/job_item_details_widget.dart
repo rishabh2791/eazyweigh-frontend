@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/terminals.dart';
@@ -55,6 +56,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   String complete = '{"action":"complete"}';
   Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
+  bool isPosting = false;
 
   @override
   void initState() {
@@ -207,6 +209,14 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     });
   }
 
+  bool checkAllComplete() {
+    bool isComplete = true;
+    for (var item in widget.allJobItems) {
+      isComplete = isComplete & item.complete;
+    }
+    return isComplete;
+  }
+
   dynamic listenToScanner(String data) async {
     Map<String, dynamic> scannerData =
         jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
@@ -238,7 +248,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": currentWeight - taredWeight,
+          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(3)),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "start_time": startTime.toLocal().toIso8601String() + "Z",
@@ -255,6 +265,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
+<<<<<<< HEAD
         if ((currentWeight - taredWeight) != 0 && actualWeight + (currentWeight - taredWeight) <= widget.jobItem.upperBound) {
           await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
             if (value["status"]) {
@@ -263,43 +274,79 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
               if (actualWeight + (currentWeight - taredWeight) >= widget.jobItem.lowerBound) {
                 printingData["complete"] = true;
               }
+=======
+        if ((currentWeight - taredWeight) > 0 &&
+            double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) <=
+                double.parse(widget.jobItem.upperBound.toStringAsFixed(4))) {
+          if (!isPosting) {
+            setState(() {
+              isPosting = true;
+            });
+            await appStore.jobWeighingApp.create(jobItemWeighing).then((value) async {
+              if (value["status"]) {
+                String id = value["payload"]["id"];
+                printingData["job_item_weighing_id"] = id;
+                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
+                    double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
+                  printingData["complete"] = true;
+                }
 
-              printingService.printJobItemLabel(printingData);
+                printingService.printJobItemLabel(printingData);
+>>>>>>> 492579ba8483a73d11a7959329bd3fa0518058f0
 
-              if (actualWeight + (currentWeight - taredWeight) > widget.jobItem.lowerBound) {
+                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
+                    double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
+                  setState(() {
+                    widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
+                  });
+                }
+
                 setState(() {
-                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
+                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += (currentWeight - taredWeight);
+                  currentWeight = 0;
+                });
+
+                if (checkAllComplete()) {
+                  Map<String, dynamic> update = {
+                    "complete": true,
+                  };
+
+                  await appStore.jobApp.update(widget.jobItem.jobID, update).then((updateResponse) {
+                    navigationService.pushReplacement(
+                      CupertinoPageRoute(
+                        builder: (BuildContext context) => JobDetailsWidget(
+                          jobCode: widget.jobCode,
+                          jobItems: widget.allJobItems,
+                        ),
+                      ),
+                    );
+                  });
+                } else {
+                  navigationService.pushReplacement(
+                    CupertinoPageRoute(
+                      builder: (BuildContext context) => JobDetailsWidget(
+                        jobCode: widget.jobCode,
+                        jobItems: widget.allJobItems,
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CustomDialog(
+                      message: value["message"],
+                      title: "Errors",
+                    );
+                  },
+                );
+                Future.delayed(const Duration(seconds: 3)).then((value) {
+                  Navigator.of(context).pop();
                 });
               }
-
-              setState(() {
-                widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += (currentWeight - taredWeight);
-                currentWeight = 0;
-              });
-
-              navigationService.pushReplacement(
-                CupertinoPageRoute(
-                  builder: (BuildContext context) => JobDetailsWidget(
-                    jobCode: widget.jobCode,
-                    jobItems: widget.allJobItems,
-                  ),
-                ),
-              );
-            } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return CustomDialog(
-                    message: value["message"],
-                    title: "Errors",
-                  );
-                },
-              );
-              Future.delayed(const Duration(seconds: 3)).then((value) {
-                Navigator.of(context).pop();
-              });
-            }
-          });
+            });
+          }
         } else {
           showDialog(
             context: context,
@@ -317,7 +364,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         break;
       case "tare":
         setState(() {
-          taredWeight = currentWeight * scaleFactor;
+          taredWeight = currentWeight;
           currentWeight = 0;
         });
         break;
@@ -356,6 +403,12 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     }
   }
 
+  Future<void> playAudio() async {
+    AudioPlayer audioPlayer = AudioPlayer();
+    String audioAsset = "audio/siren.wav";
+    await audioPlayer.play(AssetSource(audioAsset));
+  }
+
   Future<dynamic> verifyMaterial(String scannerData) async {
     Map<String, dynamic> jsonData =
         jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
@@ -373,6 +426,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           isVerified = true;
         });
       } else {
+        playAudio();
         Map<String, dynamic> scannedData = {
           "job_id": widget.jobItem.jobID,
           "actual_code": matCode,
@@ -441,9 +495,9 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
       return checkCompletion();
     } else {
       JobItem jobItem = widget.jobItem;
-      double upperLimit = jobItem.upperBound;
-      requiredQty = jobItem.requiredWeight - jobItem.actualWeight;
-      double lowerLimit = jobItem.lowerBound;
+      double upperLimit = double.parse(jobItem.upperBound.toStringAsFixed(3));
+      requiredQty = double.parse((jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(3));
+      double lowerLimit = double.parse(jobItem.lowerBound.toStringAsFixed(3));
       return Column(
         children: [
           Container(

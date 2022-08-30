@@ -24,17 +24,12 @@ class ShiftScheduleCreateWidget extends StatefulWidget {
   const ShiftScheduleCreateWidget({Key? key}) : super(key: key);
 
   @override
-  State<ShiftScheduleCreateWidget> createState() =>
-      _ShiftScheduleCreateWidgetState();
+  State<ShiftScheduleCreateWidget> createState() => _ShiftScheduleCreateWidgetState();
 }
 
 class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
   bool isLoadingData = true;
-  late TextEditingController dateController,
-      shiftController,
-      userController,
-      factoryController,
-      fileController;
+  late TextEditingController dateController, shiftController, userController, factoryController, fileController;
   List<Factory> factories = [];
   List<User> users = [];
   List<Shift> shifts = [];
@@ -104,8 +99,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
         return loader(context);
       },
     );
-    await Future.forEach([await getUsers(), await getShifts()],
-        (element) async {
+    await Future.forEach([await getUsers(), await getShifts()], (element) async {
       setState(() {
         isLoadingData = false;
       });
@@ -261,8 +255,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -305,16 +298,11 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                           });
                           Map<String, dynamic> shiftSchedule = {
                             "shift_id": shiftID,
-                            "date": DateTime.parse(dateController.text)
-                                    .toString()
-                                    .substring(0, 10) +
-                                "T00:00:00.0Z",
+                            "date": DateTime.parse(dateController.text).toString().substring(0, 10) + "T00:00:00.0Z",
                             "user_username": username,
                           };
 
-                          await appStore.shiftScheduleApp
-                              .create(shiftSchedule)
-                              .then(
+                          await appStore.shiftScheduleApp.create(shiftSchedule).then(
                             (response) async {
                               if (response["status"]) {
                                 showDialog(
@@ -336,11 +324,8 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    String message = response["message"]
-                                            .toString()
-                                            .contains("Duplicate")
-                                        ? "Job Already Assigned."
-                                        : response["message"];
+                                    String message =
+                                        response["message"].toString().contains("Duplicate") ? "Job Already Assigned." : response["message"];
                                     return CustomDialog(
                                       message: message,
                                       title: "Info",
@@ -359,8 +344,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {
@@ -407,14 +391,12 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
                         String errors = "";
-                        if (fileController.text.isEmpty ||
-                            fileController.text != "") {
+                        if (fileController.text.isEmpty || fileController.text != "") {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -429,13 +411,10 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                           // ignore: prefer_typing_uninitialized_variables
                           var csvData;
                           if (foundation.kIsWeb) {
-                            final bytes =
-                                utf8.decode(file!.files.single.bytes!);
+                            final bytes = utf8.decode(file!.files.single.bytes!);
                             csvData = const CsvToListConverter().convert(bytes);
                           } else {
-                            final csvFile =
-                                File(file!.files.single.path.toString())
-                                    .openRead();
+                            final csvFile = File(file!.files.single.path.toString()).openRead();
                             csvData = await csvFile
                                 .transform(utf8.decoder)
                                 .transform(
@@ -454,23 +433,15 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                             (element) {
                               String username = element[1];
                               if (username.isEmpty) {
-                                errors += "Username " +
-                                    element[1] +
-                                    " not created.\n";
+                                errors += "Username " + element[1] + " not created.\n";
                               } else {
-                                String shiftId =
-                                    getShiftID(element[2].toString());
+                                String shiftId = getShiftID(element[2].toString());
                                 if (shiftId.isEmpty || shiftId == "") {
-                                  errors += "Shift: " +
-                                      element[0] +
-                                      " not created.\n";
+                                  errors += "Shift: " + element[0] + " not created.\n";
                                 } else {
                                   shiftSchedules.add(
                                     {
-                                      "date": DateTime.parse(element[0])
-                                              .toString()
-                                              .substring(0, 10) +
-                                          "T00:00:00.0Z",
+                                      "date": DateTime.parse(element[0]).toString().substring(0, 10) + "T00:00:00.0Z",
                                       "user_username": username,
                                       "shift_id": shiftId,
                                     },
@@ -479,16 +450,11 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                               }
                             },
                           );
-                          await appStore.shiftScheduleApp
-                              .createMultiple(shiftSchedules)
-                              .then(
+                          await appStore.shiftScheduleApp.createMultiple(shiftSchedules).then(
                             (response) async {
                               if (response["status"]) {
-                                int created =
-                                    response["payload"]["models"].length;
-                                int notCreated =
-                                    response["payload"]["errors"].length +
-                                        errors.length;
+                                int created = response["payload"]["models"].length;
+                                int notCreated = response["payload"]["errors"].length + errors.length;
                                 Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
