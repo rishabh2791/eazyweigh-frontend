@@ -147,7 +147,7 @@ class _VerifierUnderIssueDetailsWidgetState extends State<VerifierUnderIssueDeta
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "logout":
-          logout(context);
+          logout();
           break;
         default:
       }

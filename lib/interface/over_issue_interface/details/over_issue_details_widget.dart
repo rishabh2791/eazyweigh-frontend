@@ -187,7 +187,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
         navigate(scannerData["data"]);
         break;
       case "logout":
-        logout(context);
+        logout();
         break;
       default:
     }

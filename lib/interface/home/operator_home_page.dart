@@ -47,12 +47,8 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
   }
 
   void listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "weighing":
         navigationService.pushReplacement(
@@ -76,7 +72,7 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
         );
         break;
       case "logout":
-        logout(context);
+        logout();
         break;
       default:
     }
@@ -105,11 +101,7 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
                     child: Text(
-                      timeOfDay +
-                          " " +
-                          currentUser.firstName +
-                          " " +
-                          currentUser.lastName,
+                      timeOfDay + " " + currentUser.firstName + " " + currentUser.lastName,
                       style: const TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -136,8 +128,7 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                             onPressed: () {
                               navigationService.pushReplacement(
                                 CupertinoPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const UnderIssueListWidget(),
+                                  builder: (BuildContext context) => const UnderIssueListWidget(),
                                 ),
                               );
                             },
@@ -176,8 +167,7 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                             onPressed: () {
                               navigationService.pushReplacement(
                                 CupertinoPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const JobListWidget(),
+                                  builder: (BuildContext context) => const JobListWidget(),
                                 ),
                               );
                             },
@@ -216,8 +206,7 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                             onPressed: () {
                               navigationService.pushReplacement(
                                 CupertinoPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const OverIssueListWidget(),
+                                  builder: (BuildContext context) => const OverIssueListWidget(),
                                 ),
                               );
                             },

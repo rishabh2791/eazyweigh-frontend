@@ -187,7 +187,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
         navigate(scannerData["data"]);
         break;
       case "logout":
-        logout(context);
+        logout();
         break;
       default:
     }

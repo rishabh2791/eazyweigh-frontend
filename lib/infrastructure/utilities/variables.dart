@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:async';
+
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/user_role_access.dart';
 import 'package:eazyweigh/interface/address_interface/address_widget.dart';
@@ -52,6 +54,10 @@ String companyID = "";
 String factoryID = "";
 late DateTime accessTokenExpiryTime;
 ValueNotifier themeChanged = ValueNotifier(true);
+late Timer rootTimer;
+int defaultTimeout = 180;
+
+RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 
 Map<String, dynamic> menuWidgetMapping = {
   "Home": HomePage(username: currentUser.username),

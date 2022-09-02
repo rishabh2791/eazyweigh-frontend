@@ -260,7 +260,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         {
           "GREATEREQUAL": {
             "Field": "date",
-            "Value": thisMonthStart.toUtc().toString().substring(0, 10) + "T00:00:00.0Z",
+            "Value": thisMonthStart.toString().substring(0, 10) + "T00:00:00.0Z",
           },
         },
         {
@@ -518,7 +518,8 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                           );
                                         });
                               },
-                              child: cardWidget("Weight of Jobs", weekJobWeights.toStringAsFixed(2)),
+                              child: cardWidget(
+                                  "Weight of Jobs", weekJobWeights.toStringAsFixed(0).replaceAllMapped(reg, (Match match) => '${match[1]},')),
                             ),
                             cardWidget("Over Issued Items", weekOverIssuedItems.length.toString()),
                             cardWidget("Under Issued Items", weekUnderIssuedItem.length.toString()),
@@ -616,7 +617,8 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
                                             );
                                           });
                                 },
-                                child: cardWidget("Weight of Jobs", monthJobWeights.toStringAsFixed(2))),
+                                child: cardWidget(
+                                    "Weight of Jobs", monthJobWeights.toStringAsFixed(0).replaceAllMapped(reg, (Match match) => '${match[1]},'))),
                             cardWidget("Over Issued Items", monthOverIssuedItems.length.toString()),
                             cardWidget("Under Issued Items", monthUnderIssuedItem.length.toString()),
                             TextButton(

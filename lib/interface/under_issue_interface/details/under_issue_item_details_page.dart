@@ -176,7 +176,7 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
         });
         break;
       case "logout":
-        logout(context);
+        logout();
         break;
       default:
         verifyMaterial(data);

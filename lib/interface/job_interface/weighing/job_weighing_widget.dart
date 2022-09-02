@@ -238,7 +238,7 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                     endDateCondition = {
                       "LESSEQUAL": {
                         "Field": "date",
-                        "Value": startDate.toString().substring(0, 10) + "T00:00:00.0Z",
+                        "Value": endDate.toString().substring(0, 10) + "T00:00:00.0Z",
                       }
                     };
                     listOfConditions.add(endDateCondition);

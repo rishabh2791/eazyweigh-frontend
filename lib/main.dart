@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  rootTimer = Timer(Duration(seconds: defaultTimeout), () {});
   accessTokenExpiryTime = DateTime.now();
   scannerListener.barcodeListener();
   WidgetsFlutterBinding.ensureInitialized();

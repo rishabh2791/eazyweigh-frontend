@@ -176,7 +176,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
         });
         break;
       case "logout":
-        logout(context);
+        logout();
         break;
       default:
         verifyMaterial(data);

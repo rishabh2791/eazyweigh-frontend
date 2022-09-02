@@ -27,8 +27,7 @@ class VerifierJobDetailsWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<VerifierJobDetailsWidget> createState() =>
-      _VerifierJobDetailsWidgetState();
+  State<VerifierJobDetailsWidget> createState() => _VerifierJobDetailsWidgetState();
 }
 
 class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
@@ -53,8 +52,7 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
 
   void listenToPrintingService(String message) {
     Map<String, dynamic> scannerData = jsonDecode(message);
-    if (!(scannerData.containsKey("status") &&
-        scannerData["status"] == "done")) {
+    if (!(scannerData.containsKey("status") && scannerData["status"] == "done")) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -129,15 +127,13 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
   }
 
   void updateJobItems(String jobItemID, String jobItemWeighingID) async {
-    var jobItem = jobItems
-        .firstWhere((element) => jobItemID.replaceAll("_", "-") == element.id);
+    var jobItem = jobItems.firstWhere((element) => jobItemID.replaceAll("_", "-") == element.id);
     bool allWeighedItemsVerified = true;
     await appStore.jobWeighingApp.list(jobItemID).then((response) {
       if (response.containsKey("status") && response["status"]) {
         for (Map<String, dynamic> weighedItem in response["payload"]) {
           JobItemWeighing itemWeighed = JobItemWeighing.fromJSON(weighedItem);
-          allWeighedItemsVerified =
-              allWeighedItemsVerified & itemWeighed.verified;
+          allWeighedItemsVerified = allWeighedItemsVerified & itemWeighed.verified;
         }
       }
     });
@@ -154,26 +150,20 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData =
+        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "logout":
-          logout(context);
+          logout();
           break;
         default:
       }
     } else {
       if (scannerData.containsKey("job_item_weighing_id")) {
-        await appStore.jobWeighingApp.update(
-            scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"),
-            {"verified": true}).then((response) async {
-          updateJobItems(
-              scannerData["job_item_id"], scannerData["job_item_weighing_id"]);
+        await appStore.jobWeighingApp
+            .update(scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
+          updateJobItems(scannerData["job_item_id"], scannerData["job_item_weighing_id"]);
           if (checkAllItemsVerified()) {
             Map<String, dynamic> printingData = {
               "job_code": widget.jobCode,
@@ -216,12 +206,7 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          getVerifiedItems().toString() +
-              " item(s) of " +
-              jobItems.length.toString() +
-              " Items for Job Code: " +
-              widget.jobCode +
-              " Verified.",
+          getVerifiedItems().toString() + " item(s) of " + jobItems.length.toString() + " Items for Job Code: " + widget.jobCode + " Verified.",
           style: const TextStyle(
             color: formHintTextColor,
             fontSize: 30.0,

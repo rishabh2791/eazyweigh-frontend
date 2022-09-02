@@ -1,4 +1,5 @@
 import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/auth_interface/login_widget.dart';
@@ -118,7 +119,7 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                   isLoggedIn
                       ? TextButton(
                           onPressed: () async {
-                            logout(context);
+                            logout();
                           },
                           child: const Text(
                             "Logout",
@@ -139,7 +140,7 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
   }
 }
 
-Future<void> logout(BuildContext context) async {
+Future<void> logout() async {
   await appStore.authApp
       .logout()
       .then((value) async => await Future.forEach([
@@ -155,9 +156,11 @@ Future<void> logout(BuildContext context) async {
     companyID = "";
     factoryID = "";
   }).then((value) {
+    if (rootTimer.isActive) {
+      rootTimer.cancel();
+    }
     menuItemSelected = "Home";
-    Navigator.pushReplacement(
-      context,
+    navigationService.pushReplacement(
       CupertinoPageRoute(
         builder: (BuildContext context) => const LoginWidget(),
       ),

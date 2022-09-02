@@ -358,7 +358,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         });
         break;
       case "logout":
-        logout(context);
+        logout();
         break;
       default:
         verifyMaterial(data);
