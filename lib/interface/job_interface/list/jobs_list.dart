@@ -71,6 +71,60 @@ class _JobListState extends State<JobList> {
         break;
       case 5:
         if (ascending) {
+          widget.jobs.sort((a, b) {
+            double atotal = 0, btotal = 0;
+            for (var jobItem in a.jobItems) {
+              atotal += jobItem.requiredWeight;
+            }
+            for (var jobItem in b.jobItems) {
+              btotal += jobItem.requiredWeight;
+            }
+            return atotal.compareTo(btotal);
+          });
+        } else {
+          widget.jobs.sort((a, b) {
+            double atotal = 0, btotal = 0;
+            for (var jobItem in a.jobItems) {
+              if (jobItem.material.isWeighed) {
+                atotal += jobItem.requiredWeight;
+              }
+            }
+            for (var jobItem in b.jobItems) {
+              if (jobItem.material.isWeighed) {
+                btotal += jobItem.requiredWeight;
+              }
+            }
+            return btotal.compareTo(atotal);
+          });
+        }
+        break;
+      case 6:
+        if (ascending) {
+          widget.jobs.sort((a, b) {
+            double atotal = 0, btotal = 0;
+            for (var jobItem in a.jobItems) {
+              atotal += jobItem.actualWeight;
+            }
+            for (var jobItem in b.jobItems) {
+              btotal += jobItem.actualWeight;
+            }
+            return atotal.compareTo(btotal);
+          });
+        } else {
+          widget.jobs.sort((a, b) {
+            double atotal = 0, btotal = 0;
+            for (var jobItem in a.jobItems) {
+              atotal += jobItem.actualWeight;
+            }
+            for (var jobItem in b.jobItems) {
+              btotal += jobItem.actualWeight;
+            }
+            return btotal.compareTo(atotal);
+          });
+        }
+        break;
+      case 7:
+        if (ascending) {
           widget.jobs.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
         } else {
           widget.jobs.sort((a, b) => b.complete.toString().compareTo(a.complete.toString()));
@@ -202,6 +256,42 @@ class _JobListState extends State<JobList> {
                               ),
                               DataColumn(
                                 label: Text(
+                                  "Required (KG)",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Actual (KG)",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
                                   "Complete",
                                   style: TextStyle(
                                     fontSize: 20.0,
@@ -261,6 +351,13 @@ class _DataSource extends DataTableSource {
   DataRow getRow(int index) {
     assert(index >= 0);
     final job = _jobs[index];
+    double requiredWeight = 0, actualWeight = 0;
+    for (var jobItem in job.jobItems) {
+      if (jobItem.material.isWeighed) {
+        requiredWeight += jobItem.requiredWeight;
+      }
+      actualWeight += jobItem.actualWeight;
+    }
     return DataRow.byIndex(
       index: index,
       selected: job.selected,
@@ -269,7 +366,7 @@ class _DataSource extends DataTableSource {
           _selectedCount += value! ? 1 : -1;
           job.selected = value;
           notifyListeners();
-          navigationService.pushReplacement(
+          navigationService.push(
             CupertinoPageRoute(
               builder: (BuildContext context) => JobDetailsWidget(jobCode: job.jobCode, jobItems: job.jobItems),
             ),
@@ -320,6 +417,26 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             job.jobItems.length.toString(),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            requiredWeight.toStringAsFixed(0).replaceAllMapped(reg, (Match match) => '${match[1]},'),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            actualWeight.toStringAsFixed(0).replaceAllMapped(reg, (Match match) => '${match[1]},'),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
