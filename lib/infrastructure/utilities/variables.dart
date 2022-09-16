@@ -55,7 +55,7 @@ String factoryID = "";
 late DateTime accessTokenExpiryTime;
 ValueNotifier themeChanged = ValueNotifier(true);
 late Timer rootTimer;
-int defaultTimeout = 180;
+int idleTimeout = 180;
 
 RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 

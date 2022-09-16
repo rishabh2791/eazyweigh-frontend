@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  rootTimer = Timer(Duration(seconds: defaultTimeout), () {});
+  rootTimer = Timer(Duration(seconds: idleTimeout), () {});
   accessTokenExpiryTime = DateTime.now();
   scannerListener.barcodeListener();
   WidgetsFlutterBinding.ensureInitialized();

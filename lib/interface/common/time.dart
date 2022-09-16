@@ -7,7 +7,7 @@ void initializeTimer() {
   if (rootTimer.isActive) {
     rootTimer.cancel();
   }
-  rootTimer = Timer(Duration(seconds: defaultTimeout), () {
+  rootTimer = Timer(Duration(seconds: idleTimeout), () {
     if (isLoggedIn) {
       logout();
     }
