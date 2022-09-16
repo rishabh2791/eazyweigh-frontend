@@ -30,8 +30,8 @@ class JobApp implements JobAppInterface {
 
   @override
   Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
-    return jobRepository.update(id, update);
+      String jobCode, Map<String, dynamic> update) async {
+    return jobRepository.update(jobCode, update);
   }
 
   @override

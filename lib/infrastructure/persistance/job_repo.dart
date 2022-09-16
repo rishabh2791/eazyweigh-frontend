@@ -37,8 +37,8 @@ class JobRepo implements JobRepository {
 
   @override
   Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
-    String url = "job/" + id + "/";
+      String jobCode, Map<String, dynamic> update) async {
+    String url = "job/" + jobCode + "/";
     var response =
         await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
@@ -46,7 +46,7 @@ class JobRepo implements JobRepository {
 
   @override
   Future<Map<String, dynamic>> pullFromRemote(String factoryID) async {
-    String url = "/job/remote/" + factoryID + "/";
+    String url = "job/remote/" + factoryID + "/";
     var response = await networkAPIProvider.get(url, TokenType.accessToken);
     return response;
   }

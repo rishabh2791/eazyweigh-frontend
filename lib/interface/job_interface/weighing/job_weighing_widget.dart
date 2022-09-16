@@ -16,8 +16,9 @@ import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/job_interface/list/jobs_list.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
-import 'package:flutter/foundation.dart' as foundation;
-import 'package:eazyweigh/interface/common/helper/mobile.dart' if (dart.library.html) 'package:eazyweigh/interface/common/helper/web.dart' as helper;
+import 'package:eazyweigh/interface/common/helper/mobile.dart'
+    if (dart.library.html) 'package:eazyweigh/interface/common/helper/web.dart'
+    as helper;
 
 class JobWeighingWidget extends StatefulWidget {
   const JobWeighingWidget({Key? key}) : super(key: key);
@@ -37,7 +38,10 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
   Map<String, dynamic> jobMapping = {};
   List<Job> jobs = [];
   List<String> jobIDs = [];
-  late TextEditingController startDateController, endDateController, shiftController, factoryController;
+  late TextEditingController startDateController,
+      endDateController,
+      shiftController,
+      factoryController;
 
   @override
   void initState() {
@@ -200,7 +204,8 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
           children: [
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -229,7 +234,8 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                     startDateCondition = {
                       "GREATEREQUAL": {
                         "Field": "date",
-                        "Value": startDate.toString().substring(0, 10) + "T00:00:00.0Z",
+                        "Value": startDate.toString().substring(0, 10) +
+                            "T00:00:00.0Z",
                       }
                     };
                     listOfConditions.add(startDateCondition);
@@ -238,7 +244,8 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                     endDateCondition = {
                       "LESSEQUAL": {
                         "Field": "date",
-                        "Value": endDate.toString().substring(0, 10) + "T00:00:00.0Z",
+                        "Value": endDate.toString().substring(0, 10) +
+                            "T00:00:00.0Z",
                       }
                     };
                     listOfConditions.add(endDateCondition);
@@ -247,7 +254,9 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                     shiftCondition = {
                       "EQUALS": {
                         "Field": "shift_id",
-                        "Value": shifts.firstWhere((element) => element.id == shift).id,
+                        "Value": shifts
+                            .firstWhere((element) => element.id == shift)
+                            .id,
                       }
                     };
                     listOfConditions.add(shiftCondition);
@@ -264,14 +273,18 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                     };
                     listOfConditions.add(shiftCondition);
                   }
-                  conditions = listOfConditions.isEmpty ? {} : {"AND": listOfConditions};
+                  conditions =
+                      listOfConditions.isEmpty ? {} : {"AND": listOfConditions};
                   setState(() {
                     isLoadingData = true;
                   });
-                  await appStore.shiftScheduleApp.list(conditions).then((response) async {
+                  await appStore.shiftScheduleApp
+                      .list(conditions)
+                      .then((response) async {
                     if (response.containsKey("status") && response["status"]) {
                       for (var item in response["payload"]) {
-                        ShiftSchedule shiftSchedule = ShiftSchedule.fromJSON(item);
+                        ShiftSchedule shiftSchedule =
+                            ShiftSchedule.fromJSON(item);
                         shiftSchedules.add(shiftSchedule);
                         shiftScheduleIDs.add(shiftSchedule.id);
                       }
@@ -281,12 +294,16 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                           "Value": shiftScheduleIDs,
                         }
                       };
-                      await appStore.jobItemAssignmentApp.list(shiftScheduleCondition).then((value) async {
+                      await appStore.jobItemAssignmentApp
+                          .list(shiftScheduleCondition)
+                          .then((value) async {
                         if (value.containsKey("status") && value["status"]) {
                           for (var item in value["payload"]) {
-                            JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
+                            JobItemAssignment jobItemAssignment =
+                                JobItemAssignment.fromJSON(item);
                             jobItemAssignments.add(jobItemAssignment);
-                            if (!jobIDs.contains(jobItemAssignment.jobItem.jobID)) {
+                            if (!jobIDs
+                                .contains(jobItemAssignment.jobItem.jobID)) {
                               jobIDs.add(jobItemAssignment.jobItem.jobID);
                             }
                           }
@@ -297,13 +314,17 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                             "Value": jobIDs,
                           }
                         };
-                        await appStore.jobApp.list(jobCondition).then((jobResponse) async {
-                          if (jobResponse.containsKey("status") && jobResponse["status"]) {
+                        await appStore.jobApp
+                            .list(jobCondition)
+                            .then((jobResponse) async {
+                          if (jobResponse.containsKey("status") &&
+                              jobResponse["status"]) {
                             for (var item in jobResponse["payload"]) {
                               Job job = Job.fromJSON(item);
                               jobs.add(job);
                             }
-                            jobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+                            jobs.sort(
+                                ((a, b) => a.jobCode.compareTo(b.jobCode)));
                           }
                         });
                       });
@@ -336,7 +357,8 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
             const VerticalDivider(),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () {
@@ -369,7 +391,8 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -384,12 +407,24 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                 sheet.getRangeByName("F1").setText("Completed");
                 for (var job in jobs) {
                   start++;
-                  sheet.getRangeByName("A" + start.toString()).setText(job.jobCode);
-                  sheet.getRangeByName("B" + start.toString()).setText(job.material.code);
-                  sheet.getRangeByName("C" + start.toString()).setText(job.material.description);
-                  sheet.getRangeByName("D" + start.toString()).setText(job.quantity.toString() + job.uom.code);
-                  sheet.getRangeByName("E" + start.toString()).setText(job.jobItems.length.toString());
-                  sheet.getRangeByName("F" + start.toString()).setText(job.complete.toString().toUpperCase());
+                  sheet
+                      .getRangeByName("A" + start.toString())
+                      .setText(job.jobCode);
+                  sheet
+                      .getRangeByName("B" + start.toString())
+                      .setText(job.material.code);
+                  sheet
+                      .getRangeByName("C" + start.toString())
+                      .setText(job.material.description);
+                  sheet
+                      .getRangeByName("D" + start.toString())
+                      .setText(job.quantity.toString() + job.uom.code);
+                  sheet
+                      .getRangeByName("E" + start.toString())
+                      .setText(job.jobItems.length.toString());
+                  sheet
+                      .getRangeByName("F" + start.toString())
+                      .setText(job.complete.toString().toUpperCase());
                 }
                 final List<int> bytes = workbook.saveAsStream();
                 await helper.saveAndLaunchFile(bytes, 'JobWeighing.xlsx');

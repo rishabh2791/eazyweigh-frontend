@@ -4,6 +4,7 @@ import 'package:eazyweigh/interface/common/user_action_button/user_action_button
 import 'package:eazyweigh/interface/job_interface/create/job_create_widget.dart';
 import 'package:eazyweigh/interface/job_interface/details/job_details.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
+import 'package:eazyweigh/interface/job_interface/update/job_update_widget.dart';
 import 'package:eazyweigh/interface/job_interface/weighing/job_weighing_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,8 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const JobCreateWidget(),
+                          builder: (BuildContext context) =>
+                              const JobCreateWidget(),
                         ),
                       );
                     },
@@ -45,7 +47,8 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const FullJobDetailsWidget(),
+                          builder: (BuildContext context) =>
+                              const FullJobDetailsWidget(),
                         ),
                       );
                     },
@@ -58,7 +61,22 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const JobListWidget(),
+                          builder: (BuildContext context) =>
+                              const JobUpdateWidget(),
+                        ),
+                      );
+                    },
+                    icon: Icons.update,
+                    label: "Update",
+                    table: "jobs",
+                    accessType: "update",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const JobListWidget(),
                         ),
                       );
                     },
@@ -71,7 +89,8 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const JobWeighingWidget(),
+                          builder: (BuildContext context) =>
+                              const JobWeighingWidget(),
                         ),
                       );
                     },

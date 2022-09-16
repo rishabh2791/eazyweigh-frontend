@@ -42,28 +42,6 @@ class _JobItemItemsListState extends State<JobWeighingList> {
         break;
       case 1:
         if (ascending) {
-          widget.jobWeighings.sort((a, b) => a.jobItem.material.code
-              .toString()
-              .compareTo(b.jobItem.material.code.toString()));
-        } else {
-          widget.jobWeighings.sort((a, b) => b.jobItem.material.code
-              .toString()
-              .compareTo(a.jobItem.material.code.toString()));
-        }
-        break;
-      case 2:
-        if (ascending) {
-          widget.jobWeighings.sort((a, b) => a.jobItem.material.description
-              .toString()
-              .compareTo(b.jobItem.material.description.toString()));
-        } else {
-          widget.jobWeighings.sort((a, b) => b.jobItem.material.description
-              .toString()
-              .compareTo(a.jobItem.material.description.toString()));
-        }
-        break;
-      case 3:
-        if (ascending) {
           widget.jobWeighings.sort(
               (a, b) => a.weight.toString().compareTo(b.weight.toString()));
         } else {
@@ -71,7 +49,16 @@ class _JobItemItemsListState extends State<JobWeighingList> {
               (a, b) => b.weight.toString().compareTo(a.weight.toString()));
         }
         break;
-      case 4:
+      case 2:
+        if (ascending) {
+          widget.jobWeighings
+              .sort((a, b) => a.batch.toString().compareTo(b.batch.toString()));
+        } else {
+          widget.jobWeighings
+              .sort((a, b) => b.batch.toString().compareTo(a.batch.toString()));
+        }
+        break;
+      case 3:
         if (ascending) {
           widget.jobWeighings.sort((a, b) => (a.createdBy.firstName +
                   " " +
@@ -86,6 +73,41 @@ class _JobItemItemsListState extends State<JobWeighingList> {
               .toString()
               .compareTo((a.createdBy.firstName + " " + a.createdBy.lastName)
                   .toString()));
+        }
+        break;
+      case 4:
+        if (ascending) {
+          widget.jobWeighings.sort((a, b) =>
+              a.createdAt.toString().compareTo(b.createdAt.toString()));
+        } else {
+          widget.jobWeighings.sort((a, b) =>
+              b.createdAt.toString().compareTo(a.createdAt.toString()));
+        }
+        break;
+      case 5:
+        if (ascending) {
+          widget.jobWeighings.sort((a, b) => a.endTime
+              .difference(a.startTime)
+              .inSeconds
+              .toString()
+              .compareTo(
+                  b.endTime.difference(b.startTime).inSeconds.toString()));
+        } else {
+          widget.jobWeighings.sort((a, b) => b.endTime
+              .difference(b.startTime)
+              .inSeconds
+              .toString()
+              .compareTo(
+                  a.endTime.difference(a.startTime).inSeconds.toString()));
+        }
+        break;
+      case 6:
+        if (ascending) {
+          widget.jobWeighings.sort(
+              (a, b) => a.verified.toString().compareTo(b.verified.toString()));
+        } else {
+          widget.jobWeighings.sort(
+              (a, b) => b.verified.toString().compareTo(a.verified.toString()));
         }
         break;
       default:
@@ -196,6 +218,26 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                               DataColumn(
                                 label: Text(
                                   "Weighed By",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: themeChanged.value
+                                        ? foregroundColor
+                                        : backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                onSort: (columnIndex, ascending) {
+                                  setState(() {
+                                    sort = !sort;
+                                    sortingColumnIndex = columnIndex;
+                                  });
+                                  onSortColum(columnIndex, ascending);
+                                },
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Weighed On",
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     color: themeChanged.value
@@ -341,6 +383,16 @@ class _DataSource extends DataTableSource {
             jobWeighing.createdBy.firstName +
                 " " +
                 jobWeighing.createdBy.lastName,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            jobWeighing.createdAt.toLocal().toString().substring(0, 10),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
