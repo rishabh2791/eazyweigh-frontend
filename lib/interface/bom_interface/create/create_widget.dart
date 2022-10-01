@@ -138,7 +138,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
   }
 
   Future<dynamic> getMaterials() async {
-    uoms = [];
+    materials = [];
     String factoryID = factoryController.text;
     Map<String, dynamic> conditions = {
       "EQUALS": {

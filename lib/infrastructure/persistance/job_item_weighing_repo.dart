@@ -4,9 +4,11 @@ import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
 
 class JobItemWeighingRepo implements JobItemWeighingRepository {
   @override
-  Future<Map<String, dynamic>> create(Map<String, dynamic> jobItemWeighing) async {
+  Future<Map<String, dynamic>> create(
+      Map<String, dynamic> jobItemWeighing) async {
     String url = "job_item_weight/create/";
-    var response = await networkAPIProvider.post(url, jobItemWeighing, TokenType.accessToken);
+    var response = await networkAPIProvider.post(
+        url, jobItemWeighing, TokenType.accessToken);
     return response;
   }
 
@@ -18,9 +20,19 @@ class JobItemWeighingRepo implements JobItemWeighingRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> update(String jobItemWeighingID, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(
+      String jobItemWeighingID, Map<String, dynamic> update) async {
     String url = "job_item_weight/" + jobItemWeighingID + "/";
-    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response =
+        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> details(Map<String, dynamic> conditions) async {
+    String url = "job_item_weight/batch/";
+    var response =
+        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 }

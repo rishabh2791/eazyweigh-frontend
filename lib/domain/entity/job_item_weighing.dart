@@ -61,3 +61,52 @@ class JobItemWeighing {
     return jobItemWeighing;
   }
 }
+
+class WeighingBatch {
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String id;
+  final double weight;
+  final String batch;
+  final String createdByUsername;
+  final String jobItemMaterialID;
+  final double requiredWeight;
+  final double actualWeight;
+  final String jobCode;
+  final String jobMaterialID;
+
+  WeighingBatch({
+    required this.actualWeight,
+    required this.jobCode,
+    required this.jobItemMaterialID,
+    required this.jobMaterialID,
+    required this.requiredWeight,
+    required this.batch,
+    required this.createdAt,
+    required this.createdByUsername,
+    required this.id,
+    required this.updatedAt,
+    required this.weight,
+  });
+
+  Map<String, dynamic> toJSON() {
+    return <String, dynamic>{};
+  }
+
+  factory WeighingBatch.fromJSON(Map<String, dynamic> jsonObject) {
+    WeighingBatch weighingBatch = WeighingBatch(
+      createdAt: DateTime.parse(jsonObject["created_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      id: jsonObject["id"],
+      weight: double.parse(jsonObject["weight"].toString()),
+      batch: jsonObject["batch"].toString(),
+      createdByUsername: jsonObject["created_by_username"],
+      actualWeight: double.parse(jsonObject["actual_weight"].toString()),
+      jobCode: jsonObject["job_code"].toString(),
+      jobItemMaterialID: jsonObject["job_item_material_id"],
+      jobMaterialID: jsonObject["job_material_id"],
+      requiredWeight: double.parse(jsonObject["required_weight"].toString()),
+    );
+    return weighingBatch;
+  }
+}

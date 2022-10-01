@@ -5,6 +5,7 @@ import 'package:eazyweigh/interface/job_interface/create/job_create_widget.dart'
 import 'package:eazyweigh/interface/job_interface/details/job_details.dart';
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/job_interface/update/job_update_widget.dart';
+import 'package:eazyweigh/interface/job_interface/weighing/batch_details.dart';
 import 'package:eazyweigh/interface/job_interface/weighing/job_weighing_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,20 @@ class _JobWidgetState extends State<JobWidget> {
                     },
                     icon: Icons.list,
                     label: "Weighing",
+                    table: "jobs",
+                    accessType: "view",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) =>
+                              const WeighingBatchDetailsWidget(),
+                        ),
+                      );
+                    },
+                    icon: Icons.list,
+                    label: "Batch",
                     table: "jobs",
                     accessType: "view",
                   ),
