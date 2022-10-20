@@ -13,6 +13,10 @@ import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/job_interface/weighing/weighing_batch_list.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
+import 'package:eazyweigh/interface/common/helper/mobile.dart'
+    if (dart.library.html) 'package:eazyweigh/interface/common/helper/web.dart'
+    as helper;
 
 class WeighingBatchDetailsWidget extends StatefulWidget {
   const WeighingBatchDetailsWidget({Key? key}) : super(key: key);
@@ -124,12 +128,97 @@ class _WeighingBatchDetailsWidgetState
                         fontSize: 30.0,
                       ),
                     )
-                  : const Text(
-                      "Details Found",
-                      style: TextStyle(
-                        color: menuItemColor,
-                        fontSize: 30.0,
-                      ),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Details Found",
+                          style: TextStyle(
+                            color: menuItemColor,
+                            fontSize: 30.0,
+                          ),
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(menuItemColor),
+                            elevation: MaterialStateProperty.all<double>(5.0),
+                          ),
+                          onPressed: () async {
+                            int start = 1;
+                            final excel.Workbook workbook = excel.Workbook();
+                            final excel.Worksheet sheet =
+                                workbook.worksheets[0];
+                            sheet.getRangeByName("A1").setText("Job Code");
+                            sheet.getRangeByName("B1").setText("Material Code");
+                            sheet
+                                .getRangeByName("C1")
+                                .setText("Material Description");
+                            sheet
+                                .getRangeByName("D1")
+                                .setText("Required Weight (KG)");
+                            sheet
+                                .getRangeByName("E1")
+                                .setText("Actual Weight (KG)");
+                            sheet.getRangeByName("F1").setText("Weighed By");
+                            sheet.getRangeByName("G1").setText("Weighed On");
+                            for (var weighingBatch in weighingBatches) {
+                              start++;
+                              sheet
+                                  .getRangeByName("A" + start.toString())
+                                  .setText(weighingBatch.jobCode);
+                              sheet
+                                  .getRangeByName("B" + start.toString())
+                                  .setText(materials
+                                      .firstWhere((element) =>
+                                          element.id ==
+                                          weighingBatch.jobMaterialID)
+                                      .code);
+                              sheet
+                                  .getRangeByName("C" + start.toString())
+                                  .setText(materials
+                                      .firstWhere((element) =>
+                                          element.id ==
+                                          weighingBatch.jobMaterialID)
+                                      .description);
+                              sheet
+                                  .getRangeByName("D" + start.toString())
+                                  .setText(weighingBatch.requiredWeight
+                                      .toStringAsFixed(3));
+                              sheet
+                                  .getRangeByName("E" + start.toString())
+                                  .setText(weighingBatch.actualWeight
+                                      .toStringAsFixed(3));
+                              sheet
+                                  .getRangeByName("F" + start.toString())
+                                  .setText(weighingBatch.createdByUsername
+                                      .toUpperCase());
+                              sheet
+                                  .getRangeByName("G" + start.toString())
+                                  .setText(weighingBatch.createdAt
+                                      .toLocal()
+                                      .toString()
+                                      .substring(0, 10));
+                            }
+                            final List<int> bytes = workbook.saveAsStream();
+                            await helper.saveAndLaunchFile(
+                                bytes, 'JobWeighing.xlsx');
+                            workbook.dispose();
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "Export",
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: backgroundColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
               weighingBatches.isEmpty
                   ? Container()
@@ -225,7 +314,6 @@ class _WeighingBatchDetailsWidgetState
                           "Value": batchController.text,
                         }
                       };
-
                       await appStore.jobWeighingApp
                           .details(conditions)
                           .then((response) {

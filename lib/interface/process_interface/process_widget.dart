@@ -3,7 +3,6 @@ import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
 import 'package:eazyweigh/interface/process_interface/create/process_create_widget.dart';
 import 'package:eazyweigh/interface/process_interface/details/process_details_widget.dart';
-import 'package:eazyweigh/interface/process_interface/list/process_list_widget.dart';
 import 'package:eazyweigh/interface/process_interface/update/process_update_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +31,8 @@ class _ProcessWidgetState extends State<ProcessWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const ProcessCreateWidget(),
+                          builder: (BuildContext context) =>
+                              const ProcessCreateWidget(),
                         ),
                       );
                     },
@@ -45,7 +45,8 @@ class _ProcessWidgetState extends State<ProcessWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const ProcessDetailsWidget(),
+                          builder: (BuildContext context) =>
+                              const ProcessDetailsWidget(),
                         ),
                       );
                     },
@@ -58,20 +59,8 @@ class _ProcessWidgetState extends State<ProcessWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) => const ProcessListWidget(),
-                        ),
-                      );
-                    },
-                    icon: Icons.list,
-                    label: "List",
-                    table: "processes",
-                    accessType: "view",
-                  ),
-                  UserActionButton(
-                    callback: () {
-                      Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) => const ProcessUpdateWidget(),
+                          builder: (BuildContext context) =>
+                              const ProcessUpdateWidget(),
                         ),
                       );
                     },

@@ -32,6 +32,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
         value: "",
         child: Text(
           widget.hint,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: formHintTextColor,
             fontWeight: FontWeight.bold,
@@ -44,6 +45,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
         value: item is User ? item.username : item.id,
         child: Text(
           item.toString(),
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: formHintTextColor,
             fontWeight: FontWeight.bold,
@@ -92,6 +94,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
             height: 54.0,
             child: DropdownButton<String>(
               value: _chosenValue,
+              isExpanded: true,
               elevation: 10,
               icon: Container(),
               dropdownColor: foregroundColor,

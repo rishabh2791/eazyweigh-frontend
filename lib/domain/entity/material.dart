@@ -28,6 +28,11 @@ class Mat {
     required this.isWeighed,
   });
 
+  @override
+  String toString() {
+    return code + " - " + description;
+  }
+
   Map<String, dynamic> toJSON() {
     return <String, dynamic>{
       "id": id,

@@ -46,6 +46,7 @@ dependencies:
   open_file: ^3.2.1
   syncfusion_flutter_xlsio: ^20.2.39-beta
   audioplayers: ^1.0.1
+  network_info_plus: ^2.3.2
 
 
   # The following adds the Cupertino Icons font to your application.
