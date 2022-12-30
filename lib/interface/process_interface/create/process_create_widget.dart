@@ -12,6 +12,7 @@ import 'package:eazyweigh/interface/common/drop_down_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:flutter/material.dart';
 
 class ProcessCreateWidget extends StatefulWidget {
@@ -87,7 +88,9 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
             (element) => materialController.text == element.material.id);
         valueController.text =
             (selectedBomItem.quantity * 100).toStringAsFixed(3);
-      } catch (e) {}
+      } catch (e) {
+        FLog.info(text: e.toString());
+      }
     });
     stepTypeController.addListener(() {
       try {
@@ -95,7 +98,9 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
             .firstWhere((element) => element.id == stepTypeController.text);
         stepTypeSelected = stepType.name;
         setState(() {});
-      } catch (e) {}
+      } catch (e) {
+        FLog.info(text: e.toString());
+      }
     });
     super.initState();
   }
