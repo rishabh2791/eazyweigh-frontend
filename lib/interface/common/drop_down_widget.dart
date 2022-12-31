@@ -27,6 +27,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
   late String _chosenValue;
 
   List<DropdownMenuItem<String>> getMenuItems(List<dynamic> items) {
+    _chosenValue = "";
     List<DropdownMenuItem<String>> menuItem = [
       DropdownMenuItem<String>(
         value: "",
@@ -69,9 +70,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
       builder: (context, size) {
         return Container(
           constraints: const BoxConstraints(maxWidth: 400, minWidth: 300),
-          width: size.screenType == ScreenType.mobile
-              ? size.screenSize.width * 0.8
-              : size.screenSize.width * .3,
+          width: size.screenType == ScreenType.mobile ? size.screenSize.width * 0.8 : size.screenSize.width * .3,
           child: Container(
             margin: const EdgeInsets.all(10.0),
             padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),

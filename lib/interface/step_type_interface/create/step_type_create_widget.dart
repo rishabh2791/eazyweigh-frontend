@@ -30,7 +30,12 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
   List<Factory> factories = [];
   late FilePickerResult? file;
 
-  late TextEditingController nameController, factoryController, fileController;
+  late TextEditingController nameController,
+      factoryController,
+      fileController,
+      titleController,
+      bodyController,
+      footerController;
 
   @override
   void initState() {
@@ -39,6 +44,9 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
     nameController = TextEditingController();
     factoryController = TextEditingController();
     fileController = TextEditingController();
+    titleController = TextEditingController();
+    bodyController = TextEditingController();
+    footerController = TextEditingController();
   }
 
   @override
@@ -116,6 +124,9 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
                   itemList: factories,
                 ),
                 textField(false, nameController, "Step Type Name", false),
+                textField(false, titleController, "Display Title", false),
+                textField(false, bodyController, "Display Body", false),
+                textField(false, footerController, "Display Footer", false),
                 const SizedBox(
                   height: 10.0,
                 ),
@@ -129,6 +140,9 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
                       onPressed: () async {
                         var name = nameController.text;
                         var factoryName = factoryController.text;
+                        var title = titleController.text;
+                        var body = bodyController.text;
+                        var footer = footerController.text;
 
                         String errors = "";
 
@@ -138,6 +152,18 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
 
                         if (factoryName.isEmpty) {
                           errors += "Factory Missing.\n";
+                        }
+
+                        if (title.isEmpty) {
+                          errors += "Display Title Missing.\n";
+                        }
+
+                        if (body.isEmpty) {
+                          errors += "Display Body Missing.\n";
+                        }
+
+                        if (footer.isEmpty) {
+                          errors += "Display Footer Missing.\n";
                         }
 
                         if (errors.isNotEmpty) {
@@ -162,6 +188,9 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
                           Map<String, dynamic> stepType = {
                             "description": name,
                             "factory_id": factoryName,
+                            "title": title,
+                            "body": body,
+                            "footer": footer,
                           };
 
                           await appStore.stepTypeApp.create(stepType).then((response) async {
@@ -290,6 +319,9 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
                           Map<String, dynamic> stepType = {
                             "description": element[0],
                             "factory_id": factoryController.text,
+                            "title": element[1],
+                            "body": element[2],
+                            "footer": element[3],
                           };
                           stepTypes.add(stepType);
                         });

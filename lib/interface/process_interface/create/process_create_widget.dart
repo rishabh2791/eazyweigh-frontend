@@ -3,7 +3,6 @@ import 'package:eazyweigh/domain/entity/bom_item.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/step_type.dart';
-import 'package:eazyweigh/domain/entity/vessel.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
@@ -29,8 +28,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
   List<Factory> factories = [];
   List<StepType> stepTypes = [];
   List<Mat> materials = [];
-  List<Vessel> vessels = [];
-  List<Mat> bomMaterials = [];
+  List<Mat> bomMaterials = [], pendingMaterials = [];
   List<BomItem> bomItems = [];
   String stepTypeSelected = "";
   Map<String, Map<String, String>> descriptions = {
@@ -65,7 +63,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
       valueController,
       durationController,
       materialController,
-      vesselController,
       mainMaterialController;
 
   @override
@@ -76,7 +73,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
     valueController = TextEditingController();
     durationController = TextEditingController();
     materialController = TextEditingController();
-    vesselController = TextEditingController();
     mainMaterialController = TextEditingController();
     getFactories();
     factoryController.addListener(() {
@@ -84,18 +80,15 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
     });
     materialController.addListener(() {
       try {
-        BomItem selectedBomItem = bomItems.firstWhere(
-            (element) => materialController.text == element.material.id);
-        valueController.text =
-            (selectedBomItem.quantity * 100).toStringAsFixed(3);
+        BomItem selectedBomItem = bomItems.firstWhere((element) => materialController.text == element.material.id);
+        valueController.text = (selectedBomItem.quantity * 100).toStringAsFixed(3);
       } catch (e) {
         FLog.info(text: e.toString());
       }
     });
     stepTypeController.addListener(() {
       try {
-        StepType stepType = stepTypes
-            .firstWhere((element) => element.id == stepTypeController.text);
+        StepType stepType = stepTypes.firstWhere((element) => element.id == stepTypeController.text);
         stepTypeSelected = stepType.name;
         setState(() {});
       } catch (e) {
@@ -150,11 +143,9 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
     await Future.wait([
       getStepTypes(),
       getMaterials(),
-      getVessels(),
     ]).then((value) {
       stepTypes.sort(((a, b) => a.name.compareTo(b.name)));
       materials.sort(((a, b) => a.code.compareTo(b.code)));
-      vessels.sort(((a, b) => a.name.compareTo(b.name)));
       setState(() {
         isLoadingData = false;
       });
@@ -175,37 +166,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
           StepType stepType = StepType.fromJSON(item);
           stepTypes.add(stepType);
         }
-      } else {
-        Navigator.of(context).pop();
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomDialog(
-              message: response["message"],
-              title: "Errors",
-            );
-          },
-        );
-      }
-    });
-  }
-
-  Future<void> getVessels() async {
-    vessels = [];
-    Map<String, dynamic> conditions = {
-      "EQUALS": {
-        "Field": "factory_id",
-        "Value": factoryController.text,
-      }
-    };
-    await appStore.vesselApp.list(conditions).then((response) async {
-      if (response["status"]) {
-        for (var item in response["payload"]) {
-          Vessel vessel = Vessel.fromJSON(item);
-          vessels.add(vessel);
-        }
-        vessels.sort(((a, b) => a.name.compareTo(b.name)));
-        setState(() {});
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -288,8 +248,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
             ),
           ],
         ),
-        stepTypeSelected == "Raw Material Addition" ||
-                stepTypeSelected.contains("Raw Material Addition")
+        stepTypeSelected == "Raw Material Addition" || stepTypeSelected.contains("Raw Material Addition")
             ? Row(
                 children: [
                   const SizedBox(
@@ -306,7 +265,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                     disabled: false,
                     hint: "Material",
                     controller: materialController,
-                    itemList: bomMaterials,
+                    itemList: pendingMaterials,
                   ),
                 ],
               )
@@ -361,8 +320,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
           children: [
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -371,20 +329,17 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                   Map<String, dynamic> currentStep = {
                     "step_type_id": stepTypeController.text,
                     "description": stepTypeSelected,
-                    "material_id": materialController.text,
-                    "value": valueController.text.isNotEmpty
-                        ? double.parse(valueController.text)
-                        : 0,
-                    "duration": durationController.text.isNotEmpty
-                        ? int.parse(durationController.text)
-                        : 0,
+                    "value": valueController.text.isNotEmpty ? double.parse(valueController.text) : 0,
+                    "duration": durationController.text.isNotEmpty ? int.parse(durationController.text) : 0,
                     "sequence": currentKey,
                   };
+                  if (stepTypeSelected.contains("Raw Material")) {
+                    currentStep["material_id"] = materialController.text;
+                  }
                   process[currentKey] = currentStep;
-                  materialController.text = "";
                   valueController.text = "";
                   durationController.text = "";
-                  stepTypeController.text = "";
+                  pendingMaterials.removeWhere((element) => element.id == currentStep["material_id"]);
                   setState(() {});
                 } else {
                   showDialog(
@@ -406,8 +361,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () {
@@ -427,31 +381,23 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
   List<Widget> currentStepWidget() {
     List<Widget> widget = [];
     process.forEach((key, value) {
-      StepType currentStepStype = stepTypes
-          .firstWhere((element) => element.id == value["step_type_id"]);
-      String material = value["material_id"].toString().isNotEmpty
-          ? materials
-                  .firstWhere((element) => element.id == value["material_id"])
-                  .code +
+      StepType currentStepStype = stepTypes.firstWhere((element) => element.id == value["step_type_id"]);
+      String material = value.containsKey("material_id")
+          ? materials.firstWhere((element) => element.id == value["material_id"]).code +
               " - " +
-              materials
-                  .firstWhere((element) => element.id == value["material_id"])
-                  .description
+              materials.firstWhere((element) => element.id == value["material_id"]).description
           : "";
       widget.add(
         Container(
           key: Key("key_$key"),
           margin: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
-          padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-          height: 80.0,
-          width: (MediaQuery.of(context).size.width - 200) / 2,
+          padding: const EdgeInsets.fromLTRB(0.0, 5.0, 20.0, 5.0),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             color: foregroundColor,
             borderRadius: BorderRadius.circular(5.0),
             boxShadow: const [
-              BoxShadow(
-                  color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
+              BoxShadow(color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
             ],
           ),
           child: Row(
@@ -459,6 +405,9 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
             children: [
               TextButton(
                 onPressed: () {
+                  Mat removedMaterial = materials.firstWhere((element) => element.id == process[key]["material_id"]);
+                  pendingMaterials.add(removedMaterial);
+                  pendingMaterials.sort((a, b) => a.code.compareTo(b.code));
                   process.remove(key);
                   int sequence = int.parse(value["sequence"].toString());
                   if (process.length > 1) {
@@ -472,20 +421,18 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width / 2 - 250,
-                child: Center(
-                  child: Text(
-                    currentStepStype.name +
-                        " - " +
-                        material +
-                        " - " +
-                        value["value"].toString() +
-                        " - " +
-                        value["duration"].toString(),
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: formHintTextColor,
-                      fontSize: 20.0,
-                    ),
+                child: Text(
+                  currentStepStype.name +
+                      " - " +
+                      material +
+                      " - " +
+                      value["value"].toString() +
+                      " - " +
+                      value["duration"].toString(),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: formHintTextColor,
+                    fontSize: 20.0,
                   ),
                 ),
               ),
@@ -515,18 +462,98 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
             color: Colors.transparent,
           ),
           SizedBox(
-            height: 90 * process.length.toDouble(),
+            height: 100 * process.length.toDouble() + 20,
             width: (MediaQuery.of(context).size.width - 180) / 2,
             child: ReorderableListView(
               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+              physics: const ClampingScrollPhysics(),
+              footer: process.isNotEmpty
+                  ? Row(
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                            elevation: MaterialStateProperty.all<double>(5.0),
+                          ),
+                          onPressed: () async {
+                            List<Map<String, dynamic>> processSteps = [];
+                            process.forEach((key, value) {
+                              value["created_by_username"] = currentUser.username;
+                              value["updated_by_username"] = currentUser.username;
+                              processSteps.add(value);
+                            });
+                            Map<String, dynamic> createdProcess = {
+                              "material_id":
+                                  materials.firstWhere((element) => element.code == mainMaterialController.text).id,
+                              "steps": processSteps,
+                              "created_by_username": currentUser.username,
+                              "updated_by_username": currentUser.username,
+                            };
+                            if (pendingMaterials.isNotEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const CustomDialog(
+                                    message: "Not all BOM Items have been included in process.",
+                                    title: "Error",
+                                  );
+                                },
+                              );
+                            } else {
+                              await appStore.processApp.create(createdProcess).then((response) {
+                                if (response.containsKey("status") && response["status"]) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const CustomDialog(
+                                        message: "Process Created",
+                                        title: "Info",
+                                      );
+                                    },
+                                  );
+                                  process.clear();
+                                  setState(() {});
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const CustomDialog(
+                                        message: "Unable to create process.",
+                                        title: "Error",
+                                      );
+                                    },
+                                  );
+                                }
+                              });
+                            }
+                          },
+                          child: checkButton(),
+                        ),
+                        const VerticalDivider(
+                          width: 20.0,
+                          color: Colors.transparent,
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                            elevation: MaterialStateProperty.all<double>(5.0),
+                          ),
+                          onPressed: () {
+                            process.clear();
+                            setState(() {});
+                          },
+                          child: clearButton(),
+                        ),
+                      ],
+                    )
+                  : Container(),
               children: currentStepWidget(),
               onReorder: (int start, int current) {
                 start += 1;
                 int startPos = 1;
                 int endPos = process.length;
                 if (start > current) {
-                  current =
-                      current >= process.length ? process.length : current + 1;
+                  current = current >= process.length ? process.length : current + 1;
                   startPos = current;
                   endPos = start - 1;
                   Map<String, dynamic> movedItem = process[start];
@@ -538,8 +565,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                   process[current] = movedItem;
                 }
                 if (start < current) {
-                  current =
-                      current >= process.length ? process.length : current;
+                  current = current >= process.length ? process.length : current;
                   startPos = start + 1;
                   endPos = current;
                   Map<String, dynamic> movedItem = process[start];
@@ -554,88 +580,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
               },
             ),
           ),
-          process.isEmpty
-              ? Container()
-              : const Divider(
-                  height: 10,
-                  color: Colors.transparent,
-                ),
-          process.isNotEmpty
-              ? Row(
-                  children: [
-                    TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
-                        elevation: MaterialStateProperty.all<double>(5.0),
-                      ),
-                      onPressed: () async {
-                        List<Map<String, dynamic>> processSteps = [];
-                        process.forEach((key, value) {
-                          value["created_by_username"] = currentUser.username;
-                          value["updated_by_username"] = currentUser.username;
-                          processSteps.add(value);
-                        });
-                        Map<String, dynamic> createdProcess = {
-                          "material_id": materials
-                              .firstWhere((element) =>
-                                  element.code == mainMaterialController.text)
-                              .id,
-                          "vessel_id": vesselController.text,
-                          "steps": processSteps,
-                          "created_by_username": currentUser.username,
-                          "updated_by_username": currentUser.username,
-                        };
-                        await appStore.processApp
-                            .create(createdProcess)
-                            .then((response) {
-                          if (response.containsKey("status") &&
-                              response["status"]) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const CustomDialog(
-                                  message: "Process Created",
-                                  title: "Info",
-                                );
-                              },
-                            );
-                            process.clear();
-                            setState(() {});
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const CustomDialog(
-                                  message: "Unable to create process.",
-                                  title: "Error",
-                                );
-                              },
-                            );
-                          }
-                        });
-                      },
-                      child: checkButton(),
-                    ),
-                    const VerticalDivider(
-                      width: 20.0,
-                      color: Colors.transparent,
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
-                        elevation: MaterialStateProperty.all<double>(5.0),
-                      ),
-                      onPressed: () {
-                        process.clear();
-                        setState(() {});
-                      },
-                      child: clearButton(),
-                    ),
-                  ],
-                )
-              : Container(),
         ],
       ),
     );
@@ -656,10 +600,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                     ),
                   ),
                   Text(
-                    factories
-                        .firstWhere(
-                            (element) => element.id == factoryController.text)
-                        .name,
+                    factories.firstWhere((element) => element.id == factoryController.text).name,
                     style: const TextStyle(
                       color: formHintTextColor,
                       fontSize: 30.0,
@@ -674,15 +615,9 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                     ),
                   ),
                   Text(
-                    materials
-                            .firstWhere((element) =>
-                                element.code == mainMaterialController.text)
-                            .code +
+                    materials.firstWhere((element) => element.code == mainMaterialController.text).code +
                         " - " +
-                        materials
-                            .firstWhere((element) =>
-                                element.code == mainMaterialController.text)
-                            .description,
+                        materials.firstWhere((element) => element.code == mainMaterialController.text).description,
                     style: const TextStyle(
                       color: formHintTextColor,
                       fontSize: 30.0,
@@ -694,17 +629,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                     style: TextStyle(
                       color: formHintTextColor,
                       fontSize: 30.0,
-                    ),
-                  ),
-                  Text(
-                    vessels
-                        .firstWhere(
-                            (element) => element.id == vesselController.text)
-                        .name,
-                    style: const TextStyle(
-                      color: formHintTextColor,
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -740,12 +664,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                     controller: factoryController,
                     itemList: factories,
                   ),
-                  DropDownWidget(
-                    disabled: false,
-                    hint: "Select Vessel",
-                    controller: vesselController,
-                    itemList: vessels,
-                  ),
                   textField(
                     false,
                     mainMaterialController,
@@ -754,20 +672,15 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
-                      String vessel = vesselController.text;
                       String mainMaterial = mainMaterialController.text;
                       String materialType = "";
-                      if (vessel.isNotEmpty && mainMaterial.isNotEmpty) {
+                      if (mainMaterial.isNotEmpty) {
                         try {
-                          materialType = materials
-                              .firstWhere(
-                                  (element) => element.code == mainMaterial)
-                              .type;
+                          materialType = materials.firstWhere((element) => element.code == mainMaterial).type;
                         } catch (e) {
                           showDialog(
                             context: context,
@@ -780,21 +693,15 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                           );
                         }
                         if (materialType == "Bulk") {
-                          String materialID = materials
-                              .firstWhere(
-                                  (element) => element.code == mainMaterial)
-                              .id;
+                          String materialID = materials.firstWhere((element) => element.code == mainMaterial).id;
                           Map<String, dynamic> conditions = {
                             "EQUALS": {
                               "Field": "material_id",
                               "Value": materialID,
                             }
                           };
-                          await appStore.bomApp
-                              .list(conditions)
-                              .then((response) {
-                            if (response.containsKey("status") &&
-                                response["status"]) {
+                          await appStore.bomApp.list(conditions).then((response) {
+                            if (response.containsKey("status") && response["status"]) {
                               int revision = 1;
                               List<dynamic> payloads = response["payload"];
                               Map<String, dynamic> latestBOM = payloads[0];
@@ -808,7 +715,9 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                                 BomItem bomItem = BomItem.fromJSON(item);
                                 bomItems.add(bomItem);
                                 bomMaterials.add(bomItem.material);
+                                pendingMaterials.add(bomItem.material);
                               }
+                              pendingMaterials.sort((a, b) => a.code.compareTo(b.code));
                               setState(() {
                                 isDataLoaded = true;
                               });
@@ -842,17 +751,6 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                             builder: (BuildContext context) {
                               return const CustomDialog(
                                 message: "Select Material to Proceed",
-                                title: "Error",
-                              );
-                            },
-                          );
-                        }
-                        if (vessel.isEmpty) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const CustomDialog(
-                                message: "Select Vessel to Proceed",
                                 title: "Error",
                               );
                             },

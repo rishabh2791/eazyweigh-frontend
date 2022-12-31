@@ -1,12 +1,11 @@
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/step.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
-import 'package:eazyweigh/domain/entity/vessel.dart';
 
 class Process {
   final String id;
   final Mat material;
-  final Vessel vessel;
+  final int version;
   List<Step> steps;
   final User createdBy;
   final DateTime createdAt;
@@ -17,7 +16,7 @@ class Process {
     required this.createdAt,
     required this.createdBy,
     required this.material,
-    required this.vessel,
+    required this.version,
     required this.id,
     this.steps = const [],
     required this.updatedAt,
@@ -38,7 +37,7 @@ class Process {
       "created_at": createdAt,
       "created_by": createdBy.toJSON(),
       "material": material.toJSON(),
-      "vessel": vessel.toJSON(),
+      "version": version,
       "id": id,
       "steps": processSteps,
       "updated_at": updatedAt,
@@ -62,7 +61,7 @@ class Process {
       steps: steps,
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      vessel: Vessel.fromJSON(jsonObject["vessel"]),
+      version: jsonObject["version"],
     );
     return process;
   }

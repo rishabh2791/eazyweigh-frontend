@@ -7,6 +7,7 @@ import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/home/superuser_home_page.dart';
+import 'package:eazyweigh/interface/process_interface/details/process_details_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -43,9 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getUserAuthorizations() async {
     userRolePermissions = [];
-    await appStore.userRoleAccessApp
-        .list(currentUser.userRole.id)
-        .then((response) {
+    await appStore.userRoleAccessApp.list(currentUser.userRole.id).then((response) {
       if (response.containsKey("error")) {
         showDialog(
           context: context,
@@ -107,12 +106,19 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
                 break;
+              case "Processor":
+                menuItemSelected = "Process";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const ProcessDetailsWidget(),
+                  ),
+                );
+                break;
               default:
                 menuItemSelected = "Home";
                 Navigator.of(context).pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) =>
-                        const GeneralHomeWidget(),
+                    builder: (BuildContext context) => const GeneralHomeWidget(),
                   ),
                 );
             }

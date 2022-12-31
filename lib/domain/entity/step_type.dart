@@ -9,6 +9,9 @@ class StepType {
   final DateTime createdAt;
   final User updatedBy;
   final DateTime updatedAt;
+  String title;
+  String body;
+  String footer;
 
   StepType({
     required this.createdAt,
@@ -18,6 +21,9 @@ class StepType {
     required this.name,
     required this.updatedAt,
     required this.updatedBy,
+    required this.body,
+    required this.footer,
+    required this.title,
   });
 
   @override
@@ -34,6 +40,9 @@ class StepType {
       "name": name,
       "updated_at": updatedAt,
       "updated_by": updatedBy.toJSON(),
+      "title": title,
+      "body": body,
+      "footer": footer,
     };
   }
 
@@ -46,6 +55,9 @@ class StepType {
       name: jsonObject["description"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      title: jsonObject["title"],
+      body: jsonObject["body"],
+      footer: jsonObject["footer"],
     );
     return stepType;
   }

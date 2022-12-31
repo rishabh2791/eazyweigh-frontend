@@ -20,13 +20,19 @@ class StepTypeUpdateWidget extends StatefulWidget {
 class _StepTypeUpdateWidgetState extends State<StepTypeUpdateWidget> {
   bool isLoadingData = true;
 
-  late TextEditingController nameController, factoryController, fileController;
+  late TextEditingController nameController, factoryController, titleController, bodyController, footerController;
 
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController();
+    titleController = TextEditingController();
+    bodyController = TextEditingController();
+    footerController = TextEditingController();
     nameController.text = widget.stepType.name;
+    titleController.text = widget.stepType.title;
+    bodyController.text = widget.stepType.body;
+    footerController.text = widget.stepType.footer;
     isLoadingData = false;
   }
 
@@ -60,6 +66,9 @@ class _StepTypeUpdateWidgetState extends State<StepTypeUpdateWidget> {
                   height: 10.0,
                 ),
                 textField(false, nameController, "Step Type Name", false),
+                textField(false, titleController, "Display Title", false),
+                textField(false, bodyController, "Display Body", false),
+                textField(false, footerController, "Display Footer", false),
                 const SizedBox(
                   height: 10.0,
                 ),
@@ -70,11 +79,26 @@ class _StepTypeUpdateWidgetState extends State<StepTypeUpdateWidget> {
                   ),
                   onPressed: () async {
                     var name = nameController.text;
+                    var title = titleController.text;
+                    var body = bodyController.text;
+                    var footer = footerController.text;
 
                     String errors = "";
 
                     if (name.isEmpty) {
                       errors += "Step Type Name Missing.\n";
+                    }
+
+                    if (title.isEmpty) {
+                      errors += "Display Title Missing.\n";
+                    }
+
+                    if (body.isEmpty) {
+                      errors += "Display Body Missing.\n";
+                    }
+
+                    if (footer.isEmpty) {
+                      errors += "Display Footer Missing.\n";
                     }
 
                     if (errors.isNotEmpty) {
@@ -98,6 +122,9 @@ class _StepTypeUpdateWidgetState extends State<StepTypeUpdateWidget> {
 
                       Map<String, dynamic> stepType = {
                         "description": name,
+                        "title": title,
+                        "body": body,
+                        "footer": footer,
                       };
 
                       await appStore.stepTypeApp.update(widget.stepType.id, stepType).then((response) async {
@@ -112,10 +139,16 @@ class _StepTypeUpdateWidgetState extends State<StepTypeUpdateWidget> {
                               );
                             },
                           );
+                          widget.stepType.title = title;
+                          widget.stepType.body = body;
+                          widget.stepType.footer = footer;
                           setState(() {
                             widget.stepType.name = nameController.text;
                           });
                           nameController.text = "";
+                          titleController.text = "";
+                          bodyController.text = "";
+                          footerController.text = "";
                         } else {
                           Navigator.of(context).pop();
                           showDialog(

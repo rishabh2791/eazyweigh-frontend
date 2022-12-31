@@ -31,8 +31,7 @@ class _ProcessWidgetState extends State<ProcessWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const ProcessCreateWidget(),
+                          builder: (BuildContext context) => const ProcessCreateWidget(),
                         ),
                       );
                     },
@@ -45,8 +44,7 @@ class _ProcessWidgetState extends State<ProcessWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const ProcessDetailsWidget(),
+                          builder: (BuildContext context) => const ProcessDetailsWidget(),
                         ),
                       );
                     },
@@ -59,8 +57,7 @@ class _ProcessWidgetState extends State<ProcessWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const ProcessUpdateWidget(),
+                          builder: (BuildContext context) => const ProcessUpdateWidget(),
                         ),
                       );
                     },
