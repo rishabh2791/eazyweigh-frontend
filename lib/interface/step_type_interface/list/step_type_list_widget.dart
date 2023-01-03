@@ -86,7 +86,8 @@ class _StepTypeListWidgetState extends State<StepTypeListWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -123,6 +124,7 @@ class _StepTypeListWidgetState extends State<StepTypeListWidget> {
                         StepType stepType = StepType.fromJSON(item);
                         stepTypes.add(stepType);
                       }
+                      stepTypes.sort((a, b) => a.name.compareTo(b.name));
                     }
                     Navigator.of(context).pop();
                     setState(() {

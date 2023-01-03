@@ -2,7 +2,6 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/process.dart';
-import 'package:eazyweigh/domain/entity/step.dart' as stepEntity;
 import 'package:eazyweigh/domain/entity/step_type.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
@@ -193,7 +192,8 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
@@ -201,7 +201,10 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
                       String materialType = "";
                       if (mainMaterial.isNotEmpty) {
                         try {
-                          materialType = materials.firstWhere((element) => element.code == mainMaterial).type;
+                          materialType = materials
+                              .firstWhere(
+                                  (element) => element.code == mainMaterial)
+                              .type;
                         } catch (e) {
                           showDialog(
                             context: context,
@@ -214,20 +217,27 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
                           );
                         }
                         if (materialType == "Bulk") {
-                          String materialID = materials.firstWhere((element) => element.code == mainMaterial).id;
+                          String materialID = materials
+                              .firstWhere(
+                                  (element) => element.code == mainMaterial)
+                              .id;
                           Map<String, dynamic> conditions = {
                             "EQUALS": {
                               "Field": "material_id",
                               "Value": materialID,
                             }
                           };
-                          await appStore.processApp.list(conditions).then((response) {
-                            if (response.containsKey("status") && response["status"]) {
+                          await appStore.processApp
+                              .list(conditions)
+                              .then((response) {
+                            if (response.containsKey("status") &&
+                                response["status"]) {
                               for (var item in response["payload"]) {
                                 Process thisVersion = Process.fromJSON(item);
                                 foundProcesses.add(thisVersion);
                               }
-                              foundProcesses.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+                              foundProcesses.sort(
+                                  (a, b) => a.createdAt.compareTo(b.createdAt));
                               setState(() {
                                 isDataLoaded = true;
                               });

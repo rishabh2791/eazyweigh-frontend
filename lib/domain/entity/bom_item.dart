@@ -6,7 +6,7 @@ class BomItem {
   final String id;
   final String bomID;
   final Mat material;
-  final double quantity;
+  double quantity;
   final double upperTolerance;
   final double lowerTolerance;
   final bool overIssue;

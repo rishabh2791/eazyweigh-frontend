@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/process.dart';
-import 'package:eazyweigh/domain/entity/step.dart' as stepEntity;
+import 'package:eazyweigh/domain/entity/step.dart' as step_entity;
 import 'package:eazyweigh/domain/entity/step_type.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
@@ -52,8 +52,12 @@ class _DetailsWidgetState extends State<DetailsWidget> {
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(
-        data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data
+        .replaceAll(";", ":")
+        .replaceAll("[", "{")
+        .replaceAll("]", "}")
+        .replaceAll("'", "\"")
+        .replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "complete":
         setState(() {
@@ -153,7 +157,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
     });
   }
 
-  Widget card(stepEntity.Step step, double size, double fontSize, double opacity) {
+  Widget card(
+      step_entity.Step step, double size, double fontSize, double opacity) {
     Widget thisWidget = Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
@@ -175,10 +180,22 @@ class _DetailsWidgetState extends State<DetailsWidget> {
               step.stepType.name.contains("Raw Material")
                   ? step.stepType.body +
                       " " +
-                      materials.firstWhere((element) => element.id == step.materialID).code +
+                      materials
+                          .firstWhere(
+                              (element) => element.id == step.materialID)
+                          .code +
                       " - " +
-                      materials.firstWhere((element) => element.id == step.materialID).description
-                  : step.stepType.body,
+                      materials
+                          .firstWhere(
+                              (element) => element.id == step.materialID)
+                          .description
+                  : step.stepType.name.contains("Agitat")
+                      ? step.stepType.body +
+                          " " +
+                          step.value.toString() +
+                          " " +
+                          "RPM"
+                      : step.stepType.body,
               style: TextStyle(
                 fontSize: fontSize,
                 color: formHintTextColor.withOpacity(opacity),
@@ -187,8 +204,17 @@ class _DetailsWidgetState extends State<DetailsWidget> {
             ),
             Text(
               step.stepType.name.contains("Raw Material")
-                  ? step.stepType.footer + ": " + (widget.batchSize * step.value / 100).toString() + " KG"
-                  : step.stepType.footer + ": " + (step.value).toString(),
+                  ? step.stepType.footer +
+                      ": " +
+                      (widget.batchSize * step.value / 100).toString() +
+                      " KG"
+                  : step.stepType.name.contains("Agitat")
+                      ? step.stepType.footer +
+                          " " +
+                          step.duration.toString() +
+                          " " +
+                          " min"
+                      : step.stepType.footer + ": " + (step.value).toString(),
               style: TextStyle(
                 fontSize: fontSize,
                 color: formHintTextColor.withOpacity(opacity),
@@ -202,7 +228,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
     return thisWidget;
   }
 
-  Widget currentStepWidget(double size, int index, double fontSize, double opacity) {
+  Widget currentStepWidget(
+      double size, int index, double fontSize, double opacity) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       decoration: BoxDecoration(
@@ -210,7 +237,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
         color: foregroundColor.withOpacity(opacity),
         borderRadius: BorderRadius.circular(5.0),
         boxShadow: const [
-          BoxShadow(color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
+          BoxShadow(
+              color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
         ],
       ),
       child: card(process.steps[index], size, fontSize, opacity),
@@ -254,7 +282,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
                               currentIndex--;
                             });
                           },
-                          child: currentStepWidget(200, currentIndex - 1, 16, 0.5),
+                          child:
+                              currentStepWidget(200, currentIndex - 1, 16, 0.5),
                         ),
                       ),
                 Column(
@@ -268,7 +297,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
                         ? TextButton(
                             onPressed: () {
                               setState(() {
-                                if (currentIndex + 1 <= process.steps.length - 1) {
+                                if (currentIndex + 1 <=
+                                    process.steps.length - 1) {
                                   currentIndex++;
                                 } else {
                                   //TODO completed batch processing.
@@ -297,7 +327,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
                               currentIndex++;
                             });
                           },
-                          child: currentStepWidget(200, currentIndex + 1, 16, 0.5),
+                          child:
+                              currentStepWidget(200, currentIndex + 1, 16, 0.5),
                         ),
                       ),
               ],
