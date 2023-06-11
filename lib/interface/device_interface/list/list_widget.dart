@@ -253,24 +253,24 @@ class _DeviceListState extends State<DeviceList> {
                               onSortColum(columnIndex, ascending);
                             },
                           ),
-                          // DataColumn(
-                          //   label: Text(
-                          //     " ",
-                          //     style: TextStyle(
-                          //       fontSize: 20.0,
-                          //       color: themeChanged.value ? foregroundColor : backgroundColor,
-                          //       fontWeight: FontWeight.bold,
-                          //       fontStyle: FontStyle.italic,
-                          //     ),
-                          //   ),
-                          //   onSort: (columnIndex, ascending) {
-                          //     setState(() {
-                          //       sort = !sort;
-                          //       sortingColumnIndex = columnIndex;
-                          //     });
-                          //     onSortColum(columnIndex, ascending);
-                          //   },
-                          // ),
+                          DataColumn(
+                            label: Text(
+                              " ",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
                         ],
                         source: _DataSource(context, widget.devices),
                         rowsPerPage: widget.devices.length > 25 ? 25 : widget.devices.length,
@@ -400,24 +400,24 @@ class _DataSource extends DataTableSource {
             ),
           ),
         ),
-        // DataCell(
-        //   UserActionButton(
-        //     callback: () {
-        //       Navigator.of(context).pushReplacement(
-        //         CupertinoPageRoute(
-        //           builder: (BuildContext context) => DeviceUpdateWidget(
-        //             device: device,
-        //           ),
-        //         ),
-        //       );
-        //     },
-        //     icon: Icons.update,
-        //     label: "Update",
-        //     table: "devices",
-        //     accessType: "update",
-        //     showQRCode: false,
-        //   ),
-        // )
+        DataCell(
+          UserActionButton(
+            callback: () {
+              Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => DeviceUpdateWidget(
+                    device: device,
+                  ),
+                ),
+              );
+            },
+            icon: Icons.update,
+            label: "Update",
+            table: "devices",
+            accessType: "update",
+            showQRCode: false,
+          ),
+        )
       ],
     );
   }
