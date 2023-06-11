@@ -44,8 +44,7 @@ class NetworkAPIProvider {
     return responseJSON;
   }
 
-  Future<Map<String, dynamic>> post(
-      String url, dynamic payload, TokenType tokenType) async {
+  Future<Map<String, dynamic>> post(String url, dynamic payload, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
     DateTime now = DateTime.now();
     var uri = Uri.parse(baseURL + url);
@@ -58,19 +57,13 @@ class NetworkAPIProvider {
             ([
               await refreshAccessToken(),
             ]), (value) async {
-          await http
-              .post(uri,
-                  headers: getHeader(tokenType), body: json.encode(payload))
-              .then((response) {
+          await http.post(uri, headers: getHeader(tokenType), body: json.encode(payload)).then((response) {
             isLoadingServerData = false;
             responseJSON = json.decode(response.body.toString());
           });
         });
       } else {
-        await http
-            .post(uri,
-                headers: getHeader(tokenType), body: json.encode(payload))
-            .then((response) {
+        await http.post(uri, headers: getHeader(tokenType), body: json.encode(payload)).then((response) {
           isLoadingServerData = false;
           responseJSON = json.decode(response.body.toString());
         });
@@ -81,8 +74,7 @@ class NetworkAPIProvider {
     return responseJSON;
   }
 
-  Future<Map<String, dynamic>> patch(
-      String url, Map<String, dynamic> payload, TokenType tokenType) async {
+  Future<Map<String, dynamic>> patch(String url, Map<String, dynamic> payload, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
     var uri = Uri.parse(baseURL + url);
     DateTime now = DateTime.now();
@@ -95,19 +87,13 @@ class NetworkAPIProvider {
             ([
               await refreshAccessToken(),
             ]), (value) async {
-          await http
-              .patch(uri,
-                  headers: getHeader(tokenType), body: json.encode(payload))
-              .then((response) {
+          await http.patch(uri, headers: getHeader(tokenType), body: json.encode(payload)).then((response) {
             isLoadingServerData = false;
             responseJSON = json.decode(response.body.toString());
           });
         });
       } else {
-        await http
-            .patch(uri,
-                headers: getHeader(tokenType), body: json.encode(payload))
-            .then((response) {
+        await http.patch(uri, headers: getHeader(tokenType), body: json.encode(payload)).then((response) {
           isLoadingServerData = false;
           responseJSON = json.decode(response.body.toString());
         });
@@ -118,8 +104,7 @@ class NetworkAPIProvider {
     return responseJSON;
   }
 
-  Future<Map<String, dynamic>> put(
-      String url, Map<String, dynamic> payload, TokenType tokenType) async {
+  Future<Map<String, dynamic>> put(String url, Map<String, dynamic> payload, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
     var uri = Uri.parse(baseURL + url);
     DateTime now = DateTime.now();
@@ -132,18 +117,13 @@ class NetworkAPIProvider {
             ([
               await refreshAccessToken(),
             ]), (value) async {
-          await http
-              .put(uri,
-                  headers: getHeader(tokenType), body: json.encode(payload))
-              .then((response) {
+          await http.put(uri, headers: getHeader(tokenType), body: json.encode(payload)).then((response) {
             isLoadingServerData = false;
             responseJSON = json.decode(response.body.toString());
           });
         });
       } else {
-        await http
-            .put(uri, headers: getHeader(tokenType), body: json.encode(payload))
-            .then((response) {
+        await http.put(uri, headers: getHeader(tokenType), body: json.encode(payload)).then((response) {
           isLoadingServerData = false;
           responseJSON = json.decode(response.body.toString());
         });
@@ -154,8 +134,7 @@ class NetworkAPIProvider {
     return responseJSON;
   }
 
-  Future<Map<String, dynamic>> delete(
-      String url, String id, TokenType tokenType) async {
+  Future<Map<String, dynamic>> delete(String url, String id, TokenType tokenType) async {
     var responseJSON = <String, dynamic>{};
     var uri = Uri.parse(baseURL + url);
     DateTime now = DateTime.now();
@@ -168,9 +147,7 @@ class NetworkAPIProvider {
             ([
               await refreshAccessToken(),
             ]), (value) async {
-          await http
-              .delete(uri, headers: getHeader(tokenType))
-              .then((response) {
+          await http.delete(uri, headers: getHeader(tokenType)).then((response) {
             isLoadingServerData = false;
             responseJSON = json.decode(response.body.toString());
           });

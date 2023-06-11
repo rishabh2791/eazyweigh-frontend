@@ -33,13 +33,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
   List<UnitOfMeasure> uoms = [];
   late FilePickerResult? file;
 
-  late TextEditingController typeController,
-      factoryController,
-      uomController,
-      codeController,
-      descriptionController,
-      barcodeController,
-      fileController;
+  late TextEditingController typeController, factoryController, uomController, codeController, descriptionController, barcodeController, fileController;
 
   @override
   void initState() {
@@ -209,8 +203,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -275,9 +268,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                             "factory_id": factoryName,
                           };
 
-                          await appStore.materialApp
-                              .create(material)
-                              .then((response) async {
+                          await appStore.materialApp.create(material).then((response) async {
                             if (response["status"]) {
                               Navigator.of(context).pop();
                               showDialog(
@@ -317,8 +308,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {
@@ -362,8 +352,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                 ),
                 TextButton(
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(menuItemColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                     elevation: MaterialStateProperty.all<double>(5.0),
                   ),
                   onPressed: () async {
@@ -404,9 +393,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                             },
                           );
                         } else {
-                          final csvFile =
-                              File(file!.files.single.path.toString())
-                                  .openRead();
+                          final csvFile = File(file!.files.single.path.toString()).openRead();
                           csvData = await csvFile
                               .transform(utf8.decoder)
                               .transform(
@@ -435,8 +422,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomDialog(
-                                    message:
-                                        errors + "\n Creating the Others Now.",
+                                    message: errors + "\n Creating the Others Now.",
                                     title: "Errors",
                                   );
                                 },
@@ -444,26 +430,16 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
                             }
                           },
                         );
-                        await appStore.materialApp
-                            .createMultiple(materials)
-                            .then(
+                        await appStore.materialApp.createMultiple(materials).then(
                           (value) {
                             if (value["status"]) {
                               int created = value["payload"]["models"].length;
-                              int notCreated =
-                                  value["payload"]["errors"].length;
+                              int notCreated = value["payload"]["errors"].length;
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomDialog(
-                                    message: "Created " +
-                                        created.toString() +
-                                        " materials." +
-                                        (notCreated != 0
-                                            ? "Unable to create " +
-                                                notCreated.toString() +
-                                                " materials."
-                                            : ""),
+                                    message: "Created " + created.toString() + " materials." + (notCreated != 0 ? "Unable to create " + notCreated.toString() + " materials." : ""),
                                     title: "Info",
                                   );
                                 },

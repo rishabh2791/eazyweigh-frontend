@@ -142,8 +142,7 @@ class _VerifierOverIssueDetailsWidgetState extends State<VerifierOverIssueDetail
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "logout":

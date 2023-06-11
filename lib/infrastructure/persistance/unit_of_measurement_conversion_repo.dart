@@ -2,23 +2,18 @@ import 'package:eazyweigh/domain/repository/unit_of_measurement_conversion_repos
 import 'package:eazyweigh/infrastructure/network/network.dart';
 import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
 
-class UnitOfMeasurementConversionRepo
-    implements UnitOfMeasurementConversionRepository {
+class UnitOfMeasurementConversionRepo implements UnitOfMeasurementConversionRepository {
   @override
-  Future<Map<String, dynamic>> create(
-      Map<String, dynamic> uomConversion) async {
+  Future<Map<String, dynamic>> create(Map<String, dynamic> uomConversion) async {
     String url = "uom_conversion/create/";
-    var response = await networkAPIProvider.post(
-        url, uomConversion, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, uomConversion, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> uomConversions) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> uomConversions) async {
     String url = "uom_conversion/create/multi/";
-    var response = await networkAPIProvider.post(
-        url, uomConversions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, uomConversions, TokenType.accessToken);
     return response;
   }
 
@@ -32,8 +27,7 @@ class UnitOfMeasurementConversionRepo
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "uom_conversion/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 }

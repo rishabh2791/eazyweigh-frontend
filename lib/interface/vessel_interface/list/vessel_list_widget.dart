@@ -146,7 +146,7 @@ class _VesselListWidgetState extends State<VesselListWidget> {
                     ),
                   )
                 : VesselList(vessels: vessels)
-            : Column()
+            : const Column()
       ],
     );
   }

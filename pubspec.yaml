@@ -31,15 +31,15 @@ dependencies:
     sdk: flutter
   connectivity: ^3.0.4
   http: ^0.13.3
-  equatable: ^1.2.3
+  equatable: ^2.0.5
   google_fonts: ^2.1.0
   flutter_bloc: ^7.0.0
-  font_awesome_flutter: ^8.8.1
+  font_awesome_flutter: ^10.4.0
   shared_preferences: ^2.0.6
   csv: ^5.0.1
   file_picker: ^4.0.1
   charts_flutter: ^0.11.0
-  qr_flutter: ^4.0.0
+  qr_flutter: ^4.1.0
   visibility_detector: ^0.2.2
   web_socket_channel: ^2.1.0
   f_logs: ^2.0.0

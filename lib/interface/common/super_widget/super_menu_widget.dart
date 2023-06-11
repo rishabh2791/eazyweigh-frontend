@@ -109,7 +109,7 @@ class _SuperMenuWidgetState extends State<SuperMenuWidget> {
                         )
                       : Container(),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 30.0),
+                    padding: const EdgeInsets.fromLTRB(0.0, 40.0, 10.0, 30.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,

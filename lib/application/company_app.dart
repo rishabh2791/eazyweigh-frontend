@@ -13,8 +13,7 @@ class CompanyApp implements CompanyAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> companies) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> companies) async {
     return companyRepository.createMultiple(companies);
   }
 
@@ -29,16 +28,14 @@ class CompanyApp implements CompanyAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     return companyRepository.update(id, update);
   }
 }
 
 abstract class CompanyAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> company);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> companies);
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> companies);
   Future<Map<String, dynamic>> get(String id);
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
   Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update);

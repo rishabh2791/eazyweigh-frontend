@@ -73,8 +73,7 @@ class _UserActionButtonState extends State<UserActionButton> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(
-        data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "navigation":
         break;
@@ -84,8 +83,7 @@ class _UserActionButtonState extends State<UserActionButton> {
 
   @override
   Widget build(BuildContext context) {
-    String qrImageData =
-        '{"action":"navigation", "table":"' + widget.table + '", "access_type":"' + widget.accessType + '" }';
+    String qrImageViewData = '{"action":"navigation", "table":"' + widget.table + '", "access_type":"' + widget.accessType + '" }';
     return widget.showQRCode
         ? SizedBox(
             width: 200.0,
@@ -100,8 +98,7 @@ class _UserActionButtonState extends State<UserActionButton> {
                       return const LoadingWidget();
                     },
                   );
-                  if (getAccessCode(widget.table, widget.accessType) == "1" ||
-                      (currentUser.userRole.role == "Superuser" && widget.table == "companies")) {
+                  if (getAccessCode(widget.table, widget.accessType) == "1" || (currentUser.userRole.role == "Superuser" && widget.table == "companies")) {
                     widget.callback();
                   } else {
                     Navigator.of(context).pop();
@@ -142,8 +139,8 @@ class _UserActionButtonState extends State<UserActionButton> {
                     ),
                     child: Column(
                       children: [
-                        QrImage(
-                          data: qrImageData,
+                        QrImageView(
+                          data: qrImageViewData,
                           size: 180,
                         ),
                         Row(
@@ -182,8 +179,7 @@ class _UserActionButtonState extends State<UserActionButton> {
                   return const LoadingWidget();
                 },
               );
-              if (getAccessCode(widget.table, widget.accessType) == "1" ||
-                  (currentUser.userRole.role == "Superuser" && widget.table == "companies")) {
+              if (getAccessCode(widget.table, widget.accessType) == "1" || (currentUser.userRole.role == "Superuser" && widget.table == "companies")) {
                 widget.callback();
               } else {
                 Navigator.of(context).pop();

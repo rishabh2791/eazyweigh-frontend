@@ -20,11 +20,7 @@ class ShiftCreateWidget extends StatefulWidget {
 
 class _ShiftCreateWidgetState extends State<ShiftCreateWidget> {
   bool isLoadingData = true;
-  late TextEditingController codeController,
-      descriptionController,
-      startTimeController,
-      endTimeController,
-      factoryController;
+  late TextEditingController codeController, descriptionController, startTimeController, endTimeController, factoryController;
   List<Factory> factories = [];
 
   @override
@@ -106,10 +102,8 @@ class _ShiftCreateWidgetState extends State<ShiftCreateWidget> {
                   itemList: factories,
                 ),
                 textField(false, codeController, "Shift Code", false),
-                textField(
-                    false, descriptionController, "Shift Description", false),
-                textField(
-                    false, startTimeController, "Start Time (HH:MM)", false),
+                textField(false, descriptionController, "Shift Description", false),
+                textField(false, startTimeController, "Start Time (HH:MM)", false),
                 textField(false, endTimeController, "End Time (HH:MM)", false),
                 const SizedBox(
                   height: 10.0,
@@ -118,8 +112,7 @@ class _ShiftCreateWidgetState extends State<ShiftCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -176,9 +169,7 @@ class _ShiftCreateWidgetState extends State<ShiftCreateWidget> {
                             "start_time": startTime,
                             "end_time": endTime,
                           };
-                          await appStore.shiftApp
-                              .create(shift)
-                              .then((response) async {
+                          await appStore.shiftApp.create(shift).then((response) async {
                             if (response["status"]) {
                               codeController.text = "";
                               descriptionController.text = "";
@@ -217,8 +208,7 @@ class _ShiftCreateWidgetState extends State<ShiftCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {

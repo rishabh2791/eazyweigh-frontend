@@ -6,17 +6,14 @@ class OverIssueRepo implements OverIssueRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> overIssue) async {
     String url = "over_issue/create/";
-    var response =
-        await networkAPIProvider.post(url, overIssue, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, overIssue, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> overIssues) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> overIssues) async {
     String url = "over_issue/create/multi/";
-    var response =
-        await networkAPIProvider.post(url, overIssues, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, overIssues, TokenType.accessToken);
     return response;
   }
 
@@ -28,11 +25,9 @@ class OverIssueRepo implements OverIssueRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String overIssueID, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String overIssueID, Map<String, dynamic> update) async {
     String url = "over_issue/" + overIssueID + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

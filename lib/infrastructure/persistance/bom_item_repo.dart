@@ -6,17 +6,14 @@ class BOMItemRepo implements BOMItemRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> bomItem) async {
     String url = "bom_item/create/";
-    var response =
-        await networkAPIProvider.post(url, bomItem, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, bomItem, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> bomItems) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> bomItems) async {
     String url = "bom_item/create/multi/";
-    var response =
-        await networkAPIProvider.post(url, bomItems, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, bomItems, TokenType.accessToken);
     return response;
   }
 
@@ -30,17 +27,14 @@ class BOMItemRepo implements BOMItemRepository {
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "bom_item/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     String url = "bom_item/" + id + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

@@ -106,16 +106,11 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            DropDownWidget(
-                disabled: false,
-                hint: "Factory",
-                controller: factoryController,
-                itemList: factories),
+            DropDownWidget(disabled: false, hint: "Factory", controller: factoryController, itemList: factories),
             textField(false, jobCodeController, "Job Code", false),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -194,17 +189,11 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                                 jobItems.add(jobItem);
                                 overIssueQty[jobItem.id] = 0;
                               }
-                              await appStore.overIssueApp
-                                  .list(jobItems[0].jobID)
-                                  .then((value) {
+                              await appStore.overIssueApp.list(jobItems[0].jobID).then((value) {
                                 if (value.containsKey("status")) {
                                   if (value["status"]) {
                                     for (var item in value["payload"]) {
-                                      overIssueQty[item["job_item_id"]] =
-                                          double.parse(
-                                                  item["actual"].toString()) -
-                                              double.parse(
-                                                  item["required"].toString());
+                                      overIssueQty[item["job_item_id"]] = double.parse(item["actual"].toString()) - double.parse(item["required"].toString());
                                     }
                                     Navigator.of(context).pop();
                                     setState(() {
@@ -275,8 +264,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -295,16 +283,12 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                       "job_item_id": key,
                       "unit_of_measurement_id": jobItem.uom.id,
                       "required": jobItem.requiredWeight,
-                      "actual": jobItem.actualWeight == 0
-                          ? jobItem.requiredWeight + value
-                          : jobItem.actualWeight + value,
+                      "actual": jobItem.actualWeight == 0 ? jobItem.requiredWeight + value : jobItem.actualWeight + value,
                     };
                     overIssued.add(overIssue);
                   }
                 });
-                await appStore.overIssueApp
-                    .createMultiple(overIssued)
-                    .then((response) {
+                await appStore.overIssueApp.createMultiple(overIssued).then((response) {
                   Navigator.of(context).pop();
                   if (response.containsKey("status")) {
                     if (response["status"]) {
@@ -314,11 +298,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                         context: context,
                         builder: (BuildContext context) {
                           return CustomDialog(
-                            message: "Created " +
-                                created.toString() +
-                                " over issues. Error in creating " +
-                                notCreated.toString() +
-                                " over issues.",
+                            message: "Created " + created.toString() + " over issues. Error in creating " + notCreated.toString() + " over issues.",
                             title: "Info",
                           );
                         },
@@ -357,9 +337,9 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
           color: Colors.transparent,
         ),
         isJobItemsLoaded
-            ? Column(
+            ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Select Items to Over Issue",
                     style: TextStyle(

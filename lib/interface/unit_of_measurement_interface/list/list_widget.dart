@@ -79,19 +79,11 @@ class _UOMListWidgetState extends State<UOMListWidget> {
               uoms.isEmpty
                   ? Text(
                       "No Unit of Measures Found",
-                      style: TextStyle(
-                          color: themeChanged.value
-                              ? foregroundColor
-                              : backgroundColor,
-                          fontSize: 20.0),
+                      style: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor, fontSize: 20.0),
                     )
                   : Text(
                       "Found Unit of Measures",
-                      style: TextStyle(
-                          color: themeChanged.value
-                              ? foregroundColor
-                              : backgroundColor,
-                          fontSize: 20.0),
+                      style: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor, fontSize: 20.0),
                     ),
               uoms.isEmpty ? Container() : UOMList(uoms: uoms),
             ],
@@ -108,8 +100,7 @@ class _UOMListWidgetState extends State<UOMListWidget> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(menuItemColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                   elevation: MaterialStateProperty.all<double>(5.0),
                 ),
                 onPressed: () async {
@@ -132,11 +123,8 @@ class _UOMListWidgetState extends State<UOMListWidget> {
                       }
                     };
 
-                    await appStore.unitOfMeasurementApp
-                        .list(conditions)
-                        .then((response) {
-                      if (response.containsKey("status") &&
-                          response["status"]) {
+                    await appStore.unitOfMeasurementApp.list(conditions).then((response) {
+                      if (response.containsKey("status") && response["status"]) {
                         for (var item in response["payload"]) {
                           UnitOfMeasure uom = UnitOfMeasure.fromJSON(item);
                           uoms.add(uom);

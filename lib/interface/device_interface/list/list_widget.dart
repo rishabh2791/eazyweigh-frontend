@@ -2,6 +2,9 @@ import 'package:eazyweigh/domain/entity/device.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
+import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
+import 'package:eazyweigh/interface/device_interface/update/device_update_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DeviceList extends StatefulWidget {
@@ -47,9 +50,9 @@ class _DeviceListState extends State<DeviceList> {
         break;
       case 2:
         if (ascending) {
-          widget.devices.sort((a, b) => a.name.toString().compareTo(b.name.toString()));
+          widget.devices.sort((a, b) => (a.vessel.toString() + " _ " + a.deviceType.description).compareTo((b.vessel.toString() + " _ " + b.deviceType.description)));
         } else {
-          widget.devices.sort((a, b) => b.name.toString().compareTo(a.name.toString()));
+          widget.devices.sort((a, b) => (b.vessel.toString() + " _ " + b.deviceType.description).compareTo((a.vessel.toString() + " _ " + a.deviceType.description)));
         }
         break;
       default:
@@ -71,10 +74,9 @@ class _DeviceListState extends State<DeviceList> {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor:
-                        themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
-                      caption: TextStyle(
+                      bodySmall: TextStyle(
                         color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
@@ -128,6 +130,114 @@ class _DeviceListState extends State<DeviceList> {
                           DataColumn(
                             label: Text(
                               "Device Description",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Communication Method",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Port",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Node Address",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Additional Node Address",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Baud Rate",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Message Length",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -222,7 +332,67 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            device.name,
+            (device.vessel.toString() + " - " + device.deviceType.description),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.communicationMethod,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.port,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.nodeAddress.toString(),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.additionalNodeAddress.toString(),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.baudRate.toString(),
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.messageLength.toString(),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -243,7 +413,7 @@ class _DataSource extends DataTableSource {
         //     },
         //     icon: Icons.update,
         //     label: "Update",
-        //     table: "Devices",
+        //     table: "devices",
         //     accessType: "update",
         //     showQRCode: false,
         //   ),

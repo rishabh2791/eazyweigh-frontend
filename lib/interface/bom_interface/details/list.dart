@@ -33,20 +33,16 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.bomItems
-              .sort((a, b) => a.material.code.compareTo(b.material.code));
+          widget.bomItems.sort((a, b) => a.material.code.compareTo(b.material.code));
         } else {
-          widget.bomItems
-              .sort((a, b) => b.material.code.compareTo(a.material.code));
+          widget.bomItems.sort((a, b) => b.material.code.compareTo(a.material.code));
         }
         break;
       case 1:
         if (ascending) {
-          widget.bomItems.sort((a, b) =>
-              a.material.description.compareTo(b.material.description));
+          widget.bomItems.sort((a, b) => a.material.description.compareTo(b.material.description));
         } else {
-          widget.bomItems.sort((a, b) =>
-              b.material.description.compareTo(a.material.description));
+          widget.bomItems.sort((a, b) => b.material.description.compareTo(a.material.description));
         }
         break;
       case 2:
@@ -65,38 +61,30 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
         break;
       case 4:
         if (ascending) {
-          widget.bomItems
-              .sort((a, b) => a.upperTolerance.compareTo(b.upperTolerance));
+          widget.bomItems.sort((a, b) => a.upperTolerance.compareTo(b.upperTolerance));
         } else {
-          widget.bomItems
-              .sort((a, b) => b.upperTolerance.compareTo(a.upperTolerance));
+          widget.bomItems.sort((a, b) => b.upperTolerance.compareTo(a.upperTolerance));
         }
         break;
       case 5:
         if (ascending) {
-          widget.bomItems
-              .sort((a, b) => a.lowerTolerance.compareTo(b.lowerTolerance));
+          widget.bomItems.sort((a, b) => a.lowerTolerance.compareTo(b.lowerTolerance));
         } else {
-          widget.bomItems
-              .sort((a, b) => b.lowerTolerance.compareTo(a.lowerTolerance));
+          widget.bomItems.sort((a, b) => b.lowerTolerance.compareTo(a.lowerTolerance));
         }
         break;
       case 6:
         if (ascending) {
-          widget.bomItems.sort((a, b) =>
-              a.overIssue.toString().compareTo(b.overIssue.toString()));
+          widget.bomItems.sort((a, b) => a.overIssue.toString().compareTo(b.overIssue.toString()));
         } else {
-          widget.bomItems.sort((a, b) =>
-              b.overIssue.toString().compareTo(a.overIssue.toString()));
+          widget.bomItems.sort((a, b) => b.overIssue.toString().compareTo(a.overIssue.toString()));
         }
         break;
       case 7:
         if (ascending) {
-          widget.bomItems.sort((a, b) =>
-              a.underIssue.toString().compareTo(b.underIssue.toString()));
+          widget.bomItems.sort((a, b) => a.underIssue.toString().compareTo(b.underIssue.toString()));
         } else {
-          widget.bomItems.sort((a, b) =>
-              b.underIssue.toString().compareTo(a.underIssue.toString()));
+          widget.bomItems.sort((a, b) => b.underIssue.toString().compareTo(a.underIssue.toString()));
         }
         break;
       default:
@@ -117,15 +105,9 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor:
-                        themeChanged.value ? foregroundColor : backgroundColor,
-                    textTheme: TextTheme(
-                        caption: TextStyle(
-                            color: themeChanged.value
-                                ? foregroundColor
-                                : backgroundColor)),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor : backgroundColor,
+                    textTheme: TextTheme(bodySmall: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -141,9 +123,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -161,9 +141,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Material Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -181,9 +159,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Quantity",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -201,9 +177,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "UOM",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -221,9 +195,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Upper Limit",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -241,9 +213,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Lower Limit",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -261,9 +231,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Over Issue",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -281,9 +249,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                               "Under Issue",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -298,9 +264,7 @@ class _BOMItemsListWidgetState extends State<BOMItemsListWidget> {
                           ),
                         ],
                         source: _DataSource(context, widget.bomItems),
-                        rowsPerPage: widget.bomItems.length > 25
-                            ? 25
-                            : widget.bomItems.length,
+                        rowsPerPage: widget.bomItems.length > 25 ? 25 : widget.bomItems.length,
                       )
                     ],
                   ),
@@ -379,8 +343,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            (bomItem.quantity * (1 + bomItem.upperTolerance / 100))
-                .toStringAsFixed(3),
+            (bomItem.quantity * (1 + bomItem.upperTolerance / 100)).toStringAsFixed(3),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -390,8 +353,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            (bomItem.quantity * (1 - bomItem.lowerTolerance / 100))
-                .toStringAsFixed(3),
+            (bomItem.quantity * (1 - bomItem.lowerTolerance / 100)).toStringAsFixed(3),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

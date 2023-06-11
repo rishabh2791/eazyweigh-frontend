@@ -6,16 +6,14 @@ class AuthRepo implements AuthRepository {
   @override
   Future<Map<String, dynamic>> login(Map<String, dynamic> loginDetails) async {
     String url = "auth/login/";
-    var response =
-        await networkAPIProvider.post(url, loginDetails, TokenType.none);
+    var response = await networkAPIProvider.post(url, loginDetails, TokenType.none);
     return response;
   }
 
   @override
   Future<Map<String, dynamic>> logout() async {
     String url = "auth/logout/";
-    var response =
-        await networkAPIProvider.post(url, {}, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, {}, TokenType.accessToken);
     return response;
   }
 
@@ -31,8 +29,7 @@ class AuthRepo implements AuthRepository {
     Map<String, dynamic> passwordDetails,
   ) async {
     String url = "auth/reset/password/";
-    var response = await networkAPIProvider.post(
-        url, passwordDetails, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, passwordDetails, TokenType.accessToken);
     return response;
   }
 }

@@ -7,6 +7,7 @@ import 'package:eazyweigh/infrastructure/persistance/common_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/company_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/device_data_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/device_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/device_type_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/factory_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/job_item_assignment_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/job_item_repo.dart';
@@ -46,6 +47,7 @@ class RepoStore {
   final commonRepo = CommonRepo();
   final deviceRepo = DeviceRepo();
   final deviceDataRepo = DeviceDataRepo();
+  final deviceTypeRepo = DeviceTypeRepo();
   final factoryRepo = FactoryRepo();
   final jobRepo = JobRepo();
   final jobItemRepo = JobItemRepo();

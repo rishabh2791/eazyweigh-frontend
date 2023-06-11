@@ -7,6 +7,7 @@ import 'package:eazyweigh/application/common_app.dart';
 import 'package:eazyweigh/application/company_app.dart';
 import 'package:eazyweigh/application/device_app.dart';
 import 'package:eazyweigh/application/device_data_app.dart';
+import 'package:eazyweigh/application/device_type_app.dart';
 import 'package:eazyweigh/application/factory_app.dart';
 import 'package:eazyweigh/application/job_app.dart';
 import 'package:eazyweigh/application/job_item_assignment_app.dart';
@@ -47,6 +48,7 @@ class AppStore {
   final commonApp = CommonApp(commonRepository: repoStore.commonRepo);
   final deviceApp = DeviceApp(deviceRepository: repoStore.deviceRepo);
   final deviceDataApp = DeviceDataApp(deviceDataRepository: repoStore.deviceDataRepo);
+  final deviceTypeApp = DeviceTypeApp(deviceTypeRepository: repoStore.deviceTypeRepo);
   final factoryApp = FactoryApp(factoryRepository: repoStore.factoryRepo);
   final jobApp = JobApp(jobRepository: repoStore.jobRepo);
   final jobItemApp = JobItemApp(jobItemRepository: repoStore.jobItemRepo);
@@ -63,8 +65,7 @@ class AppStore {
   final terminalApp = TerminalApp(terminalRepository: repoStore.terminalRepo);
   final underIssueApp = UnderIssueApp(underIssueRepository: repoStore.underIssueRepo);
   final unitOfMeasurementApp = UnitOfMeasurementApp(unitOfMeasurementRepository: repoStore.uomRepo);
-  final unitOfMeasurementConversionApp =
-      UnitOfMeasurementConversionApp(unitOfMeasurementConversionRepository: repoStore.uomConversionRepo);
+  final unitOfMeasurementConversionApp = UnitOfMeasurementConversionApp(unitOfMeasurementConversionRepository: repoStore.uomConversionRepo);
   final userApp = UserApp(userRepository: repoStore.userRepo);
   final userRoleApp = UserRoleApp(userRoleRepository: repoStore.userRoleRepo);
   final userCompanyAccessApp = UserCompanyAccessApp(userCompanyAccessRepository: repoStore.userCompanyAccessRepo);

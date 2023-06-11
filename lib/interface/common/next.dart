@@ -18,12 +18,10 @@ class NextWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        QrImage(
+        QrImageView(
           data: data,
-          foregroundColor: isDisabled ? Colors.white : Colors.black,
-          size: screenSizeInformation.screenType == ScreenType.mobile
-              ? screenSizeInformation.screenSize.height / 3 * 0.4
-              : screenSizeInformation.screenSize.width / 3 * 0.4,
+          eyeStyle: QrEyeStyle(color: isDisabled ? Colors.white : Colors.black),
+          size: screenSizeInformation.screenType == ScreenType.mobile ? screenSizeInformation.screenSize.height / 3 * 0.4 : screenSizeInformation.screenSize.width / 3 * 0.4,
         ),
         Text(
           "Next",

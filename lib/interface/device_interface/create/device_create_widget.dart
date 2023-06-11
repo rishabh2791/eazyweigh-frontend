@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:eazyweigh/application/app_store.dart';
+import 'package:eazyweigh/domain/entity/device_type.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/vessel.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
@@ -15,6 +16,7 @@ import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
+import 'package:eazyweigh/interface/device_interface/create/dropdowns.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
@@ -30,19 +32,56 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
   bool isLoadingData = true;
   List<Factory> factories = [];
   List<Vessel> factoryVessels = [];
+  List<DeviceType> factoryDeviceTypes = [];
   late FilePickerResult? file;
 
-  late TextEditingController nameController, factoryController, vesselController, fileController;
+  late TextEditingController nodeAddressController,
+      additionalNodeAddressController,
+      readStartController,
+      baudRateController,
+      byteSizeController,
+      stopBitsController,
+      timeoutController,
+      messageLengthController,
+      clearBufferController,
+      closePortController,
+      commMethodController,
+      factoryController,
+      vesselController,
+      deviceTypeController,
+      fileController,
+      portController,
+      isConstantController,
+      constantValueController,
+      factorController;
 
   @override
   void initState() {
     super.initState();
     getFactories();
-    nameController = TextEditingController();
-    factoryController = TextEditingController();
+    nodeAddressController = TextEditingController();
+    additionalNodeAddressController = TextEditingController();
+    readStartController = TextEditingController();
+    baudRateController = TextEditingController();
+    byteSizeController = TextEditingController();
+    stopBitsController = TextEditingController();
+    timeoutController = TextEditingController();
+    messageLengthController = TextEditingController();
+    clearBufferController = TextEditingController();
+    clearBufferController.text = "1";
+    closePortController = TextEditingController();
+    closePortController.text = "1";
+    commMethodController = TextEditingController();
     vesselController = TextEditingController();
+    deviceTypeController = TextEditingController();
     fileController = TextEditingController();
-    factoryController.addListener(getFactoryVessels);
+    portController = TextEditingController();
+    isConstantController = TextEditingController();
+    isConstantController.text = "0";
+    constantValueController = TextEditingController();
+    factorController = TextEditingController();
+    factoryController = TextEditingController();
+    factoryController.addListener(getBackendData);
   }
 
   @override
@@ -82,17 +121,25 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
     });
   }
 
+  Future<dynamic> getBackendData() async {
+    setState(() {
+      isLoadingData = true;
+    });
+    await Future.forEach([await getFactoryVessels(), await getFactoryDeviceTypes()], (element) {}).then((value) {
+      setState(() {
+        isLoadingData = false;
+      });
+    });
+  }
+
   Future<dynamic> getFactoryVessels() async {
-    factories = [];
+    factoryVessels = [];
     Map<String, dynamic> conditions = {
       "EQUALS": {
         "Field": "factory_id",
         "Value": factoryController.text,
       }
     };
-    setState(() {
-      isLoadingData = true;
-    });
     await appStore.vesselApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
@@ -100,9 +147,24 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
           factoryVessels.add(vessel);
         }
       }
-      setState(() {
-        isLoadingData = false;
-      });
+    });
+  }
+
+  Future<dynamic> getFactoryDeviceTypes() async {
+    factoryDeviceTypes = [];
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "factory_id",
+        "Value": factoryController.text,
+      }
+    };
+    await appStore.deviceTypeApp.list(conditions).then((response) async {
+      if (response["status"]) {
+        for (var item in response["payload"]) {
+          DeviceType deviceType = DeviceType.fromJSON(item);
+          factoryDeviceTypes.add(deviceType);
+        }
+      }
     });
   }
 
@@ -149,9 +211,145 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                   controller: vesselController,
                   itemList: factoryVessels,
                 ),
-                textField(false, nameController, "Device Name", false),
+                DropDownWidget(
+                  disabled: false,
+                  hint: "Select Device Type",
+                  controller: deviceTypeController,
+                  itemList: factoryDeviceTypes,
+                ),
+                DropDownWidget(
+                  disabled: false,
+                  hint: "Communication Method",
+                  controller: commMethodController,
+                  itemList: communicationMethods,
+                ),
                 const SizedBox(
                   height: 10.0,
+                ),
+                textField(false, portController, "Communication Port", false),
+                Row(
+                  children: [
+                    Container(
+                      height: 60.0,
+                      padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                      child: Transform.scale(
+                        scale: 2.0,
+                        child: Checkbox(
+                          value: isConstantController.text == "1" ? true : false,
+                          fillColor: MaterialStateProperty.all(menuItemColor),
+                          activeColor: menuItemColor,
+                          onChanged: (bool? value) {
+                            setState(
+                              () {
+                                isConstantController.text = isConstantController.text == "1" ? "0" : "1";
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    const Text(
+                      "Is Constant",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                textField(false, constantValueController, "Constant Value", false),
+                textField(false, factorController, "Scaling Factor", false),
+                textField(false, nodeAddressController, "Node Address", false),
+                textField(false, additionalNodeAddressController, "Additional Node Address", false),
+                textField(false, readStartController, "Read Start Register Address", false),
+                DropDownWidget(
+                  disabled: false,
+                  hint: "Baud Rate",
+                  controller: baudRateController,
+                  itemList: baudRateValues,
+                ),
+                DropDownWidget(
+                  disabled: false,
+                  hint: "Byte Size",
+                  controller: byteSizeController,
+                  itemList: byteSizeValues,
+                ),
+                DropDownWidget(
+                  disabled: false,
+                  hint: "Stop Bits",
+                  controller: stopBitsController,
+                  itemList: stopBitValues,
+                ),
+                textField(false, timeoutController, "Timeout", false),
+                textField(false, messageLengthController, "Message Length (Bytes to Read)", false),
+                Row(
+                  children: [
+                    Container(
+                      height: 60.0,
+                      padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                      child: Transform.scale(
+                        scale: 2.0,
+                        child: Checkbox(
+                          value: clearBufferController.text == "1" ? true : false,
+                          fillColor: MaterialStateProperty.all(menuItemColor),
+                          activeColor: menuItemColor,
+                          onChanged: (bool? value) {
+                            setState(
+                              () {
+                                clearBufferController.text = clearBufferController.text == "1" ? "0" : "1";
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    const Text(
+                      "Clear Buffer Before Each Transaction",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 60.0,
+                      padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                      child: Transform.scale(
+                        scale: 2.0,
+                        child: Checkbox(
+                          value: closePortController.text == "1" ? true : false,
+                          fillColor: MaterialStateProperty.all(menuItemColor),
+                          activeColor: menuItemColor,
+                          onChanged: (bool? value) {
+                            setState(
+                              () {
+                                closePortController.text = closePortController.text == "1" ? "0" : "1";
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    const Text(
+                      "Close Port After Each Call",
+                      style: TextStyle(
+                        color: foregroundColor,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   children: [
@@ -161,18 +359,136 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
-                        var name = nameController.text;
+                        Map<String, dynamic> postData = {};
                         var vesselID = vesselController.text;
+                        var deviceTypeID = deviceTypeController.text;
+                        var commMethod = commMethodController.text;
+                        var commPort = portController.text;
+                        var isConstant = isConstantController.text;
+                        var constantValue = constantValueController.text;
+                        var scalingfactor = factorController.text;
+                        var nodeAddress = nodeAddressController.text;
+                        var additionalNodeAddress = additionalNodeAddressController.text;
+                        var readStart = readStartController.text;
+                        var baudRate = baudRateController.text;
+                        var byteSize = byteSizeController.text;
+                        var stopBits = stopBitsController.text;
+                        var timeout = timeoutController.text;
+                        var messageLength = messageLengthController.text;
+                        var clearBuffer = clearBufferController.text;
+                        var closePort = closePortController.text;
 
                         String errors = "";
 
-                        if (name.isEmpty) {
-                          errors += "Device Name Missing.\n";
-                        }
-
+                        //TODO check all fields
                         if (vesselID.isEmpty) {
                           errors += "Vessel Missing.\n";
+                        } else {
+                          postData["vessel_id"] = vesselID;
                         }
+
+                        if (deviceTypeID.isEmpty) {
+                          errors += "Device Type Missing.\n";
+                        } else {
+                          postData["device_type_id"] = deviceTypeID;
+                        }
+
+                        if (commMethod.isEmpty) {
+                          errors += "Communication Method Missing.\n";
+                        } else {
+                          postData["communication_method"] = commMethod;
+                        }
+
+                        if (commMethod.isNotEmpty) {
+                          postData["port"] = commPort;
+                        }
+
+                        if (isConstant == "1" && constantValue.isEmpty) {
+                          errors += "Constant Value Missing for Constant Value Device.\n";
+                        } else {
+                          try {
+                            if (isConstant == "1") {
+                              postData["constant_value"] = double.parse(constantValue);
+                            }
+                          } catch (e) {
+                            errors += "Constant Value is not a Number.\n";
+                          }
+                        }
+
+                        if (scalingfactor.isNotEmpty) {
+                          try {
+                            postData["factor"] = int.parse(scalingfactor);
+                          } catch (e) {
+                            errors += "Scaling Factor is not a Number.\n";
+                          }
+                        }
+
+                        if (nodeAddress.isNotEmpty) {
+                          try {
+                            postData["node_address"] = int.parse(nodeAddress);
+                          } catch (e) {
+                            errors += "Node Address is not a Number.\n";
+                          }
+                        }
+
+                        if (additionalNodeAddress.isNotEmpty) {
+                          try {
+                            postData["additional_node_address"] = int.parse(additionalNodeAddress);
+                          } catch (e) {
+                            errors += "Additional Node Address is not a Number.\n";
+                          }
+                        }
+
+                        if (readStart.isNotEmpty) {
+                          try {
+                            postData["read_start"] = int.parse(readStart);
+                          } catch (e) {
+                            errors += "Read Start is not a Number.\n";
+                          }
+                        }
+
+                        if (baudRate.isNotEmpty) {
+                          try {
+                            postData["baud_rate"] = int.parse(baudRate);
+                          } catch (e) {
+                            errors += "Baud Rate is not a Number.\n";
+                          }
+                        }
+
+                        if (byteSize.isNotEmpty) {
+                          try {
+                            postData["byte_size"] = int.parse(byteSize);
+                          } catch (e) {
+                            errors += "Byte Size is not a Number.\n";
+                          }
+                        }
+
+                        if (stopBits.isNotEmpty) {
+                          try {
+                            postData["stop_bits"] = int.parse(stopBits);
+                          } catch (e) {
+                            errors += "Stop Bits is not a Number.\n";
+                          }
+                        }
+
+                        if (timeout.isNotEmpty) {
+                          try {
+                            postData["time_out"] = double.parse(timeout);
+                          } catch (e) {
+                            errors += "Timeout is not a Number.\n";
+                          }
+                        }
+
+                        if (messageLength.isNotEmpty) {
+                          try {
+                            postData["message_length"] = int.parse(messageLength);
+                          } catch (e) {
+                            errors += "Message Length is not a Number.\n";
+                          }
+                        }
+
+                        postData["clear_buffers_before_each_transaction"] = clearBuffer == "1" ? true : false;
+                        postData["close_port_after_each_call"] = closePort == "1" ? true : false;
 
                         if (errors.isNotEmpty) {
                           showDialog(
@@ -193,12 +509,7 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                             },
                           );
 
-                          Map<String, dynamic> device = {
-                            "name": name,
-                            "vessel_id": vesselID,
-                          };
-
-                          await appStore.deviceApp.create(device).then((response) async {
+                          await appStore.deviceApp.create(postData).then((response) async {
                             if (response["status"]) {
                               Navigator.of(context).pop();
                               showDialog(
@@ -210,9 +521,23 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                                   );
                                 },
                               );
-                              nameController.text = "";
-                              vesselController.text = "";
                               factoryController.text = "";
+                              vesselController.text = "";
+                              commMethodController.text = "";
+                              portController.text = "";
+                              isConstantController.text = "";
+                              constantValueController.text = "";
+                              factorController.text = "";
+                              nodeAddressController.text = "";
+                              additionalNodeAddressController.text = "";
+                              readStartController.text = "";
+                              baudRateController.text = "";
+                              byteSizeController.text = "";
+                              stopBitsController.text = "";
+                              timeoutController.text = "";
+                              messageLengthController.text = "";
+                              clearBufferController.text = "";
+                              closePortController.text = "";
                             } else {
                               Navigator.of(context).pop();
                               showDialog(
@@ -239,9 +564,23 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {
-                        nameController.text = "";
                         factoryController.text = "";
                         vesselController.text = "";
+                        commMethodController.text = "";
+                        portController.text = "";
+                        isConstantController.text = "";
+                        constantValueController.text = "";
+                        factorController.text = "";
+                        nodeAddressController.text = "";
+                        additionalNodeAddressController.text = "";
+                        readStartController.text = "";
+                        baudRateController.text = "";
+                        byteSizeController.text = "";
+                        stopBitsController.text = "";
+                        timeoutController.text = "";
+                        messageLengthController.text = "";
+                        clearBufferController.text = "";
+                        closePortController.text = "";
                       },
                       child: clearButton(),
                     ),
@@ -305,6 +644,7 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                             .toList();
                       }
                       csvData.forEach((element) {
+                        //TODO correct this.
                         Map<String, dynamic> device = {
                           "name": element[1],
                           "vessel_id": element[0],
@@ -319,10 +659,7 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
                             context: context,
                             builder: (BuildContext context) {
                               return CustomDialog(
-                                message: "Created " +
-                                    created.toString() +
-                                    " devices." +
-                                    (notCreated != 0 ? "Unable to create " + notCreated.toString() + " devices." : ""),
+                                message: "Created " + created.toString() + " devices." + (notCreated != 0 ? "Unable to create " + notCreated.toString() + " devices." : ""),
                                 title: "Info",
                               );
                             },

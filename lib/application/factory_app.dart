@@ -13,8 +13,7 @@ class FactoryApp implements FactoryAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> factories) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> factories) async {
     return factoryRepository.createMultiple(factories);
   }
 
@@ -29,16 +28,14 @@ class FactoryApp implements FactoryAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     return factoryRepository.update(id, update);
   }
 }
 
 abstract class FactoryAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> factory);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> factories);
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> factories);
   Future<Map<String, dynamic>> get(String id);
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
   Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update);

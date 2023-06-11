@@ -6,17 +6,14 @@ class CompanyRepo implements CompanyRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> company) async {
     String url = "company/create/";
-    var response =
-        await networkAPIProvider.post(url, company, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, company, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> companies) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> companies) async {
     String url = "company/create/multi/";
-    var response =
-        await networkAPIProvider.post(url, companies, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, companies, TokenType.accessToken);
     return response;
   }
 
@@ -30,17 +27,14 @@ class CompanyRepo implements CompanyRepository {
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "company/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     String url = "cimpany/" + id + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

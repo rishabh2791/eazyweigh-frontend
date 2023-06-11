@@ -12,8 +12,7 @@ class UnitOfMeasurementApp implements UnitOfMeasurementAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> uoms) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> uoms) async {
     return unitOfMeasurementRepository.createMultiple(uoms);
   }
 
@@ -28,8 +27,7 @@ class UnitOfMeasurementApp implements UnitOfMeasurementAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     return unitOfMeasurementRepository.update(id, update);
   }
 }

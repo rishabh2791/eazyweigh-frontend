@@ -74,8 +74,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
   }
 
   void listenToPrintingService(String message) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(message.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(message.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (!(scannerData.containsKey("status") && scannerData["status"])) {
       showDialog(
         context: context,
@@ -94,8 +93,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "back":
         Navigator.of(context).pop();
@@ -117,8 +115,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
           "job_code": widget.jobCode,
           "over_issue_id": widget.overIssue.id,
         };
-        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .998).toStringAsFixed(4)) &&
-            (currentWeight - taredWeight) <= double.parse((1.002 * requiredQty).toStringAsFixed(4))) {
+        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .998).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.002 * requiredQty).toStringAsFixed(4))) {
           await appStore.overIssueApp.update(widget.overIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
@@ -184,8 +181,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
-    Map<String, dynamic> jsonData =
-        jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("code")) {
       String matCode = jsonData["code"];
@@ -236,7 +232,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3 - 50,
                   child: Center(
-                    child: QrImage(
+                    child: QrImageView(
                       data: complete,
                       size: 200.0 * MediaQuery.of(context).size.width / 1920,
                       backgroundColor: Colors.white,
@@ -270,7 +266,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: cancel,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -307,8 +303,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
   }
 
   dynamic listenToWeighingScale(String data) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     try {
       if (scannerData.containsKey("error")) {
         showDialog(
@@ -520,7 +515,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: tare,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -550,7 +545,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: complete,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -580,7 +575,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: back,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -621,9 +616,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                               (currentWeight - taredWeight).toStringAsFixed(3),
                               style: TextStyle(
                                   fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
-                                  color: ((currentWeight - taredWeight) > upperLimit || (currentWeight - taredWeight) < lowerLimit)
-                                      ? Colors.red
-                                      : Colors.green),
+                                  color: ((currentWeight - taredWeight) > upperLimit || (currentWeight - taredWeight) < lowerLimit) ? Colors.red : Colors.green),
                             ),
                             Icon(
                               (currentWeight - taredWeight) < lowerLimit
@@ -632,9 +625,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                                       ? Icons.arrow_circle_down
                                       : Icons.check_circle,
                               size: 200.0 * sizeInformation.screenSize.height / 1006,
-                              color: ((currentWeight - taredWeight) < lowerLimit || (currentWeight - taredWeight) > upperLimit)
-                                  ? Colors.red
-                                  : Colors.green,
+                              color: ((currentWeight - taredWeight) < lowerLimit || (currentWeight - taredWeight) > upperLimit) ? Colors.red : Colors.green,
                             ),
                           ],
                         ),
@@ -662,7 +653,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
             ),
           ),
           const Divider(),
-          QrImage(
+          QrImageView(
             data: back,
             size: 250,
             backgroundColor: Colors.red,
@@ -684,7 +675,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
             ),
           ),
           const Divider(),
-          QrImage(
+          QrImageView(
             data: back,
             size: 250,
             backgroundColor: Colors.red,

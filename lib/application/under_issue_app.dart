@@ -13,8 +13,7 @@ class UnderIssueApp implements UnderIssueAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> underIssues) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> underIssues) async {
     return underIssueRepository.createMultiple(underIssues);
   }
 
@@ -24,17 +23,14 @@ class UnderIssueApp implements UnderIssueAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String underIssueID, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String underIssueID, Map<String, dynamic> update) async {
     return underIssueRepository.update(underIssueID, update);
   }
 }
 
 abstract class UnderIssueAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> underIssue);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> underIssues);
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> underIssues);
   Future<Map<String, dynamic>> list(String jobID);
-  Future<Map<String, dynamic>> update(
-      String underIssueID, Map<String, dynamic> update);
+  Future<Map<String, dynamic>> update(String underIssueID, Map<String, dynamic> update);
 }

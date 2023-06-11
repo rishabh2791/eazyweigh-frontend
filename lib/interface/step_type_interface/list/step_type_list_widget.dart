@@ -86,8 +86,7 @@ class _StepTypeListWidgetState extends State<StepTypeListWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -148,7 +147,7 @@ class _StepTypeListWidgetState extends State<StepTypeListWidget> {
                     ),
                   )
                 : StepTypeList(stepTypes: stepTypes)
-            : Column()
+            : const Column()
       ],
     );
   }

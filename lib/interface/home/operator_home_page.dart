@@ -47,8 +47,7 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
   }
 
   void listenToScanner(String data) async {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "weighing":
         navigationService.pushReplacement(
@@ -132,11 +131,11 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                                 ),
                               );
                             },
-                            child: QrImage(
+                            child: QrImageView(
                               size: 250,
                               data: underIssue,
                               backgroundColor: Colors.green,
-                              foregroundColor: Colors.black,
+                              eyeStyle: const QrEyeStyle(color: Colors.black),
                             ),
                           ),
                         ),
@@ -171,11 +170,11 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                                 ),
                               );
                             },
-                            child: QrImage(
+                            child: QrImageView(
                               size: 250,
                               data: weighing,
                               backgroundColor: Colors.green,
-                              foregroundColor: Colors.black,
+                              eyeStyle: const QrEyeStyle(color: Colors.black),
                             ),
                           ),
                         ),
@@ -210,11 +209,11 @@ class _OperatorHomePageState extends State<OperatorHomePage> {
                                 ),
                               );
                             },
-                            child: QrImage(
+                            child: QrImageView(
                               size: 250,
                               data: overIssue,
                               backgroundColor: Colors.green,
-                              foregroundColor: Colors.black,
+                              eyeStyle: const QrEyeStyle(color: Colors.black),
                             ),
                           ),
                         ),

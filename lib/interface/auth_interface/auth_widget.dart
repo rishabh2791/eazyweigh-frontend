@@ -34,12 +34,7 @@ class _AuthWidgetState extends State<AuthWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     switch (scannerData["action"]) {
       case "login":
@@ -65,7 +60,7 @@ class _AuthWidgetState extends State<AuthWidget> {
           children: [
             Column(
               children: [
-                QrImage(
+                QrImageView(
                   data: loginMessage,
                   size: 200,
                   backgroundColor: Colors.white,
@@ -90,7 +85,7 @@ class _AuthWidgetState extends State<AuthWidget> {
             ),
             Column(
               children: [
-                QrImage(
+                QrImageView(
                   data: registerMessage,
                   size: 200,
                   backgroundColor: Colors.white,

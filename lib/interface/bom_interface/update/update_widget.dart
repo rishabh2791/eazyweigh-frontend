@@ -24,9 +24,7 @@ class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
   bool isBomItemsLoaded = false;
   List<Factory> factories = [];
   List<BomItem> bomItems = [];
-  late TextEditingController materialCodeController,
-      factoryController,
-      revisionController;
+  late TextEditingController materialCodeController, factoryController, revisionController;
 
   @override
   void initState() {
@@ -71,7 +69,7 @@ class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
 
   Widget detailsWidget() {
     return isBomItemsLoaded
-        ? Column()
+        ? const Column()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -87,18 +85,12 @@ class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
                 alignment: WrapAlignment.start,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  DropDownWidget(
-                      disabled: false,
-                      hint: "Factory",
-                      controller: factoryController,
-                      itemList: factories),
-                  textField(
-                      false, materialCodeController, "Material Code", false),
+                  DropDownWidget(disabled: false, hint: "Factory", controller: factoryController, itemList: factories),
+                  textField(false, materialCodeController, "Material Code", false),
                   textField(false, revisionController, "Revision", false),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(menuItemColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                       elevation: MaterialStateProperty.all<double>(5.0),
                     ),
                     onPressed: () async {
@@ -140,12 +132,9 @@ class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
                           "material.code": materialCode.toString(),
                           "revision": int.parse(revision),
                         };
-                        await appStore.bomApp
-                            .list(conditions)
-                            .then((response) async {
+                        await appStore.bomApp.list(conditions).then((response) async {
                           if (response["status"]) {
-                            for (var item in response["payload"][0]
-                                ["bom_items"]) {
+                            for (var item in response["payload"][0]["bom_items"]) {
                               BomItem bomItem = BomItem.fromJSON(item);
                               bomItems.add(bomItem);
                             }

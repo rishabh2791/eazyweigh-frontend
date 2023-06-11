@@ -43,7 +43,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
     ];
     for (var item in items) {
       DropdownMenuItem<String> newItem = DropdownMenuItem<String>(
-        value: item is User ? item.username : item.id,
+        value: item is User ? item.username : item.id.toString(),
         child: Text(
           item.toString(),
           overflow: TextOverflow.ellipsis,

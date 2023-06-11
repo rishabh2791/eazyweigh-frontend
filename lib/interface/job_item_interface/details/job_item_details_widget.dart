@@ -218,8 +218,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData = jsonDecode(
-        data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "back":
         widget.allJobItems.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
@@ -265,9 +264,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
         };
-        if ((currentWeight - taredWeight) > 0 &&
-            double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) <=
-                double.parse(widget.jobItem.upperBound.toStringAsFixed(4))) {
+        if ((currentWeight - taredWeight) > 0 && double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) <= double.parse(widget.jobItem.upperBound.toStringAsFixed(4))) {
           if (!isPosting) {
             setState(() {
               isPosting = true;
@@ -276,23 +273,20 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
               if (value["status"]) {
                 String id = value["payload"]["id"];
                 printingData["job_item_weighing_id"] = id;
-                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
-                    double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
+                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >= double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
                   printingData["complete"] = true;
                 }
 
                 printingService.printJobItemLabel(printingData);
 
-                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >=
-                    double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
+                if (double.parse((actualWeight + (currentWeight - taredWeight)).toStringAsFixed(4)) >= double.parse(widget.jobItem.lowerBound.toStringAsFixed(4))) {
                   setState(() {
                     widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).complete = true;
                   });
                 }
 
                 setState(() {
-                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight +=
-                      (currentWeight - taredWeight);
+                  widget.allJobItems.firstWhere((element) => element.id == widget.jobItem.id).actualWeight += (currentWeight - taredWeight);
                   currentWeight = 0;
                 });
 
@@ -367,8 +361,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   dynamic listenToWeighingScale(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(
-        data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     try {
       if (scannerData.containsKey("error")) {
         showDialog(
@@ -400,12 +393,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   Future<dynamic> verifyMaterial(String scannerData) async {
-    Map<String, dynamic> jsonData = jsonDecode(scannerData
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("code")) {
       String matCode = jsonData["code"];
@@ -512,7 +500,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: tare,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -542,7 +530,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: preComplete,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -579,7 +567,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: back,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
@@ -620,8 +608,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                               (currentWeight - taredWeight).toStringAsFixed(3),
                               style: TextStyle(
                                   fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
-                                  color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit ||
-                                          (currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit)
+                                  color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit || (currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit)
                                       ? Colors.red
                                       : Colors.green),
                             ),
@@ -632,8 +619,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                                       ? Icons.arrow_circle_down
                                       : Icons.check_circle,
                               size: 200.0 * sizeInformation.screenSize.height / 1006,
-                              color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit ||
-                                      (currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit)
+                              color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit || (currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit)
                                   ? Colors.red
                                   : Colors.green,
                             ),
@@ -688,7 +674,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             ),
           ),
           const Divider(),
-          QrImage(
+          QrImageView(
             data: back,
             size: 250,
             backgroundColor: Colors.red,
@@ -710,7 +696,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             ),
           ),
           const Divider(),
-          QrImage(
+          QrImageView(
             data: back,
             size: 250,
             backgroundColor: Colors.red,
@@ -744,7 +730,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3 - 50,
                   child: Center(
-                    child: QrImage(
+                    child: QrImageView(
                       data: complete,
                       size: 200.0 * MediaQuery.of(context).size.width / 1920,
                       backgroundColor: Colors.white,
@@ -778,7 +764,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
-                      child: QrImage(
+                      child: QrImageView(
                         data: cancel,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,

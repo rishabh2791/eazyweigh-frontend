@@ -32,91 +32,53 @@ class _UnderIssueListState extends State<UnderIssueList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.underIssues.sort((a, b) => a.underIssue.createdAt
-              .toString()
-              .compareTo(b.underIssue.createdAt.toString()));
+          widget.underIssues.sort((a, b) => a.underIssue.createdAt.toString().compareTo(b.underIssue.createdAt.toString()));
         } else {
-          widget.underIssues.sort((a, b) => b.underIssue.createdAt
-              .toString()
-              .compareTo(a.underIssue.createdAt.toString()));
+          widget.underIssues.sort((a, b) => b.underIssue.createdAt.toString().compareTo(a.underIssue.createdAt.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.underIssues.sort((a, b) =>
-              a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
+          widget.underIssues.sort((a, b) => a.job.jobCode.toString().compareTo(b.job.jobCode.toString()));
         } else {
-          widget.underIssues.sort((a, b) =>
-              b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
+          widget.underIssues.sort((a, b) => b.job.jobCode.toString().compareTo(a.job.jobCode.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.underIssues.sort((a, b) => a.underIssue.jobItem.material.code
-              .toString()
-              .compareTo(b.underIssue.jobItem.material.code.toString()));
+          widget.underIssues.sort((a, b) => a.underIssue.jobItem.material.code.toString().compareTo(b.underIssue.jobItem.material.code.toString()));
         } else {
-          widget.underIssues.sort((a, b) => b.underIssue.jobItem.material.code
-              .toString()
-              .compareTo(a.underIssue.jobItem.material.code.toString()));
+          widget.underIssues.sort((a, b) => b.underIssue.jobItem.material.code.toString().compareTo(a.underIssue.jobItem.material.code.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.underIssues.sort((a, b) => a
-              .underIssue.jobItem.material.description
-              .toString()
-              .compareTo(b.underIssue.jobItem.material.description.toString()));
+          widget.underIssues.sort((a, b) => a.underIssue.jobItem.material.description.toString().compareTo(b.underIssue.jobItem.material.description.toString()));
         } else {
-          widget.underIssues.sort((a, b) => b
-              .underIssue.jobItem.material.description
-              .toString()
-              .compareTo(a.underIssue.jobItem.material.description.toString()));
+          widget.underIssues.sort((a, b) => b.underIssue.jobItem.material.description.toString().compareTo(a.underIssue.jobItem.material.description.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.underIssues.sort((a, b) => a.underIssue.req
-              .toString()
-              .compareTo(b.underIssue.req.toString()));
+          widget.underIssues.sort((a, b) => a.underIssue.req.toString().compareTo(b.underIssue.req.toString()));
         } else {
-          widget.underIssues.sort((a, b) => b.underIssue.req
-              .toString()
-              .compareTo(a.underIssue.req.toString()));
+          widget.underIssues.sort((a, b) => b.underIssue.req.toString().compareTo(a.underIssue.req.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.underIssues.sort((a, b) => (a.underIssue.req -
-                  a.underIssue.actual)
-              .toString()
-              .compareTo((b.underIssue.req - b.underIssue.actual).toString()));
+          widget.underIssues.sort((a, b) => (a.underIssue.req - a.underIssue.actual).toString().compareTo((b.underIssue.req - b.underIssue.actual).toString()));
         } else {
-          widget.underIssues.sort((a, b) => (b.underIssue.req -
-                  b.underIssue.actual)
-              .toString()
-              .compareTo((a.underIssue.req - a.underIssue.actual).toString()));
+          widget.underIssues.sort((a, b) => (b.underIssue.req - b.underIssue.actual).toString().compareTo((a.underIssue.req - a.underIssue.actual).toString()));
         }
         break;
       case 6:
         if (ascending) {
-          widget.underIssues.sort((a, b) => (a.underIssue.createdBy.firstName +
-                  " " +
-                  a.underIssue.createdBy.lastName)
-              .toString()
-              .compareTo((b.underIssue.createdBy.firstName +
-                      " " +
-                      b.underIssue.createdBy.lastName)
-                  .toString()));
+          widget.underIssues.sort((a, b) =>
+              (a.underIssue.createdBy.firstName + " " + a.underIssue.createdBy.lastName).toString().compareTo((b.underIssue.createdBy.firstName + " " + b.underIssue.createdBy.lastName).toString()));
         } else {
-          widget.underIssues.sort((a, b) => (b.underIssue.createdBy.firstName +
-                  " " +
-                  b.underIssue.createdBy.lastName)
-              .toString()
-              .compareTo((a.underIssue.createdBy.firstName +
-                      " " +
-                      a.underIssue.createdBy.lastName)
-                  .toString()));
+          widget.underIssues.sort((a, b) =>
+              (b.underIssue.createdBy.firstName + " " + b.underIssue.createdBy.lastName).toString().compareTo((a.underIssue.createdBy.firstName + " " + a.underIssue.createdBy.lastName).toString()));
         }
         break;
       default:
@@ -139,8 +101,7 @@ class _UnderIssueListState extends State<UnderIssueList> {
                   data: Theme.of(context).copyWith(
                     cardColor: backgroundColor,
                     dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    textTheme: const TextTheme(bodySmall: TextStyle(color: foregroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -279,9 +240,7 @@ class _UnderIssueListState extends State<UnderIssueList> {
                           ),
                         ],
                         source: _DataSource(context, widget.underIssues),
-                        rowsPerPage: widget.underIssues.length > 25
-                            ? 25
-                            : widget.underIssues.length,
+                        rowsPerPage: widget.underIssues.length > 25 ? 25 : widget.underIssues.length,
                       )
                     ],
                   ),
@@ -320,10 +279,7 @@ class _DataSource extends DataTableSource {
       cells: [
         DataCell(
           Text(
-            underIssues.underIssue.createdAt
-                .toLocal()
-                .toString()
-                .substring(0, 10),
+            underIssues.underIssue.createdAt.toLocal().toString().substring(0, 10),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -373,8 +329,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            (underIssues.underIssue.req - underIssues.underIssue.actual)
-                .toStringAsFixed(2),
+            (underIssues.underIssue.req - underIssues.underIssue.actual).toStringAsFixed(2),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,
@@ -384,9 +339,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            underIssues.underIssue.createdBy.firstName +
-                " " +
-                underIssues.underIssue.createdBy.lastName,
+            underIssues.underIssue.createdBy.firstName + " " + underIssues.underIssue.createdBy.lastName,
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,

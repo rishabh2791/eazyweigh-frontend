@@ -16,8 +16,7 @@ class UOMConversionCreateWidget extends StatefulWidget {
   const UOMConversionCreateWidget({Key? key}) : super(key: key);
 
   @override
-  State<UOMConversionCreateWidget> createState() =>
-      _UOMConversionCreateWidgetState();
+  State<UOMConversionCreateWidget> createState() => _UOMConversionCreateWidgetState();
 }
 
 class _UOMConversionCreateWidgetState extends State<UOMConversionCreateWidget> {
@@ -25,10 +24,7 @@ class _UOMConversionCreateWidgetState extends State<UOMConversionCreateWidget> {
   List<Factory> factories = [];
   List<UnitOfMeasure> uoms = [];
 
-  late TextEditingController uom1Controller,
-      uom2Controller,
-      factoryController,
-      valueController;
+  late TextEditingController uom1Controller, uom2Controller, factoryController, valueController;
 
   @override
   void initState() {
@@ -193,8 +189,7 @@ class _UOMConversionCreateWidgetState extends State<UOMConversionCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -248,9 +243,7 @@ class _UOMConversionCreateWidgetState extends State<UOMConversionCreateWidget> {
                             "factory_id": factoryName,
                           };
 
-                          await appStore.unitOfMeasurementConversionApp
-                              .create(uom)
-                              .then((response) async {
+                          await appStore.unitOfMeasurementConversionApp.create(uom).then((response) async {
                             if (response["status"]) {
                               Navigator.of(context).pop();
                               showDialog(
@@ -284,8 +277,7 @@ class _UOMConversionCreateWidgetState extends State<UOMConversionCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {

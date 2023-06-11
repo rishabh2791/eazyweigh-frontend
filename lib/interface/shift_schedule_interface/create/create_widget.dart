@@ -324,8 +324,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    String message =
-                                        response["message"].toString().contains("Duplicate") ? "Job Already Assigned." : response["message"];
+                                    String message = response["message"].toString().contains("Duplicate") ? "Job Already Assigned." : response["message"];
                                     return CustomDialog(
                                       message: message,
                                       title: "Info",
@@ -460,11 +459,7 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return CustomDialog(
-                                      message: "Created " +
-                                          created.toString() +
-                                          " Shift Schedules and found error in " +
-                                          notCreated.toString() +
-                                          " schedules.",
+                                      message: "Created " + created.toString() + " Shift Schedules and found error in " + notCreated.toString() + " schedules.",
                                       title: "Info",
                                     );
                                   },

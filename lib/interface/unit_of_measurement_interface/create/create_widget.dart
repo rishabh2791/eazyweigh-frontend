@@ -22,9 +22,7 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
   bool isLoadingData = true;
   List<Factory> factories = [];
 
-  late TextEditingController codeController,
-      descriptionController,
-      factoryController;
+  late TextEditingController codeController, descriptionController, factoryController;
 
   @override
   void initState() {
@@ -103,8 +101,7 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
                   itemList: factories,
                 ),
                 textField(false, codeController, "UOM Code", false),
-                textField(
-                    false, descriptionController, "UOM Description", false),
+                textField(false, descriptionController, "UOM Description", false),
                 const SizedBox(
                   height: 10.0,
                 ),
@@ -112,8 +109,7 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -160,9 +156,7 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
                             "factory_id": factoryName,
                           };
 
-                          await appStore.unitOfMeasurementApp
-                              .create(uom)
-                              .then((response) async {
+                          await appStore.unitOfMeasurementApp.create(uom).then((response) async {
                             if (response["status"]) {
                               Navigator.of(context).pop();
                               showDialog(
@@ -199,8 +193,7 @@ class _UOMCreateWidgetState extends State<UOMCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {

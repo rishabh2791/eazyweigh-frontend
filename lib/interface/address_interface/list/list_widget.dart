@@ -61,8 +61,7 @@ class _AddressListWidgetState extends State<AddressListWidget> {
           color: Colors.green,
           borderRadius: BorderRadius.circular(20.0),
           boxShadow: const [
-            BoxShadow(
-                color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
+            BoxShadow(color: Colors.black26, offset: Offset(0, 10), blurRadius: 10),
           ],
         ),
         width: 400,

@@ -9,6 +9,7 @@ import 'package:eazyweigh/interface/bom_interface/bom_widget.dart';
 import 'package:eazyweigh/interface/company_interface/company_widget.dart';
 import 'package:eazyweigh/interface/device_data_interface/device_data_widget.dart';
 import 'package:eazyweigh/interface/device_interface/device_widget.dart';
+import 'package:eazyweigh/interface/device_type_interface/device_type_widget.dart';
 import 'package:eazyweigh/interface/factory_interface/factory_widget.dart';
 import 'package:eazyweigh/interface/home/home_page.dart';
 import 'package:eazyweigh/interface/job_assignment_interface/job_assignment_widget.dart';
@@ -34,7 +35,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 late User currentUser;
 List<UserRoleAccess> userRolePermissions = [];
 
-String baseURL = "http://10.19.1.211/backend/";
+String baseURL = "http://192.168.50.227:8000";
 String WEBSOCKET_SERVER_HOST = '10.19.0.210';
 int WEBSOCKET_PORT = 8001;
 String WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';
@@ -64,8 +65,9 @@ Map<String, dynamic> menuWidgetMapping = {
   "Address": const AddressWidget(),
   "BOM": const BOMWidget(),
   "Company": const CompanyWidget(),
-  "Device Data": const DeviceDataWidget(),
   "Device": const DeviceWidget(),
+  "Device Data": const DeviceDataWidget(),
+  "Device Type": const DeviceTypeWidget(),
   "Factory": const FactoryWidget(),
   "Job": const JobWidget(),
   "Job Assignment": const JobAssignmentWidget(),
@@ -93,6 +95,7 @@ Map<String, List<String>> menuTableMapping = {
   "Company": ["companies"],
   "Device": ["devices"],
   "Device Data": ["device_data"],
+  "Device Type": ["device_types"],
   "Factory": ["factories"],
   "Job": ["jobs", "job_items", "job_item_weighings"],
   "Job Assignment": ["job_item_assignments"],

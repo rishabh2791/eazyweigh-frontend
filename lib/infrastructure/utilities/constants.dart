@@ -56,6 +56,12 @@ const Map<String, List<String>> menuItems = {
     "Create",
     "List",
   ],
+  "Device Type": [
+    "Create",
+    "Details",
+    "List",
+    "Update",
+  ],
   "Factory": [
     "Create",
     "Details",

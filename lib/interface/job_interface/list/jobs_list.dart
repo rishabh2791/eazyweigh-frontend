@@ -153,7 +153,7 @@ class _JobListState extends State<JobList> {
                       data: Theme.of(context).copyWith(
                         cardColor: themeChanged.value ? backgroundColor : foregroundColor,
                         dividerColor: themeChanged.value ? foregroundColor : backgroundColor,
-                        textTheme: TextTheme(caption: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor)),
+                        textTheme: TextTheme(bodySmall: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor)),
                       ),
                       child: ListView(
                         children: [

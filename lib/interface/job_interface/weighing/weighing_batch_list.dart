@@ -36,28 +36,22 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.weighingBatches.sort(
-              (a, b) => a.jobCode.toString().compareTo(b.jobCode.toString()));
+          widget.weighingBatches.sort((a, b) => a.jobCode.toString().compareTo(b.jobCode.toString()));
         } else {
-          widget.weighingBatches.sort(
-              (a, b) => b.jobCode.toString().compareTo(a.jobCode.toString()));
+          widget.weighingBatches.sort((a, b) => b.jobCode.toString().compareTo(a.jobCode.toString()));
         }
         break;
       case 1:
         if (ascending) {
           widget.weighingBatches.sort((a, b) {
-            Mat materialA = widget.materials
-                .firstWhere((element) => element.id == a.jobMaterialID);
-            Mat materialB = widget.materials
-                .firstWhere((element) => element.id == b.jobMaterialID);
+            Mat materialA = widget.materials.firstWhere((element) => element.id == a.jobMaterialID);
+            Mat materialB = widget.materials.firstWhere((element) => element.id == b.jobMaterialID);
             return materialA.code.compareTo(materialB.code);
           });
         } else {
           widget.weighingBatches.sort((a, b) {
-            Mat materialA = widget.materials
-                .firstWhere((element) => element.id == a.jobMaterialID);
-            Mat materialB = widget.materials
-                .firstWhere((element) => element.id == b.jobMaterialID);
+            Mat materialA = widget.materials.firstWhere((element) => element.id == a.jobMaterialID);
+            Mat materialB = widget.materials.firstWhere((element) => element.id == b.jobMaterialID);
             return materialB.code.compareTo(materialA.code);
           });
         }
@@ -65,60 +59,44 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
       case 2:
         if (ascending) {
           widget.weighingBatches.sort((a, b) {
-            Mat materialA = widget.materials
-                .firstWhere((element) => element.id == a.jobMaterialID);
-            Mat materialB = widget.materials
-                .firstWhere((element) => element.id == b.jobMaterialID);
+            Mat materialA = widget.materials.firstWhere((element) => element.id == a.jobMaterialID);
+            Mat materialB = widget.materials.firstWhere((element) => element.id == b.jobMaterialID);
             return materialA.description.compareTo(materialB.description);
           });
         } else {
           widget.weighingBatches.sort((a, b) {
-            Mat materialA = widget.materials
-                .firstWhere((element) => element.id == a.jobMaterialID);
-            Mat materialB = widget.materials
-                .firstWhere((element) => element.id == b.jobMaterialID);
+            Mat materialA = widget.materials.firstWhere((element) => element.id == a.jobMaterialID);
+            Mat materialB = widget.materials.firstWhere((element) => element.id == b.jobMaterialID);
             return materialB.description.compareTo(materialA.description);
           });
         }
         break;
       case 3:
         if (ascending) {
-          widget.weighingBatches.sort((a, b) => a.requiredWeight
-              .toString()
-              .compareTo(b.requiredWeight.toString()));
+          widget.weighingBatches.sort((a, b) => a.requiredWeight.toString().compareTo(b.requiredWeight.toString()));
         } else {
-          widget.weighingBatches.sort((a, b) => b.requiredWeight
-              .toString()
-              .compareTo(a.requiredWeight.toString()));
+          widget.weighingBatches.sort((a, b) => b.requiredWeight.toString().compareTo(a.requiredWeight.toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.weighingBatches.sort((a, b) =>
-              a.actualWeight.toString().compareTo(b.actualWeight.toString()));
+          widget.weighingBatches.sort((a, b) => a.actualWeight.toString().compareTo(b.actualWeight.toString()));
         } else {
-          widget.weighingBatches.sort((a, b) =>
-              b.actualWeight.toString().compareTo(a.actualWeight.toString()));
+          widget.weighingBatches.sort((a, b) => b.actualWeight.toString().compareTo(a.actualWeight.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.weighingBatches.sort((a, b) => a.createdByUsername
-              .toString()
-              .compareTo(b.createdByUsername.toString()));
+          widget.weighingBatches.sort((a, b) => a.createdByUsername.toString().compareTo(b.createdByUsername.toString()));
         } else {
-          widget.weighingBatches.sort((a, b) => b.createdByUsername
-              .toString()
-              .compareTo(a.createdByUsername.toString()));
+          widget.weighingBatches.sort((a, b) => b.createdByUsername.toString().compareTo(a.createdByUsername.toString()));
         }
         break;
       case 6:
         if (ascending) {
-          widget.weighingBatches.sort((a, b) =>
-              a.createdAt.toString().compareTo(b.createdAt.toString()));
+          widget.weighingBatches.sort((a, b) => a.createdAt.toString().compareTo(b.createdAt.toString()));
         } else {
-          widget.weighingBatches.sort((a, b) =>
-              b.createdAt.toString().compareTo(a.createdAt.toString()));
+          widget.weighingBatches.sort((a, b) => b.createdAt.toString().compareTo(a.createdAt.toString()));
         }
         break;
       default:
@@ -142,17 +120,9 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                   Expanded(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        cardColor: themeChanged.value
-                            ? backgroundColor
-                            : foregroundColor,
-                        dividerColor: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
-                        textTheme: TextTheme(
-                            caption: TextStyle(
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor)),
+                        cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                        dividerColor: themeChanged.value ? foregroundColor : backgroundColor,
+                        textTheme: TextTheme(bodySmall: TextStyle(color: themeChanged.value ? foregroundColor : backgroundColor)),
                       ),
                       child: ListView(
                         children: [
@@ -168,9 +138,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Job Code",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -188,9 +156,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Material",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -208,9 +174,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Material Name",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -228,9 +192,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Required Weight",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -248,9 +210,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Actual Weight",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -268,9 +228,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Weighed By",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -288,9 +246,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                                   "Weighed On",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -309,9 +265,7 @@ class _WeighingBatchListState extends State<WeighingBatchList> {
                               widget.weighingBatches,
                               widget.materials,
                             ),
-                            rowsPerPage: widget.weighingBatches.length > 25
-                                ? 25
-                                : widget.weighingBatches.length,
+                            rowsPerPage: widget.weighingBatches.length > 25 ? 25 : widget.weighingBatches.length,
                           )
                         ],
                       ),
@@ -364,11 +318,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            _materials
-                .firstWhere(
-                    (element) => weighingBatch.jobMaterialID == element.id)
-                .code
-                .toString(),
+            _materials.firstWhere((element) => weighingBatch.jobMaterialID == element.id).code.toString(),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -378,10 +328,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            _materials
-                .firstWhere(
-                    (element) => weighingBatch.jobMaterialID == element.id)
-                .description,
+            _materials.firstWhere((element) => weighingBatch.jobMaterialID == element.id).description,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -391,9 +338,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            weighingBatch.requiredWeight
-                .toStringAsFixed(3)
-                .replaceAllMapped(reg, (Match match) => '${match[1]},'),
+            weighingBatch.requiredWeight.toStringAsFixed(3).replaceAllMapped(reg, (Match match) => '${match[1]},'),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -403,9 +348,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            weighingBatch.actualWeight
-                .toStringAsFixed(3)
-                .replaceAllMapped(reg, (Match match) => '${match[1]},'),
+            weighingBatch.actualWeight.toStringAsFixed(3).replaceAllMapped(reg, (Match match) => '${match[1]},'),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

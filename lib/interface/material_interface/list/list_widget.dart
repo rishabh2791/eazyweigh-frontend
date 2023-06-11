@@ -86,8 +86,7 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -147,7 +146,7 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                     ),
                   )
                 : MaterialList(materials: materials)
-            : Column()
+            : const Column()
       ],
     );
   }

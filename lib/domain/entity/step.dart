@@ -57,24 +57,15 @@ class Step {
       createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       description: jsonObject["description"],
-      duration: jsonObject.containsKey("duration") &&
-              jsonObject["duration"].toString().isNotEmpty
-          ? int.parse(jsonObject["duration"].toString())
-          : 0,
+      duration: jsonObject.containsKey("duration") && jsonObject["duration"].toString().isNotEmpty ? int.parse(jsonObject["duration"].toString()) : 0,
       id: jsonObject["id"],
-      materialID: jsonObject.containsKey("material_id") &&
-              jsonObject["material_id"].toString().isNotEmpty
-          ? jsonObject["material_id"]
-          : "",
+      materialID: jsonObject.containsKey("material_id") && jsonObject["material_id"].toString().isNotEmpty ? jsonObject["material_id"] : "",
       processID: jsonObject["process_id"],
       sequence: int.parse(jsonObject["sequence"].toString()),
       stepType: StepType.fromJSON(jsonObject["step_type"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      value: jsonObject.containsKey("value") &&
-              jsonObject["value"].toString().isNotEmpty
-          ? double.parse(jsonObject["value"].toString())
-          : 0,
+      value: jsonObject.containsKey("value") && jsonObject["value"].toString().isNotEmpty ? double.parse(jsonObject["value"].toString()) : 0,
     );
     return step;
   }

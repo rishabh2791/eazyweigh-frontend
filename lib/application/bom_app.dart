@@ -13,8 +13,7 @@ class BOMApp implements BOMAppInterfce {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> boms) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> boms) async {
     return bomRepository.createMultiple(boms);
   }
 
@@ -29,8 +28,7 @@ class BOMApp implements BOMAppInterfce {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     return bomRepository.update(id, update);
   }
 }

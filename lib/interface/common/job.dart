@@ -14,16 +14,13 @@ class JobWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var data =
-        '{"action": "selection","data": {"type": "job","id": "' + jobID + '"}}';
+    var data = '{"action": "selection","data": {"type": "job","id": "' + jobID + '"}}';
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        QrImage(
+        QrImageView(
           data: data,
-          size: screenSizeInformation.screenType == ScreenType.mobile
-              ? screenSizeInformation.screenSize.height / 3 * 0.6
-              : screenSizeInformation.screenSize.width / 3 * 0.6,
+          size: screenSizeInformation.screenType == ScreenType.mobile ? screenSizeInformation.screenSize.height / 3 * 0.6 : screenSizeInformation.screenSize.width / 3 * 0.6,
         ),
         Text(
           jobID,

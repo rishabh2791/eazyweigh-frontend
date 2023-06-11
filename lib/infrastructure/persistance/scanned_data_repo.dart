@@ -6,8 +6,7 @@ class ScannedDataRepo implements ScannedDataRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> scan) async {
     String url = "scan/create/";
-    var response =
-        await networkAPIProvider.post(url, scan, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, scan, TokenType.accessToken);
     return response;
   }
 
@@ -21,8 +20,7 @@ class ScannedDataRepo implements ScannedDataRepository {
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "scan/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 }

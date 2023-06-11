@@ -32,58 +32,44 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobItems.sort(
-              (a, b) => a.complete.toString().compareTo(b.complete.toString()));
+          widget.jobItems.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
         } else {
-          widget.jobItems.sort(
-              (a, b) => b.complete.toString().compareTo(a.complete.toString()));
+          widget.jobItems.sort((a, b) => b.complete.toString().compareTo(a.complete.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobItems.sort(
-              (a, b) => a.verified.toString().compareTo(b.verified.toString()));
+          widget.jobItems.sort((a, b) => a.verified.toString().compareTo(b.verified.toString()));
         } else {
-          widget.jobItems.sort(
-              (a, b) => b.verified.toString().compareTo(a.verified.toString()));
+          widget.jobItems.sort((a, b) => b.verified.toString().compareTo(a.verified.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobItems
-              .sort((a, b) => a.material.code.compareTo(b.material.code));
+          widget.jobItems.sort((a, b) => a.material.code.compareTo(b.material.code));
         } else {
-          widget.jobItems
-              .sort((a, b) => b.material.code.compareTo(a.material.code));
+          widget.jobItems.sort((a, b) => b.material.code.compareTo(a.material.code));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobItems.sort((a, b) =>
-              a.material.description.compareTo(b.material.description));
+          widget.jobItems.sort((a, b) => a.material.description.compareTo(b.material.description));
         } else {
-          widget.jobItems.sort((a, b) =>
-              b.material.description.compareTo(a.material.description));
+          widget.jobItems.sort((a, b) => b.material.description.compareTo(a.material.description));
         }
         break;
       case 4:
         if (ascending) {
-          widget.jobItems
-              .sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
+          widget.jobItems.sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
         } else {
-          widget.jobItems
-              .sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
+          widget.jobItems.sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
         }
         break;
       case 5:
         if (ascending) {
-          widget.jobItems.sort((a, b) => a.material.isWeighed
-              .toString()
-              .compareTo(b.material.isWeighed.toString()));
+          widget.jobItems.sort((a, b) => a.material.isWeighed.toString().compareTo(b.material.isWeighed.toString()));
         } else {
-          widget.jobItems.sort((a, b) => b.material.isWeighed
-              .toString()
-              .compareTo(a.material.isWeighed.toString()));
+          widget.jobItems.sort((a, b) => b.material.isWeighed.toString().compareTo(a.material.isWeighed.toString()));
         }
         break;
       default:
@@ -106,8 +92,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                   data: Theme.of(context).copyWith(
                     cardColor: backgroundColor,
                     dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    textTheme: const TextTheme(bodySmall: TextStyle(color: foregroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -228,9 +213,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                           ),
                         ],
                         source: _DataSource(context, widget.jobItems),
-                        rowsPerPage: widget.jobItems.length > 25
-                            ? 25
-                            : widget.jobItems.length,
+                        rowsPerPage: widget.jobItems.length > 25 ? 25 : widget.jobItems.length,
                       )
                     ],
                   ),

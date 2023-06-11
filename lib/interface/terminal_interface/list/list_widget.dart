@@ -87,8 +87,7 @@ class _TerminalListWidgetState extends State<TerminalListWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -142,15 +141,13 @@ class _TerminalListWidgetState extends State<TerminalListWidget> {
                 ? Text(
                     "No Terminals Found",
                     style: TextStyle(
-                      color: themeChanged.value
-                          ? foregroundColor
-                          : backgroundColor,
+                      color: themeChanged.value ? foregroundColor : backgroundColor,
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
                     ),
                   )
                 : TerminalList(terminals: terminals)
-            : Column()
+            : const Column()
       ],
     );
   }

@@ -303,8 +303,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "selection":
@@ -468,16 +467,15 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
         onPressed: () {
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) =>
-                  UnderIssueDetailsWidget(jobCode: job.jobCode, underIssueItems: passedJobMapping[job.id]!, jobItems: jobItems),
+              builder: (BuildContext context) => UnderIssueDetailsWidget(jobCode: job.jobCode, underIssueItems: passedJobMapping[job.id]!, jobItems: jobItems),
             ),
           );
         },
-        child: QrImage(
+        child: QrImageView(
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
+          eyeStyle: const QrEyeStyle(color: Colors.black),
         ),
       ),
     );
@@ -519,7 +517,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   ),
                 );
               },
-              child: QrImage(
+              child: QrImageView(
                 data: back,
                 size: 150,
                 backgroundColor: Colors.red,
@@ -543,11 +541,11 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   end = min(2, passedJobMapping.length - 1);
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                foregroundColor: start == 0 ? backgroundColor : Colors.black,
+                eyeStyle: QrEyeStyle(color: start == 0 ? backgroundColor : Colors.black),
               ),
             ),
             start == 0
@@ -576,11 +574,11 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                   }
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: next,
                 size: 150,
                 backgroundColor: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? Colors.transparent : Colors.red,
-                foregroundColor: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? backgroundColor : Colors.black,
+                eyeStyle: QrEyeStyle(color: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? backgroundColor : Colors.black),
               ),
             ),
             (end == passedJobMapping.length - 1 || passedJobMapping.length < 3)
@@ -641,7 +639,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
             ),
           ),
           const Divider(),
-          QrImage(
+          QrImageView(
             data: back,
             size: 250,
             backgroundColor: Colors.red,

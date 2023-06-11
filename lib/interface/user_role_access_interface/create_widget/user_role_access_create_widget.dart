@@ -15,12 +15,10 @@ class UserRoleAccessCreateWidget extends StatefulWidget {
   const UserRoleAccessCreateWidget({Key? key}) : super(key: key);
 
   @override
-  State<UserRoleAccessCreateWidget> createState() =>
-      _UserRoleAccessCreateWidgetState();
+  State<UserRoleAccessCreateWidget> createState() => _UserRoleAccessCreateWidgetState();
 }
 
-class _UserRoleAccessCreateWidgetState
-    extends State<UserRoleAccessCreateWidget> {
+class _UserRoleAccessCreateWidgetState extends State<UserRoleAccessCreateWidget> {
   List<String> tables = [];
   List<UserRole> userRoles = [];
   bool isLoadingData = false;
@@ -225,8 +223,7 @@ class _UserRoleAccessCreateWidgetState
                     children: [
                       TextButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(menuItemColor),
+                          backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                           elevation: MaterialStateProperty.all<double>(5.0),
                         ),
                         onPressed: () async {
@@ -247,9 +244,7 @@ class _UserRoleAccessCreateWidgetState
                             },
                           );
 
-                          await appStore.userRoleAccessApp
-                              .createMultiple(permissions)
-                              .then((response) async {
+                          await appStore.userRoleAccessApp.createMultiple(permissions).then((response) async {
                             if (response["status"]) {
                               Navigator.of(context).pop();
                               showDialog(

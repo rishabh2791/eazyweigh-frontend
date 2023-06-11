@@ -16,8 +16,7 @@ class UOMConversionListWidget extends StatefulWidget {
   const UOMConversionListWidget({Key? key}) : super(key: key);
 
   @override
-  State<UOMConversionListWidget> createState() =>
-      _UOMConversionListWidgetState();
+  State<UOMConversionListWidget> createState() => _UOMConversionListWidgetState();
 }
 
 class _UOMConversionListWidgetState extends State<UOMConversionListWidget> {
@@ -87,8 +86,7 @@ class _UOMConversionListWidgetState extends State<UOMConversionListWidget> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -119,14 +117,10 @@ class _UOMConversionListWidgetState extends State<UOMConversionListWidget> {
                       "Value": factoryID,
                     }
                   };
-                  await appStore.unitOfMeasurementConversionApp
-                      .list(conditions)
-                      .then((response) {
+                  await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) {
                     if (response.containsKey("status") && response["status"]) {
                       for (var item in response["payload"]) {
-                        UnitOfMeasurementConversion
-                            unitOfMeasurementConversion =
-                            UnitOfMeasurementConversion.fromJSON(item);
+                        UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
                         uomConversions.add(unitOfMeasurementConversion);
                       }
                     }
@@ -146,15 +140,13 @@ class _UOMConversionListWidgetState extends State<UOMConversionListWidget> {
                 ? Text(
                     "No Conversions Found",
                     style: TextStyle(
-                      color: themeChanged.value
-                          ? foregroundColor
-                          : backgroundColor,
+                      color: themeChanged.value ? foregroundColor : backgroundColor,
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
                     ),
                   )
                 : UOMConversionList(uomConversions: uomConversions)
-            : Column()
+            : const Column()
       ],
     );
   }

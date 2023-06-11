@@ -33,29 +33,23 @@ class _MaterialListState extends State<MaterialList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.materials
-              .sort((a, b) => a.code.toString().compareTo(b.code.toString()));
+          widget.materials.sort((a, b) => a.code.toString().compareTo(b.code.toString()));
         } else {
-          widget.materials
-              .sort((a, b) => b.code.toString().compareTo(a.code.toString()));
+          widget.materials.sort((a, b) => b.code.toString().compareTo(a.code.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.materials.sort((a, b) =>
-              a.description.toString().compareTo(b.description.toString()));
+          widget.materials.sort((a, b) => a.description.toString().compareTo(b.description.toString()));
         } else {
-          widget.materials.sort((a, b) =>
-              b.description.toString().compareTo(a.description.toString()));
+          widget.materials.sort((a, b) => b.description.toString().compareTo(a.description.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.materials.sort(
-              (a, b) => a.uom.code.toString().compareTo(b.uom.code.toString()));
+          widget.materials.sort((a, b) => a.uom.code.toString().compareTo(b.uom.code.toString()));
         } else {
-          widget.materials.sort(
-              (a, b) => b.uom.code.toString().compareTo(a.uom.code.toString()));
+          widget.materials.sort((a, b) => b.uom.code.toString().compareTo(a.uom.code.toString()));
         }
         break;
       default:
@@ -76,16 +70,11 @@ class _MaterialListState extends State<MaterialList> {
               Expanded(
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    cardColor:
-                        themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor: themeChanged.value
-                        ? foregroundColor.withOpacity(0.25)
-                        : backgroundColor.withOpacity(0.25),
+                    cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
-                      caption: TextStyle(
-                        color: themeChanged.value
-                            ? foregroundColor
-                            : backgroundColor,
+                      bodySmall: TextStyle(
+                        color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),
                   ),
@@ -103,9 +92,7 @@ class _MaterialListState extends State<MaterialList> {
                               "Material Code",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -123,9 +110,7 @@ class _MaterialListState extends State<MaterialList> {
                               "Material Description",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -143,9 +128,7 @@ class _MaterialListState extends State<MaterialList> {
                               "Unit of Measurement",
                               style: TextStyle(
                                 fontSize: 20.0,
-                                color: themeChanged.value
-                                    ? foregroundColor
-                                    : backgroundColor,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -160,9 +143,7 @@ class _MaterialListState extends State<MaterialList> {
                           ),
                         ],
                         source: _DataSource(context, widget.materials),
-                        rowsPerPage: widget.materials.length > 25
-                            ? 25
-                            : widget.materials.length,
+                        rowsPerPage: widget.materials.length > 25 ? 25 : widget.materials.length,
                       )
                     ],
                   ),

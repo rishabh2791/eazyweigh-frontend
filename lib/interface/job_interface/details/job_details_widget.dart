@@ -47,8 +47,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   String previous = '{"action":"navigation", "data":{"type":"previous"}}';
   String next = '{"action":"navigation", "data":{"type":"next"}}';
   String back = '{"action":"navigation", "data":{"type":"back"}}';
-  String showItemList =
-      '{"action":"navigation", "data":{"type":"hide_summary"}}';
+  String showItemList = '{"action":"navigation", "data":{"type":"hide_summary"}}';
 
   @override
   void initState() {
@@ -70,8 +69,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       widget.jobItems.removeWhere((element) => element.complete);
     }
     end = min(2, widget.jobItems.length - 1);
-    widget.jobItems
-        .sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
+    widget.jobItems.sort((a, b) => a.complete.toString().compareTo(b.complete.toString()));
     if (widget.jobItems.isNotEmpty) {
       await Future.forEach([
         await getUOMConversions(),
@@ -93,13 +91,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
     Map<String, dynamic> conditions = {
       "factory_id": widget.jobItems[0].material.factoryID,
     };
-    await appStore.unitOfMeasurementConversionApp
-        .list(conditions)
-        .then((response) async {
+    await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion =
-              UnitOfMeasurementConversion.fromJSON(item);
+          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
           uomConversions.add(unitOfMeasurementConversion);
         }
       } else {
@@ -147,12 +142,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   double getScaleFactor(String terminalCode, String jobItemCode) {
     if (terminalCode != jobItemCode) {
       for (var uomConversion in uomConversions) {
-        if (uomConversion.unitOfMeasure1.code == terminalCode &&
-            uomConversion.unitOfMeasure2.code == jobItemCode) {
+        if (uomConversion.unitOfMeasure1.code == terminalCode && uomConversion.unitOfMeasure2.code == jobItemCode) {
           return uomConversion.value2 / uomConversion.value1;
         }
-        if (uomConversion.unitOfMeasure1.code == jobItemCode &&
-            uomConversion.unitOfMeasure2.code == terminalCode) {
+        if (uomConversion.unitOfMeasure1.code == jobItemCode && uomConversion.unitOfMeasure2.code == terminalCode) {
           return uomConversion.value1 / uomConversion.value2;
         }
       }
@@ -187,12 +180,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData = jsonDecode(data
-        .replaceAll(";", ":")
-        .replaceAll("[", "{")
-        .replaceAll("]", "}")
-        .replaceAll("'", "\"")
-        .replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
         late JobItem passedJobItem;
@@ -280,9 +268,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                     ),
                   ),
                   Text(
-                    jobItem.material.code +
-                        " - " +
-                        jobItem.material.description,
+                    jobItem.material.code + " - " + jobItem.material.description,
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -306,8 +292,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  (jobItem.requiredWeight - jobItem.actualWeight)
-                      .toStringAsFixed(3),
+                  (jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(3),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -330,8 +315,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound,
-                      jobItem.lowerBound, jobItem.uom.code),
+                  assignTerminal(jobItem.requiredWeight, jobItem.upperBound, jobItem.lowerBound, jobItem.uom.code),
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -349,10 +333,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       );
     }
 
-    String jobItemData =
-        '{"action": "selection","data": {"type": "job_item", "data": "' +
-            jobItem.id +
-            '"}}';
+    String jobItemData = '{"action": "selection","data": {"type": "job_item", "data": "' + jobItem.id + '"}}';
     widgets.add(
       TextButton(
         onPressed: () {
@@ -366,11 +347,11 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
             ),
           );
         },
-        child: QrImage(
+        child: QrImageView(
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: isComplete ? Colors.transparent : Colors.green,
-          foregroundColor: isComplete ? Colors.transparent : Colors.black,
+          eyeStyle: QrEyeStyle(color: isComplete ? Colors.transparent : Colors.black),
         ),
       ),
     );
@@ -435,9 +416,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 ),
                 Text(
-                  jobItem.requiredWeight.toStringAsFixed(3) +
-                      " " +
-                      jobItem.uom.code,
+                  jobItem.requiredWeight.toStringAsFixed(3) + " " + jobItem.uom.code,
                   style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.red,
@@ -468,7 +447,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 );
               },
-              child: QrImage(
+              child: QrImageView(
                 data: back,
                 size: 150,
                 backgroundColor: Colors.red,
@@ -491,7 +470,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   isSummaryShown = true;
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: showItemList,
                 size: 150,
                 backgroundColor: Colors.red,
@@ -521,7 +500,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   ),
                 );
               },
-              child: QrImage(
+              child: QrImageView(
                 data: back,
                 size: 150,
                 backgroundColor: Colors.red,
@@ -545,11 +524,11 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   end = min(2, widget.jobItems.length - 1);
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
+                eyeStyle: QrEyeStyle(color: start == 0 ? Colors.transparent : Colors.black),
               ),
             ),
             start == 0
@@ -578,17 +557,11 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                   }
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: next,
                 size: 150,
-                backgroundColor: (end == widget.jobItems.length - 1 ||
-                        widget.jobItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.red,
-                foregroundColor: (end == widget.jobItems.length - 1 ||
-                        widget.jobItems.length < 3)
-                    ? Colors.transparent
-                    : Colors.black,
+                backgroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.red,
+                eyeStyle: QrEyeStyle(color: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.black),
               ),
             ),
             (end == widget.jobItems.length - 1 || widget.jobItems.length < 3)
@@ -604,8 +577,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
         ),
       ],
     );
-    int incompleteJobItems = widget.jobItems.length -
-        widget.jobItems.where((element) => element.complete).length;
+    int incompleteJobItems = widget.jobItems.length - widget.jobItems.where((element) => element.complete).length;
     return currentUser.userRole.role == "Operator"
         ? BaseWidget(
             builder: (context, screenSizeInfo) {
@@ -633,8 +605,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                               ),
                     getJobItems(screenSizeInfo).isEmpty
                         ? const Image(
-                            image: AssetImage(
-                                "assets/img/fireworks_transparent.gif"),
+                            image: AssetImage("assets/img/fireworks_transparent.gif"),
                             height: 400.0,
                             fit: BoxFit.scaleDown,
                           )
@@ -648,9 +619,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                         ),
                       ),
                     ),
-                    isSummaryShown
-                        ? afterSummaryNavigation
-                        : beforeSummaryNavigation
+                    isSummaryShown ? afterSummaryNavigation : beforeSummaryNavigation
                   ],
                 ),
               );

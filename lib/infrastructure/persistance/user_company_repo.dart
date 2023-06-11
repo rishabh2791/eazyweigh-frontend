@@ -6,16 +6,14 @@ class UserCompanyRepo implements UserCompanyRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> userCompany) async {
     String url = "user_company/create/";
-    var response =
-        await networkAPIProvider.post(url, userCompany, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, userCompany, TokenType.accessToken);
     return response;
   }
 
   @override
   Future<Map<String, dynamic>> get(Map<String, dynamic> conditions) async {
     String url = "user_company/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 }

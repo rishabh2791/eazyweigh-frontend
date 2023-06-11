@@ -150,8 +150,7 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) async {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
         case "logout":
@@ -161,8 +160,7 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
       }
     } else {
       if (scannerData.containsKey("job_item_weighing_id")) {
-        await appStore.jobWeighingApp
-            .update(scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
+        await appStore.jobWeighingApp.update(scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
           updateJobItems(scannerData["job_item_id"], scannerData["job_item_weighing_id"]);
           if (checkAllItemsVerified()) {
             Map<String, dynamic> printingData = {

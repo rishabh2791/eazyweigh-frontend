@@ -8,14 +8,12 @@ class ShiftScheduleApp implements ShiftScheduleAppInterface {
   });
 
   @override
-  Future<Map<String, dynamic>> create(
-      Map<String, dynamic> shiftSchedule) async {
+  Future<Map<String, dynamic>> create(Map<String, dynamic> shiftSchedule) async {
     return shiftScheduleRepository.create(shiftSchedule);
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> shiftSchedules) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> shiftSchedules) async {
     return shiftScheduleRepository.createMultiple(shiftSchedules);
   }
 
@@ -32,8 +30,7 @@ class ShiftScheduleApp implements ShiftScheduleAppInterface {
 
 abstract class ShiftScheduleAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> shiftSchedule);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> shiftSchedules);
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> shiftSchedules);
   Future<Map<String, dynamic>> delete(String id);
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
 }

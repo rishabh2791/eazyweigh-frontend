@@ -6,17 +6,14 @@ class TerminalRepo implements TerminalRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> terminal) async {
     String url = "terminal/create/";
-    var response =
-        await networkAPIProvider.post(url, terminal, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, terminal, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> terminals) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> terminals) async {
     String url = "terminal/create/multi/";
-    var response =
-        await networkAPIProvider.post(url, terminals, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, terminals, TokenType.accessToken);
     return response;
   }
 
@@ -30,17 +27,14 @@ class TerminalRepo implements TerminalRepository {
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "terminal/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     String url = "terminal/" + id + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

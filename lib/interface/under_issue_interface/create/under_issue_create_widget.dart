@@ -65,16 +65,11 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            DropDownWidget(
-                disabled: false,
-                hint: "Factory",
-                controller: factoryController,
-                itemList: factories),
+            DropDownWidget(disabled: false, hint: "Factory", controller: factoryController, itemList: factories),
             textField(false, jobCodeController, "Job Code", false),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -153,17 +148,11 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                                 jobItems.add(jobItem);
                                 underIssueQty[jobItem.id] = 0;
                               }
-                              await appStore.underIssueApp
-                                  .list(jobItems[0].jobID)
-                                  .then((value) {
+                              await appStore.underIssueApp.list(jobItems[0].jobID).then((value) {
                                 if (value.containsKey("status")) {
                                   if (value["status"]) {
                                     for (var item in value["payload"]) {
-                                      underIssueQty[item["job_item_id"]] =
-                                          double.parse(
-                                                  item["actual"].toString()) -
-                                              double.parse(
-                                                  item["required"].toString());
+                                      underIssueQty[item["job_item_id"]] = double.parse(item["actual"].toString()) - double.parse(item["required"].toString());
                                     }
                                     Navigator.of(context).pop();
                                     setState(() {
@@ -232,8 +221,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
             const VerticalDivider(),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -252,16 +240,12 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                       "job_item_id": key,
                       "unit_of_measurement_id": jobItem.uom.id,
                       "required": jobItem.requiredWeight,
-                      "actual": jobItem.actualWeight == 0
-                          ? jobItem.requiredWeight + value
-                          : jobItem.actualWeight + value,
+                      "actual": jobItem.actualWeight == 0 ? jobItem.requiredWeight + value : jobItem.actualWeight + value,
                     };
                     underIssued.add(underIssue);
                   }
                 });
-                await appStore.underIssueApp
-                    .createMultiple(underIssued)
-                    .then((response) {
+                await appStore.underIssueApp.createMultiple(underIssued).then((response) {
                   Navigator.of(context).pop();
                   if (response.containsKey("status")) {
                     if (response["status"]) {
@@ -271,11 +255,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                         context: context,
                         builder: (BuildContext context) {
                           return CustomDialog(
-                            message: "Created " +
-                                created.toString() +
-                                " under issues. Error in creating " +
-                                notCreated.toString() +
-                                " under issues.",
+                            message: "Created " + created.toString() + " under issues. Error in creating " + notCreated.toString() + " under issues.",
                             title: "Info",
                           );
                         },
@@ -312,9 +292,9 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
         ),
         const Divider(),
         isJobItemsLoaded
-            ? Column(
+            ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Select Items to Under Issue",
                     style: TextStyle(

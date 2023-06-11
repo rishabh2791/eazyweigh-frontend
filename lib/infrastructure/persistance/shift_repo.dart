@@ -6,8 +6,7 @@ class ShiftRepo implements ShiftRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> shift) async {
     String url = "shift/create/";
-    var response =
-        await networkAPIProvider.post(url, shift, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, shift, TokenType.accessToken);
     return response;
   }
 
@@ -21,8 +20,7 @@ class ShiftRepo implements ShiftRepository {
   @override
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
     String url = "shift/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 }

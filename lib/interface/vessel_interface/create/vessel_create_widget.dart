@@ -301,12 +301,7 @@ class _VesselCreateWidgetState extends State<VesselCreateWidget> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialog(
-                                  message: "Created " +
-                                      created.toString() +
-                                      " vessels." +
-                                      (notCreated != 0
-                                          ? "Unable to create " + notCreated.toString() + " vessels."
-                                          : ""),
+                                  message: "Created " + created.toString() + " vessels." + (notCreated != 0 ? "Unable to create " + notCreated.toString() + " vessels." : ""),
                                   title: "Info",
                                 );
                               },

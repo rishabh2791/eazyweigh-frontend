@@ -67,10 +67,9 @@ class _VesselListState extends State<VesselList> {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     cardColor: themeChanged.value ? backgroundColor : foregroundColor,
-                    dividerColor:
-                        themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
+                    dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
-                      caption: TextStyle(
+                      bodySmall: TextStyle(
                         color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),

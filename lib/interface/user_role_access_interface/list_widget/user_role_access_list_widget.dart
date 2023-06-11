@@ -13,8 +13,7 @@ class UserRoleAccessListWidget extends StatefulWidget {
   const UserRoleAccessListWidget({Key? key}) : super(key: key);
 
   @override
-  State<UserRoleAccessListWidget> createState() =>
-      _UserRoleAccessListWidgetState();
+  State<UserRoleAccessListWidget> createState() => _UserRoleAccessListWidgetState();
 }
 
 class _UserRoleAccessListWidgetState extends State<UserRoleAccessListWidget> {

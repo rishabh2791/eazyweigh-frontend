@@ -1,7 +1,6 @@
 import 'package:eazyweigh/domain/repository/unit_of_measurement_conversion_repository.dart';
 
-class UnitOfMeasurementConversionApp
-    implements UnitOfMeasurementConversionAppInterface {
+class UnitOfMeasurementConversionApp implements UnitOfMeasurementConversionAppInterface {
   UnitOfMeasurementConversionRepository unitOfMeasurementConversionRepository;
 
   UnitOfMeasurementConversionApp({
@@ -9,14 +8,12 @@ class UnitOfMeasurementConversionApp
   });
 
   @override
-  Future<Map<String, dynamic>> create(
-      Map<String, dynamic> uomConversion) async {
+  Future<Map<String, dynamic>> create(Map<String, dynamic> uomConversion) async {
     return unitOfMeasurementConversionRepository.create(uomConversion);
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> uomConversion) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> uomConversion) async {
     return unitOfMeasurementConversionRepository.createMultiple(uomConversion);
   }
 
@@ -33,8 +30,7 @@ class UnitOfMeasurementConversionApp
 
 abstract class UnitOfMeasurementConversionAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> uomConversion);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> uomConversion);
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> uomConversion);
   Future<Map<String, dynamic>> get(String id);
   Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
 }

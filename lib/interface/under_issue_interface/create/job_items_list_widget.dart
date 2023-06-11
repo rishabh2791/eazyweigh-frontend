@@ -35,38 +35,30 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobItems.sort(
-              (a, b) => a.selected.toString().compareTo(b.selected.toString()));
+          widget.jobItems.sort((a, b) => a.selected.toString().compareTo(b.selected.toString()));
         } else {
-          widget.jobItems.sort(
-              (a, b) => b.selected.toString().compareTo(a.selected.toString()));
+          widget.jobItems.sort((a, b) => b.selected.toString().compareTo(a.selected.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobItems
-              .sort((a, b) => a.material.code.compareTo(b.material.code));
+          widget.jobItems.sort((a, b) => a.material.code.compareTo(b.material.code));
         } else {
-          widget.jobItems
-              .sort((a, b) => b.material.code.compareTo(a.material.code));
+          widget.jobItems.sort((a, b) => b.material.code.compareTo(a.material.code));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobItems.sort((a, b) =>
-              a.material.description.compareTo(b.material.description));
+          widget.jobItems.sort((a, b) => a.material.description.compareTo(b.material.description));
         } else {
-          widget.jobItems.sort((a, b) =>
-              b.material.description.compareTo(a.material.description));
+          widget.jobItems.sort((a, b) => b.material.description.compareTo(a.material.description));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobItems
-              .sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
+          widget.jobItems.sort((a, b) => a.requiredWeight.compareTo(b.requiredWeight));
         } else {
-          widget.jobItems
-              .sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
+          widget.jobItems.sort((a, b) => b.requiredWeight.compareTo(a.requiredWeight));
         }
         break;
       default:
@@ -89,8 +81,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                   data: Theme.of(context).copyWith(
                     cardColor: backgroundColor,
                     dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    textTheme: const TextTheme(bodySmall: TextStyle(color: foregroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -185,11 +176,8 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                             ),
                           ),
                         ],
-                        source: _DataSource(
-                            context, widget.jobItems, widget.underIssueQty),
-                        rowsPerPage: widget.jobItems.length > 25
-                            ? 25
-                            : widget.jobItems.length,
+                        source: _DataSource(context, widget.jobItems, widget.underIssueQty),
+                        rowsPerPage: widget.jobItems.length > 25 ? 25 : widget.jobItems.length,
                       )
                     ],
                   ),
@@ -224,8 +212,7 @@ class _DataSource extends DataTableSource {
   int _selectedCount = 0;
   TextEditingController underIssueController = TextEditingController();
 
-  Future<void> _displayTextInputDialog(
-      BuildContext context, JobItem jobItem) async {
+  Future<void> _displayTextInputDialog(BuildContext context, JobItem jobItem) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -233,8 +220,7 @@ class _DataSource extends DataTableSource {
             title: const Text('Under Issue Quantity'),
             content: TextField(
               controller: underIssueController,
-              decoration:
-                  const InputDecoration(hintText: "Under Issue Quantity"),
+              decoration: const InputDecoration(hintText: "Under Issue Quantity"),
             ),
             actions: <Widget>[
               TextButton(
@@ -252,8 +238,7 @@ class _DataSource extends DataTableSource {
                       },
                     );
                   } else {
-                    _underIssueQty[jobItem.id] =
-                        _underIssueQty[jobItem.id]! - double.parse(qty);
+                    _underIssueQty[jobItem.id] = _underIssueQty[jobItem.id]! - double.parse(qty);
                     Navigator.of(context).pop();
                     notifyListeners();
                   }
@@ -284,9 +269,7 @@ class _DataSource extends DataTableSource {
       cells: [
         DataCell(
           Text(
-            jobItem.assigned
-                ? true.toString().toUpperCase()
-                : jobItem.selected.toString().toUpperCase(),
+            jobItem.assigned ? true.toString().toUpperCase() : jobItem.selected.toString().toUpperCase(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,

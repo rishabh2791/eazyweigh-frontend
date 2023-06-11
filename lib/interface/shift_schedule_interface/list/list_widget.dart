@@ -18,8 +18,7 @@ class ShiftScheduleListWidget extends StatefulWidget {
   const ShiftScheduleListWidget({Key? key}) : super(key: key);
 
   @override
-  State<ShiftScheduleListWidget> createState() =>
-      _ShiftScheduleListWidgetState();
+  State<ShiftScheduleListWidget> createState() => _ShiftScheduleListWidgetState();
 }
 
 class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
@@ -28,10 +27,7 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
   List<Factory> factories = [];
   List<User> weighers = [];
   List<ShiftSchedule> shiftSchedules = [];
-  late TextEditingController factoryController,
-      startDateController,
-      endDateController,
-      userController;
+  late TextEditingController factoryController, startDateController, endDateController, userController;
 
   @override
   void initState() {
@@ -130,17 +126,13 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                shiftSchedules.isEmpty
-                    ? "Not Shift Schedule Found"
-                    : "Found Shift Schedules",
+                shiftSchedules.isEmpty ? "Not Shift Schedule Found" : "Found Shift Schedules",
                 style: TextStyle(
                   fontSize: 20.0,
                   color: themeChanged.value ? foregroundColor : backgroundColor,
                 ),
               ),
-              shiftSchedules.isEmpty
-                  ? Container()
-                  : ShiftScheduleList(shiftSchedules: shiftSchedules),
+              shiftSchedules.isEmpty ? Container() : ShiftScheduleList(shiftSchedules: shiftSchedules),
             ],
           )
         : Column(
@@ -175,8 +167,7 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(menuItemColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                   elevation: MaterialStateProperty.all<double>(5.0),
                 ),
                 onPressed: () async {
@@ -194,10 +185,7 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
                     startDateCondition = {
                       "GREATEREQUAL": {
                         "Field": "created_at",
-                        "Value": DateTime.parse(startDate)
-                                .toString()
-                                .substring(0, 10) +
-                            "T00:00:00.0Z",
+                        "Value": DateTime.parse(startDate).toString().substring(0, 10) + "T00:00:00.0Z",
                       },
                     };
                   }
@@ -208,11 +196,7 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
                     endDateCondition = {
                       "LESSEQUAL": {
                         "Field": "created_at",
-                        "Value": DateTime.parse(endDate)
-                                .add(const Duration(days: 1))
-                                .toString()
-                                .substring(0, 10) +
-                            "T00:00:00.0Z",
+                        "Value": DateTime.parse(endDate).add(const Duration(days: 1)).toString().substring(0, 10) + "T00:00:00.0Z",
                       },
                     };
                   }
@@ -222,8 +206,7 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
                     endDateCondition,
                   ];
 
-                  if (userController.text.isNotEmpty ||
-                      userController.text != "") {
+                  if (userController.text.isNotEmpty || userController.text != "") {
                     conditions["AND"].add(
                       {
                         "EQUALS": {
@@ -245,14 +228,10 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
                       },
                     );
                   } else {
-                    await appStore.shiftScheduleApp
-                        .list(conditions)
-                        .then((response) {
-                      if (response.containsKey("status") &&
-                          response["status"]) {
+                    await appStore.shiftScheduleApp.list(conditions).then((response) {
+                      if (response.containsKey("status") && response["status"]) {
                         for (var item in response["payload"]) {
-                          ShiftSchedule shiftSchedule =
-                              ShiftSchedule.fromJSON(item);
+                          ShiftSchedule shiftSchedule = ShiftSchedule.fromJSON(item);
                           shiftSchedules.add(shiftSchedule);
                         }
                       }

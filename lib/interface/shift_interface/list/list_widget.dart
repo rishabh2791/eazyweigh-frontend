@@ -90,8 +90,7 @@ class _ShiftListWidgetState extends State<ShiftListWidget> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(menuItemColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                   elevation: MaterialStateProperty.all<double>(5.0),
                 ),
                 onPressed: () async {
@@ -115,8 +114,7 @@ class _ShiftListWidgetState extends State<ShiftListWidget> {
                       },
                     };
                     await appStore.shiftApp.list(conditions).then((response) {
-                      if (response.containsKey("status") &&
-                          response["status"]) {
+                      if (response.containsKey("status") && response["status"]) {
                         for (var item in response["payload"]) {
                           Shift shift = Shift.fromJSON(item);
                           shifts.add(shift);

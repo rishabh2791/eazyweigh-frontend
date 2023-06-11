@@ -14,8 +14,7 @@ class OverIssueItemsListWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<OverIssueItemsListWidget> createState() =>
-      _OverIssueItemsListWidgetState();
+  State<OverIssueItemsListWidget> createState() => _OverIssueItemsListWidgetState();
 }
 
 class _OverIssueItemsListWidgetState extends State<OverIssueItemsListWidget> {
@@ -36,49 +35,37 @@ class _OverIssueItemsListWidgetState extends State<OverIssueItemsListWidget> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.overIssues.sort(
-              (a, b) => a.weighed.toString().compareTo(b.weighed.toString()));
+          widget.overIssues.sort((a, b) => a.weighed.toString().compareTo(b.weighed.toString()));
         } else {
-          widget.overIssues.sort(
-              (a, b) => b.weighed.toString().compareTo(a.weighed.toString()));
+          widget.overIssues.sort((a, b) => b.weighed.toString().compareTo(a.weighed.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.overIssues.sort(
-              (a, b) => a.verified.toString().compareTo(b.verified.toString()));
+          widget.overIssues.sort((a, b) => a.verified.toString().compareTo(b.verified.toString()));
         } else {
-          widget.overIssues.sort(
-              (a, b) => b.verified.toString().compareTo(a.verified.toString()));
+          widget.overIssues.sort((a, b) => b.verified.toString().compareTo(a.verified.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.overIssues.sort((a, b) => widget.jobItems[a.id]!.material.code
-              .compareTo(widget.jobItems[b.id]!.material.code));
+          widget.overIssues.sort((a, b) => widget.jobItems[a.id]!.material.code.compareTo(widget.jobItems[b.id]!.material.code));
         } else {
-          widget.overIssues.sort((a, b) => widget.jobItems[b.id]!.material.code
-              .compareTo(widget.jobItems[a.id]!.material.code));
+          widget.overIssues.sort((a, b) => widget.jobItems[b.id]!.material.code.compareTo(widget.jobItems[a.id]!.material.code));
         }
         break;
       case 3:
         if (ascending) {
-          widget.overIssues.sort((a, b) => widget
-              .jobItems[a.id]!.material.description
-              .compareTo(widget.jobItems[b.id]!.material.description));
+          widget.overIssues.sort((a, b) => widget.jobItems[a.id]!.material.description.compareTo(widget.jobItems[b.id]!.material.description));
         } else {
-          widget.overIssues.sort((a, b) => widget
-              .jobItems[b.id]!.material.description
-              .compareTo(widget.jobItems[a.id]!.material.description));
+          widget.overIssues.sort((a, b) => widget.jobItems[b.id]!.material.description.compareTo(widget.jobItems[a.id]!.material.description));
         }
         break;
       case 4:
         if (ascending) {
-          widget.overIssues
-              .sort((a, b) => (a.actual - a.req).compareTo(b.actual - b.req));
+          widget.overIssues.sort((a, b) => (a.actual - a.req).compareTo(b.actual - b.req));
         } else {
-          widget.overIssues
-              .sort((a, b) => (b.actual - b.req).compareTo(a.actual - a.req));
+          widget.overIssues.sort((a, b) => (b.actual - b.req).compareTo(a.actual - a.req));
         }
         break;
       default:
@@ -101,8 +88,7 @@ class _OverIssueItemsListWidgetState extends State<OverIssueItemsListWidget> {
                   data: Theme.of(context).copyWith(
                     cardColor: backgroundColor,
                     dividerColor: foregroundColor.withOpacity(0.25),
-                    textTheme: const TextTheme(
-                        caption: TextStyle(color: foregroundColor)),
+                    textTheme: const TextTheme(bodySmall: TextStyle(color: foregroundColor)),
                   ),
                   child: ListView(
                     children: [
@@ -204,11 +190,8 @@ class _OverIssueItemsListWidgetState extends State<OverIssueItemsListWidget> {
                             },
                           ),
                         ],
-                        source: _DataSource(
-                            context, widget.overIssues, widget.jobItems),
-                        rowsPerPage: widget.overIssues.length > 25
-                            ? 25
-                            : widget.overIssues.length,
+                        source: _DataSource(context, widget.overIssues, widget.jobItems),
+                        rowsPerPage: widget.overIssues.length > 25 ? 25 : widget.overIssues.length,
                       )
                     ],
                   ),

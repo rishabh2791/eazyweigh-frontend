@@ -308,8 +308,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (scannerData.containsKey("action")) {
       switch (scannerData["action"]) {
@@ -474,16 +473,15 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
         onPressed: () {
           navigationService.pushReplacement(
             CupertinoPageRoute(
-              builder: (BuildContext context) =>
-                  OverIssueDetailsWidget(jobCode: job.jobCode, overIssueItems: passedJobMapping[job.id]!, jobItems: jobItems),
+              builder: (BuildContext context) => OverIssueDetailsWidget(jobCode: job.jobCode, overIssueItems: passedJobMapping[job.id]!, jobItems: jobItems),
             ),
           );
         },
-        child: QrImage(
+        child: QrImageView(
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
+          eyeStyle: const QrEyeStyle(color: Colors.black),
         ),
       ),
     );
@@ -525,7 +523,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   ),
                 );
               },
-              child: QrImage(
+              child: QrImageView(
                 data: back,
                 size: 150,
                 backgroundColor: Colors.red,
@@ -549,11 +547,11 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   end = min(2, passedJobMapping.length - 1);
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                foregroundColor: start == 0 ? backgroundColor : Colors.black,
+                eyeStyle: QrEyeStyle(color: start == 0 ? backgroundColor : Colors.black),
               ),
             ),
             start == 0
@@ -582,11 +580,11 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                   }
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: next,
                 size: 150,
                 backgroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? Colors.transparent : Colors.red,
-                foregroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? backgroundColor : Colors.black,
+                eyeStyle: QrEyeStyle(color: (end == jobMapping.length - 1 || jobMapping.length < 3) ? backgroundColor : Colors.black),
               ),
             ),
             (end == jobMapping.length - 1 || jobMapping.length < 3)
@@ -821,7 +819,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
             ),
           ),
           const Divider(),
-          QrImage(
+          QrImageView(
             data: back,
             size: 250,
             backgroundColor: Colors.red,

@@ -30,14 +30,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
   List<Factory> factories = [];
   late FilePickerResult? file;
 
-  late TextEditingController usernameController,
-      passwordController,
-      firstNameController,
-      lastNameController,
-      emailController,
-      userRoleController,
-      profilePicController,
-      factoryController;
+  late TextEditingController usernameController, passwordController, firstNameController, lastNameController, emailController, userRoleController, profilePicController, factoryController;
 
   @override
   void initState() {
@@ -142,8 +135,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
     });
   }
 
-  Future<void> handleCreation(
-      Map<String, String> user, String username, String factoryName) async {
+  Future<void> handleCreation(Map<String, String> user, String username, String factoryName) async {
     await appStore.userApp.create(user).then(
       (response) async {
         if (response.containsKey("status")) {
@@ -152,9 +144,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
               "user_username": username,
               "company_id": companyID,
             };
-            await appStore.userCompanyApp
-                .create(userCompany)
-                .then((userCompanyResponse) async {
+            await appStore.userCompanyApp.create(userCompany).then((userCompanyResponse) async {
               if (userCompanyResponse["status"]) {
                 if (factoryName.isNotEmpty) {
                   Map<String, dynamic> userFactory = {
@@ -310,8 +300,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -381,34 +370,27 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                             var url = baseURL + "image/upload/";
                             String? token = storage?.getString("access_token");
                             Map<String, String> headers = {
-                              "Authorization":
-                                  "accessToken " + token.toString(),
+                              "Authorization": "accessToken " + token.toString(),
                               "Content-Type": "multipart/form-data",
                             };
                             // ignore: prefer_typing_uninitialized_variables
                             var pic;
-                            var request =
-                                http.MultipartRequest("POST", Uri.parse(url));
+                            var request = http.MultipartRequest("POST", Uri.parse(url));
                             if (foundation.kIsWeb) {
-                              var _bytesData =
-                                  List<int>.from(file!.files.single.bytes!);
+                              var _bytesData = List<int>.from(file!.files.single.bytes!);
                               pic = http.MultipartFile.fromBytes(
                                 "file",
                                 _bytesData,
                                 filename: file!.files.single.name,
                               );
                             } else {
-                              pic = await http.MultipartFile.fromPath(
-                                  "file", file!.files.single.path.toString());
+                              pic = await http.MultipartFile.fromPath("file", file!.files.single.path.toString());
                             }
                             request.headers.addAll(headers);
                             request.files.add(pic);
                             var response = await request.send();
-                            await response.stream
-                                .toBytes()
-                                .then((responseData) {
-                              var responseString =
-                                  String.fromCharCodes(responseData);
+                            await response.stream.toBytes().then((responseData) {
+                              var responseString = String.fromCharCodes(responseData);
                               var responseJSON = json.decode(responseString);
                               user["profile_pic"] = responseJSON["payload"];
                               handleCreation(user, username, factoryName);
@@ -425,8 +407,7 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {

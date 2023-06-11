@@ -33,81 +33,51 @@ class _JobItemItemsListState extends State<JobWeighingList> {
     switch (columnIndex) {
       case 0:
         if (ascending) {
-          widget.jobWeighings
-              .sort((a, b) => a.id.toString().compareTo(b.id.toString()));
+          widget.jobWeighings.sort((a, b) => a.id.toString().compareTo(b.id.toString()));
         } else {
-          widget.jobWeighings
-              .sort((a, b) => b.id.toString().compareTo(a.id.toString()));
+          widget.jobWeighings.sort((a, b) => b.id.toString().compareTo(a.id.toString()));
         }
         break;
       case 1:
         if (ascending) {
-          widget.jobWeighings.sort(
-              (a, b) => a.weight.toString().compareTo(b.weight.toString()));
+          widget.jobWeighings.sort((a, b) => a.weight.toString().compareTo(b.weight.toString()));
         } else {
-          widget.jobWeighings.sort(
-              (a, b) => b.weight.toString().compareTo(a.weight.toString()));
+          widget.jobWeighings.sort((a, b) => b.weight.toString().compareTo(a.weight.toString()));
         }
         break;
       case 2:
         if (ascending) {
-          widget.jobWeighings
-              .sort((a, b) => a.batch.toString().compareTo(b.batch.toString()));
+          widget.jobWeighings.sort((a, b) => a.batch.toString().compareTo(b.batch.toString()));
         } else {
-          widget.jobWeighings
-              .sort((a, b) => b.batch.toString().compareTo(a.batch.toString()));
+          widget.jobWeighings.sort((a, b) => b.batch.toString().compareTo(a.batch.toString()));
         }
         break;
       case 3:
         if (ascending) {
-          widget.jobWeighings.sort((a, b) => (a.createdBy.firstName +
-                  " " +
-                  a.createdBy.lastName)
-              .toString()
-              .compareTo((b.createdBy.firstName + " " + b.createdBy.lastName)
-                  .toString()));
+          widget.jobWeighings.sort((a, b) => (a.createdBy.firstName + " " + a.createdBy.lastName).toString().compareTo((b.createdBy.firstName + " " + b.createdBy.lastName).toString()));
         } else {
-          widget.jobWeighings.sort((a, b) => (b.createdBy.firstName +
-                  " " +
-                  b.createdBy.lastName)
-              .toString()
-              .compareTo((a.createdBy.firstName + " " + a.createdBy.lastName)
-                  .toString()));
+          widget.jobWeighings.sort((a, b) => (b.createdBy.firstName + " " + b.createdBy.lastName).toString().compareTo((a.createdBy.firstName + " " + a.createdBy.lastName).toString()));
         }
         break;
       case 4:
         if (ascending) {
-          widget.jobWeighings.sort((a, b) =>
-              a.createdAt.toString().compareTo(b.createdAt.toString()));
+          widget.jobWeighings.sort((a, b) => a.createdAt.toString().compareTo(b.createdAt.toString()));
         } else {
-          widget.jobWeighings.sort((a, b) =>
-              b.createdAt.toString().compareTo(a.createdAt.toString()));
+          widget.jobWeighings.sort((a, b) => b.createdAt.toString().compareTo(a.createdAt.toString()));
         }
         break;
       case 5:
         if (ascending) {
-          widget.jobWeighings.sort((a, b) => a.endTime
-              .difference(a.startTime)
-              .inSeconds
-              .toString()
-              .compareTo(
-                  b.endTime.difference(b.startTime).inSeconds.toString()));
+          widget.jobWeighings.sort((a, b) => a.endTime.difference(a.startTime).inSeconds.toString().compareTo(b.endTime.difference(b.startTime).inSeconds.toString()));
         } else {
-          widget.jobWeighings.sort((a, b) => b.endTime
-              .difference(b.startTime)
-              .inSeconds
-              .toString()
-              .compareTo(
-                  a.endTime.difference(a.startTime).inSeconds.toString()));
+          widget.jobWeighings.sort((a, b) => b.endTime.difference(b.startTime).inSeconds.toString().compareTo(a.endTime.difference(a.startTime).inSeconds.toString()));
         }
         break;
       case 6:
         if (ascending) {
-          widget.jobWeighings.sort(
-              (a, b) => a.verified.toString().compareTo(b.verified.toString()));
+          widget.jobWeighings.sort((a, b) => a.verified.toString().compareTo(b.verified.toString()));
         } else {
-          widget.jobWeighings.sort(
-              (a, b) => b.verified.toString().compareTo(a.verified.toString()));
+          widget.jobWeighings.sort((a, b) => b.verified.toString().compareTo(a.verified.toString()));
         }
         break;
       default:
@@ -124,25 +94,18 @@ class _JobItemItemsListState extends State<JobWeighingList> {
             return Container(
               padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
               width: sizeInfo.screenSize.width,
-              height: double.parse(
-                  (150 + 56 * widget.jobWeighings.length).toString()),
+              height: double.parse((150 + 56 * widget.jobWeighings.length).toString()),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        cardColor: themeChanged.value
-                            ? backgroundColor
-                            : foregroundColor,
-                        dividerColor: themeChanged.value
-                            ? foregroundColor.withOpacity(0.25)
-                            : backgroundColor.withOpacity(0.25),
+                        cardColor: themeChanged.value ? backgroundColor : foregroundColor,
+                        dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                         textTheme: TextTheme(
-                          caption: TextStyle(
-                            color: themeChanged.value
-                                ? foregroundColor
-                                : backgroundColor,
+                          bodySmall: TextStyle(
+                            color: themeChanged.value ? foregroundColor : backgroundColor,
                           ),
                         ),
                       ),
@@ -160,9 +123,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Weighing ID",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -180,9 +141,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Quantity",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -200,9 +159,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Batch",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -220,9 +177,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Weighed By",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -240,9 +195,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Weighed On",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -260,9 +213,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Time Taken (s)",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -280,9 +231,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                                   "Verified",
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: themeChanged.value
-                                        ? foregroundColor
-                                        : backgroundColor,
+                                    color: themeChanged.value ? foregroundColor : backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -300,9 +249,7 @@ class _JobItemItemsListState extends State<JobWeighingList> {
                               context,
                               widget.jobWeighings,
                             ),
-                            rowsPerPage: widget.jobWeighings.length > 25
-                                ? 25
-                                : widget.jobWeighings.length,
+                            rowsPerPage: widget.jobWeighings.length > 25 ? 25 : widget.jobWeighings.length,
                           )
                         ],
                       ),
@@ -341,9 +288,7 @@ class _DataSource extends DataTableSource {
     return DataRow.byIndex(
       color: MaterialStateColor.resolveWith(
         (states) {
-          return jobWeighing.jobItem.complete
-              ? Colors.transparent
-              : Colors.blue;
+          return jobWeighing.jobItem.complete ? Colors.transparent : Colors.blue;
         },
       ),
       index: index,
@@ -380,9 +325,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            jobWeighing.createdBy.firstName +
-                " " +
-                jobWeighing.createdBy.lastName,
+            jobWeighing.createdBy.firstName + " " + jobWeighing.createdBy.lastName,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -402,10 +345,7 @@ class _DataSource extends DataTableSource {
         ),
         DataCell(
           Text(
-            jobWeighing.endTime
-                .difference(jobWeighing.startTime)
-                .inSeconds
-                .toString(),
+            jobWeighing.endTime.difference(jobWeighing.startTime).inSeconds.toString(),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

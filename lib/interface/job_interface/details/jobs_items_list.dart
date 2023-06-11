@@ -40,8 +40,7 @@ class _JobItemItemsListState extends State<JobItemsList> {
   }
 
   void listenToPrintingService(String message) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(message.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(message.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     if (!(scannerData.containsKey("status") && scannerData["status"] == "done")) {
       showDialog(
         context: context,
@@ -131,7 +130,7 @@ class _JobItemItemsListState extends State<JobItemsList> {
                     cardColor: themeChanged.value ? backgroundColor : foregroundColor,
                     dividerColor: themeChanged.value ? foregroundColor.withOpacity(0.25) : backgroundColor.withOpacity(0.25),
                     textTheme: TextTheme(
-                      caption: TextStyle(
+                      bodySmall: TextStyle(
                         color: themeChanged.value ? foregroundColor : backgroundColor,
                       ),
                     ),

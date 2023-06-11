@@ -18,8 +18,7 @@ class JobAssignmentCreateWidget extends StatefulWidget {
   const JobAssignmentCreateWidget({Key? key}) : super(key: key);
 
   @override
-  State<JobAssignmentCreateWidget> createState() =>
-      _JobAssignmentCreateWidgetState();
+  State<JobAssignmentCreateWidget> createState() => _JobAssignmentCreateWidgetState();
 }
 
 class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
@@ -28,9 +27,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
   List<Factory> factories = [];
   List<JobItem> jobItems = [];
   List<ShiftSchedule> shiftSchedules = [];
-  late TextEditingController jobCodeController,
-      factoryController,
-      shiftScheduleController;
+  late TextEditingController jobCodeController, factoryController, shiftScheduleController;
 
   @override
   void initState() {
@@ -91,9 +88,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
         {
           "LESSEQUAL": {
             "Field": "date",
-            "Value": DateTime(today.year, today.month, today.day)
-                .add(const Duration(days: 7))
-                .toString(),
+            "Value": DateTime(today.year, today.month, today.day).add(const Duration(days: 7)).toString(),
           },
         },
       ],
@@ -145,16 +140,11 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            DropDownWidget(
-                disabled: false,
-                hint: "Factory",
-                controller: factoryController,
-                itemList: factories),
+            DropDownWidget(disabled: false, hint: "Factory", controller: factoryController, itemList: factories),
             textField(false, jobCodeController, "Job Code", false),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -307,8 +297,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                     children: [
                       TextButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(menuItemColor),
+                          backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                           elevation: MaterialStateProperty.all<double>(5.0),
                         ),
                         onPressed: () {
@@ -326,8 +315,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                           ),
                           message: "Select All",
                           child: Padding(
-                            padding:
-                                EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                            padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                             child: Icon(
                               Icons.select_all,
                               color: backgroundColor,
@@ -344,8 +332,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                       ),
                       TextButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(menuItemColor),
+                          backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                           elevation: MaterialStateProperty.all<double>(5.0),
                         ),
                         onPressed: () async {
@@ -377,8 +364,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return const CustomDialog(
-                                    message:
-                                        "Please Select at least one Job Item",
+                                    message: "Please Select at least one Job Item",
                                     title: "Errors",
                                   );
                                 },
@@ -391,9 +377,7 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                                   return loader(context);
                                 },
                               );
-                              await appStore.jobItemAssignmentApp
-                                  .createMultiple(jobItemsAssigned)
-                                  .then(
+                              await appStore.jobItemAssignmentApp.createMultiple(jobItemsAssigned).then(
                                 (response) async {
                                   if (response["status"]) {
                                     Navigator.of(context).pop();

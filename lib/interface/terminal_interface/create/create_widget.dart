@@ -33,13 +33,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
   List<UnitOfMeasure> uoms = [];
   late FilePickerResult? file;
 
-  late TextEditingController descriptionController,
-      factoryController,
-      uomController,
-      macAddressController,
-      capacityController,
-      leastCountController,
-      fileController;
+  late TextEditingController descriptionController, factoryController, uomController, macAddressController, capacityController, leastCountController, fileController;
 
   @override
   void initState() {
@@ -187,8 +181,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                 const SizedBox(
                   height: 10.0,
                 ),
-                textField(false, descriptionController, "Terminal Description",
-                    false),
+                textField(false, descriptionController, "Terminal Description", false),
                 textField(false, capacityController, "Maximum Capacity", false),
                 textField(false, leastCountController, "Least Count", false),
                 textField(false, macAddressController, "MAC Address", false),
@@ -205,8 +198,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                   children: [
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -271,19 +263,15 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                             "mac_address": macAddress,
                           };
 
-                          await appStore.terminalApp
-                              .create(terminal)
-                              .then((response) async {
+                          await appStore.terminalApp.create(terminal).then((response) async {
                             if (response["status"]) {
-                              String apiKey =
-                                  response["payload"]["api_key"].toString();
+                              String apiKey = response["payload"]["api_key"].toString();
                               Navigator.of(context).pop();
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomDialog(
-                                    message: "Terminal Created with API Key: " +
-                                        apiKey,
+                                    message: "Terminal Created with API Key: " + apiKey,
                                     title: "Info",
                                   );
                                 },
@@ -316,8 +304,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () {
@@ -361,8 +348,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                 ),
                 TextButton(
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(menuItemColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                     elevation: MaterialStateProperty.all<double>(5.0),
                   ),
                   onPressed: () async {
@@ -403,9 +389,7 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                             },
                           );
                         } else {
-                          final csvFile =
-                              File(file!.files.single.path.toString())
-                                  .openRead();
+                          final csvFile = File(file!.files.single.path.toString()).openRead();
                           // ignore: prefer_typing_uninitialized_variables
                           csvData = await csvFile
                               .transform(utf8.decoder)
@@ -434,34 +418,23 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialog(
-                                  message:
-                                      errors + "\n Creating the Others Now.",
+                                  message: errors + "\n Creating the Others Now.",
                                   title: "Errors",
                                 );
                               },
                             );
                           }
                         }
-                        await appStore.terminalApp
-                            .createMultiple(terminals)
-                            .then(
+                        await appStore.terminalApp.createMultiple(terminals).then(
                           (value) {
                             if (value["status"]) {
                               int created = value["payload"]["models"].length;
-                              int notCreated =
-                                  value["payload"]["errors"].length;
+                              int notCreated = value["payload"]["errors"].length;
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomDialog(
-                                    message: "Created " +
-                                        created.toString() +
-                                        " terminals." +
-                                        (notCreated != 0
-                                            ? "Unable to create " +
-                                                notCreated.toString() +
-                                                " terminals."
-                                            : ""),
+                                    message: "Created " + created.toString() + " terminals." + (notCreated != 0 ? "Unable to create " + notCreated.toString() + " terminals." : ""),
                                     title: "Info",
                                   );
                                 },

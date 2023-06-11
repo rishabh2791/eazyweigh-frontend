@@ -6,17 +6,14 @@ class UnderIssueRepo implements UnderIssueRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, dynamic> underIssues) async {
     String url = "under_issue/create/";
-    var response =
-        await networkAPIProvider.post(url, underIssues, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, underIssues, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> underIssuess) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> underIssuess) async {
     String url = "under_issue/create/multi/";
-    var response =
-        await networkAPIProvider.post(url, underIssuess, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, underIssuess, TokenType.accessToken);
     return response;
   }
 
@@ -28,11 +25,9 @@ class UnderIssueRepo implements UnderIssueRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String underIssueID, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String underIssueID, Map<String, dynamic> update) async {
     String url = "under_issue/" + underIssueID + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

@@ -25,9 +25,7 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
   bool isBomItemsLoaded = false;
   List<Factory> factories = [];
   List<BomItem> bomItems = [];
-  late TextEditingController materialCodeController,
-      revisionController,
-      factoryController;
+  late TextEditingController materialCodeController, revisionController, factoryController;
 
   @override
   void initState() {
@@ -92,17 +90,12 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            DropDownWidget(
-                disabled: false,
-                hint: "Factory",
-                controller: factoryController,
-                itemList: factories),
+            DropDownWidget(disabled: false, hint: "Factory", controller: factoryController, itemList: factories),
             textField(false, materialCodeController, "Material Code", false),
             textField(false, revisionController, "Revision", false),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -155,12 +148,8 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
                     ]
                   };
                   bomItems = [];
-                  await appStore.materialApp
-                      .list(conditions)
-                      .then((value) async {
-                    if (value.containsKey("status") &&
-                        value["status"] &&
-                        value["payload"].isNotEmpty) {
+                  await appStore.materialApp.list(conditions).then((value) async {
+                    if (value.containsKey("status") && value["status"] && value["payload"].isNotEmpty) {
                       Map<String, dynamic> conditions = {
                         "AND": [
                           {
@@ -183,12 +172,9 @@ class _BOMDetailsWidgetState extends State<BOMDetailsWidget> {
                           },
                         ]
                       };
-                      await appStore.bomApp
-                          .list(conditions)
-                          .then((response) async {
+                      await appStore.bomApp.list(conditions).then((response) async {
                         if (response["status"]) {
-                          for (var item in response["payload"][0]
-                              ["bom_items"]) {
+                          for (var item in response["payload"][0]["bom_items"]) {
                             BomItem bomItem = BomItem.fromJSON(item);
                             bomItems.add(bomItem);
                           }

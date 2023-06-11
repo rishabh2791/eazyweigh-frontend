@@ -161,8 +161,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
   }
 
   dynamic listenToScanner(String data) {
-    Map<String, dynamic> scannerData =
-        jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
     switch (scannerData["action"]) {
       case "selection":
         late OverIssue passedOverIssueItem;
@@ -324,11 +323,11 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
             ),
           );
         },
-        child: QrImage(
+        child: QrImageView(
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
+          eyeStyle: const QrEyeStyle(color: Colors.black),
         ),
       ),
     );
@@ -374,7 +373,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                   ),
                 );
               },
-              child: QrImage(
+              child: QrImageView(
                 data: back,
                 size: 150,
                 backgroundColor: Colors.red,
@@ -398,11 +397,11 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                   end = min(2, widget.overIssueItems.length - 1);
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
+                eyeStyle: QrEyeStyle(color: start == 0 ? Colors.transparent : Colors.black),
               ),
             ),
             start == 0
@@ -431,11 +430,11 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                   }
                 });
               },
-              child: QrImage(
+              child: QrImageView(
                 data: next,
                 size: 150,
                 backgroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.red,
-                foregroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.black,
+                eyeStyle: QrEyeStyle(color: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.black),
               ),
             ),
             (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3)

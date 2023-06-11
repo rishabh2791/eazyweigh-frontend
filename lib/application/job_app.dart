@@ -13,8 +13,7 @@ class JobApp implements JobAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> jobs) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> jobs) async {
     return jobRepository.createMultiple(jobs);
   }
 
@@ -29,8 +28,7 @@ class JobApp implements JobAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String jobCode, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String jobCode, Map<String, dynamic> update) async {
     return jobRepository.update(jobCode, update);
   }
 

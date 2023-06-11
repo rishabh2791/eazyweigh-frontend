@@ -44,12 +44,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
   Map<int, TextEditingController> overIssueControllers = {};
   Map<int, TextEditingController> underIssueControllers = {};
 
-  late TextEditingController factoryController,
-      uomController,
-      codeController,
-      fileController,
-      unitSizeController,
-      revisionController;
+  late TextEditingController factoryController, uomController, codeController, fileController, unitSizeController, revisionController;
 
   @override
   void initState() {
@@ -374,8 +369,8 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    Wrap(
-                      children: const [
+                    const Wrap(
+                      children: [
                         SizedBox(
                           width: 30,
                           child: Text(
@@ -478,8 +473,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                     ),
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(menuItemColor),
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                         elevation: MaterialStateProperty.all<double>(5.0),
                       ),
                       onPressed: () async {
@@ -489,24 +483,17 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                       },
                       child: Tooltip(
                         decoration: BoxDecoration(
-                          color: themeChanged.value
-                              ? foregroundColor
-                              : backgroundColor,
+                          color: themeChanged.value ? foregroundColor : backgroundColor,
                         ),
                         message: "Add More Rows",
                         textStyle: TextStyle(
-                          color: themeChanged.value
-                              ? backgroundColor
-                              : foregroundColor,
+                          color: themeChanged.value ? backgroundColor : foregroundColor,
                         ),
                         child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                          padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                           child: Icon(
                             Icons.add,
-                            color: themeChanged.value
-                                ? backgroundColor
-                                : foregroundColor,
+                            color: themeChanged.value ? backgroundColor : foregroundColor,
                             size: 30.0,
                           ),
                         ),
@@ -543,8 +530,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                       children: [
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(menuItemColor),
+                            backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                             elevation: MaterialStateProperty.all<double>(5.0),
                           ),
                           onPressed: () async {
@@ -565,20 +551,16 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                               errors += "Material Details Required.\n";
                             }
 
-                            if (unitSizeController.text.isEmpty ||
-                                unitSizeController.text.toString() == "") {
+                            if (unitSizeController.text.isEmpty || unitSizeController.text.toString() == "") {
                               errors += "Unit Size Required.\n";
                             } else {
-                              unitSize = double.parse(
-                                  unitSizeController.text.toString());
+                              unitSize = double.parse(unitSizeController.text.toString());
                             }
 
-                            if (revisionController.text.isEmpty ||
-                                revisionController.text.toString() == "") {
+                            if (revisionController.text.isEmpty || revisionController.text.toString() == "") {
                               errors += "Revision Required.\n";
                             } else {
-                              revision =
-                                  int.parse(revisionController.text.toString());
+                              revision = int.parse(revisionController.text.toString());
                             }
 
                             if (uom.isEmpty || uom == "") {
@@ -586,30 +568,19 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                             }
 
                             if (errors.isEmpty) {
-                              String bomMaterialID =
-                                  getMaterialID(materialCode);
+                              String bomMaterialID = getMaterialID(materialCode);
 
-                              if (bomMaterialID.isEmpty ||
-                                  bomMaterialID == "") {
-                                errors += "Material: " +
-                                    codeController.text +
-                                    " not created in Factory: " +
-                                    getFactoryName(factoryID) +
-                                    ".\n";
+                              if (bomMaterialID.isEmpty || bomMaterialID == "") {
+                                errors += "Material: " + codeController.text + " not created in Factory: " + getFactoryName(factoryID) + ".\n";
                               } else {
-                                if (fileController.text.isNotEmpty ||
-                                    fileController.text != "") {
+                                if (fileController.text.isNotEmpty || fileController.text != "") {
                                   // ignore: prefer_typing_uninitialized_variables
                                   var csvData;
                                   if (foundation.kIsWeb) {
-                                    final bytes =
-                                        utf8.decode(file!.files.single.bytes!);
-                                    csvData = const CsvToListConverter()
-                                        .convert(bytes);
+                                    final bytes = utf8.decode(file!.files.single.bytes!);
+                                    csvData = const CsvToListConverter().convert(bytes);
                                   } else {
-                                    final csvFile =
-                                        File(file!.files.single.path.toString())
-                                            .openRead();
+                                    final csvFile = File(file!.files.single.path.toString()).openRead();
                                     csvData = await csvFile
                                         .transform(utf8.decoder)
                                         .transform(
@@ -621,37 +592,22 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                                     (element) {
                                       String uomID = getUOMID(element[1]);
                                       if (uomID.isEmpty) {
-                                        errors += "Unit of Measure: " +
-                                            element[1] +
-                                            " not created.\n";
+                                        errors += "Unit of Measure: " + element[1] + " not created.\n";
                                       } else {
-                                        String materialID = getMaterialID(
-                                            element[0].toString());
-                                        if (materialID.isEmpty ||
-                                            materialID == "") {
-                                          errors += "Material: " +
-                                              element[0] +
-                                              " not created.\n";
+                                        String materialID = getMaterialID(element[0].toString());
+                                        if (materialID.isEmpty || materialID == "") {
+                                          errors += "Material: " + element[0] + " not created.\n";
                                         } else {
                                           bomItems.add(
                                             {
                                               "bom_id": "",
-                                              "material_id": getMaterialID(
-                                                  element[0].toString()),
-                                              "unit_of_measurement_id":
-                                                  getUOMID(element[1]),
-                                              "quantity": double.parse(
-                                                  element[2].toString()),
-                                              "upper_tolerance": double.parse(
-                                                  element[3].toString()),
-                                              "lower_tolerance": double.parse(
-                                                  element[4].toString()),
-                                              "over_issue": element[5] == 1
-                                                  ? true
-                                                  : false,
-                                              "under_issue": element[6] == 1
-                                                  ? true
-                                                  : false,
+                                              "material_id": getMaterialID(element[0].toString()),
+                                              "unit_of_measurement_id": getUOMID(element[1]),
+                                              "quantity": double.parse(element[2].toString()),
+                                              "upper_tolerance": double.parse(element[3].toString()),
+                                              "lower_tolerance": double.parse(element[4].toString()),
+                                              "over_issue": element[5] == 1 ? true : false,
+                                              "under_issue": element[6] == 1 ? true : false,
                                             },
                                           );
                                         }
@@ -662,31 +618,15 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                                   if (getEmptyRows(codeControllers) == rows) {
                                     errors += "No BOM Items Found.";
                                   } else {
-                                    for (var j = 0;
-                                        j < codeControllers.length;
-                                        j++) {
-                                      var thisCode =
-                                          codeControllers[j]?.text.toString();
-                                      var thisUOM =
-                                          uomControllers[j]?.text.toString();
-                                      var thisQty =
-                                          qtyControllers[j]?.text.toString();
-                                      var thisUpperTol = upperTolControllers[j]
-                                          ?.text
-                                          .toString();
-                                      var thisLowerTol = lowerTolControllers[j]
-                                          ?.text
-                                          .toString();
-                                      var thisOverIssue =
-                                          overIssueControllers[j]
-                                              ?.text
-                                              .toString();
-                                      var thisUnderIssue =
-                                          underIssueControllers[j]
-                                              ?.text
-                                              .toString();
-                                      String materialID =
-                                          getMaterialID(thisCode.toString());
+                                    for (var j = 0; j < codeControllers.length; j++) {
+                                      var thisCode = codeControllers[j]?.text.toString();
+                                      var thisUOM = uomControllers[j]?.text.toString();
+                                      var thisQty = qtyControllers[j]?.text.toString();
+                                      var thisUpperTol = upperTolControllers[j]?.text.toString();
+                                      var thisLowerTol = lowerTolControllers[j]?.text.toString();
+                                      var thisOverIssue = overIssueControllers[j]?.text.toString();
+                                      var thisUnderIssue = underIssueControllers[j]?.text.toString();
+                                      String materialID = getMaterialID(thisCode.toString());
 
                                       if (thisCode!.isEmpty &&
                                           thisUOM!.isEmpty &&
@@ -699,12 +639,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                                       }
 
                                       if (materialID.isEmpty) {
-                                        errors += "Material Code:" +
-                                            thisCode.toString() +
-                                            " not created in. " +
-                                            getFactoryName(
-                                                factoryController.text) +
-                                            ".\n";
+                                        errors += "Material Code:" + thisCode.toString() + " not created in. " + getFactoryName(factoryController.text) + ".\n";
                                       } else {
                                         if (thisCode.isEmpty ||
                                             thisUOM!.isEmpty ||
@@ -713,31 +648,19 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                                             thisLowerTol!.isEmpty ||
                                             thisOverIssue!.isEmpty ||
                                             thisUnderIssue!.isEmpty) {
-                                          errors +=
-                                              "Please check all entries in Sr. No. " +
-                                                  (j + 1).toString() +
-                                                  ".\n";
+                                          errors += "Please check all entries in Sr. No. " + (j + 1).toString() + ".\n";
                                         } else {
                                           if (materialID.isEmpty) {
                                           } else {
                                             Map<String, dynamic> thisBOMItem = {
                                               "bom_id": "",
-                                              "material_id":
-                                                  getMaterialID(thisCode),
+                                              "material_id": getMaterialID(thisCode),
                                               "unit_of_measurement_id": thisUOM,
                                               "quantity": double.parse(thisQty),
-                                              "upper_tolerance":
-                                                  double.parse(thisUpperTol),
-                                              "lower_tolerance":
-                                                  double.parse(thisLowerTol),
-                                              "over_issue":
-                                                  thisOverIssue == "True"
-                                                      ? true
-                                                      : false,
-                                              "under_issue":
-                                                  thisUnderIssue == "True"
-                                                      ? true
-                                                      : false,
+                                              "upper_tolerance": double.parse(thisUpperTol),
+                                              "lower_tolerance": double.parse(thisLowerTol),
+                                              "over_issue": thisOverIssue == "True" ? true : false,
+                                              "under_issue": thisUnderIssue == "True" ? true : false,
                                             };
                                             bomItems.add(thisBOMItem);
                                           }
@@ -775,30 +698,21 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                                 "unit_of_measurement_id": uom,
                                 "revision": revision,
                               };
-                              await appStore.bomApp
-                                  .create(bom)
-                                  .then((response) async {
+                              await appStore.bomApp.create(bom).then((response) async {
                                 if (response["status"]) {
                                   String bomID = response["payload"]["id"];
                                   for (var bomItem in bomItems) {
                                     bomItem["bom_id"] = bomID;
                                   }
-                                  await appStore.bomItemApp
-                                      .createMultiple(bomItems)
-                                      .then((value) async {
+                                  await appStore.bomItemApp.createMultiple(bomItems).then((value) async {
                                     if (value["status"]) {
-                                      if (value["payload"]["errors"].length >
-                                          0) {
+                                      if (value["payload"]["errors"].length > 0) {
                                         Navigator.of(context).pop();
                                         showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
                                             return CustomDialog(
-                                              message: value["payload"]
-                                                          ["errors"]
-                                                      .length
-                                                      .toString() +
-                                                  " bom items not created.",
+                                              message: value["payload"]["errors"].length.toString() + " bom items not created.",
                                               title: "Errors",
                                             );
                                           },
@@ -851,8 +765,7 @@ class _BOMCreateWidgetState extends State<BOMCreateWidget> {
                         ),
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(menuItemColor),
+                            backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                             elevation: MaterialStateProperty.all<double>(5.0),
                           ),
                           onPressed: () {

@@ -17,8 +17,7 @@ class AddressApp implements AddressAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String id, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> update) async {
     return addressRepository.update(id, update);
   }
 

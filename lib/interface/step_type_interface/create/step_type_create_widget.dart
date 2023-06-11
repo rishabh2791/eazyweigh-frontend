@@ -30,12 +30,7 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
   List<Factory> factories = [];
   late FilePickerResult? file;
 
-  late TextEditingController nameController,
-      factoryController,
-      fileController,
-      titleController,
-      bodyController,
-      footerController;
+  late TextEditingController nameController, factoryController, fileController, titleController, bodyController, footerController;
 
   @override
   void initState() {
@@ -333,12 +328,7 @@ class _StepTypeCreateWidgetState extends State<StepTypeCreateWidget> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialog(
-                                  message: "Created " +
-                                      created.toString() +
-                                      " step types." +
-                                      (notCreated != 0
-                                          ? "Unable to create " + notCreated.toString() + " materials."
-                                          : ""),
+                                  message: "Created " + created.toString() + " step types." + (notCreated != 0 ? "Unable to create " + notCreated.toString() + " materials." : ""),
                                   title: "Info",
                                 );
                               },

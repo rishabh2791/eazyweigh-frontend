@@ -31,7 +31,7 @@ initLogging() {
       FieldName.METHOD_NAME,
       FieldName.TEXT,
       FieldName.EXCEPTION,
-      FieldName.STACKTRACE
+      FieldName.STACKTRACE,
     ]
     ..customOpeningDivider = "{"
     ..customClosingDivider = "}";

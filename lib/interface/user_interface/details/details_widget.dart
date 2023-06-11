@@ -24,7 +24,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
   }
 
   Widget detailsWidget() {
-    return Column();
+    return const Column();
   }
 
   @override

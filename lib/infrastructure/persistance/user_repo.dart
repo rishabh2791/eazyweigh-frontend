@@ -6,17 +6,14 @@ class UserRepo implements UserRepository {
   @override
   Future<Map<String, dynamic>> create(Map<String, String> user) async {
     String url = "user/create/";
-    var response =
-        await networkAPIProvider.post(url, user, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, user, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> users) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> users) async {
     String url = "user/create/multi/";
-    var response =
-        await networkAPIProvider.post(url, users, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, users, TokenType.accessToken);
     return response;
   }
 
@@ -28,20 +25,16 @@ class UserRepo implements UserRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> listUsers(
-      Map<String, dynamic> conditions) async {
+  Future<Map<String, dynamic>> listUsers(Map<String, dynamic> conditions) async {
     String url = "user/";
-    var response =
-        await networkAPIProvider.post(url, conditions, TokenType.accessToken);
+    var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String code, Map<String, dynamic> update) async {
+  Future<Map<String, dynamic>> update(String code, Map<String, dynamic> update) async {
     String url = "user/" + code + "/";
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 
@@ -51,8 +44,7 @@ class UserRepo implements UserRepository {
     Map<String, dynamic> update = {
       "active": true,
     };
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 
@@ -62,8 +54,7 @@ class UserRepo implements UserRepository {
     Map<String, dynamic> update = {
       "active": false,
     };
-    var response =
-        await networkAPIProvider.patch(url, update, TokenType.accessToken);
+    var response = await networkAPIProvider.patch(url, update, TokenType.accessToken);
     return response;
   }
 }

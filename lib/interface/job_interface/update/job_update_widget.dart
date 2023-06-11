@@ -27,10 +27,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
   bool isLoading = true;
   bool isDataLoaded = false;
   late Job job;
-  late TextEditingController factoryController,
-      jobCodeController,
-      oldQtyController,
-      newQtyController;
+  late TextEditingController factoryController, jobCodeController, oldQtyController, newQtyController;
 
   @override
   void initState() {
@@ -98,9 +95,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                             "Job Code",
                             style: TextStyle(
                               fontSize: 30.0,
-                              color: themeChanged.value
-                                  ? foregroundColor
-                                  : backgroundColor,
+                              color: themeChanged.value ? foregroundColor : backgroundColor,
                             ),
                           ),
                         ),
@@ -108,9 +103,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                           job.jobCode.toString(),
                           style: TextStyle(
                             fontSize: 30.0,
-                            color: themeChanged.value
-                                ? foregroundColor
-                                : backgroundColor,
+                            color: themeChanged.value ? foregroundColor : backgroundColor,
                           ),
                         ),
                       ],
@@ -127,21 +120,15 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                             "Material",
                             style: TextStyle(
                               fontSize: 30.0,
-                              color: themeChanged.value
-                                  ? foregroundColor
-                                  : backgroundColor,
+                              color: themeChanged.value ? foregroundColor : backgroundColor,
                             ),
                           ),
                         ),
                         Text(
-                          job.material.code.toString() +
-                              " " +
-                              job.material.description,
+                          job.material.code.toString() + " " + job.material.description,
                           style: TextStyle(
                             fontSize: 30.0,
-                            color: themeChanged.value
-                                ? foregroundColor
-                                : backgroundColor,
+                            color: themeChanged.value ? foregroundColor : backgroundColor,
                           ),
                         ),
                       ],
@@ -158,9 +145,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                             "Old Quantity",
                             style: TextStyle(
                               fontSize: 30.0,
-                              color: themeChanged.value
-                                  ? foregroundColor
-                                  : backgroundColor,
+                              color: themeChanged.value ? foregroundColor : backgroundColor,
                             ),
                           ),
                         ),
@@ -168,9 +153,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                           job.quantity.toStringAsFixed(0),
                           style: TextStyle(
                             fontSize: 30.0,
-                            color: themeChanged.value
-                                ? foregroundColor
-                                : backgroundColor,
+                            color: themeChanged.value ? foregroundColor : backgroundColor,
                           ),
                         ),
                       ],
@@ -187,14 +170,11 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                             "New Quantity",
                             style: TextStyle(
                               fontSize: 30.0,
-                              color: themeChanged.value
-                                  ? foregroundColor
-                                  : backgroundColor,
+                              color: themeChanged.value ? foregroundColor : backgroundColor,
                             ),
                           ),
                         ),
-                        textField(
-                            false, newQtyController, "New Quantity", false),
+                        textField(false, newQtyController, "New Quantity", false),
                       ],
                     ),
                   ),
@@ -208,14 +188,12 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                       children: [
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(menuItemColor),
+                            backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                             elevation: MaterialStateProperty.all<double>(5.0),
                           ),
                           onPressed: () async {
                             double oldQuantity = job.quantity;
-                            double newQuantity =
-                                double.parse(newQtyController.text);
+                            double newQuantity = double.parse(newQtyController.text);
                             if (newQuantity == oldQuantity) {
                               showDialog(
                                 context: context,
@@ -230,11 +208,8 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                               Map<String, dynamic> updated = {
                                 "quantity": newQuantity,
                               };
-                              await appStore.jobApp
-                                  .update(job.jobCode, updated)
-                                  .then((response) {
-                                if (response.containsKey("status") &&
-                                    response["status"]) {
+                              await appStore.jobApp.update(job.jobCode, updated).then((response) {
+                                if (response.containsKey("status") && response["status"]) {
                                   Navigator.of(context).pop();
                                   showDialog(
                                     context: context,
@@ -281,15 +256,13 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                         ),
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(menuItemColor),
+                            backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                             elevation: MaterialStateProperty.all<double>(5.0),
                           ),
                           onPressed: () {
                             navigationService.pushReplacement(
                               CupertinoPageRoute(
-                                builder: (BuildContext context) =>
-                                    const JobUpdateWidget(),
+                                builder: (BuildContext context) => const JobUpdateWidget(),
                               ),
                             );
                           },
@@ -307,9 +280,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                     "Get Job Details:",
                     style: TextStyle(
                       fontSize: 20.0,
-                      color: themeChanged.value
-                          ? backgroundColor
-                          : foregroundColor,
+                      color: themeChanged.value ? backgroundColor : foregroundColor,
                     ),
                   ),
                   Wrap(
@@ -329,8 +300,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                       ),
                       TextButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(menuItemColor),
+                          backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                           elevation: MaterialStateProperty.all<double>(5.0),
                         ),
                         onPressed: () async {
@@ -376,11 +346,8 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                                 },
                               ],
                             };
-                            await appStore.jobApp
-                                .list(conditions)
-                                .then((value) async {
-                              if (value.containsKey("status") &&
-                                  value["status"]) {
+                            await appStore.jobApp.list(conditions).then((value) async {
+                              if (value.containsKey("status") && value["status"]) {
                                 if (value["payload"].isNotEmpty) {
                                   job = Job.fromJSON(value["payload"][0]);
                                 }

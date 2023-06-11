@@ -74,7 +74,7 @@ class _SuperPageState extends State<SuperPage> with SingleTickerProviderStateMix
                                       onPressed: () {
                                         menu.logout();
                                       },
-                                      child: QrImage(
+                                      child: QrImageView(
                                         data: logout,
                                         size: 150.0,
                                         backgroundColor: Colors.red,

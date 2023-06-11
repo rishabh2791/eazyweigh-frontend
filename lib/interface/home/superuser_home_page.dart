@@ -32,8 +32,7 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                     onTap: () {
                       navigationService.push(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const CompanyCreatePage(),
+                          builder: (BuildContext context) => const CompanyCreatePage(),
                         ),
                       );
                     },
@@ -57,17 +56,17 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                               )
                             ],
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.create,
                                 color: Colors.black,
                                 size: 100.0,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   VerticalDivider(
                                     color: Colors.transparent,
                                   ),
@@ -91,8 +90,7 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                     onTap: () {
                       navigationService.push(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const UserCreateWidget(),
+                          builder: (BuildContext context) => const UserCreateWidget(),
                         ),
                       );
                     },
@@ -116,17 +114,17 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                               )
                             ],
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.create,
                                 color: Colors.black,
                                 size: 100.0,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   VerticalDivider(
                                     color: Colors.transparent,
                                   ),
@@ -150,8 +148,7 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                     onTap: () {
                       navigationService.push(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const CompanyListPage(),
+                          builder: (BuildContext context) => const CompanyListPage(),
                         ),
                       );
                     },
@@ -175,17 +172,17 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                               )
                             ],
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.remove_red_eye,
                                 color: Colors.black,
                                 size: 100.0,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   VerticalDivider(
                                     color: Colors.transparent,
                                   ),
@@ -227,17 +224,17 @@ class _SuperUserHomePageState extends State<SuperUserHomePage> {
                               )
                             ],
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.remove_red_eye,
                                 color: Colors.black,
                                 size: 100.0,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   VerticalDivider(
                                     color: Colors.transparent,
                                   ),

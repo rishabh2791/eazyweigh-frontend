@@ -8,14 +8,12 @@ class UserRoleAccessApp implements UserRoleAccessAppInterface {
   });
 
   @override
-  Future<Map<String, dynamic>> create(
-      Map<String, dynamic> userRoleAccess) async {
+  Future<Map<String, dynamic>> create(Map<String, dynamic> userRoleAccess) async {
     return userRoleAccessRepository.create(userRoleAccess);
   }
 
   @override
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> userRoleAccess) async {
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> userRoleAccess) async {
     return userRoleAccessRepository.createMultiple(userRoleAccess);
   }
 
@@ -25,17 +23,14 @@ class UserRoleAccessApp implements UserRoleAccessAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> update(
-      String userRole, Map<String, dynamic> userRoleAccess) async {
+  Future<Map<String, dynamic>> update(String userRole, Map<String, dynamic> userRoleAccess) async {
     return userRoleAccessRepository.update(userRole, userRoleAccess);
   }
 }
 
 abstract class UserRoleAccessAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> userRoleAccess);
-  Future<Map<String, dynamic>> createMultiple(
-      List<Map<String, dynamic>> userRoleAccess);
+  Future<Map<String, dynamic>> createMultiple(List<Map<String, dynamic>> userRoleAccess);
   Future<Map<String, dynamic>> list(String userRole);
-  Future<Map<String, dynamic>> update(
-      String userRole, Map<String, dynamic> userRoleAccess);
+  Future<Map<String, dynamic>> update(String userRole, Map<String, dynamic> userRoleAccess);
 }

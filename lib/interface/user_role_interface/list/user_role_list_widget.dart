@@ -100,8 +100,7 @@ class _UserRoleListWidgetState extends State<UserRoleListWidget> {
                   () {
                     Navigator.of(context).pushReplacement(
                       CupertinoPageRoute(
-                        builder: (BuildContext context) =>
-                            const UserRoleWidget(),
+                        builder: (BuildContext context) => const UserRoleWidget(),
                       ),
                     );
                   },

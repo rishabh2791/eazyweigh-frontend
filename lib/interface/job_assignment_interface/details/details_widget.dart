@@ -17,12 +17,10 @@ class JobAssignmentDetailsWidget extends StatefulWidget {
   const JobAssignmentDetailsWidget({Key? key}) : super(key: key);
 
   @override
-  State<JobAssignmentDetailsWidget> createState() =>
-      _JobAssignmentDetailsWidgetState();
+  State<JobAssignmentDetailsWidget> createState() => _JobAssignmentDetailsWidgetState();
 }
 
-class _JobAssignmentDetailsWidgetState
-    extends State<JobAssignmentDetailsWidget> {
+class _JobAssignmentDetailsWidgetState extends State<JobAssignmentDetailsWidget> {
   bool isLoadingData = true;
   bool isJobItemsLoaded = false;
   List<Factory> factories = [];
@@ -90,16 +88,11 @@ class _JobAssignmentDetailsWidgetState
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            DropDownWidget(
-                disabled: false,
-                hint: "Factory",
-                controller: factoryController,
-                itemList: factories),
+            DropDownWidget(disabled: false, hint: "Factory", controller: factoryController, itemList: factories),
             textField(false, jobCodeController, "Job Code", false),
             TextButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(menuItemColor),
+                backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
                 elevation: MaterialStateProperty.all<double>(5.0),
               ),
               onPressed: () async {
@@ -159,11 +152,9 @@ class _JobAssignmentDetailsWidgetState
                     if (value.containsKey("status") && value["status"]) {
                       String jobID = value["payload"][0]["id"];
 
-                      await appStore.jobItemApp
-                          .get(jobID, {}).then((jobItemsResponse) async {
+                      await appStore.jobItemApp.get(jobID, {}).then((jobItemsResponse) async {
                         List<String> jobItemIDs = [];
-                        if (jobItemsResponse.containsKey("status") &&
-                            jobItemsResponse["status"]) {
+                        if (jobItemsResponse.containsKey("status") && jobItemsResponse["status"]) {
                           for (var item in jobItemsResponse["payload"]) {
                             jobItemIDs.add(item["id"]);
                           }
@@ -173,14 +164,11 @@ class _JobAssignmentDetailsWidgetState
                               "Value": jobItemIDs,
                             }
                           };
-                          await appStore.jobItemAssignmentApp
-                              .list(conditions)
-                              .then((response) async {
+                          await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                             if (response.containsKey("status")) {
                               if (response["status"]) {
                                 for (var item in response["payload"]) {
-                                  JobItemAssignment jobItemAssignment =
-                                      JobItemAssignment.fromJSON(item);
+                                  JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
                                   jobItemAssignments.add(jobItemAssignment);
                                 }
                                 Navigator.of(context).pop();
@@ -260,8 +248,7 @@ class _JobAssignmentDetailsWidgetState
                       const Divider(
                         color: Colors.transparent,
                       ),
-                      JobAssignmentListWidget(
-                          jobItemAssignments: jobItemAssignments)
+                      JobAssignmentListWidget(jobItemAssignments: jobItemAssignments)
                     ],
                   )
             : Container(),
