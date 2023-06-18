@@ -43,12 +43,13 @@ class _ShiftListWidgetState extends State<ShiftListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -113,19 +114,19 @@ class _ShiftListWidgetState extends State<ShiftListWidget> {
                         "Value": factoryID,
                       },
                     };
-                    await appStore.shiftApp.list(conditions).then((response) {
+                    await appStore.shiftApp.list(conditions).then((response) async {
                       if (response.containsKey("status") && response["status"]) {
-                        for (var item in response["payload"]) {
-                          Shift shift = Shift.fromJSON(item);
+                        await Future.forEach(response["payload"], (dynamic item) async {
+                          Shift shift = await Shift.fromServer(Map<String, dynamic>.from(item));
                           shifts.add(shift);
-                        }
+                        }).then((value) {
+                          setState(() {
+                            isLoadingData = false;
+                            isDataLoaded = true;
+                          });
+                        });
                       }
-                    }).then((value) {
-                      setState(() {
-                        isLoadingData = false;
-                        isDataLoaded = true;
-                      });
-                    });
+                    }).then((value) {});
                   }
                 },
                 child: checkButton(),

@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/step.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
@@ -12,7 +13,7 @@ class Process {
   final User updatedBy;
   final DateTime updatedAt;
 
-  Process({
+  Process._({
     required this.createdAt,
     required this.createdBy,
     required this.material,
@@ -45,24 +46,39 @@ class Process {
     };
   }
 
-  factory Process.fromJSON(Map<String, dynamic> jsonObject) {
-    List<Step> steps = [];
-    if (jsonObject["steps"].isNotEmpty) {
-      for (var data in jsonObject["steps"]) {
-        Step thisStep = Step.fromJSON(data);
-        steps.add(thisStep);
-      }
-    }
-    Process process = Process(
-      createdAt: DateTime.parse(jsonObject["created_at"]),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
-      material: Mat.fromJSON(jsonObject["material"]),
-      id: jsonObject["id"],
-      steps: steps,
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      version: jsonObject["version"],
-    );
+  static Future<Process> fromServer(Map<String, dynamic> jsonObject) async {
+    late Process process;
+
+    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
+      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
+        await appStore.materialApp.get(jsonObject["material_id"]).then((materialResponse) async {
+          Map<String, dynamic> conditions = {
+            "EQUALS": {
+              "Field": "process_id",
+              "Value": jsonObject["process_id"],
+            }
+          };
+          List<Step> steps = [];
+          await appStore.stepApp.list(conditions).then((stepResponse) async {
+            for (var item in stepResponse["payload"]) {
+              Step currentStep = await Step.fromServer(item);
+              steps.add(currentStep);
+            }
+            process = Process._(
+              createdAt: DateTime.parse(jsonObject["created_at"]),
+              createdBy: await User.fromServer(jsonObject["created_at"]),
+              material: await Mat.fromServer(materialResponse["payload"]),
+              version: int.parse(jsonObject["version"].toString()),
+              id: jsonObject["id"],
+              updatedAt: DateTime.parse(jsonObject["updated_at"]),
+              updatedBy: await User.fromServer(updatedByResponse["payload"]),
+              steps: steps,
+            );
+          });
+        });
+      });
+    });
+
     return process;
   }
 }

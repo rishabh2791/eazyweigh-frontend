@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
 class Company {
@@ -9,7 +10,7 @@ class Company {
   final DateTime updatedAt;
   final User updatedBy;
 
-  Company({
+  Company._({
     required this.active,
     required this.createdAt,
     required this.createdBy,
@@ -31,16 +32,23 @@ class Company {
     };
   }
 
-  factory Company.fromJSON(Map<String, dynamic> jsonObject) {
-    Company company = Company(
-      active: jsonObject["active"],
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
-      id: jsonObject["id"],
-      name: jsonObject["name"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
-    );
+  static Future<Company> fromServer(Map<String, dynamic> jsonObject) async {
+    late Company company;
+
+    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
+      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
+        company = Company._(
+          active: jsonObject["active"],
+          createdAt: DateTime.parse(jsonObject["created_at"]),
+          createdBy: await User.fromServer(createdByResponse["payload"]),
+          id: jsonObject["id"],
+          name: jsonObject["name"],
+          updatedAt: DateTime.parse(jsonObject["updated_at"]),
+          updatedBy: await User.fromServer(updatedByResponse["payload"]),
+        );
+      });
+    });
+
     return company;
   }
 }

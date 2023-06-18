@@ -59,12 +59,13 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         showDialog(
@@ -95,11 +96,12 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
     };
     await appStore.shiftApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Shift shift = Shift.fromJSON(item);
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Shift shift = await Shift.fromServer(item);
           shifts.add(shift);
-        }
-        setState(() {});
+        }).then((value) {
+          setState(() {});
+        });
       } else {
         showDialog(
           context: context,
@@ -269,52 +271,52 @@ class _JobWeighingWidgetState extends State<JobWeighingWidget> {
                   });
                   await appStore.shiftScheduleApp.list(conditions).then((response) async {
                     if (response.containsKey("status") && response["status"]) {
-                      for (var item in response["payload"]) {
-                        ShiftSchedule shiftSchedule = ShiftSchedule.fromJSON(item);
+                      await Future.forEach(response["payload"], (dynamic item) async {
+                        ShiftSchedule shiftSchedule = await ShiftSchedule.fromServer(Map<String, dynamic>.from(item));
                         shiftSchedules.add(shiftSchedule);
                         shiftScheduleIDs.add(shiftSchedule.id);
-                      }
-                      Map<String, dynamic> shiftScheduleCondition = {
-                        "IN": {
-                          "Field": "shift_schedule_id",
-                          "Value": shiftScheduleIDs,
-                        }
-                      };
-                      await appStore.jobItemAssignmentApp.list(shiftScheduleCondition).then((value) async {
-                        if (value.containsKey("status") && value["status"]) {
-                          for (var item in value["payload"]) {
-                            JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
-                            jobItemAssignments.add(jobItemAssignment);
-                            if (!jobIDs.contains(jobItemAssignment.jobItem.jobID)) {
-                              jobIDs.add(jobItemAssignment.jobItem.jobID);
-                            }
-                          }
-                        }
-                        Map<String, dynamic> jobCondition = {
+                      }).then((value) async {
+                        Map<String, dynamic> shiftScheduleCondition = {
                           "IN": {
-                            "Field": "id",
-                            "Value": jobIDs,
+                            "Field": "shift_schedule_id",
+                            "Value": shiftScheduleIDs,
                           }
                         };
-                        await appStore.jobApp.list(jobCondition).then((jobResponse) async {
-                          if (jobResponse.containsKey("status") && jobResponse["status"]) {
-                            for (var item in jobResponse["payload"]) {
-                              Job job = Job.fromJSON(item);
-                              jobs.add(job);
-                            }
-                            jobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+                        await appStore.jobItemAssignmentApp.list(shiftScheduleCondition).then((value) async {
+                          if (value.containsKey("status") && value["status"]) {
+                            await Future.forEach(value["payload"], (dynamic item) async {
+                              JobItemAssignment jobItemAssignment = await JobItemAssignment.fromServer(Map<String, dynamic>.from(item));
+                              jobItemAssignments.add(jobItemAssignment);
+                              if (!jobIDs.contains(jobItemAssignment.jobItem.jobID)) {
+                                jobIDs.add(jobItemAssignment.jobItem.jobID);
+                              }
+                            }).then((value) async {
+                              Map<String, dynamic> jobCondition = {
+                                "IN": {
+                                  "Field": "id",
+                                  "Value": jobIDs,
+                                }
+                              };
+                              await appStore.jobApp.list(jobCondition).then((jobResponse) async {
+                                if (jobResponse.containsKey("status") && jobResponse["status"]) {
+                                  await Future.forEach(jobResponse["payload"], (dynamic element) async {
+                                    for (var item in jobResponse["payload"]) {
+                                      Job job = await Job.fromServer(item);
+                                      jobs.add(job);
+                                    }
+                                  }).then((value) {
+                                    jobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+                                    setState(() {
+                                      isLoadingData = false;
+                                      isDataLoaded = true;
+                                    });
+                                  });
+                                }
+                              });
+                            });
                           }
                         });
                       });
-                      setState(() {
-                        isLoadingData = false;
-                        isDataLoaded = true;
-                      });
-                      // navigationService.push(
-                      //   CupertinoPageRoute(
-                      //     builder: (BuildContext context) => JobWeighingList(jobs: jobs),
-                      //   ),
-                      // );
                     } else {
                       Navigator.of(context).pop();
                       showDialog(

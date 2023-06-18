@@ -13,7 +13,7 @@ class Address {
   final DateTime updatedAt;
   final String updatedBy;
 
-  Address({
+  Address._({
     required this.city,
     required this.country,
     required this.createdAt,
@@ -47,11 +47,13 @@ class Address {
     };
   }
 
-  factory Address.fromJSON(Map<String, dynamic> jsonObject) {
-    Address address = Address(
+  static Future<Address> fromServer(Map<String, dynamic> jsonObject) async {
+    late Address address;
+
+    address = Address._(
       city: jsonObject["city"],
       country: jsonObject["country"],
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: jsonObject["created_by_username"],
       headOffice: jsonObject["head_office"],
       id: jsonObject["id"],
@@ -59,10 +61,11 @@ class Address {
       line2: jsonObject["line2"],
       state: jsonObject["state"],
       companyID: jsonObject["company_id"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: jsonObject["updated_by_username"],
       zip: jsonObject["zip"],
     );
+
     return address;
   }
 }

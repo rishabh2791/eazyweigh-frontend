@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/user_role.dart';
 
@@ -10,7 +11,7 @@ class UserRoleAccess {
   final DateTime updatedAt;
   final User updatedBy;
 
-  UserRoleAccess({
+  UserRoleAccess._({
     required this.accessLevel,
     required this.createdAt,
     required this.createdBy,
@@ -32,16 +33,25 @@ class UserRoleAccess {
     };
   }
 
-  factory UserRoleAccess.fromJSON(Map<String, dynamic> jsonObject) {
-    UserRoleAccess userRoleAccess = UserRoleAccess(
-      accessLevel: jsonObject["access_level"],
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
-      tableName: jsonObject["table_name"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      userRole: UserRole.fromJSON(jsonObject["user_role_role"]),
-    );
+  static Future<UserRoleAccess> fromServer(Map<String, dynamic> jsonObject) async {
+    late UserRoleAccess userRoleAccess;
+
+    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
+      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
+        await appStore.userRoleApp.get(jsonObject["user_role_id"]).then((userRoleResponse) async {
+          userRoleAccess = UserRoleAccess._(
+            accessLevel: jsonObject["access_level"],
+            createdAt: DateTime.parse(jsonObject["created_at"]),
+            createdBy: await User.fromServer(createdByResponse["payload"]),
+            tableName: jsonObject["table_name"],
+            updatedAt: DateTime.parse(jsonObject["updated_at"]),
+            updatedBy: await User.fromServer(updatedByResponse["payload"]),
+            userRole: await UserRole.fromServer(userRoleResponse["payload"]),
+          );
+        });
+      });
+    });
+
     return userRoleAccess;
   }
 }

@@ -48,12 +48,13 @@ class _StepTypeListWidgetState extends State<StepTypeListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -117,13 +118,18 @@ class _StepTypeListWidgetState extends State<StepTypeListWidget> {
                       "Value": factoryID,
                     }
                   };
-                  await appStore.stepTypeApp.list(conditions).then((response) {
+                  await appStore.stepTypeApp.list(conditions).then((response) async {
                     if (response.containsKey("status") && response["status"]) {
                       for (var item in response["payload"]) {
-                        StepType stepType = StepType.fromJSON(item);
+                        StepType stepType = await StepType.fromServer(item);
                         stepTypes.add(stepType);
                       }
-                      stepTypes.sort((a, b) => a.name.compareTo(b.name));
+                      await Future.forEach(response["payload"], (dynamic item) async {
+                        StepType stepType = await StepType.fromServer(Map<String, dynamic>.from(item));
+                        stepTypes.add(stepType);
+                      }).then((value) {
+                        stepTypes.sort((a, b) => a.name.compareTo(b.name));
+                      });
                     }
                     Navigator.of(context).pop();
                     setState(() {

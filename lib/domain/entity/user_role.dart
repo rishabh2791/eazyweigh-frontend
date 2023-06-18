@@ -9,7 +9,7 @@ class UserRole {
 
   bool selected = false;
 
-  UserRole({
+  UserRole._({
     required this.id,
     required this.active,
     this.companyID = "",
@@ -36,16 +36,19 @@ class UserRole {
     };
   }
 
-  factory UserRole.fromJSON(Map<String, dynamic> jsonObject) {
-    UserRole userRole = UserRole(
+  static Future<UserRole> fromServer(Map<String, dynamic> jsonObject) async {
+    UserRole userRole;
+
+    userRole = UserRole._(
       id: jsonObject["id"],
       active: jsonObject["active"],
-      companyID: jsonObject["company_id"],
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdAt: DateTime.parse(jsonObject["created_at"]),
       description: jsonObject["description"],
       role: jsonObject["role"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      companyID: jsonObject["company_id"],
     );
+
     return userRole;
   }
 }

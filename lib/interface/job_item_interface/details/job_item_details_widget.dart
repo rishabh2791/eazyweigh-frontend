@@ -164,10 +164,10 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     };
     await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
-          uomConversions.add(unitOfMeasurementConversion);
-        }
+        await Future.forEach(response["payload"], (dynamic item) async {
+          UnitOfMeasurementConversion conversion = await UnitOfMeasurementConversion.fromServer(Map<String, dynamic>.from(item));
+          uomConversions.add(conversion);
+        });
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -190,10 +190,10 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     };
     await appStore.terminalApp.list(conditions).then((value) async {
       if (value["status"]) {
-        for (var item in value["payload"]) {
-          Terminal terminal = Terminal.fromJSON(item);
+        await Future.forEach(value["payload"], (dynamic item) async {
+          Terminal terminal = await Terminal.fromServer(Map<String, dynamic>.from(item));
           terminals.add(terminal);
-        }
+        });
       } else {
         Navigator.of(context).pop();
         showDialog(

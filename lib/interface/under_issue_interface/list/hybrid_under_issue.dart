@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/under_issue.dart';
 
@@ -5,7 +6,7 @@ class HybridUnderIssue {
   final UnderIssue underIssue;
   final Job job;
 
-  HybridUnderIssue({
+  HybridUnderIssue._({
     required this.job,
     required this.underIssue,
   });
@@ -17,11 +18,26 @@ class HybridUnderIssue {
     };
   }
 
-  factory HybridUnderIssue.fromJSON(Map<String, dynamic> jsonObject) {
-    HybridUnderIssue hybridUnderIssue = HybridUnderIssue(
-      job: Job.fromJSON(jsonObject["job"]),
-      underIssue: UnderIssue.fromJSON(jsonObject["under_issue"]),
-    );
+  static Future<HybridUnderIssue> fromServer(Map<String, dynamic> jsonObject) async {
+    late HybridUnderIssue hybridUnderIssue;
+
+    await appStore.jobApp.get(jsonObject["job_id"]).then((jobResponse) async {
+      Job job = await Job.fromServer(jobResponse["payload"]);
+      await appStore.underIssueApp.list(job.id).then((value) async {
+        late UnderIssue underIssued;
+        for (var item in value["payload"]) {
+          UnderIssue underIssue = await UnderIssue.fromServer(item);
+          if (underIssue.id == jsonObject["over_issue_id"]) {
+            underIssued = underIssue;
+          }
+        }
+        hybridUnderIssue = HybridUnderIssue._(
+          job: job,
+          underIssue: underIssued,
+        );
+      });
+    });
+
     return hybridUnderIssue;
   }
 }

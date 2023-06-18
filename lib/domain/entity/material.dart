@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -14,7 +15,7 @@ class Mat {
   final User updatedBy; //
   final bool isWeighed;
 
-  Mat({
+  Mat._({
     required this.code,
     required this.createdAt,
     required this.createdBy,
@@ -49,20 +50,29 @@ class Mat {
     };
   }
 
-  factory Mat.fromJSON(Map<String, dynamic> jsonObject) {
-    Mat material = Mat(
-      code: jsonObject["code"],
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
-      description: jsonObject["description"],
-      factoryID: jsonObject["factory_id"],
-      id: jsonObject["id"],
-      type: jsonObject["type"],
-      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      isWeighed: jsonObject["is_weighed"],
-    );
-    return material;
+  static Future<Mat> fromServer(Map<String, dynamic> jsonObject) async {
+    late Mat mat;
+
+    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
+      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
+        await appStore.unitOfMeasurementApp.get(jsonObject["unit_of_measurement_id"]).then((uomResponse) async {
+          mat = Mat._(
+            code: jsonObject["code"],
+            createdAt: DateTime.parse(jsonObject["created_at"]),
+            createdBy: await User.fromServer(createdByResponse["payload"]),
+            description: jsonObject["description"],
+            factoryID: jsonObject["factory_id"],
+            id: jsonObject["id"],
+            type: jsonObject["type"],
+            uom: await UnitOfMeasure.fromServer(uomResponse["payload"]),
+            updatedAt: DateTime.parse(jsonObject["updated_at"]),
+            updatedBy: await User.fromServer(updatedByResponse["payload"]),
+            isWeighed: jsonObject["is_weighed"],
+          );
+        });
+      });
+    });
+
+    return mat;
   }
 }

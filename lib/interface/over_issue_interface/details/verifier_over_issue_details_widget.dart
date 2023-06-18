@@ -75,27 +75,28 @@ class _VerifierOverIssueDetailsWidgetState extends State<VerifierOverIssueDetail
     await appStore.overIssueApp.list(widget.jobID).then((response) async {
       if (response.containsKey("status")) {
         if (response["status"]) {
-          for (var item in response["payload"]) {
-            OverIssue overIssue = OverIssue.fromJSON(item);
-            Map<String, dynamic> condition = {
-              "EQUAL": {
-                "Field": "job_item",
-                "Value": overIssue.jobItem,
-              },
-            };
-            await appStore.jobItemApp.get(widget.jobID, condition).then((value) {
-              if (value.containsKey("status")) {
-                if (value["status"]) {
-                  JobItem jobItem = JobItem.fromJSON(value["payload"][0]);
-                  jobItems[overIssue.id] = jobItem;
+          await Future.forEach(response["payload"], (dynamic item) async {
+            await Future.value(await OverIssue.fromServer(Map<String, dynamic>.from(item))).then((OverIssue overIssue) async {
+              Map<String, dynamic> condition = {
+                "EQUAL": {
+                  "Field": "id",
+                  "Value": overIssue.jobItem.id,
+                },
+              };
+              await appStore.jobItemApp.get(condition).then((value) async {
+                if (value.containsKey("status") && value["status"]) {
+                  await Future.value(await JobItem.fromServer(value["payload"][0])).then((JobItem jobItem) {
+                    jobItems[overIssue.id] = jobItem;
+                  });
                 }
-              }
-            }).then((value) {
-              overIssueItems.add(overIssue);
+              }).then((value) {
+                overIssueItems.add(overIssue);
+              });
             });
-          }
-          setState(() {
-            isLoadingData = false;
+          }).then((value) {
+            setState(() {
+              isLoadingData = false;
+            });
           });
         } else {
           Navigator.of(context).pop();

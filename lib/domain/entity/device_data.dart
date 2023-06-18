@@ -5,7 +5,7 @@ class DeviceData {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  DeviceData({
+  DeviceData._({
     required this.createdAt,
     required this.deviceID,
     required this.id,
@@ -28,14 +28,13 @@ class DeviceData {
     };
   }
 
-  factory DeviceData.fromJSON(Map<String, dynamic> jsonObject) {
-    DeviceData deviceData = DeviceData(
+  static Future<DeviceData> fromServer(Map<String, dynamic> jsonObject) async {
+    return DeviceData._(
       createdAt: DateTime.parse(jsonObject["created_at"]),
       deviceID: jsonObject["device_id"],
       id: jsonObject["id"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       value: jsonObject["value"],
     );
-    return deviceData;
   }
 }

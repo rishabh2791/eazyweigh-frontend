@@ -104,10 +104,10 @@ class _DetailsWidgetState extends State<DetailsWidget> {
     };
     await appStore.stepTypeApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          StepType stepType = StepType.fromJSON(item);
+        await Future.forEach(response["payload"], (dynamic item) async {
+          StepType stepType = await StepType.fromServer(Map<String, dynamic>.from(item));
           stepTypes.add(stepType);
-        }
+        });
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -133,10 +133,10 @@ class _DetailsWidgetState extends State<DetailsWidget> {
     };
     await appStore.materialApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Mat material = Mat.fromJSON(item);
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Mat material = await Mat.fromServer(Map<String, dynamic>.from(item));
           materials.add(material);
-        }
+        });
       } else {
         Navigator.of(context).pop();
         showDialog(

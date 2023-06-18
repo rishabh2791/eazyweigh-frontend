@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/step_type.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -15,7 +16,7 @@ class Step {
   final User updatedBy;
   final DateTime updatedAt;
 
-  Step({
+  Step._({
     required this.createdAt,
     required this.createdBy,
     required this.description,
@@ -52,21 +53,36 @@ class Step {
     };
   }
 
-  factory Step.fromJSON(Map<String, dynamic> jsonObject) {
-    Step step = Step(
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
-      description: jsonObject["description"],
-      duration: jsonObject.containsKey("duration") && jsonObject["duration"].toString().isNotEmpty ? int.parse(jsonObject["duration"].toString()) : 0,
-      id: jsonObject["id"],
-      materialID: jsonObject.containsKey("material_id") && jsonObject["material_id"].toString().isNotEmpty ? jsonObject["material_id"] : "",
-      processID: jsonObject["process_id"],
-      sequence: int.parse(jsonObject["sequence"].toString()),
-      stepType: StepType.fromJSON(jsonObject["step_type"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      value: jsonObject.containsKey("value") && jsonObject["value"].toString().isNotEmpty ? double.parse(jsonObject["value"].toString()) : 0,
-    );
+  static Future<Step> fromServer(Map<String, dynamic> jsonObject) async {
+    late Step step;
+
+    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
+      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
+        Map<String, dynamic> conditions = {
+          "EQUALS": {
+            "Field": "id",
+            "Value": jsonObject["step_type_id"],
+          }
+        };
+        await appStore.stepTypeApp.list(conditions).then((stepTypeResponse) async {
+          step = Step._(
+            createdAt: DateTime.parse(jsonObject["created_at"]),
+            createdBy: await User.fromServer(createdByResponse["payload"]),
+            description: jsonObject["description"],
+            id: jsonObject["id"],
+            processID: jsonObject["process_id"],
+            sequence: int.parse(jsonObject["sequence"].toString()),
+            stepType: await StepType.fromServer(stepTypeResponse["payload"][0]),
+            updatedAt: DateTime.parse(jsonObject["updated_at"]),
+            updatedBy: await User.fromServer(updatedByResponse["payload"]),
+            duration: int.parse(jsonObject["duration"].toString()),
+            value: double.parse(jsonObject["value"].toString()),
+            materialID: jsonObject["material_id"] ?? "",
+          );
+        });
+      });
+    });
+
     return step;
   }
 }

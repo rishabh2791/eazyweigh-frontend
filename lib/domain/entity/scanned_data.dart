@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/terminals.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
@@ -12,7 +13,7 @@ class ScannedData {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  ScannedData({
+  ScannedData._({
     required this.actualCode,
     required this.expectedCode,
     required this.id,
@@ -33,17 +34,26 @@ class ScannedData {
     };
   }
 
-  factory ScannedData.fromJSON(Map<String, dynamic> jsonObject) {
-    ScannedData scannedData = ScannedData(
-      actualCode: jsonObject["actual_code"],
-      expectedCode: jsonObject["expected_code"],
-      id: jsonObject["id"],
-      job: Job.fromJSON(jsonObject["job"]),
-      weigher: User.fromJSON(jsonObject["user"]),
-      terminal: Terminal.fromJSON(jsonObject["terminal"]),
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
-    );
+  static Future<ScannedData> fromServer(Map<String, dynamic> jsonObject) async {
+    late ScannedData scannedData;
+
+    await appStore.userApp.getUser(jsonObject["user_username"]).then((userResponse) async {
+      await appStore.terminalApp.get(jsonObject["terminal_id"]).then((terminalResponse) async {
+        await appStore.jobApp.get(jsonObject["job_id"]).then((jobResponse) async {
+          scannedData = ScannedData._(
+            actualCode: jsonObject["scanned_data"],
+            expectedCode: jsonObject["expected_code"],
+            id: jsonObject["id"],
+            job: await Job.fromServer(jobResponse["payload"]),
+            weigher: await User.fromServer(userResponse["payload"]),
+            createdAt: DateTime.parse(jsonObject["created_at"]),
+            terminal: await Terminal.fromServer(terminalResponse["payload"]),
+            updatedAt: DateTime.parse(jsonObject["updated_at"]),
+          );
+        });
+      });
+    });
+
     return scannedData;
   }
 }

@@ -50,15 +50,14 @@ class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response.containsKey("status")) {
-        if (response["status"]) {
-          for (var item in response["payload"]) {
-            Factory fact = Factory.fromJSON(item);
-            factories.add(fact);
-          }
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
           setState(() {
             isLoadingData = false;
           });
-        }
+        });
       }
     }).then((value) {
       setState(() {
@@ -134,13 +133,14 @@ class _BOMUpdateWidgetState extends State<BOMUpdateWidget> {
                         };
                         await appStore.bomApp.list(conditions).then((response) async {
                           if (response["status"]) {
-                            for (var item in response["payload"][0]["bom_items"]) {
-                              BomItem bomItem = BomItem.fromJSON(item);
+                            await Future.forEach(response["payload"], (dynamic item) async {
+                              BomItem bomItem = await BomItem.fromServer(Map<String, dynamic>.from(item));
                               bomItems.add(bomItem);
-                            }
-                            setState(() {
-                              isBomItemsLoaded = true;
-                              isLoadingData = false;
+                            }).then((value) {
+                              setState(() {
+                                isLoadingData = false;
+                                isBomItemsLoaded = true;
+                              });
                             });
                           } else {
                             showDialog(

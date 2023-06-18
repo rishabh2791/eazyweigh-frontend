@@ -92,10 +92,14 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
+        });
       } else {
         showDialog(
           context: context,
@@ -159,38 +163,54 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
               };
               await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                 if (response["status"]) {
-                  for (var item in response["payload"]) {
-                    JobItem jobItem = JobItem.fromJSON(item["job_item"]);
+                  await Future.forEach(response["payload"], (dynamic item) async {
+                    JobItem jobItem = await JobItem.fromServer(Map<String, dynamic>.from(item["job_item"]));
                     jobItems[jobItem.id] = jobItem;
                     if (!jobMapping.containsKey(item["job_item"]["job_id"])) {
                       jobMapping[item["job_item"]["job_id"]] = [];
                       jobIDs.add(item["job_item"]["job_id"]);
                     }
-                  }
-                  if (jobMapping.isNotEmpty) {
-                    Map<String, dynamic> jobConditions = {
-                      "IN": {
-                        "Field": "id",
-                        "Value": jobIDs,
-                      },
-                    };
-                    await appStore.jobApp.list(jobConditions).then((value) async {
-                      if (value["status"]) {
-                        for (var job in value["payload"]) {
-                          Job thisJob = Job.fromJSON(job);
-                          jobs[job["id"]] = thisJob;
+                  }).then((value) async {
+                    if (jobMapping.isNotEmpty) {
+                      Map<String, dynamic> jobConditions = {
+                        "IN": {
+                          "Field": "id",
+                          "Value": jobIDs,
+                        },
+                      };
+                      await appStore.jobApp.list(jobConditions).then((value) async {
+                        if (value["status"]) {
+                          await Future.forEach(value["payload"], (dynamic job) async {
+                            Job thisJob = await Job.fromServer(Map<String, dynamic>.from(job));
+                            jobs[job["id"]] = thisJob;
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomDialog(
+                                message: value["message"],
+                                title: "Error",
+                              );
+                            },
+                          );
+                          Future.delayed(const Duration(seconds: 3)).then((value) {
+                            Navigator.of(context).pop();
+                          });
                         }
+                      }).then((value) async {
                         jobMapping.forEach((key, value) async {
-                          await appStore.underIssueApp.list(key).then((underIssueReposnse) {
+                          await appStore.overIssueApp.list(key).then((underIssueReposnse) async {
                             if (underIssueReposnse.containsKey("status")) {
                               if (underIssueReposnse["status"]) {
-                                for (var item in underIssueReposnse["payload"]) {
-                                  UnderIssue underIssue = UnderIssue.fromJSON(item);
+                                await Future.forEach(underIssueReposnse["payload"], (dynamic item) async {
+                                  UnderIssue underIssue = await UnderIssue.fromServer(Map<String, dynamic>.from(item));
                                   if (!underIssue.weighed) {
                                     jobMapping[key]!.add(underIssue);
                                   }
-                                }
-                                cleanJobMapping();
+                                }).then((value) {
+                                  cleanJobMapping();
+                                });
                               } else {
                                 showDialog(
                                   context: context,
@@ -221,22 +241,9 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                             }
                           });
                         });
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomDialog(
-                              message: value["message"],
-                              title: "Error",
-                            );
-                          },
-                        );
-                        Future.delayed(const Duration(seconds: 3)).then((value) {
-                          Navigator.of(context).pop();
-                        });
-                      }
-                    });
-                  } else {}
+                      });
+                    } else {}
+                  });
                 } else {
                   showDialog(
                     context: context,
@@ -753,22 +760,21 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                         });
                         await appStore.jobApp.list(conditions).then((value) async {
                           if (value.containsKey("status") && value["status"]) {
-                            for (var item in value["payload"]) {
-                              Job job = Job.fromJSON(item);
-                              await appStore.underIssueApp.list(job.id).then((response) {
+                            await Future.forEach(value["payload"], (dynamic item) async {
+                              Job job = await Job.fromServer(Map<String, dynamic>.from(item));
+                              await appStore.overIssueApp.list(job.id).then((response) async {
                                 if (response.containsKey("status") && response["status"]) {
                                   if (response["payload"].length != 0) {
-                                    for (var under in response["payload"]) {
-                                      UnderIssue underIssue = UnderIssue.fromJSON(under);
-                                      underIssues.add(HybridUnderIssue(
-                                        job: job,
-                                        underIssue: underIssue,
-                                      ));
-                                    }
+                                    await Future.forEach(response["payload"], (dynamic over) async {
+                                      underIssues.add(await HybridUnderIssue.fromServer({
+                                        "job_id": job.id,
+                                        "over_issue_id": over["id"],
+                                      }));
+                                    });
                                   }
                                 }
                               });
-                            }
+                            });
                           } else {
                             showDialog(
                               context: context,

@@ -54,12 +54,13 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -89,11 +90,11 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
     });
     await appStore.vesselApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Vessel vessel = Vessel.fromJSON(item);
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Vessel vessel = await Vessel.fromServer(Map<String, dynamic>.from(item));
           factoryVessels.add(vessel);
           vesselIDs.add(vessel.id);
-        }
+        });
       }
       setState(() {
         isLoadingData = false;
@@ -202,13 +203,17 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                                     return loader(context);
                                   },
                                 );
-                                await appStore.deviceApp.list(conditions).then((response) {
+                                await appStore.deviceApp.list(conditions).then((response) async {
                                   Navigator.of(context).pop();
                                   if (response.containsKey("status") && response["status"]) {
-                                    for (var item in response["payload"]) {
-                                      Device device = Device.fromJSON(item);
+                                    await Future.forEach(response["payload"], (dynamic item) async {
+                                      Device device = await Device.fromServer(Map<String, dynamic>.from(item));
                                       devices.add(device);
-                                    }
+                                    }).then((value) {
+                                      setState(() {
+                                        isDataLoaded = true;
+                                      });
+                                    });
                                   } else {
                                     showDialog(
                                       context: context,
@@ -220,9 +225,6 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                                       },
                                     );
                                   }
-                                  setState(() {
-                                    isDataLoaded = true;
-                                  });
                                 });
                               }
                             },

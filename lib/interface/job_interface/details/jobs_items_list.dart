@@ -438,27 +438,28 @@ class _DataSource extends DataTableSource {
                 ? await appStore.jobWeighingApp.list(jobItem.id).then((response) async {
                     if (response.containsKey("status")) {
                       if (response["status"]) {
-                        for (var item in response["payload"]) {
-                          JobItemWeighing jobItemWeighing = JobItemWeighing.fromJSON(item);
-                          Map<String, dynamic> printingData = {
-                            "job_code": _jobCode,
-                            "job_id": jobItemWeighing.jobItem.jobID,
-                            "weigher": jobItemWeighing.createdBy.firstName + " " + jobItemWeighing.createdBy.lastName,
-                            "material_code": jobItemWeighing.jobItem.material.code,
-                            "material_description": jobItemWeighing.jobItem.material.description,
-                            "weight": jobItemWeighing.weight,
-                            "uom": jobItemWeighing.jobItem.uom.code,
-                            "batch": jobItemWeighing.batch,
-                            "job_item_id": jobItemWeighing.jobItem.id,
-                            "job_item_weighing_id": jobItemWeighing.id,
-                          };
+                        await Future.forEach(response["payload"], (dynamic item) async {
+                          await Future.value(await JobItemWeighing.fromServer(Map<String, dynamic>.from(item))).then((JobItemWeighing jobItemWeighing) {
+                            Map<String, dynamic> printingData = {
+                              "job_code": _jobCode,
+                              "job_id": jobItemWeighing.jobItem.jobID,
+                              "weigher": jobItemWeighing.createdBy.firstName + " " + jobItemWeighing.createdBy.lastName,
+                              "material_code": jobItemWeighing.jobItem.material.code,
+                              "material_description": jobItemWeighing.jobItem.material.description,
+                              "weight": jobItemWeighing.weight,
+                              "uom": jobItemWeighing.jobItem.uom.code,
+                              "batch": jobItemWeighing.batch,
+                              "job_item_id": jobItemWeighing.jobItem.id,
+                              "job_item_weighing_id": jobItemWeighing.id,
+                            };
 
-                          if (jobItemWeighing.jobItem.complete) {
-                            printingData["complete"] = true;
-                          }
+                            if (jobItemWeighing.jobItem.complete) {
+                              printingData["complete"] = true;
+                            }
 
-                          printingService.printJobItemLabel(printingData);
-                        }
+                            printingService.printJobItemLabel(printingData);
+                          });
+                        });
                       }
                     }
                   })

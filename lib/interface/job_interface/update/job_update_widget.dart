@@ -54,12 +54,13 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoading = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoading = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -349,7 +350,7 @@ class _JobUpdateWidgetState extends State<JobUpdateWidget> {
                             await appStore.jobApp.list(conditions).then((value) async {
                               if (value.containsKey("status") && value["status"]) {
                                 if (value["payload"].isNotEmpty) {
-                                  job = Job.fromJSON(value["payload"][0]);
+                                  job = await Job.fromServer(value["payload"][0]);
                                 }
                               }
                             }).then((value) {

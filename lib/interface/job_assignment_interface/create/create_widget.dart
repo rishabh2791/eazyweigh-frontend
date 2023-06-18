@@ -49,12 +49,13 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -95,14 +96,13 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
     };
     await appStore.shiftScheduleApp.list(conditions).then((value) async {
       if (value["status"]) {
-        for (var item in value["payload"]) {
-          if (item["user"]["user_role"]["role"] == "Operator") {
-            ShiftSchedule shiftSchedule = ShiftSchedule.fromJSON(item);
-            shiftSchedules.add(shiftSchedule);
-          }
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(value["payload"], (dynamic item) async {
+          ShiftSchedule shiftSchedule = await ShiftSchedule.fromServer(Map<String, dynamic>.from(item));
+          shiftSchedules.add(shiftSchedule);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -226,34 +226,36 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                             },
                           );
                         } else {
-                          String jobID = response["payload"][0]["id"];
-                          await appStore.jobItemApp.get(jobID, {}).then(
-                            (value) async {
-                              if (value["status"]) {
-                                for (var item in value["payload"]) {
-                                  JobItem jobItem = JobItem.fromJSON(item);
-                                  if (jobItem.material.isWeighed) {
-                                    jobItems.add(jobItem);
-                                  }
-                                }
-                                Navigator.of(context).pop();
+                          Map<String, dynamic> conditions = {
+                            "EQUALS": {
+                              "Field": "job_id",
+                              "Value": response["payload"][0]["id"],
+                            }
+                          };
+                          await appStore.jobItemApp.get(conditions).then((value) async {
+                            if (value["status"]) {
+                              await Future.forEach(value["payload"], (dynamic item) async {
+                                JobItem jobItem = await JobItem.fromServer(Map<String, dynamic>.from(item));
+                                jobItems.add(jobItem);
+                              }).then((value) {
                                 setState(() {
                                   isJobItemsLoaded = true;
                                 });
-                              } else {
                                 Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: value["message"],
-                                      title: "Errors",
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                          ).then((value) {
+                              });
+                            } else {
+                              Navigator.of(context).pop();
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialog(
+                                    message: value["message"],
+                                    title: "Errors",
+                                  );
+                                },
+                              );
+                            }
+                          }).then((value) {
                             setState(() {
                               isJobItemsLoaded = true;
                             });

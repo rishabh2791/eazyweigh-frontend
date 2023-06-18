@@ -80,10 +80,10 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
         "Value": ids.toList(),
       }
     };
-    await appStore.jobApp.list(conditions).then((response) {
+    await appStore.jobApp.list(conditions).then((response) async {
       if (response.containsKey("status") && response["status"]) {
-        for (var item in response["payload"]) {
-          Job job = Job.fromJSON(item);
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Job job = await Job.fromServer(Map<String, dynamic>.from(item));
           if (weekJobIDs.contains(job.id)) {
             weekJobs.add(job);
             if (job.complete) {
@@ -96,11 +96,12 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
               monthJobsComplete += 1;
             }
           }
-        }
+        }).then((value) {
+          weekJobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+          monthJobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
+        });
       }
     });
-    weekJobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
-    monthJobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
   }
 
   Future<dynamic> getIncorrectWeighing(String period) async {
@@ -148,14 +149,15 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
     Map<String, List<ScannedData>> incorrectWeighing = {};
     await appStore.scannedDataApp.list(dateConditions).then((response) async {
       if (response.containsKey("status") && response["status"]) {
-        for (var item in response["payload"]) {
-          ScannedData scannedData = ScannedData.fromJSON(item);
-          if (incorrectWeighing.containsKey(scannedData.weigher.firstName + " " + scannedData.weigher.lastName)) {
-            incorrectWeighing[scannedData.weigher.firstName + " " + scannedData.weigher.lastName]!.add(scannedData);
-          } else {
-            incorrectWeighing[scannedData.weigher.firstName + " " + scannedData.weigher.lastName] = [scannedData];
-          }
-        }
+        await Future.forEach(response["payload"], (dynamic item) async {
+          await Future.value(await ScannedData.fromServer(item)).then((ScannedData scannedData) async {
+            if (incorrectWeighing.containsKey(scannedData.weigher.firstName + " " + scannedData.weigher.lastName)) {
+              incorrectWeighing[scannedData.weigher.firstName + " " + scannedData.weigher.lastName]!.add(scannedData);
+            } else {
+              incorrectWeighing[scannedData.weigher.firstName + " " + scannedData.weigher.lastName] = [scannedData];
+            }
+          });
+        });
       }
     });
     return incorrectWeighing;
@@ -166,10 +168,10 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
     for (var job in jobs) {
       await appStore.underIssueApp.list(job).then((response) async {
         if (response.containsKey("status") && response["status"]) {
-          for (var item in response["payload"]) {
-            UnderIssue underIssue = UnderIssue.fromJSON(item);
+          await Future.forEach(response["payload"], (dynamic item) async {
+            UnderIssue underIssue = await UnderIssue.fromServer(Map<String, dynamic>.from(item));
             underIssues.add(underIssue);
-          }
+          });
         }
       });
     }
@@ -181,10 +183,10 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
     for (var job in jobs) {
       await appStore.overIssueApp.list(job).then((response) async {
         if (response.containsKey("status") && response["status"]) {
-          for (var item in response["payload"]) {
-            OverIssue overIssue = OverIssue.fromJSON(item);
+          await Future.forEach(response["payload"], (dynamic item) async {
+            OverIssue overIssue = await OverIssue.fromServer(Map<String, dynamic>.from(item));
             overIssues.add(overIssue);
-          }
+          });
         }
       });
     }
@@ -223,21 +225,22 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
           }
         };
         if (shiftScheduleIDs.isNotEmpty) {
-          await appStore.jobItemAssignmentApp.list(shiftCondition).then((response) {
+          await appStore.jobItemAssignmentApp.list(shiftCondition).then((response) async {
             if (response.containsKey("status") && response["status"]) {
-              for (var item in response["payload"]) {
-                JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
-                if (!weekJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
-                  weekJobIDs.add(jobItemAssignment.jobItem.jobID);
-                }
-                weekJobWeights += jobItemAssignment.jobItem.requiredWeight;
-                if (weekOperatorWeight.containsKey(jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName)) {
-                  weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] =
-                      weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName]! + jobItemAssignment.jobItem.requiredWeight;
-                } else {
-                  weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] = jobItemAssignment.jobItem.requiredWeight;
-                }
-              }
+              await Future.forEach(response["payload"], (dynamic item) async {
+                await Future.value(await JobItemAssignment.fromServer(item)).then((JobItemAssignment jobItemAssignment) {
+                  if (!weekJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
+                    weekJobIDs.add(jobItemAssignment.jobItem.jobID);
+                  }
+                  weekJobWeights += jobItemAssignment.jobItem.requiredWeight;
+                  if (weekOperatorWeight.containsKey(jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName)) {
+                    weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] =
+                        weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName]! + jobItemAssignment.jobItem.requiredWeight;
+                  } else {
+                    weekOperatorWeight[jobItemAssignment.shiftSchedule.weigher.firstName + " " + jobItemAssignment.shiftSchedule.weigher.lastName] = jobItemAssignment.jobItem.requiredWeight;
+                  }
+                });
+              });
             }
           });
         }
@@ -281,10 +284,10 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
           }
         };
         if (shiftScheduleIDs.isNotEmpty) {
-          await appStore.jobItemAssignmentApp.list(shiftCondition).then((response) {
+          await appStore.jobItemAssignmentApp.list(shiftCondition).then((response) async {
             if (response.containsKey("status") && response["status"]) {
               for (var item in response["payload"]) {
-                JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
+                JobItemAssignment jobItemAssignment = await JobItemAssignment.fromServer(item);
                 monthJobWeights += jobItemAssignment.jobItem.requiredWeight;
                 if (!monthJobIDs.contains(jobItemAssignment.jobItem.jobID)) {
                   monthJobIDs.add(jobItemAssignment.jobItem.jobID);

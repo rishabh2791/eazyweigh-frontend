@@ -79,12 +79,13 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -111,14 +112,13 @@ class _UserCreateWidgetState extends State<UserCreateWidget> {
     };
     await appStore.userRoleApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          if (item["role"] != "Superuser") {
-            UserRole userRole = UserRole.fromJSON(item);
-            userRoles.add(userRole);
-          }
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          UserRole userRole = await UserRole.fromServer(Map<String, dynamic>.from(item));
+          userRoles.add(userRole);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();

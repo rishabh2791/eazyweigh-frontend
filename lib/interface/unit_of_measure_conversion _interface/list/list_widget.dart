@@ -48,12 +48,13 @@ class _UOMConversionListWidgetState extends State<UOMConversionListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -117,17 +118,18 @@ class _UOMConversionListWidgetState extends State<UOMConversionListWidget> {
                       "Value": factoryID,
                     }
                   };
-                  await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) {
+                  await appStore.unitOfMeasurementConversionApp.list(conditions).then((response) async {
                     if (response.containsKey("status") && response["status"]) {
-                      for (var item in response["payload"]) {
-                        UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion.fromJSON(item);
+                      await Future.forEach(response["payload"], (dynamic item) async {
+                        UnitOfMeasurementConversion unitOfMeasurementConversion = await UnitOfMeasurementConversion.fromServer(Map<String, dynamic>.from(item));
                         uomConversions.add(unitOfMeasurementConversion);
-                      }
+                      }).then((value) {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          isDataLoaded = true;
+                        });
+                      });
                     }
-                    Navigator.of(context).pop();
-                    setState(() {
-                      isDataLoaded = true;
-                    });
                   });
                 }
               },

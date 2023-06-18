@@ -48,12 +48,13 @@ class _VesselListWidgetState extends State<VesselListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
-          factories.add(fact);
-        }
-        setState(() {
-          isLoadingData = false;
+        await Future.forEach(response["payload"], (dynamic item) async {
+          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
+          factories.add(factory);
+        }).then((value) {
+          setState(() {
+            isLoadingData = false;
+          });
         });
       } else {
         Navigator.of(context).pop();
@@ -117,17 +118,18 @@ class _VesselListWidgetState extends State<VesselListWidget> {
                       "Value": factoryID,
                     }
                   };
-                  await appStore.vesselApp.list(conditions).then((response) {
+                  await appStore.vesselApp.list(conditions).then((response) async {
                     if (response.containsKey("status") && response["status"]) {
-                      for (var item in response["payload"]) {
-                        Vessel vessel = Vessel.fromJSON(item);
+                      await Future.forEach(response["payload"], (dynamic item) async {
+                        Vessel vessel = await Vessel.fromServer(Map<String, dynamic>.from(item));
                         vessels.add(vessel);
-                      }
+                      }).then((value) {
+                        setState(() {
+                          isDataLoaded = true;
+                        });
+                      });
                     }
                     Navigator.of(context).pop();
-                    setState(() {
-                      isDataLoaded = true;
-                    });
                   });
                 }
               },

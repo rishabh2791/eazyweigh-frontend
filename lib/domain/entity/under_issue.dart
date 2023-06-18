@@ -1,3 +1,4 @@
+import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
@@ -18,7 +19,7 @@ class UnderIssue {
 
   bool selected = false;
 
-  UnderIssue({
+  UnderIssue._({
     required this.actual,
     required this.verified,
     required this.createdAt,
@@ -50,21 +51,38 @@ class UnderIssue {
     };
   }
 
-  factory UnderIssue.fromJSON(Map<String, dynamic> jsonObject) {
-    UnderIssue underIssue = UnderIssue(
-      actual: jsonObject["actual"],
-      verified: jsonObject["verified"],
-      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
-      createdBy: User.fromJSON(jsonObject["created_by"]),
-      id: jsonObject["id"],
-      jobItem: JobItem.fromJSON(jsonObject["job_item"]),
-      req: double.parse(jsonObject["required"].toString()),
-      weighed: jsonObject["weighed"],
-      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
-      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
-      updatedBy: User.fromJSON(jsonObject["updated_by"]),
-      weight: double.parse(jsonObject["weight"].toString()),
-    );
+  static Future<UnderIssue> fromServer(Map<String, dynamic> jsonObject) async {
+    late UnderIssue underIssue;
+
+    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
+      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
+        await appStore.unitOfMeasurementApp.get(jsonObject["unit_of_measurement_id"]).then((uomResponse) async {
+          Map<String, dynamic> conditions = {
+            "EQUALS": {
+              "Field": "id",
+              "Value": jsonObject["job_item_id"],
+            }
+          };
+          await appStore.jobItemApp.get(conditions).then((jobItemResponse) async {
+            underIssue = UnderIssue._(
+              actual: double.parse(jsonObject["actual"].toString()),
+              verified: jsonObject["verified"],
+              createdAt: DateTime.parse(jsonObject["created_at"]),
+              createdBy: await User.fromServer(createdByResponse["payload"]),
+              id: jsonObject["id"],
+              jobItem: await JobItem.fromServer(jobItemResponse["payload"]),
+              req: double.parse(jsonObject["required"].toString()),
+              uom: await UnitOfMeasure.fromServer(uomResponse["payload"]),
+              weighed: jsonObject["weighed"],
+              updatedAt: DateTime.parse(jsonObject["updated_at"]),
+              updatedBy: await User.fromServer(updatedByResponse["payload"]),
+              weight: double.parse(jsonObject["weight"].toString()),
+            );
+          });
+        });
+      });
+    });
+
     return underIssue;
   }
 }
