@@ -48,10 +48,10 @@ class _TerminalListWidgetState extends State<TerminalListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -118,18 +118,17 @@ class _TerminalListWidgetState extends State<TerminalListWidget> {
                       "Value": factoryID,
                     }
                   };
-                  await appStore.terminalApp.list(conditions).then((response) async {
+                  await appStore.terminalApp.list(conditions).then((response) {
                     if (response.containsKey("status") && response["status"]) {
-                      await Future.forEach(response["payload"], (dynamic item) async {
-                        Terminal terminal = await Terminal.fromServer(Map<String, dynamic>.from(item));
+                      for (var item in response["payload"]) {
+                        Terminal terminal = Terminal.fromJSON(item);
                         terminals.add(terminal);
-                      }).then((value) {
-                        Navigator.of(context).pop();
-                        setState(() {
-                          isDataLoaded = true;
-                        });
-                      });
+                      }
                     }
+                    Navigator.of(context).pop();
+                    setState(() {
+                      isDataLoaded = true;
+                    });
                   });
                 }
               },

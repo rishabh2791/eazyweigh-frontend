@@ -59,12 +59,12 @@ class _UserRoleAccessListWidgetState extends State<UserRoleAccessListWidget> {
     };
     await appStore.userRoleApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
+        for (var item in response["payload"]) {
           if (item["role"] != "Superuser") {
-            UserRole userRole = await UserRole.fromServer(Map<String, dynamic>.from(item));
+            UserRole userRole = UserRole.fromJSON(item);
             userRoles.add(userRole);
           }
-        });
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(

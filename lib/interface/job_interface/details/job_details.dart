@@ -58,72 +58,64 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
 
   Future<dynamic> getJobItemWeighings() async {
     for (var jobItemID in jobItemIDs) {
-      await appStore.jobWeighingApp.list(jobItemID).then((response) async {
-        if (response.containsKey("status") && response["status"]) {
-          await Future.forEach(response["payload"], (dynamic item) async {
-            JobItemWeighing jobItemWeighing = await JobItemWeighing.fromServer(Map<String, dynamic>.from(item));
-            if (jobItemWeighing.startTime.toLocal().difference(firstStartTime.toLocal()).inSeconds < 0) {
-              firstStartTime = jobItemWeighing.startTime.toLocal();
+      await appStore.jobWeighingApp.list(jobItemID).then(
+        (response) {
+          if (response.containsKey("status") && response["status"]) {
+            for (var item in response["payload"]) {
+              JobItemWeighing jobItemWeighing = JobItemWeighing.fromJSON(item);
+              if (jobItemWeighing.startTime.toLocal().difference(firstStartTime.toLocal()).inSeconds < 0) {
+                firstStartTime = jobItemWeighing.startTime.toLocal();
+              }
+              if (jobItemWeighing.endTime.toLocal().difference(lastEndTime.toLocal()).inSeconds > 0) {
+                lastEndTime = jobItemWeighing.endTime.toLocal();
+              }
+              timeTaken += jobItemWeighing.endTime.difference(jobItemWeighing.startTime).inSeconds;
+              if (jobWeighings.containsKey(jobItemID)) {
+                jobWeighings[jobItemID]!.add(jobItemWeighing);
+              } else {
+                jobWeighings[jobItemID] = [jobItemWeighing];
+              }
             }
-            if (jobItemWeighing.endTime.toLocal().difference(lastEndTime.toLocal()).inSeconds > 0) {
-              lastEndTime = jobItemWeighing.endTime.toLocal();
-            }
-            timeTaken += jobItemWeighing.endTime.difference(jobItemWeighing.startTime).inSeconds;
-            if (jobWeighings.containsKey(jobItemID)) {
-              jobWeighings[jobItemID]!.add(jobItemWeighing);
-            } else {
-              jobWeighings[jobItemID] = [jobItemWeighing];
-            }
-          });
-        }
-      });
+          }
+        },
+      );
     }
   }
 
   Future<dynamic> getJobItemOverIssues() async {
     String jobID = jobItems.first.jobID;
-    await appStore.overIssueApp.list(jobID).then((response) async {
-      if (response.containsKey("status") && response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          await Future.value(await OverIssue.fromServer(Map<String, dynamic>.from(item))).then((OverIssue overIssue) async {
-            Map<String, dynamic> jsonObject = {
-              "job_id": jobID,
-              "over_issue_id": overIssue.id,
-            };
-            await Future.value(await HybridOverIssue.fromServer(jsonObject)).then((HybridOverIssue hybridOverIssue) {
-              if (overIssues.containsKey(overIssue.jobItem.id)) {
-                overIssues[overIssue.jobItem.id]!.add(hybridOverIssue);
-              } else {
-                overIssues[overIssue.jobItem.id] = [hybridOverIssue];
-              }
-            });
-          });
-        });
-      }
-    });
+    await appStore.overIssueApp.list(jobID).then(
+      (response) async {
+        if (response.containsKey("status") && response["status"]) {
+          for (var item in response["payload"]) {
+            OverIssue overIssue = OverIssue.fromJSON(item);
+            if (overIssues.containsKey(overIssue.jobItem.id)) {
+              overIssues[overIssue.jobItem.id]!.add(HybridOverIssue(job: job, overIssue: overIssue));
+            } else {
+              overIssues[overIssue.jobItem.id] = [HybridOverIssue(job: job, overIssue: overIssue)];
+            }
+          }
+        }
+      },
+    );
   }
 
   Future<dynamic> getJobItemUnderIssues() async {
     String jobID = jobItems.first.jobID;
-    await appStore.underIssueApp.list(jobID).then((response) async {
-      if (response.containsKey("status") && response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          await Future.value(await UnderIssue.fromServer(Map<String, dynamic>.from(item))).then((UnderIssue underIssue) async {
-            Map<String, dynamic> jsonObject = {
-              "job_id": jobID,
-              "under_issue_id": underIssue.id,
-            };
-            await Future.value(await HybridUnderIssue.fromServer(jsonObject)).then((HybridUnderIssue hybridUnderIssue) {
-              if (underIssues.containsKey(underIssue.jobItem.id)) {
-                underIssues[underIssue.jobItem.id]!.add(hybridUnderIssue);
-              } else {
-                underIssues[underIssue.jobItem.id] = [hybridUnderIssue];
-              }
-            });
-          });
-        });
-      }
-    });
+    await appStore.underIssueApp.list(jobID).then(
+      (response) async {
+        if (response.containsKey("status") && response["status"]) {
+          for (var item in response["payload"]) {
+            UnderIssue underIssue = UnderIssue.fromJSON(item);
+            if (underIssues.containsKey(underIssue.jobItem.id)) {
+              underIssues[underIssue.jobItem.id]!.add(HybridUnderIssue(job: job, underIssue: underIssue));
+            } else {
+              underIssues[underIssue.jobItem.id] = [HybridUnderIssue(job: job, underIssue: underIssue)];
+            }
+          }
+        }
+      },
+    );
   }
 
   Future<dynamic> getFactories() async {
@@ -136,13 +128,12 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -779,21 +770,19 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
                             await appStore.jobApp.list(conditions).then((value) async {
                               if (value.containsKey("status") && value["status"]) {
                                 if (value["payload"].isNotEmpty) {
-                                  await Future.value(await Job.fromServer(value["payload"][0])).then((job) async {
-                                    await Future.forEach(value["payload"][0]["job_items"], (dynamic item) async {
-                                      JobItem jobItem = await JobItem.fromServer(Map<String, dynamic>.from(item));
-                                      if (jobItem.material.isWeighed) {
-                                        jobItems.add(jobItem);
-                                        jobItemIDs.add(jobItem.id);
-                                      }
-                                    });
-                                  }).then((value) async {
-                                    await Future.forEach([
-                                      await getJobItemWeighings(),
-                                      await getJobItemOverIssues(),
-                                      await getJobItemUnderIssues(),
-                                    ], (element) {});
-                                  });
+                                  job = Job.fromJSON(value["payload"][0]);
+                                  for (var item in value["payload"][0]["job_items"]) {
+                                    JobItem jobItem = JobItem.fromJSON(item);
+                                    if (jobItem.material.isWeighed) {
+                                      jobItems.add(jobItem);
+                                      jobItemIDs.add(jobItem.id);
+                                    }
+                                  }
+                                  await Future.forEach([
+                                    await getJobItemWeighings(),
+                                    await getJobItemOverIssues(),
+                                    await getJobItemUnderIssues(),
+                                  ], (element) {});
                                 }
                               }
                             }).then((value) {

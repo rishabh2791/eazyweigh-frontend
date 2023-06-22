@@ -35,7 +35,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 late User currentUser;
 List<UserRoleAccess> userRolePermissions = [];
 
-String baseURL = "http://192.168.50.227:8000/";
+String baseURL = "http://10.19.1.211/eazyweigh/";
 String WEBSOCKET_SERVER_HOST = '10.19.0.210';
 int WEBSOCKET_PORT = 8001;
 String WEB_SOCKET_URL = 'ws://$WEBSOCKET_SERVER_HOST:$WEBSOCKET_PORT/';

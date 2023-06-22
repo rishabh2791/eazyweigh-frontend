@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getUserAuthorizations() async {
     userRolePermissions = [];
-    await appStore.userRoleAccessApp.list(currentUser.userRole.id).then((response) async {
+    await appStore.userRoleAccessApp.list(currentUser.userRole.id).then((response) {
       if (response.containsKey("error")) {
         showDialog(
           context: context,
@@ -57,10 +57,10 @@ class _HomePageState extends State<HomePage> {
         );
       } else {
         if (response["status"]) {
-          await Future.forEach(response["payload"], (dynamic item) async {
-            UserRoleAccess userRoleAccess = await UserRoleAccess.fromServer(Map<String, dynamic>.from(item));
+          for (var item in response["payload"]) {
+            UserRoleAccess userRoleAccess = UserRoleAccess.fromJSON(item);
             userRolePermissions.add(userRoleAccess);
-          });
+          }
         } else {
           showDialog(
             context: context,
@@ -79,60 +79,57 @@ class _HomePageState extends State<HomePage> {
   Future<dynamic> getUserDetails() async {
     await appStore.userApp.getUser(widget.username).then((response) async {
       if (response["status"] && response.containsKey("payload")) {
-        await Future.value(await User.fromServer(Map<String, dynamic>.from(response["payload"]))).then((user) async {
-          currentUser = user;
-        }).then((value) async {
-          Map<String, dynamic> userCondition = {
-            "EQUALS": {
-              "Field": "user_username",
-              "Value": currentUser.username,
-            }
-          };
-          if (currentUser.userRole.role != "Superuser") {
-            await appStore.userCompanyApp.get(userCondition).then((value) async {
-              companyID = value["payload"][0]["company_id"];
-              switch (currentUser.userRole.role) {
-                case "Operator":
-                  menuItemSelected = "Job";
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (BuildContext context) => const OperatorHomePage(),
-                    ),
-                  );
-                  break;
-                case "Verifier":
-                  menuItemSelected = "Job";
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (BuildContext context) => const OperatorHomePage(),
-                    ),
-                  );
-                  break;
-                case "Processor":
-                  menuItemSelected = "Process";
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (BuildContext context) => const ProcessDetailsWidget(),
-                    ),
-                  );
-                  break;
-                default:
-                  menuItemSelected = "Home";
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (BuildContext context) => const GeneralHomeWidget(),
-                    ),
-                  );
-              }
-            });
-          } else {
-            Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(
-                builder: (BuildContext context) => const SuperUserHomePage(),
-              ),
-            );
+        currentUser = User.fromJSON(response["payload"]);
+        Map<String, dynamic> userCondition = {
+          "EQUALS": {
+            "Field": "user_username",
+            "Value": currentUser.username,
           }
-        });
+        };
+        if (currentUser.userRole.role != "Superuser") {
+          await appStore.userCompanyApp.get(userCondition).then((value) async {
+            companyID = value["payload"][0]["company_id"];
+            switch (currentUser.userRole.role) {
+              case "Operator":
+                menuItemSelected = "Job";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+                break;
+              case "Verifier":
+                menuItemSelected = "Job";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const OperatorHomePage(),
+                  ),
+                );
+                break;
+              case "Processor":
+                menuItemSelected = "Process";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const ProcessDetailsWidget(),
+                  ),
+                );
+                break;
+              default:
+                menuItemSelected = "Home";
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (BuildContext context) => const GeneralHomeWidget(),
+                  ),
+                );
+            }
+          });
+        } else {
+          Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(
+              builder: (BuildContext context) => const SuperUserHomePage(),
+            ),
+          );
+        }
       } else {
         showDialog(
           context: context,

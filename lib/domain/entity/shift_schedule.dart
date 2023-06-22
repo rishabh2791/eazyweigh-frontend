@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/shift.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -12,7 +11,7 @@ class ShiftSchedule {
   final DateTime updatedAt;
   final User updatedBy;
 
-  ShiftSchedule._({
+  ShiftSchedule({
     required this.createdAt,
     required this.createdBy,
     required this.date,
@@ -41,28 +40,17 @@ class ShiftSchedule {
     };
   }
 
-  static Future<ShiftSchedule> fromServer(Map<String, dynamic> jsonObject) async {
-    late ShiftSchedule shiftSchedule;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.userApp.getUser(jsonObject["user_username"]).then((userResponse) async {
-          await appStore.shiftApp.get(jsonObject["shift_id"]).then((shiftResponse) async {
-            shiftSchedule = ShiftSchedule._(
-              createdAt: DateTime.parse(jsonObject["created_at"]),
-              createdBy: await User.fromServer(createdByResponse["payload"]),
-              date: DateTime.parse(jsonObject["date"]),
-              id: jsonObject["id"],
-              shift: await Shift.fromServer(shiftResponse["payload"]),
-              updatedAt: DateTime.parse(jsonObject["updated_at"]),
-              updatedBy: await User.fromServer(updatedByResponse["payload"]),
-              weigher: await User.fromServer(userResponse["payload"]),
-            );
-          });
-        });
-      });
-    });
-
+  factory ShiftSchedule.fromJSON(Map<String, dynamic> jsonObject) {
+    ShiftSchedule shiftSchedule = ShiftSchedule(
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      date: DateTime.parse(jsonObject["date"]),
+      id: jsonObject["id"],
+      shift: Shift.fromJSON(jsonObject["shift"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      weigher: User.fromJSON(jsonObject["user"]),
+    );
     return shiftSchedule;
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:eazyweigh/infrastructure/utilities/enums/token_type.dart';
 import 'package:eazyweigh/infrastructure/utilities/headers.dart';
@@ -33,8 +34,12 @@ class NetworkAPIProvider {
           responseJSON = json.decode(response.body.toString());
         });
       }
-    } on Exception catch (e) {
-      responseJSON = {"error": e.toString()};
+    } on SocketException {
+      responseJSON = {"error": "Socket Exception"};
+    } on FormatException {
+      responseJSON = {"error": "Format Exception"};
+    } on HttpException {
+      responseJSON = {"error": "HTTP Exception"};
     }
     return responseJSON;
   }
@@ -63,8 +68,8 @@ class NetworkAPIProvider {
           responseJSON = json.decode(response.body.toString());
         });
       }
-    } on Exception catch (e) {
-      responseJSON = {"error": e.toString()};
+    } on Exception {
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
@@ -93,8 +98,8 @@ class NetworkAPIProvider {
           responseJSON = json.decode(response.body.toString());
         });
       }
-    } on Exception catch (e) {
-      responseJSON = {"error": e.toString()};
+    } on Exception {
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
@@ -123,8 +128,8 @@ class NetworkAPIProvider {
           responseJSON = json.decode(response.body.toString());
         });
       }
-    } on Exception catch (e) {
-      responseJSON = {"error": e.toString()};
+    } on Exception {
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }
@@ -153,8 +158,8 @@ class NetworkAPIProvider {
           responseJSON = json.decode(response.body.toString());
         });
       }
-    } on Exception catch (e) {
-      responseJSON = {"error": e.toString()};
+    } on Exception {
+      responseJSON = {"error": "Network Exception"};
     }
     return responseJSON;
   }

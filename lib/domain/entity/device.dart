@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/device_type.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/vessel.dart';
@@ -28,7 +27,7 @@ class Device {
   final bool closePort;
   final String communicationMethod;
 
-  Device._({
+  Device({
     required this.createdAt,
     required this.createdBy,
     required this.deviceType,
@@ -87,43 +86,32 @@ class Device {
     };
   }
 
-  static Future<Device> fromServer(Map<String, dynamic> jsonObject) async {
-    late Device device;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.vesselApp.getVessel(jsonObject["vessel_id"]).then((vesselResponse) async {
-          await appStore.deviceTypeApp.getDevice(jsonObject["device_type_id"]).then((deviceTypeResponse) async {
-            device = Device._(
-              createdAt: DateTime.parse(jsonObject["created_at"]),
-              createdBy: await User.fromServer(createdByResponse["payload"]),
-              deviceType: await DeviceType.fromServer(deviceTypeResponse["payload"]),
-              id: jsonObject["id"],
-              updatedAt: DateTime.parse(jsonObject["updated_at"]),
-              updatedBy: await User.fromServer(updatedByResponse["payload"]),
-              vessel: await Vessel.fromServer(vesselResponse["payload"]),
-              nodeAddress: jsonObject["node_address"],
-              additionalNodeAddress: jsonObject["additional_node_address"],
-              baudRate: int.parse(jsonObject["baud_rate"].toString()),
-              byteSize: int.parse(jsonObject["byte_size"].toString()),
-              clearBuffer: jsonObject["clear_buffers_before_each_transaction"],
-              closePort: jsonObject["close_port_after_each_call"],
-              enabled: jsonObject["enabled"],
-              factor: int.parse(jsonObject["factor"].toString()),
-              isConstant: jsonObject["is_constant"],
-              constantValue: double.parse(jsonObject["constant_value"].toString()),
-              messageLength: int.parse(jsonObject["message_length"].toString()),
-              port: jsonObject["port"],
-              readStart: int.parse(jsonObject["read_start"].toString()),
-              stopBits: int.parse(jsonObject["stop_bits"].toString()),
-              timeout: double.parse(jsonObject["time_out"].toString()),
-              communicationMethod: jsonObject["communication_method"],
-            );
-          });
-        });
-      });
-    });
-
+  factory Device.fromJSON(Map<String, dynamic> jsonObject) {
+    Device device = Device(
+      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      deviceType: DeviceType.fromJSON(jsonObject["device_type"]),
+      id: jsonObject["id"],
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      vessel: Vessel.fromJSON(jsonObject["vessel"]),
+      nodeAddress: int.parse(jsonObject["node_address"].toString()),
+      additionalNodeAddress: int.parse(jsonObject["additional_node_address"].toString()),
+      baudRate: int.parse(jsonObject["baud_rate"].toString()),
+      byteSize: int.parse(jsonObject["byte_size"].toString()),
+      clearBuffer: jsonObject["clear_buffers_before_each_transaction"],
+      closePort: jsonObject["close_port_after_each_call"],
+      enabled: jsonObject["enabled"],
+      factor: int.parse(jsonObject["factor"].toString()),
+      isConstant: jsonObject["is_constant"],
+      constantValue: double.parse(jsonObject["constant_value"].toString()),
+      messageLength: int.parse(jsonObject["message_length"].toString()),
+      port: jsonObject["port"],
+      readStart: int.parse(jsonObject["read_start"].toString()),
+      stopBits: int.parse(jsonObject["stop_bits"].toString()),
+      timeout: double.parse(jsonObject["time_out"].toString()),
+      communicationMethod: jsonObject["communication_method"],
+    );
     return device;
   }
 }

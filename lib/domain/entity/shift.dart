@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -14,7 +13,7 @@ class Shift {
   final DateTime updatedAt;
   final User updatedBy;
 
-  Shift._({
+  Shift({
     required this.code,
     required this.createdAt,
     required this.createdBy,
@@ -47,28 +46,19 @@ class Shift {
     };
   }
 
-  static Future<Shift> fromServer(Map<String, dynamic> jsonObject) async {
-    late Shift shift;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.factoryApp.get(jsonObject["factory_id"]).then((factoryResponse) async {
-          shift = Shift._(
-            code: jsonObject["code"],
-            createdAt: DateTime.parse(jsonObject["created_at"]),
-            createdBy: await User.fromServer(createdByResponse["payload"]),
-            description: jsonObject["description"],
-            endTime: jsonObject["end_time"],
-            fact: await Factory.fromServer(factoryResponse["payload"]),
-            id: jsonObject["id"],
-            startTime: jsonObject["start_time"],
-            updatedAt: DateTime.parse(jsonObject["updated_at"]),
-            updatedBy: await User.fromServer(updatedByResponse["payload"]),
-          );
-        });
-      });
-    });
-
+  factory Shift.fromJSON(Map<String, dynamic> jsonObject) {
+    Shift shift = Shift(
+      code: jsonObject["code"],
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      description: jsonObject["description"],
+      endTime: jsonObject["end_time"],
+      fact: Factory.fromJSON(jsonObject["factory"]),
+      id: jsonObject["id"],
+      startTime: jsonObject["start_time"],
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+    );
     return shift;
   }
 }

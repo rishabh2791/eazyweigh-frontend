@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/address.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -12,7 +11,7 @@ class Factory {
   final User updatedBy;
   final DateTime updatedAt;
 
-  Factory._({
+  Factory({
     required this.id,
     required this.name,
     required this.address,
@@ -43,32 +42,17 @@ class Factory {
     };
   }
 
-  static Future<Factory> fromServer(Map<String, dynamic> jsonObject) async {
-    late Factory fact;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        Map<String, dynamic> conditions = {
-          "EQUALS": {
-            "Field": "id",
-            "Value": jsonObject["address_id"],
-          }
-        };
-        await appStore.addressApp.list(conditions).then((addressResponse) async {
-          fact = Factory._(
-            id: jsonObject["id"],
-            name: jsonObject["name"],
-            address: await Address.fromServer(addressResponse["payload"][0]),
-            companyID: jsonObject["company_id"],
-            createdAt: DateTime.parse(jsonObject["created_at"]),
-            createdBy: await User.fromServer(createdByResponse["payload"]),
-            updatedAt: DateTime.parse(jsonObject["updated_at"]),
-            updatedBy: await User.fromServer(updatedByResponse["payload"]),
-          );
-        });
-      });
-    });
-
+  factory Factory.fromJSON(Map<String, dynamic> jsonObject) {
+    Factory fact = Factory(
+      id: jsonObject["id"],
+      name: jsonObject["name"],
+      address: Address.fromJSON(jsonObject["address"]),
+      companyID: jsonObject["company_id"],
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+    );
     return fact;
   }
 }

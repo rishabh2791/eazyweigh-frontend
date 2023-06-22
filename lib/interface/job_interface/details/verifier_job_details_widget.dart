@@ -73,51 +73,43 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
     await appStore.jobApp.get(widget.jobCode).then((value) async {
       if (value.containsKey("status")) {
         if (value["status"]) {
-          await Future.value(await Job.fromServer(value["payload"])).then((Job job) async {
-            Map<String, dynamic> conditions = {
-              "EQUALS": {
-                "Field": "job_id",
-                "Value": job.id,
-              }
-            };
-            await appStore.jobItemApp.get(conditions).then((response) async {
-              if (response.containsKey("status")) {
-                if (response["status"]) {
-                  await Future.forEach(response["payload"], (dynamic item) async {
-                    JobItem jobItem = await JobItem.fromServer(Map<String, dynamic>.from(item));
-                    if (jobItem.material.isWeighed) {
-                      jobItems.add(jobItem);
-                    }
-                  }).then((value) {
-                    setState(() {
-                      isLoadingData = false;
-                    });
-                  });
-                } else {
-                  Navigator.of(context).pop();
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CustomDialog(
-                        message: response["message"],
-                        title: "Error",
-                      );
-                    },
-                  );
+          job = Job.fromJSON(value["payload"]);
+          await appStore.jobItemApp.get(job.id, {}).then((response) async {
+            if (response.containsKey("status")) {
+              if (response["status"]) {
+                for (var item in response["payload"]) {
+                  JobItem jobItem = JobItem.fromJSON(item);
+                  if (jobItem.material.isWeighed) {
+                    jobItems.add(jobItem);
+                  }
                 }
+                setState(() {
+                  isLoadingData = false;
+                });
               } else {
                 Navigator.of(context).pop();
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const CustomDialog(
-                      message: "Unable to Connect.",
+                    return CustomDialog(
+                      message: response["message"],
                       title: "Error",
                     );
                   },
                 );
               }
-            });
+            } else {
+              Navigator.of(context).pop();
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const CustomDialog(
+                    message: "Unable to Connect.",
+                    title: "Error",
+                  );
+                },
+              );
+            }
           });
         } else {
           showDialog(
@@ -137,12 +129,12 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
   void updateJobItems(String jobItemID, String jobItemWeighingID) async {
     var jobItem = jobItems.firstWhere((element) => jobItemID.replaceAll("_", "-") == element.id);
     bool allWeighedItemsVerified = true;
-    await appStore.jobWeighingApp.list(jobItemID).then((response) async {
+    await appStore.jobWeighingApp.list(jobItemID).then((response) {
       if (response.containsKey("status") && response["status"]) {
-        await Future.forEach(response["payload"], (dynamic weighedItem) async {
-          JobItemWeighing itemWeighed = await JobItemWeighing.fromServer(Map<String, dynamic>.from(weighedItem));
+        for (Map<String, dynamic> weighedItem in response["payload"]) {
+          JobItemWeighing itemWeighed = JobItemWeighing.fromJSON(weighedItem);
           allWeighedItemsVerified = allWeighedItemsVerified & itemWeighed.verified;
-        });
+        }
       }
     });
     jobItem.verified = allWeighedItemsVerified;

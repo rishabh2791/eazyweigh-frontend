@@ -108,13 +108,12 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -158,10 +157,10 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
     };
     await appStore.stepTypeApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          StepType stepType = await StepType.fromServer(Map<String, dynamic>.from(item));
+        for (var item in response["payload"]) {
+          StepType stepType = StepType.fromJSON(item);
           stepTypes.add(stepType);
-        });
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -187,10 +186,10 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
     };
     await appStore.materialApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Mat material = await Mat.fromServer(Map<String, dynamic>.from(item));
+        for (var item in response["payload"]) {
+          Mat material = Mat.fromJSON(item);
           materials.add(material);
-        });
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -744,7 +743,7 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                               "Value": materialID,
                             }
                           };
-                          await appStore.bomApp.list(conditions).then((response) async {
+                          await appStore.bomApp.list(conditions).then((response) {
                             if (response.containsKey("status") && response["status"]) {
                               int revision = 1;
                               List<dynamic> payloads = response["payload"];
@@ -755,17 +754,16 @@ class _ProcessCreateWidgetState extends State<ProcessCreateWidget> {
                                   revision = payload["revision"];
                                 }
                               }
-                              await Future.forEach(latestBOM["bom_items"], (dynamic item) async {
-                                BomItem bomItem = await BomItem.fromServer(Map<String, dynamic>.from(item));
+                              for (var item in latestBOM["bom_items"]) {
+                                BomItem bomItem = BomItem.fromJSON(item);
                                 bomItems.add(bomItem);
                                 pendingBOMItems.add(bomItem);
                                 bomMaterials.add(bomItem.material);
                                 pendingMaterials.add(bomItem.material);
-                              }).then((value) {
-                                pendingMaterials.sort((a, b) => a.code.compareTo(b.code));
-                                setState(() {
-                                  isDataLoaded = true;
-                                });
+                              }
+                              pendingMaterials.sort((a, b) => a.code.compareTo(b.code));
+                              setState(() {
+                                isDataLoaded = true;
                               });
                             } else {
                               showDialog(

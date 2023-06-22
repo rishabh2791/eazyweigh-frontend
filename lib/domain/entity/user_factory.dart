@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -8,7 +7,7 @@ class UserFactory {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  UserFactory._({
+  UserFactory({
     required this.fact,
     required this.user,
     required this.createdAt,
@@ -24,20 +23,13 @@ class UserFactory {
     };
   }
 
-  static Future<UserFactory> fromServer(Map<String, dynamic> jsonObject) async {
-    late UserFactory userFactory;
-
-    await appStore.userApp.getUser(jsonObject["user_username"]).then((userResponse) async {
-      await appStore.factoryApp.get(jsonObject["factory_id"]).then((factoryResponse) async {
-        userFactory = UserFactory._(
-          fact: await Factory.fromServer(factoryResponse["payload"]),
-          user: await User.fromServer(userResponse["payload"]),
-          createdAt: DateTime.parse(jsonObject["created_at"]),
-          updatedAt: DateTime.parse(jsonObject["updated_at"]),
-        );
-      });
-    });
-
+  factory UserFactory.fromJSON(Map<String, dynamic> jsonObject) {
+    UserFactory userFactory = UserFactory(
+      fact: Factory.fromJSON(jsonObject["factory"]),
+      user: User.fromJSON(jsonObject["user"]),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+    );
     return userFactory;
   }
 }

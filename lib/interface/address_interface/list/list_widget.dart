@@ -36,16 +36,18 @@ class _AddressListWidgetState extends State<AddressListWidget> {
       }
     };
     await appStore.addressApp.list(condition).then((response) async {
-      if (response.containsKey("status") && response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Address address = await Address.fromServer(Map<String, dynamic>.from(item));
-          addresses.add(address);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
-        });
-      }
+      if (response.containsKey("status")) {
+        if (response["status"]) {
+          for (var item in response["payload"]) {
+            Address address = Address.fromJSON(item);
+            addresses.add(address);
+          }
+        }
+      } else {}
+    }).then((value) {
+      setState(() {
+        isLoadingData = false;
+      });
     });
   }
 

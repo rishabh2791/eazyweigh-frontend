@@ -92,14 +92,10 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
-        });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -162,74 +158,59 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                 };
                 await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                   if (response["status"]) {
-                    await Future.forEach(response["payload"], (dynamic item) async {
-                      JobItem jobItem = await JobItem.fromServer(Map<String, dynamic>.from(item["job_item"]));
+                    for (var item in response["payload"]) {
+                      JobItem jobItem = JobItem.fromJSON(item["job_item"]);
                       jobItems[jobItem.id] = jobItem;
                       if (!jobMapping.containsKey(item["job_item"]["job_id"])) {
                         jobMapping[item["job_item"]["job_id"]] = [];
                         jobIDs.add(item["job_item"]["job_id"]);
                       }
-                    }).then((value) async {
-                      if (jobMapping.isNotEmpty) {
-                        Map<String, dynamic> jobConditions = {
-                          "IN": {
-                            "Field": "id",
-                            "Value": jobIDs,
-                          },
-                        };
-                        await appStore.jobApp.list(jobConditions).then((value) async {
-                          if (value["status"]) {
-                            await Future.forEach(value["payload"], (dynamic job) async {
-                              Job thisJob = await Job.fromServer(Map<String, dynamic>.from(job));
-                              jobs[job["id"]] = thisJob;
-                            });
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomDialog(
-                                  message: value["message"],
-                                  title: "Error",
-                                );
-                              },
-                            );
-                            Future.delayed(const Duration(seconds: 3)).then((value) {
-                              Navigator.of(context).pop();
-                            });
+                    }
+                    if (jobMapping.isNotEmpty) {
+                      Map<String, dynamic> jobConditions = {
+                        "IN": {
+                          "Field": "id",
+                          "Value": jobIDs,
+                        },
+                      };
+                      await appStore.jobApp.list(jobConditions).then((value) async {
+                        if (value["status"]) {
+                          for (var job in value["payload"]) {
+                            Job thisJob = Job.fromJSON(job);
+                            jobs[job["id"]] = thisJob;
                           }
-                        }).then((value) async {
-                          jobMapping.forEach((key, value) async {
-                            await appStore.overIssueApp.list(key).then((overIssueReposnse) async {
-                              if (overIssueReposnse.containsKey("status")) {
-                                if (overIssueReposnse["status"]) {
-                                  await Future.forEach(overIssueReposnse["payload"], (dynamic item) async {
-                                    OverIssue overIssue = await OverIssue.fromServer(Map<String, dynamic>.from(item));
-                                    if (!overIssue.weighed) {
-                                      jobMapping[key]!.add(overIssue);
-                                    }
-                                  }).then((value) {
-                                    cleanJobMapping();
-                                  });
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: overIssueReposnse["message"],
-                                        title: "Error",
-                                      );
-                                    },
-                                  );
-                                  Future.delayed(const Duration(seconds: 3)).then((value) {
-                                    Navigator.of(context).pop();
-                                  });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomDialog(
+                                message: value["message"],
+                                title: "Error",
+                              );
+                            },
+                          );
+                          Future.delayed(const Duration(seconds: 3)).then((value) {
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      }).then((value) async {
+                        jobMapping.forEach((key, value) async {
+                          await appStore.overIssueApp.list(key).then((overIssueReposnse) {
+                            if (overIssueReposnse.containsKey("status")) {
+                              if (overIssueReposnse["status"]) {
+                                for (var item in overIssueReposnse["payload"]) {
+                                  OverIssue overIssue = OverIssue.fromJSON(item);
+                                  if (!overIssue.weighed) {
+                                    jobMapping[key]!.add(overIssue);
+                                  }
                                 }
+                                cleanJobMapping();
                               } else {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const CustomDialog(
-                                      message: "Unable to Connect.",
+                                    return CustomDialog(
+                                      message: overIssueReposnse["message"],
                                       title: "Error",
                                     );
                                   },
@@ -238,11 +219,24 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                   Navigator.of(context).pop();
                                 });
                               }
-                            });
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const CustomDialog(
+                                    message: "Unable to Connect.",
+                                    title: "Error",
+                                  );
+                                },
+                              );
+                              Future.delayed(const Duration(seconds: 3)).then((value) {
+                                Navigator.of(context).pop();
+                              });
+                            }
                           });
                         });
-                      } else {}
-                    });
+                      });
+                    } else {}
                   } else {
                     showDialog(
                       context: context,
@@ -659,7 +653,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                         fontSize: 20.0,
                       ),
                     ),
-              overIssues.isEmpty ? Container() : OverIssueList(overIssues: overIssues),
+              OverIssueList(overIssues: overIssues),
             ],
           )
         : Column(
@@ -743,22 +737,22 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                         });
                         await appStore.jobApp.list(conditions).then((value) async {
                           if (value.containsKey("status") && value["status"]) {
-                            await Future.forEach(value["payload"], (dynamic item) async {
-                              await Future.value(await Job.fromServer(Map<String, dynamic>.from(item))).then((Job job) async {
-                                await appStore.overIssueApp.list(job.id).then((response) async {
-                                  if (response.containsKey("status") && response["status"]) {
-                                    if (response["payload"].length != 0) {
-                                      await Future.forEach(response["payload"], (dynamic over) async {
-                                        overIssues.add(await HybridOverIssue.fromServer({
-                                          "job_id": job.id,
-                                          "over_issue_id": over["id"],
-                                        }));
-                                      });
+                            for (var item in value["payload"]) {
+                              Job job = Job.fromJSON(item);
+                              await appStore.overIssueApp.list(job.id).then((response) {
+                                if (response.containsKey("status") && response["status"]) {
+                                  if (response["payload"].length != 0) {
+                                    for (var under in response["payload"]) {
+                                      OverIssue overIssue = OverIssue.fromJSON(under);
+                                      overIssues.add(HybridOverIssue(
+                                        job: job,
+                                        overIssue: overIssue,
+                                      ));
                                     }
                                   }
-                                });
+                                }
                               });
-                            });
+                            }
                           } else {
                             showDialog(
                               context: context,

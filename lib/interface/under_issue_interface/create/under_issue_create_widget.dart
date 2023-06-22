@@ -139,55 +139,49 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                           },
                         );
                       } else {
-                        Map<String, dynamic> conditions = {
-                          "EQUALS": {
-                            "Field": "job_id",
-                            "Value": response["payload"][0]["id"],
-                          }
-                        };
-                        await appStore.jobItemApp.get(conditions).then(
+                        String jobID = response["payload"][0]["id"];
+                        await appStore.jobItemApp.get(jobID, {}).then(
                           (value) async {
                             if (value["status"]) {
-                              await Future.forEach(value["payload"], (dynamic item) async {
-                                JobItem jobItem = await JobItem.fromServer(Map<String, dynamic>.from(item));
+                              for (var item in value["payload"]) {
+                                JobItem jobItem = JobItem.fromJSON(item);
                                 jobItems.add(jobItem);
                                 underIssueQty[jobItem.id] = 0;
-                              }).then((value) async {
-                                await appStore.underIssueApp.list(jobItems[0].jobID).then((value) {
-                                  if (value.containsKey("status")) {
-                                    if (value["status"]) {
-                                      for (var item in value["payload"]) {
-                                        underIssueQty[item["job_item_id"]] = double.parse(item["actual"].toString()) - double.parse(item["required"].toString());
-                                      }
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        isJobItemsLoaded = true;
-                                      });
-                                    } else {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            message: value["message"],
-                                            title: "Errors",
-                                          );
-                                        },
-                                      );
+                              }
+                              await appStore.underIssueApp.list(jobItems[0].jobID).then((value) {
+                                if (value.containsKey("status")) {
+                                  if (value["status"]) {
+                                    for (var item in value["payload"]) {
+                                      underIssueQty[item["job_item_id"]] = double.parse(item["actual"].toString()) - double.parse(item["required"].toString());
                                     }
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      isJobItemsLoaded = true;
+                                    });
                                   } else {
                                     Navigator.of(context).pop();
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return const CustomDialog(
-                                          message: "Unable to connect.",
+                                        return CustomDialog(
+                                          message: value["message"],
                                           title: "Errors",
                                         );
                                       },
                                     );
                                   }
-                                });
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const CustomDialog(
+                                        message: "Unable to connect.",
+                                        title: "Errors",
+                                      );
+                                    },
+                                  );
+                                }
                               });
                             } else {
                               Navigator.of(context).pop();
@@ -333,13 +327,12 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();

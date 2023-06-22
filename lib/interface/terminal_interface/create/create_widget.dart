@@ -80,13 +80,12 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -121,14 +120,13 @@ class _TerminalCreateWidgetState extends State<TerminalCreateWidget> {
     );
     await appStore.unitOfMeasurementApp.list(condition).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          UnitOfMeasure uom = await UnitOfMeasure.fromServer(Map<String, dynamic>.from(item));
+        for (var item in response["payload"]) {
+          UnitOfMeasure uom = UnitOfMeasure.fromJSON(item);
           uoms.add(uom);
-        }).then((value) {
-          Navigator.of(context).pop();
-          setState(() {
-            isLoadingData = false;
-          });
+        }
+        Navigator.of(context).pop();
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();

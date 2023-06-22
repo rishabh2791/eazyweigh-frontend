@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
@@ -15,7 +14,7 @@ class BOM {
   final DateTime updatedAt;
   final User updatedBy;
 
-  BOM._({
+  BOM({
     required this.createdAt,
     required this.createdBy,
     required this.id,
@@ -43,30 +42,19 @@ class BOM {
     };
   }
 
-  static Future<BOM> fromServer(Map<String, dynamic> jsonObject) async {
-    late BOM bom;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.materialApp.get(jsonObject["material_id"]).then((materialResponse) async {
-          await appStore.unitOfMeasurementApp.get(jsonObject["unit_of_measurement_id"]).then((uomResponse) async {
-            bom = BOM._(
-              createdAt: DateTime.parse(jsonObject["created_at"]),
-              createdBy: await User.fromServer(createdByResponse["payload"]),
-              id: jsonObject["id"],
-              material: await Mat.fromServer(materialResponse["payload"]),
-              revision: int.parse(jsonObject["int"]),
-              unitSize: double.parse(jsonObject["unit_size"].toString()),
-              uom: await UnitOfMeasure.fromServer(uomResponse["payload"]),
-              updatedAt: DateTime.parse(jsonObject["updated_at"]),
-              updatedBy: await User.fromServer(updatedByResponse["payload"]),
-              factoryID: jsonObject["factory_id"],
-            );
-          });
-        });
-      });
-    });
-
+  factory BOM.fromJSON(Map<String, dynamic> jsonObject) {
+    BOM bom = BOM(
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_at"]),
+      id: jsonObject["id"],
+      factoryID: jsonObject["factory_id"],
+      material: Mat.fromJSON(jsonObject["material"]),
+      revision: jsonObject["revision"],
+      unitSize: jsonObject["unit_size"],
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measure"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: jsonObject["updated_by"],
+    );
     return bom;
   }
 }

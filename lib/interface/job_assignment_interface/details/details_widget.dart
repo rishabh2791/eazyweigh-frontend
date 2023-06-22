@@ -50,13 +50,12 @@ class _JobAssignmentDetailsWidgetState extends State<JobAssignmentDetailsWidget>
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -151,13 +150,9 @@ class _JobAssignmentDetailsWidgetState extends State<JobAssignmentDetailsWidget>
                   );
                   await appStore.jobApp.list(conditions).then((value) async {
                     if (value.containsKey("status") && value["status"]) {
-                      Map<String, dynamic> conditions = {
-                        "EQUALS": {
-                          "Field": "job_id",
-                          "Value": value["payload"][0]["id"],
-                        }
-                      };
-                      await appStore.jobItemApp.get(conditions).then((jobItemsResponse) async {
+                      String jobID = value["payload"][0]["id"];
+
+                      await appStore.jobItemApp.get(jobID, {}).then((jobItemsResponse) async {
                         List<String> jobItemIDs = [];
                         if (jobItemsResponse.containsKey("status") && jobItemsResponse["status"]) {
                           for (var item in jobItemsResponse["payload"]) {
@@ -172,14 +167,13 @@ class _JobAssignmentDetailsWidgetState extends State<JobAssignmentDetailsWidget>
                           await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                             if (response.containsKey("status")) {
                               if (response["status"]) {
-                                await Future.forEach(response["payload"], (dynamic item) async {
-                                  JobItemAssignment jobItemAssignment = await JobItemAssignment.fromServer(Map<String, dynamic>.from(item));
+                                for (var item in response["payload"]) {
+                                  JobItemAssignment jobItemAssignment = JobItemAssignment.fromJSON(item);
                                   jobItemAssignments.add(jobItemAssignment);
-                                }).then((value) {
-                                  setState(() {
-                                    isJobItemsLoaded = true;
-                                  });
-                                  Navigator.of(context).pop();
+                                }
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  isJobItemsLoaded = true;
                                 });
                               } else {
                                 Navigator.of(context).pop();

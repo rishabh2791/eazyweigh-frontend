@@ -48,10 +48,10 @@ class _UOMListWidgetState extends State<UOMListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -123,12 +123,12 @@ class _UOMListWidgetState extends State<UOMListWidget> {
                       }
                     };
 
-                    await appStore.unitOfMeasurementApp.list(conditions).then((response) async {
+                    await appStore.unitOfMeasurementApp.list(conditions).then((response) {
                       if (response.containsKey("status") && response["status"]) {
-                        await Future.forEach(response["payload"], (dynamic item) async {
-                          UnitOfMeasure uom = await UnitOfMeasure.fromServer(Map<String, dynamic>.from(item));
+                        for (var item in response["payload"]) {
+                          UnitOfMeasure uom = UnitOfMeasure.fromJSON(item);
                           uoms.add(uom);
-                        });
+                        }
                       }
                     }).then((value) {
                       setState(() {

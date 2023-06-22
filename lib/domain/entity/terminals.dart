@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -17,7 +16,7 @@ class Terminal {
   final DateTime updatedAt;
   final User updatedBy;
 
-  Terminal._({
+  Terminal({
     required this.apiKey,
     required this.capacity,
     required this.createdAt,
@@ -51,31 +50,22 @@ class Terminal {
     };
   }
 
-  static Future<Terminal> fromServer(Map<String, dynamic> jsonObject) async {
-    late Terminal terminal;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.unitOfMeasurementApp.get(jsonObject["unit_of_measurement_id"]).then((uomResponse) async {
-          terminal = Terminal._(
-            apiKey: jsonObject["api_key"],
-            capacity: double.parse(jsonObject["capacity"].toString()),
-            createdAt: DateTime.parse(jsonObject["created_at"]),
-            createdBy: await User.fromServer(createdByResponse["payload"]),
-            description: jsonObject["description"],
-            factoryID: jsonObject["factory_id"],
-            id: jsonObject["id"],
-            leastCount: double.parse(jsonObject["least_count"].toString()),
-            macAddress: jsonObject["mac_address"],
-            occupied: jsonObject["occupied"],
-            uom: await UnitOfMeasure.fromServer(uomResponse["payload"]),
-            updatedAt: DateTime.parse(jsonObject["updated_at"]),
-            updatedBy: await User.fromServer(updatedByResponse["payload"]),
-          );
-        });
-      });
-    });
-
+  factory Terminal.fromJSON(Map<String, dynamic> jsonObject) {
+    Terminal terminal = Terminal(
+      apiKey: jsonObject["api_key"],
+      capacity: double.parse(jsonObject["capacity"].toString()),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      description: jsonObject["description"],
+      factoryID: jsonObject["factory_id"],
+      id: jsonObject["id"],
+      leastCount: double.parse(jsonObject["least_count"].toString()),
+      macAddress: jsonObject["mac_address"],
+      occupied: jsonObject["occupied"],
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+    );
     return terminal;
   }
 }

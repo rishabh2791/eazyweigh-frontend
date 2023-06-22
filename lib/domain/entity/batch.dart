@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/process.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
@@ -16,7 +15,7 @@ class Batch {
   final User updatedBy;
   final DateTime updatedAt;
 
-  Batch._({
+  Batch({
     required this.createdAt,
     required this.createdBy,
     required this.job,
@@ -49,32 +48,19 @@ class Batch {
     };
   }
 
-  static Future<Batch> fromServer(Map<String, dynamic> jsonObject) async {
-    late Batch batch;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.vesselApp.getVessel(jsonObject["vessel_id"]).then((vesselResponse) async {
-          await appStore.processApp.getProcess(jsonObject["process_id"]).then((processResponse) async {
-            await appStore.jobApp.get(jsonObject["job_id"]).then((jobResponse) async {
-              batch = Batch._(
-                createdAt: DateTime.parse(jsonObject["created_at"]),
-                createdBy: await User.fromServer(createdByResponse["payload"]),
-                job: await Job.fromServer(jobResponse["payload"]),
-                process: await Process.fromServer(processResponse["payload"]),
-                id: jsonObject["id"],
-                updatedAt: DateTime.parse(jsonObject["updated_at"]),
-                updatedBy: await User.fromServer(updatedByResponse["payload"]),
-                vessel: await Vessel.fromServer(vesselResponse["payload"]),
-                endTime: DateTime.parse(jsonObject["end_time"]),
-                startTime: DateTime.parse(jsonObject["start_time"]),
-              );
-            });
-          });
-        });
-      });
-    });
-
+  factory Batch.fromJSON(Map<String, dynamic> jsonObject) {
+    Batch batch = Batch(
+      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      job: Job.fromJSON(jsonObject["job"]),
+      process: Process.fromJSON(jsonObject["process"]),
+      id: jsonObject["id"],
+      endTime: DateTime.parse(jsonObject["end_time"]).toLocal(),
+      startTime: DateTime.parse(jsonObject["start_time"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      vessel: Vessel.fromJSON(jsonObject["vessel"]),
+    );
     return batch;
   }
 }

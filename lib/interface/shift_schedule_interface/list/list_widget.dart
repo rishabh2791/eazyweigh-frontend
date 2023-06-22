@@ -52,13 +52,12 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -87,17 +86,13 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
       try {
         await appStore.userFactoryApp.get(conditions).then((response) async {
           if (response["status"]) {
-            await Future.forEach(response["payload"], (dynamic item) async {
-              await appStore.userApp.getUser(item["user_username"]).then((value) async {
-                await Future.value(await User.fromServer(Map<String, dynamic>.from(value["payload"]))).then((User weigher) async {
-                  if (weigher.userRole.role == "Operator") {
-                    weighers.add(weigher);
-                  }
-                }).then((value) {
-                  setState(() {});
-                });
-              });
-            });
+            for (var item in response["payload"]) {
+              User user = User.fromJSON(item["user"]);
+              if (user.userRole.role == "Operator") {
+                weighers.add(user);
+              }
+            }
+            setState(() {});
           } else {
             showDialog(
               context: context,
@@ -233,12 +228,12 @@ class _ShiftScheduleListWidgetState extends State<ShiftScheduleListWidget> {
                       },
                     );
                   } else {
-                    await appStore.shiftScheduleApp.list(conditions).then((response) async {
+                    await appStore.shiftScheduleApp.list(conditions).then((response) {
                       if (response.containsKey("status") && response["status"]) {
-                        await Future.forEach(response["payload"], (dynamic item) async {
-                          ShiftSchedule shiftSchedule = await ShiftSchedule.fromServer(Map<String, dynamic>.from(item));
+                        for (var item in response["payload"]) {
+                          ShiftSchedule shiftSchedule = ShiftSchedule.fromJSON(item);
                           shiftSchedules.add(shiftSchedule);
-                        });
+                        }
                       }
                     }).then((value) {
                       setState(() {

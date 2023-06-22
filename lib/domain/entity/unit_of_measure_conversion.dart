@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -14,7 +13,7 @@ class UnitOfMeasurementConversion {
   final User updatedBy;
   final DateTime updatedAt;
 
-  UnitOfMeasurementConversion._({
+  UnitOfMeasurementConversion({
     required this.createdAt,
     required this.createdBy,
     required this.factoryID,
@@ -31,30 +30,19 @@ class UnitOfMeasurementConversion {
     return <String, dynamic>{};
   }
 
-  static Future<UnitOfMeasurementConversion> fromServer(Map<String, dynamic> jsonObject) async {
-    late UnitOfMeasurementConversion conversion;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.unitOfMeasurementApp.get(jsonObject["unit1_id"]).then((unit1Response) async {
-          await appStore.unitOfMeasurementApp.get(jsonObject["unit2_id"]).then((unit2Response) async {
-            conversion = UnitOfMeasurementConversion._(
-              createdAt: DateTime.parse(jsonObject["created_at"]),
-              createdBy: await User.fromServer(createdByResponse["payload"]),
-              factoryID: jsonObject["factory_id"],
-              id: jsonObject["id"],
-              unitOfMeasure1: await UnitOfMeasure.fromServer(unit1Response["payload"]),
-              unitOfMeasure2: await UnitOfMeasure.fromServer(unit2Response["payload"]),
-              updatedAt: DateTime.parse(jsonObject["updated_at"]),
-              updatedBy: await User.fromServer(updatedByResponse["payload"]),
-              value1: double.parse(jsonObject["value1"].toString()),
-              value2: double.parse(jsonObject["value2"].toString()),
-            );
-          });
-        });
-      });
-    });
-
-    return conversion;
+  factory UnitOfMeasurementConversion.fromJSON(Map<String, dynamic> jsonObject) {
+    UnitOfMeasurementConversion unitOfMeasurementConversion = UnitOfMeasurementConversion(
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      factoryID: jsonObject["factory_id"],
+      id: jsonObject["id"],
+      unitOfMeasure1: UnitOfMeasure.fromJSON(jsonObject["unit1"]),
+      unitOfMeasure2: UnitOfMeasure.fromJSON(jsonObject["unit2"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      value1: double.parse(jsonObject["value1"].toString()),
+      value2: double.parse(jsonObject["value2"].toString()),
+    );
+    return unitOfMeasurementConversion;
   }
 }

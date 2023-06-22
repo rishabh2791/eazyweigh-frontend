@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/user_role.dart';
 
 class User {
@@ -15,7 +14,7 @@ class User {
   final String updatedByUsername;
   final DateTime updatedAt;
 
-  User._({
+  User({
     required this.active,
     required this.createdAt,
     required this.createdByUsername,
@@ -52,26 +51,21 @@ class User {
     };
   }
 
-  static Future<User> fromServer(Map<String, dynamic> jsonObject) async {
-    late User user;
-
-    await appStore.userRoleApp.get(jsonObject["user_role_id"]).then((response) async {
-      user = User._(
-        active: jsonObject["active"],
-        createdAt: DateTime.parse(jsonObject["created_at"]),
-        createdByUsername: jsonObject["created_by_username"],
-        email: jsonObject["email"],
-        firstName: jsonObject["first_name"],
-        lastName: jsonObject["last_name"],
-        password: jsonObject["password"],
-        updatedAt: DateTime.parse(jsonObject["updated_at"]),
-        profilePic: jsonObject["profile_pic"],
-        updatedByUsername: jsonObject["updated_by_username"],
-        userRole: await UserRole.fromServer(response["payload"]),
-        username: jsonObject["username"],
-      );
-    });
-
+  factory User.fromJSON(Map<String, dynamic> jsonObject) {
+    User user = User(
+      active: jsonObject["active"],
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdByUsername: jsonObject["created_by_username"],
+      email: jsonObject["email"],
+      firstName: jsonObject["first_name"],
+      lastName: jsonObject["last_name"] ?? jsonObject["first_name"],
+      password: jsonObject["password"],
+      profilePic: jsonObject["profile_pic"],
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedByUsername: jsonObject["updated_by_username"],
+      userRole: UserRole.fromJSON(jsonObject["user_role"]),
+      username: jsonObject["username"],
+    );
     return user;
   }
 }

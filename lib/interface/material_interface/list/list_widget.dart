@@ -48,13 +48,12 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory fact = await Factory.fromServer(Map<String, dynamic>.from(item));
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
           factories.add(fact);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -118,12 +117,12 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                       "Value": factoryID,
                     }
                   };
-                  await appStore.materialApp.list(conditions).then((response) async {
+                  await appStore.materialApp.list(conditions).then((response) {
                     if (response.containsKey("status") && response["status"]) {
-                      await Future.forEach(response["payload"], (dynamic item) async {
-                        Mat material = await Mat.fromServer(Map<String, dynamic>.from(item));
+                      for (var item in response["payload"]) {
+                        Mat material = Mat.fromJSON(item);
                         materials.add(material);
-                      });
+                      }
                     }
                     Navigator.of(context).pop();
                     setState(() {

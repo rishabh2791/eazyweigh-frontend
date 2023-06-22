@@ -49,13 +49,12 @@ class _DeviceTypeListWidgetState extends State<DeviceTypeListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -143,18 +142,13 @@ class _DeviceTypeListWidgetState extends State<DeviceTypeListWidget> {
                                 return loader(context);
                               },
                             );
-                            await appStore.deviceTypeApp.list(conditions).then((response) async {
+                            await appStore.deviceTypeApp.list(conditions).then((response) {
                               Navigator.of(context).pop();
                               if (response.containsKey("status") && response["status"]) {
-                                await Future.forEach(response["payload"], (dynamic item) async {
-                                  DeviceType deviceType = await DeviceType.fromServer(Map<String, dynamic>.from(item));
+                                for (var item in response["payload"]) {
+                                  DeviceType deviceType = DeviceType.fromJSON(item);
                                   deviceTypes.add(deviceType);
-                                }).then((value) {
-                                  setState(() {
-                                    isLoadingData = false;
-                                    isDataLoaded = true;
-                                  });
-                                });
+                                }
                                 deviceTypes.sort((a, b) => a.description.compareTo(b.description));
                               } else {
                                 showDialog(
@@ -167,6 +161,9 @@ class _DeviceTypeListWidgetState extends State<DeviceTypeListWidget> {
                                   },
                                 );
                               }
+                              setState(() {
+                                isDataLoaded = true;
+                              });
                             });
                           }
                         },

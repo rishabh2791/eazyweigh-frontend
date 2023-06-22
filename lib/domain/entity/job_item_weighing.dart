@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -15,7 +14,7 @@ class JobItemWeighing {
   final DateTime updatedAt;
   bool verified;
 
-  JobItemWeighing._({
+  JobItemWeighing({
     required this.createdAt,
     required this.createdBy,
     required this.endTime,
@@ -45,35 +44,20 @@ class JobItemWeighing {
     };
   }
 
-  static Future<JobItemWeighing> fromServer(Map<String, dynamic> jsonObject) async {
-    late JobItemWeighing jobItemWeighing;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        Map<String, dynamic> jobItemConditions = {
-          "EQUALS": {
-            "Field": "id",
-            "Value": jsonObject["job_item_id"],
-          }
-        };
-        await appStore.jobItemApp.get(jobItemConditions).then((jobItemResponse) async {
-          jobItemWeighing = JobItemWeighing._(
-            createdAt: DateTime.parse(jsonObject["created_at"]),
-            createdBy: await User.fromServer(createdByResponse["payload"]),
-            endTime: DateTime.parse(jsonObject["end_time"]),
-            id: jsonObject["id"],
-            batch: jsonObject["batch"],
-            jobItem: await JobItem.fromServer(jobItemResponse["payload"][0]),
-            startTime: DateTime.parse(jsonObject["start_time"]),
-            updatedAt: DateTime.parse(jsonObject["updated_at"]),
-            updatedBy: await User.fromServer(updatedByResponse["payload"]),
-            weight: double.parse(jsonObject["weight"].toString()),
-            verified: jsonObject["verified"],
-          );
-        });
-      });
-    });
-
+  factory JobItemWeighing.fromJSON(Map<String, dynamic> jsonObject) {
+    JobItemWeighing jobItemWeighing = JobItemWeighing(
+      batch: jsonObject["batch"].toString(),
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      endTime: DateTime.parse(jsonObject["end_time"]).toLocal(),
+      id: jsonObject["id"],
+      jobItem: JobItem.fromJSON(jsonObject["job_item"]),
+      startTime: DateTime.parse(jsonObject["start_time"]).toLocal(),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      weight: double.parse(jsonObject["weight"].toString()),
+      verified: jsonObject["verified"],
+    );
     return jobItemWeighing;
   }
 }
@@ -91,7 +75,7 @@ class WeighingBatch {
   final String jobCode;
   final String jobMaterialID;
 
-  WeighingBatch._({
+  WeighingBatch({
     required this.actualWeight,
     required this.jobCode,
     required this.jobItemMaterialID,
@@ -109,19 +93,20 @@ class WeighingBatch {
     return <String, dynamic>{};
   }
 
-  static Future<WeighingBatch> fromServer(Map<String, dynamic> jsonObject) async {
-    return WeighingBatch._(
-      actualWeight: double.parse(jsonObject["actual_weight"]),
-      jobCode: jsonObject["job_code"],
+  factory WeighingBatch.fromJSON(Map<String, dynamic> jsonObject) {
+    WeighingBatch weighingBatch = WeighingBatch(
+      createdAt: DateTime.parse(jsonObject["created_at"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      id: jsonObject["id"],
+      weight: double.parse(jsonObject["weight"].toString()),
+      batch: jsonObject["batch"].toString(),
+      createdByUsername: jsonObject["created_by_username"],
+      actualWeight: double.parse(jsonObject["actual_weight"].toString()),
+      jobCode: jsonObject["job_code"].toString(),
       jobItemMaterialID: jsonObject["job_item_material_id"],
       jobMaterialID: jsonObject["job_material_id"],
       requiredWeight: double.parse(jsonObject["required_weight"].toString()),
-      batch: jsonObject["batch"],
-      createdAt: DateTime.parse(jsonObject["created_at"]),
-      createdByUsername: jsonObject["created_by_username"],
-      id: jsonObject["id"],
-      updatedAt: DateTime.parse(jsonObject["updated_at"]),
-      weight: double.parse(jsonObject["weight"].toString()),
     );
+    return weighingBatch;
   }
 }

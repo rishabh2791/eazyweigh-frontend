@@ -18,8 +18,8 @@ class JobItemRepo implements JobItemRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> get(Map<String, dynamic> conditions) async {
-    String url = "job_item/";
+  Future<Map<String, dynamic>> get(String id, Map<String, dynamic> conditions) async {
+    String url = "job_item/" + id + "/";
     var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }

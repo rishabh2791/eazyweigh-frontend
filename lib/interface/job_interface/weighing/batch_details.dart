@@ -54,13 +54,12 @@ class _WeighingBatchDetailsWidgetState extends State<WeighingBatchDetailsWidget>
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -91,11 +90,10 @@ class _WeighingBatchDetailsWidgetState extends State<WeighingBatchDetailsWidget>
     });
     await appStore.materialApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          await Future.value(await Mat.fromServer(Map<String, dynamic>.from(item))).then((Mat material) {
-            materials.add(material);
-          });
-        });
+        for (var item in response["payload"]) {
+          Mat material = Mat.fromJSON(item);
+          materials.add(material);
+        }
       } else {
         showDialog(
           context: context,
@@ -274,13 +272,12 @@ class _WeighingBatchDetailsWidgetState extends State<WeighingBatchDetailsWidget>
                           "Value": batchController.text,
                         }
                       };
-                      await appStore.jobWeighingApp.details(conditions).then((response) async {
+                      await appStore.jobWeighingApp.details(conditions).then((response) {
                         if (response.containsKey("status") && response["status"]) {
-                          await Future.forEach(response["payload"], (dynamic item) async {
-                            await Future.value(await WeighingBatch.fromServer(Map<String, dynamic>.from(item))).then((WeighingBatch weighingBatch) {
-                              weighingBatches.add(weighingBatch);
-                            });
-                          });
+                          for (var item in response["payload"]) {
+                            WeighingBatch weighingBatch = WeighingBatch.fromJSON(item);
+                            weighingBatches.add(weighingBatch);
+                          }
                         }
                         Navigator.of(context).pop();
                         setState(() {

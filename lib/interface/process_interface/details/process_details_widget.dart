@@ -56,13 +56,12 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -106,10 +105,10 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
     };
     await appStore.stepTypeApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          StepType stepType = await StepType.fromServer(Map<String, dynamic>.from(item));
+        for (var item in response["payload"]) {
+          StepType stepType = StepType.fromJSON(item);
           stepTypes.add(stepType);
-        });
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -135,10 +134,10 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
     };
     await appStore.materialApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Mat material = await Mat.fromServer(Map<String, dynamic>.from(item));
+        for (var item in response["payload"]) {
+          Mat material = Mat.fromJSON(item);
           materials.add(material);
-        });
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -221,16 +220,15 @@ class _ProcessDetailsWidgetState extends State<ProcessDetailsWidget> {
                               "Value": materialID,
                             }
                           };
-                          await appStore.processApp.list(conditions).then((response) async {
+                          await appStore.processApp.list(conditions).then((response) {
                             if (response.containsKey("status") && response["status"]) {
-                              await Future.forEach(response["payload"], (dynamic item) async {
-                                Process thisVersion = await Process.fromServer(Map<String, dynamic>.from(item));
+                              for (var item in response["payload"]) {
+                                Process thisVersion = Process.fromJSON(item);
                                 foundProcesses.add(thisVersion);
-                              }).then((value) {
-                                foundProcesses.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-                                setState(() {
-                                  isDataLoaded = true;
-                                });
+                              }
+                              foundProcesses.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+                              setState(() {
+                                isDataLoaded = true;
                               });
                             } else {
                               showDialog(

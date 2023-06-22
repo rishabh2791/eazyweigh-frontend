@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
@@ -22,7 +21,7 @@ class Job {
 
   bool selected = false;
 
-  Job._({
+  Job({
     required this.createdAt,
     required this.createdBy,
     required this.id,
@@ -60,54 +59,37 @@ class Job {
     };
   }
 
-  static Future<Job> fromServer(Map<String, dynamic> jsonObject) async {
-    late Job job;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.factoryApp.get(jsonObject["factory_id"]).then((factoryResponse) async {
-          await appStore.materialApp.get(jsonObject["material_id"]).then((materialResponse) async {
-            await appStore.unitOfMeasurementApp.get(jsonObject["unit_of_measurement_id"]).then((uomResponse) async {
-              Map<String, dynamic> conditions = {
-                "EQUALS": {
-                  "Field": "job_id",
-                  "Value": jsonObject["id"],
-                }
-              };
-              List<JobItem> jobItems = [];
-              bool complete = true;
-              await appStore.jobItemApp.get(conditions).then((value) async {
-                for (var item in value["payload"]) {
-                  JobItem jobItem = await JobItem.fromServer(item);
-                  jobItems.add(jobItem);
-                  if (jobItem.material.isWeighed) {
-                    complete = complete && jobItem.complete;
-                  } else {
-                    complete = complete && true;
-                  }
-                }
-                job = Job._(
-                  createdAt: DateTime.parse(jsonObject["created_at"]),
-                  createdBy: await User.fromServer(createdByResponse["payload"]),
-                  id: jsonObject["id"],
-                  fact: await Factory.fromServer(factoryResponse["payload"]),
-                  jobCode: jsonObject["job_code"],
-                  material: await Mat.fromServer(materialResponse["payload"]),
-                  processing: jsonObject["processing"],
-                  quantity: double.parse(jsonObject["quantity"].toString()),
-                  uom: await UnitOfMeasure.fromServer(uomResponse["payload"]),
-                  complete: complete,
-                  updatedAt: DateTime.parse(jsonObject["updated_at"]),
-                  updatedBy: await User.fromServer(updatedByResponse["payload"]),
-                  jobItems: jobItems,
-                );
-              });
-            });
-          });
-        });
-      });
-    });
-
+  factory Job.fromJSON(Map<String, dynamic> jsonObject) {
+    List<JobItem> jobItems = [];
+    bool complete = true;
+    for (Map<String, dynamic> item in jsonObject["job_items"]) {
+      JobItem jobItem = JobItem.fromJSON(item);
+      jobItems.add(jobItem);
+      if (jobItem.material.isWeighed) {
+        if (!jobItem.complete) {
+          complete = complete && false;
+        } else {
+          complete = complete && true;
+        }
+      } else {
+        complete = complete && true;
+      }
+    }
+    Job job = Job(
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      id: jsonObject["id"],
+      fact: Factory.fromJSON(jsonObject["factory"]),
+      jobCode: jsonObject["job_code"],
+      material: Mat.fromJSON(jsonObject["material"]),
+      processing: jsonObject["processing"],
+      complete: complete,
+      quantity: double.parse(jsonObject["quantity"].toString()),
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      jobItems: jobItems,
+    );
     return job;
   }
 }

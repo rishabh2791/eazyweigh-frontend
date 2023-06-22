@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
@@ -18,7 +17,7 @@ class BomItem {
   final DateTime updatedAt;
   final User updatedBy;
 
-  BomItem._({
+  BomItem({
     required this.bomID,
     required this.createdAt,
     required this.createdBy,
@@ -52,33 +51,22 @@ class BomItem {
     };
   }
 
-  static Future<BomItem> fromServer(Map<String, dynamic> jsonObject) async {
-    late BomItem bomItem;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.materialApp.get(jsonObject["material_id"]).then((materialResponse) async {
-          await appStore.unitOfMeasurementApp.get(jsonObject["unit_of_measurement_id"]).then((uomResponse) async {
-            bomItem = BomItem._(
-              bomID: jsonObject["bom_id"],
-              createdAt: DateTime.parse(jsonObject["created_at"]),
-              createdBy: await User.fromServer(createdByResponse["payload"]),
-              id: jsonObject["id"],
-              material: await Mat.fromServer(materialResponse["payload"]),
-              overIssue: jsonObject["over_issue"],
-              quantity: double.parse(jsonObject["quantity"].toString()),
-              upperTolerance: double.parse(jsonObject["upper_tolerance"].toString()),
-              lowerTolerance: double.parse(jsonObject["lower_tolerance"].toString()),
-              underIssue: jsonObject["under_issue"],
-              uom: await UnitOfMeasure.fromServer(uomResponse["payload"]),
-              updatedAt: DateTime.parse(jsonObject["updated_at"]),
-              updatedBy: await User.fromServer(updatedByResponse["payload"]),
-            );
-          });
-        });
-      });
-    });
-
+  factory BomItem.fromJSON(Map<String, dynamic> jsonObject) {
+    BomItem bomItem = BomItem(
+      bomID: jsonObject["bom_id"],
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      id: jsonObject["id"],
+      material: Mat.fromJSON(jsonObject["material"]),
+      overIssue: jsonObject["over_issue"],
+      quantity: jsonObject["quantity"],
+      upperTolerance: double.parse(jsonObject["upper_tolerance"].toString()),
+      lowerTolerance: double.parse(jsonObject["lower_tolerance"].toString()),
+      underIssue: jsonObject["under_issue"],
+      uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+    );
     return bomItem;
   }
 }

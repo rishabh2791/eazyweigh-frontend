@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -12,7 +11,7 @@ class UnitOfMeasure {
   final DateTime updatedAt;
   final User updatedBy;
 
-  UnitOfMeasure._({
+  UnitOfMeasure({
     required this.code,
     required this.createdAt,
     required this.createdBy,
@@ -41,26 +40,17 @@ class UnitOfMeasure {
     };
   }
 
-  static Future<UnitOfMeasure> fromServer(Map<String, dynamic> jsonObject) async {
-    late UnitOfMeasure uom;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.factoryApp.get(jsonObject["factory_id"]).then((factoryResponse) async {
-          uom = UnitOfMeasure._(
-            code: jsonObject["code"],
-            createdAt: DateTime.parse(jsonObject["created_at"]),
-            createdBy: await User.fromServer(createdByResponse["payload"]),
-            description: jsonObject["description"],
-            fact: await Factory.fromServer(factoryResponse["payload"]),
-            id: jsonObject["id"],
-            updatedAt: DateTime.parse(jsonObject["updated_at"]),
-            updatedBy: await User.fromServer(updatedByResponse["payload"]),
-          );
-        });
-      });
-    });
-
+  factory UnitOfMeasure.fromJSON(Map<String, dynamic> jsonObject) {
+    UnitOfMeasure uom = UnitOfMeasure(
+      code: jsonObject["code"],
+      createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      description: jsonObject["description"],
+      fact: Factory.fromJSON(jsonObject["factory"]),
+      id: jsonObject["id"],
+      updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+    );
     return uom;
   }
 }

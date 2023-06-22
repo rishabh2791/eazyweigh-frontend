@@ -119,55 +119,51 @@ class _JobListWidgetState extends State<JobListWidget> {
                 };
                 await appStore.jobItemAssignmentApp.list(conditions).then((response) async {
                   if (response["status"]) {
-                    await Future.forEach(response["payload"], (dynamic item) async {
-                      await Future.value(await JobItem.fromServer(Map<String, dynamic>.from(item["job_item"]))).then((JobItem jobItem) {
-                        if (jobItem.material.isWeighed) {
-                          if (!jobIDs.contains(item["job_item"]["job_id"])) {
-                            jobIDs.add(item["job_item"]["job_id"]);
-                            jobMapping[item["job_item"]["job_id"]] = [jobItem];
-                          } else {
-                            jobMapping[item["job_item"]["job_id"]]?.add(jobItem);
+                    for (var item in response["payload"]) {
+                      JobItem jobItem = JobItem.fromJSON(item["job_item"]);
+                      if (jobItem.material.isWeighed) {
+                        if (!jobIDs.contains(item["job_item"]["job_id"])) {
+                          jobIDs.add(item["job_item"]["job_id"]);
+                          jobMapping[item["job_item"]["job_id"]] = [jobItem];
+                        } else {
+                          jobMapping[item["job_item"]["job_id"]]?.add(jobItem);
+                        }
+                      }
+                    }
+                    if (jobIDs.isNotEmpty) {
+                      Map<String, dynamic> jobConditions = {
+                        "IN": {
+                          "Field": "id",
+                          "Value": jobIDs,
+                        },
+                      };
+                      await appStore.jobApp.list(jobConditions).then((value) async {
+                        if (value["status"]) {
+                          for (var job in value["payload"]) {
+                            Job thisJob = Job.fromJSON(job);
+                            operatorAllJobs.add(thisJob);
+                            if (!thisJob.complete) {
+                              operatorJobs.add(thisJob);
+                              jobsByID[job["id"]] = thisJob;
+                            }
                           }
+                          end = min(2, operatorJobs.length - 1);
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomDialog(
+                                message: value["message"],
+                                title: "Error",
+                              );
+                            },
+                          );
+                          Future.delayed(const Duration(seconds: 3)).then((value) {
+                            Navigator.of(context).pop();
+                          });
                         }
                       });
-                    }).then((value) async {
-                      if (jobIDs.isNotEmpty) {
-                        Map<String, dynamic> jobConditions = {
-                          "IN": {
-                            "Field": "id",
-                            "Value": jobIDs,
-                          },
-                        };
-                        await appStore.jobApp.list(jobConditions).then((value) async {
-                          if (value["status"]) {
-                            await Future.forEach(value["payload"], (dynamic item) async {
-                              await Future.value(await Job.fromServer(Map<String, dynamic>.from(item))).then((Job thisJob) {
-                                operatorAllJobs.add(thisJob);
-                                if (!thisJob.complete) {
-                                  operatorJobs.add(thisJob);
-                                  jobsByID[item["id"]] = thisJob;
-                                }
-                              });
-                            }).then((value) {
-                              end = min(2, operatorJobs.length - 1);
-                            });
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomDialog(
-                                  message: value["message"],
-                                  title: "Error",
-                                );
-                              },
-                            );
-                            Future.delayed(const Duration(seconds: 3)).then((value) {
-                              Navigator.of(context).pop();
-                            });
-                          }
-                        });
-                      }
-                    });
+                    }
                   } else {
                     showDialog(
                       context: context,
@@ -248,13 +244,12 @@ class _JobListWidgetState extends State<JobListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         showDialog(
@@ -802,16 +797,14 @@ class _JobListWidgetState extends State<JobListWidget> {
                         setState(() {
                           isLoadingData = true;
                         });
-                        await appStore.jobApp.list(conditions).then((response) async {
+                        await appStore.jobApp.list(conditions).then((response) {
                           if (response.containsKey("status")) {
                             if (response["status"]) {
-                              await Future.forEach(response["payload"], (dynamic item) async {
-                                await Future.value(await Job.fromServer(Map<String, dynamic>.from(item))).then((Job thisJob) {
-                                  jobs.add(thisJob);
-                                });
-                              }).then((value) {
-                                jobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
-                              });
+                              for (var item in response["payload"]) {
+                                Job thisJob = Job.fromJSON(item);
+                                jobs.add(thisJob);
+                              }
+                              jobs.sort(((a, b) => a.jobCode.compareTo(b.jobCode)));
                             }
                           }
                           setState(() {

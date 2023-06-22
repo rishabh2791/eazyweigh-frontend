@@ -1,4 +1,3 @@
-import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
@@ -14,7 +13,7 @@ class StepType {
   String body;
   String footer;
 
-  StepType._({
+  StepType({
     required this.createdAt,
     required this.createdBy,
     required this.fact,
@@ -47,28 +46,19 @@ class StepType {
     };
   }
 
-  static Future<StepType> fromServer(Map<String, dynamic> jsonObject) async {
-    late StepType stepType;
-
-    await appStore.userApp.getUser(jsonObject["created_by_username"]).then((createdByResponse) async {
-      await appStore.userApp.getUser(jsonObject["updated_by_username"]).then((updatedByResponse) async {
-        await appStore.factoryApp.get(jsonObject["factory_id"]).then((factoryResponse) async {
-          stepType = StepType._(
-            createdAt: DateTime.parse(jsonObject["created_at"]),
-            createdBy: await User.fromServer(createdByResponse["payload"]),
-            fact: await Factory.fromServer(factoryResponse["payload"]),
-            id: jsonObject["id"],
-            name: jsonObject["description"],
-            updatedAt: DateTime.parse(jsonObject["updated_at"]),
-            updatedBy: await User.fromServer(updatedByResponse["payload"]),
-            body: jsonObject["body"],
-            footer: jsonObject["footer"],
-            title: jsonObject["title"],
-          );
-        });
-      });
-    });
-
+  factory StepType.fromJSON(Map<String, dynamic> jsonObject) {
+    StepType stepType = StepType(
+      createdAt: DateTime.parse(jsonObject["created_at"]),
+      createdBy: User.fromJSON(jsonObject["created_by"]),
+      fact: Factory.fromJSON(jsonObject["factory"]),
+      id: jsonObject["id"],
+      name: jsonObject["description"],
+      updatedAt: DateTime.parse(jsonObject["updated_at"]),
+      updatedBy: User.fromJSON(jsonObject["updated_by"]),
+      title: jsonObject["title"],
+      body: jsonObject["body"],
+      footer: jsonObject["footer"],
+    );
     return stepType;
   }
 }

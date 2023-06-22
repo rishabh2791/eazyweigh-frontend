@@ -69,14 +69,10 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
-        });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -102,15 +98,12 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
     };
     await appStore.userCompanyApp.get(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          await appStore.userApp.getUser(item["user_username"]).then((value) async {
-            await Future.value(await User.fromServer(Map<String, dynamic>.from(value["payload"]))).then((User weigher) async {
-              if (weigher.userRole.role == "Operator") {
-                weighers.add(weigher);
-              }
-            });
-          });
-        });
+        for (var item in response["payload"]) {
+          User weigher = User.fromJSON(item["user"]);
+          if (weigher.userRole.role == "Operator") {
+            weighers.add(weigher);
+          }
+        }
       } else {
         Navigator.of(context).pop();
         showDialog(
@@ -146,10 +139,10 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
     };
     await appStore.materialApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Mat material = await Mat.fromServer(Map<String, dynamic>.from(item));
-          materials.add(material);
-        });
+        for (var item in response["payload"]) {
+          Mat mat = Mat.fromJSON(item);
+          materials.add(mat);
+        }
       }
     });
   }
@@ -269,19 +262,15 @@ class _ScannedDataListWidgetState extends State<ScannedDataListWidget> {
                           isLoadingData = true;
                         });
                         await getMaterial(factoryID).then((value) async {
-                          await appStore.scannedDataApp.list(conditions).then((response) async {
+                          await appStore.scannedDataApp.list(conditions).then((response) {
                             setState(() {
                               isLoadingData = false;
                             });
                             if (response.containsKey("status") && response["status"]) {
-                              await Future.forEach(response["payload"], (dynamic item) async {
-                                ScannedData thisScannedData = await ScannedData.fromServer(Map<String, dynamic>.from(item));
+                              for (var item in response["payload"]) {
+                                ScannedData thisScannedData = ScannedData.fromJSON(item);
                                 scannedData.add(thisScannedData);
-                              }).then((value) {
-                                setState(() {
-                                  isDataLoaded = true;
-                                });
-                              });
+                              }
                               setState(() {
                                 isDataLoaded = true;
                               });

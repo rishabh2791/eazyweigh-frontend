@@ -69,13 +69,12 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
     };
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
-        await Future.forEach(response["payload"], (dynamic item) async {
-          Factory factory = await Factory.fromServer(Map<String, dynamic>.from(item));
-          factories.add(factory);
-        }).then((value) {
-          setState(() {
-            isLoadingData = false;
-          });
+        for (var item in response["payload"]) {
+          Factory fact = Factory.fromJSON(item);
+          factories.add(fact);
+        }
+        setState(() {
+          isLoadingData = false;
         });
       } else {
         Navigator.of(context).pop();
@@ -120,12 +119,12 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
     try {
       await appStore.userFactoryApp.get(conditions).then((response) async {
         if (response["status"]) {
-          await Future.forEach(response["payload"], (dynamic item) async {
-            User weigher = await User.fromServer(Map<String, dynamic>.from(item["user"]));
-            if (weigher.userRole.role == "Operator") {
-              users.add(weigher);
+          for (var item in response["payload"]) {
+            User user = User.fromJSON(item["user"]);
+            if (user.userRole.role == "Operator") {
+              users.add(user);
             }
-          });
+          }
         } else {
           showDialog(
             context: context,
@@ -163,10 +162,10 @@ class _ShiftScheduleCreateWidgetState extends State<ShiftScheduleCreateWidget> {
     try {
       await appStore.shiftApp.list(conditions).then((response) async {
         if (response["status"]) {
-          await Future.forEach(response["payload"], (dynamic item) async {
-            Shift shift = await Shift.fromServer(Map<String, dynamic>.from(item));
+          for (var item in response["payload"]) {
+            Shift shift = Shift.fromJSON(item);
             shifts.add(shift);
-          });
+          }
         } else {
           showDialog(
             context: context,
