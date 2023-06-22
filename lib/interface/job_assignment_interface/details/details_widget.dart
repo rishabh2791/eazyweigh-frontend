@@ -150,9 +150,13 @@ class _JobAssignmentDetailsWidgetState extends State<JobAssignmentDetailsWidget>
                   );
                   await appStore.jobApp.list(conditions).then((value) async {
                     if (value.containsKey("status") && value["status"]) {
-                      String jobID = value["payload"][0]["id"];
-
-                      await appStore.jobItemApp.get(jobID, {}).then((jobItemsResponse) async {
+                      Map<String, dynamic> conditions = {
+                        "EQUALS": {
+                          "Field": "job_id",
+                          "Value": value["payload"][0]["id"],
+                        }
+                      };
+                      await appStore.jobItemApp.get(conditions).then((jobItemsResponse) async {
                         List<String> jobItemIDs = [];
                         if (jobItemsResponse.containsKey("status") && jobItemsResponse["status"]) {
                           for (var item in jobItemsResponse["payload"]) {

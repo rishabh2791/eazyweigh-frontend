@@ -1,6 +1,7 @@
 import 'package:eazyweigh/application/address_app.dart';
 import 'package:eazyweigh/application/auth_app.dart';
 import 'package:eazyweigh/application/batch_app.dart';
+import 'package:eazyweigh/application/batch_run_app.dart';
 import 'package:eazyweigh/application/bom_app.dart';
 import 'package:eazyweigh/application/bom_item_app.dart';
 import 'package:eazyweigh/application/common_app.dart';
@@ -42,6 +43,7 @@ class AppStore {
   final addressApp = AddressApp(addressRepository: repoStore.addressRepo);
   final authApp = AuthApp(authRepository: repoStore.authRepo);
   final batchApp = BatchApp(batchRepository: repoStore.batchRepo);
+  final batchRunApp = BatchRunApp(batchRunRepository: repoStore.batchRunRepo);
   final bomApp = BOMApp(bomRepository: repoStore.bomRepo);
   final bomItemApp = BOMItemApp(bomItemRepository: repoStore.bomItemRepo);
   final companyApp = CompanyApp(companyRepository: repoStore.companyRepo);

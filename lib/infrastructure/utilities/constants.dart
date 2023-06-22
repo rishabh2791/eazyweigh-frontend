@@ -35,6 +35,11 @@ const Map<String, List<String>> menuItems = {
     "Edit",
     "List",
   ],
+  "Batch Run": [
+    "Create",
+    "Details",
+    "Update",
+  ],
   "BOM": [
     "Create",
     "Details",

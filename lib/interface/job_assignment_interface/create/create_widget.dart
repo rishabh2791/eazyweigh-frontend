@@ -226,8 +226,13 @@ class _JobAssignmentCreateWidgetState extends State<JobAssignmentCreateWidget> {
                             },
                           );
                         } else {
-                          String jobID = response["payload"][0]["id"];
-                          await appStore.jobItemApp.get(jobID, {}).then(
+                          Map<String, dynamic> conditions = {
+                            "EQUALS": {
+                              "Field": "job_id",
+                              "Value": response["payload"][0]["id"],
+                            }
+                          };
+                          await appStore.jobItemApp.get(conditions).then(
                             (value) async {
                               if (value["status"]) {
                                 for (var item in value["payload"]) {

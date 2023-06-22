@@ -139,8 +139,13 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                           },
                         );
                       } else {
-                        String jobID = response["payload"][0]["id"];
-                        await appStore.jobItemApp.get(jobID, {}).then(
+                        Map<String, dynamic> condition = {
+                          "EQUAL": {
+                            "Field": "job_id",
+                            "Value": response["payload"][0]["id"],
+                          }
+                        };
+                        await appStore.jobItemApp.get(condition).then(
                           (value) async {
                             if (value["status"]) {
                               for (var item in value["payload"]) {

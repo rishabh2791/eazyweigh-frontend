@@ -79,11 +79,12 @@ class _VerifierOverIssueDetailsWidgetState extends State<VerifierOverIssueDetail
             OverIssue overIssue = OverIssue.fromJSON(item);
             Map<String, dynamic> condition = {
               "EQUAL": {
-                "Field": "job_item",
-                "Value": overIssue.jobItem,
-              },
+                "Field": "id",
+                "Value": overIssue.jobItem.id,
+              }
             };
-            await appStore.jobItemApp.get(widget.jobID, condition).then((value) {
+
+            await appStore.jobItemApp.get(condition).then((value) {
               if (value.containsKey("status")) {
                 if (value["status"]) {
                   JobItem jobItem = JobItem.fromJSON(value["payload"][0]);

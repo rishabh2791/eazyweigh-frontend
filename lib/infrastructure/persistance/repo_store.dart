@@ -1,6 +1,7 @@
 import 'package:eazyweigh/infrastructure/persistance/address_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/auth_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/batch_repo.dart';
+import 'package:eazyweigh/infrastructure/persistance/batch_run_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/bom_item_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/bom_repo.dart';
 import 'package:eazyweigh/infrastructure/persistance/common_repo.dart';
@@ -41,6 +42,7 @@ class RepoStore {
   final addressRepo = AddressRepo();
   final authRepo = AuthRepo();
   final batchRepo = BatchRepo();
+  final batchRunRepo = BatchRunRepo();
   final bomRepo = BOMRepo();
   final bomItemRepo = BOMItemRepo();
   final companyRepo = CompanyRepo();

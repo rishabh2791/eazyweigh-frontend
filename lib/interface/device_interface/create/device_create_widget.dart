@@ -146,6 +146,7 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
           Vessel vessel = Vessel.fromJSON(item);
           factoryVessels.add(vessel);
         }
+        factoryVessels.sort((a, b) => a.name.compareTo(b.name));
       }
     });
   }
@@ -164,6 +165,7 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
           DeviceType deviceType = DeviceType.fromJSON(item);
           factoryDeviceTypes.add(deviceType);
         }
+        factoryDeviceTypes.sort((a, b) => a.description.compareTo(b.description));
       }
     });
   }
@@ -380,7 +382,6 @@ class _DeviceCreateWidgetState extends State<DeviceCreateWidget> {
 
                         String errors = "";
 
-                        //TODO check all fields
                         if (vesselID.isEmpty) {
                           errors += "Vessel Missing.\n";
                         } else {

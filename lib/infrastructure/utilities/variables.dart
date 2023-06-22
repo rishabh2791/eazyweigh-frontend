@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/user_role_access.dart';
 import 'package:eazyweigh/interface/address_interface/address_widget.dart';
+import 'package:eazyweigh/interface/batch_run/batch_run_widget.dart';
 import 'package:eazyweigh/interface/bom_interface/bom_widget.dart';
 import 'package:eazyweigh/interface/company_interface/company_widget.dart';
 import 'package:eazyweigh/interface/device_data_interface/device_data_widget.dart';
@@ -63,6 +64,7 @@ RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 Map<String, dynamic> menuWidgetMapping = {
   "Home": HomePage(username: currentUser.username),
   "Address": const AddressWidget(),
+  "Batch Run": const BatchRunWidget(),
   "BOM": const BOMWidget(),
   "Company": const CompanyWidget(),
   "Device": const DeviceWidget(),
@@ -91,6 +93,7 @@ Map<String, dynamic> menuWidgetMapping = {
 Map<String, List<String>> menuTableMapping = {
   "Home": [],
   "Address": ["addresses"],
+  "Batch Run": ["batch_runs"],
   "BOM": ["boms", "bom_items"],
   "Company": ["companies"],
   "Device": ["devices"],

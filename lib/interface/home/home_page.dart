@@ -2,12 +2,12 @@ import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 import 'package:eazyweigh/domain/entity/user_role_access.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/interface/batch_run/create/create_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/loading_widget.dart';
 import 'package:eazyweigh/interface/home/general_home_page.dart';
 import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:eazyweigh/interface/home/superuser_home_page.dart';
-import 'package:eazyweigh/interface/process_interface/details/process_details_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                 menuItemSelected = "Process";
                 Navigator.of(context).pushReplacement(
                   CupertinoPageRoute(
-                    builder: (BuildContext context) => const ProcessDetailsWidget(),
+                    builder: (BuildContext context) => const BatchRunCreateWidget(),
                   ),
                 );
                 break;

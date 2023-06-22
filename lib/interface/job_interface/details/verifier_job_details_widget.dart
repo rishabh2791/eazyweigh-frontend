@@ -74,7 +74,13 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
       if (value.containsKey("status")) {
         if (value["status"]) {
           job = Job.fromJSON(value["payload"]);
-          await appStore.jobItemApp.get(job.id, {}).then((response) async {
+          Map<String, dynamic> conditions = {
+            "EQUALS": {
+              "Field": "job_id",
+              "Value": job.id,
+            }
+          };
+          await appStore.jobItemApp.get(conditions).then((response) async {
             if (response.containsKey("status")) {
               if (response["status"]) {
                 for (var item in response["payload"]) {
