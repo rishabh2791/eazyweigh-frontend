@@ -34,7 +34,7 @@ class DeviceData {
       deviceID: jsonObject["device_id"],
       id: jsonObject["id"],
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
-      value: jsonObject["value"],
+      value: double.parse(jsonObject["value"].toString()),
     );
     return deviceData;
   }

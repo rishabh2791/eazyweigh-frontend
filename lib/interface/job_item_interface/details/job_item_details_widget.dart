@@ -408,7 +408,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           isVerified = true;
         });
       } else {
-        playAudio();
+        await playAudio();
         Map<String, dynamic> scannedData = {
           "job_id": widget.jobItem.jobID,
           "actual_code": matCode,

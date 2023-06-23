@@ -11,8 +11,15 @@ class DeviceDataRepo implements DeviceDataRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> getForDevice(String deviceID, Map<String, dynamic> conditions) async {
+  Future<Map<String, dynamic>> get(String deviceID) async {
     String url = "device_data/" + deviceID + "/";
+    var response = await networkAPIProvider.get(url, TokenType.accessToken);
+    return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
+    String url = "device_data/";
     var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }

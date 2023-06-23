@@ -10,12 +10,18 @@ class DeviceDataApp implements DeviceDataAppInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> getForDevice(String deviceID, Map<String, dynamic> conditions) async {
-    return deviceDataRepository.getForDevice(deviceID, conditions);
+  Future<Map<String, dynamic>> get(String deviceID) async {
+    return deviceDataRepository.get(deviceID);
+  }
+
+  @override
+  Future<Map<String, dynamic>> list(Map<String, dynamic> conditions) async {
+    return deviceDataRepository.list(conditions);
   }
 }
 
 abstract class DeviceDataAppInterface {
   Future<Map<String, dynamic>> create(Map<String, dynamic> deviceData);
-  Future<Map<String, dynamic>> getForDevice(String deviceID, Map<String, dynamic> conditions);
+  Future<Map<String, dynamic>> get(String deviceID);
+  Future<Map<String, dynamic>> list(Map<String, dynamic> conditions);
 }
