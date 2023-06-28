@@ -20,13 +20,15 @@ class DeviceTypeUpdateWidget extends StatefulWidget {
 class _DeviceTypeUpdateWidgetState extends State<DeviceTypeUpdateWidget> {
   bool isLoadingData = true;
 
-  late TextEditingController descriptionController;
+  late TextEditingController descriptionController, colourController;
 
   @override
   void initState() {
     super.initState();
     descriptionController = TextEditingController();
+    colourController = TextEditingController();
     descriptionController.text = widget.deviceType.description;
+    colourController.text = widget.deviceType.colour.toString();
     isLoadingData = false;
   }
 
@@ -60,6 +62,7 @@ class _DeviceTypeUpdateWidgetState extends State<DeviceTypeUpdateWidget> {
                   height: 10.0,
                 ),
                 textField(false, descriptionController, "Device Type Description", false),
+                textField(false, colourController, "View Colour", false),
                 const SizedBox(
                   height: 10.0,
                 ),
@@ -70,11 +73,16 @@ class _DeviceTypeUpdateWidgetState extends State<DeviceTypeUpdateWidget> {
                   ),
                   onPressed: () async {
                     var description = descriptionController.text;
+                    var color = colourController.text;
 
                     String errors = "";
 
                     if (description.isEmpty) {
                       errors += "Device Type Description Missing.\n";
+                    }
+
+                    if (color.isEmpty) {
+                      errors += "View Colour Missing.\n";
                     }
 
                     if (errors.isNotEmpty) {
@@ -98,6 +106,7 @@ class _DeviceTypeUpdateWidgetState extends State<DeviceTypeUpdateWidget> {
 
                       Map<String, dynamic> deviceType = {
                         "description": description,
+                        "view_color": color,
                       };
 
                       await appStore.deviceTypeApp.update(widget.deviceType.id, deviceType).then((response) async {
@@ -114,8 +123,10 @@ class _DeviceTypeUpdateWidgetState extends State<DeviceTypeUpdateWidget> {
                           );
                           setState(() {
                             widget.deviceType.description = descriptionController.text;
+                            widget.deviceType.colour = int.parse(colourController.text);
                           });
                           descriptionController.text = "";
+                          colourController.text = "";
                         } else {
                           Navigator.of(context).pop();
                           showDialog(

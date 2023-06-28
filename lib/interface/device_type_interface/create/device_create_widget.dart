@@ -27,7 +27,7 @@ class DeviceTypeCreateWidget extends StatefulWidget {
 
 class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
   bool isLoadingData = true;
-  late TextEditingController descriptionController, fileController, factoryController;
+  late TextEditingController descriptionController, fileController, factoryController, colourController;
   List<Factory> factories = [];
   late FilePickerResult? file;
 
@@ -38,6 +38,7 @@ class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
     factoryController = TextEditingController();
     descriptionController = TextEditingController();
     fileController = TextEditingController();
+    colourController = TextEditingController();
   }
 
   @override
@@ -115,6 +116,7 @@ class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
                   itemList: factories,
                 ),
                 textField(false, descriptionController, "Device Type Description", false),
+                textField(false, colourController, "View Colour", false),
                 const SizedBox(
                   height: 10.0,
                 ),
@@ -128,6 +130,7 @@ class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
                       onPressed: () async {
                         var description = descriptionController.text;
                         var factoryID = factoryController.text;
+                        var colour = colourController.text;
 
                         String errors = "";
 
@@ -137,6 +140,10 @@ class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
 
                         if (factoryID.isEmpty) {
                           errors += "Factory Missing.\n";
+                        }
+
+                        if (colour.isEmpty) {
+                          errors += "Colour Missing.\n";
                         }
 
                         if (errors.isNotEmpty) {
@@ -161,6 +168,7 @@ class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
                           Map<String, dynamic> deviceType = {
                             "description": description,
                             "factory_id": factoryID,
+                            "view_colour": colour,
                           };
 
                           await appStore.deviceTypeApp.create(deviceType).then((response) async {
@@ -177,7 +185,7 @@ class _DeviceTypeCreateWidgetState extends State<DeviceTypeCreateWidget> {
                               );
                               descriptionController.text = "";
                               factoryController.text = "";
-                              factoryController.text = "";
+                              colourController.text = "";
                             } else {
                               Navigator.of(context).pop();
                               showDialog(

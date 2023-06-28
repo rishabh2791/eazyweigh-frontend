@@ -48,6 +48,13 @@ class _DeviceTypeListState extends State<DeviceTypeList> {
           widget.deviceTypes.sort((a, b) => b.description.toString().compareTo(a.description.toString()));
         }
         break;
+      case 2:
+        if (ascending) {
+          widget.deviceTypes.sort((a, b) => a.colour.toString().compareTo(b.colour.toString()));
+        } else {
+          widget.deviceTypes.sort((a, b) => b.colour.toString().compareTo(a.colour.toString()));
+        }
+        break;
       default:
         break;
     }
@@ -105,6 +112,24 @@ class _DeviceTypeListState extends State<DeviceTypeList> {
                           DataColumn(
                             label: Text(
                               "Device Type Description",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "View Colour ",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -190,6 +215,16 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             deviceType.description,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            deviceType.colour.toRadixString(16),
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,

@@ -9,6 +9,7 @@ class DeviceType {
   final DateTime createdAt;
   final User updatedBy;
   final DateTime updatedAt;
+  int colour;
 
   DeviceType({
     required this.createdAt,
@@ -18,6 +19,7 @@ class DeviceType {
     required this.id,
     required this.updatedAt,
     required this.updatedBy,
+    required this.colour,
   });
 
   @override
@@ -34,6 +36,7 @@ class DeviceType {
       "updated_at": updatedAt,
       "updated_by": updatedBy.toJSON(),
       "factory": fact.toJSON(),
+      "view_colour": colour,
     };
   }
 
@@ -46,6 +49,7 @@ class DeviceType {
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
       fact: Factory.fromJSON(jsonObject["factory"]),
+      colour: int.parse(jsonObject["view_color"].toString()),
     );
     return device;
   }

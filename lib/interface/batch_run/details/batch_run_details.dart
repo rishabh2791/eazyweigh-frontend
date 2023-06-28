@@ -30,9 +30,12 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
   List<Device> devices = [];
   List<String> deviceIDs = [];
   List<DateTime> ticks = [];
+  Map<String, double> maxValues = {};
+  Map<String, int> colours = {};
   Map<String, List<DeviceData>> devicesData = {};
   Map<String, List<DeviceDataPoint>> devicesDataPoints = {};
   late TextEditingController factoryController, jobCodeController;
+  bool viewScaled = true;
 
   @override
   void initState() {
@@ -221,10 +224,19 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                                             devicesDataPoints[deviceData.deviceID] = [];
                                           }
                                           devicesData[deviceData.deviceID]!.add(deviceData);
-                                          devicesDataPoints[deviceData.deviceID]!.add(DeviceDataPoint(
-                                            timeStamp: deviceData.createdAt,
-                                            value: deviceData.value,
-                                          ));
+                                          devicesDataPoints[deviceData.deviceID]!.add(
+                                            DeviceDataPoint(
+                                              timeStamp: deviceData.createdAt,
+                                              value: deviceData.value,
+                                            ),
+                                          );
+                                          if (maxValues.containsKey(deviceData.deviceID)) {
+                                            if (deviceData.value > (maxValues[deviceData.deviceID] ?? 1)) {
+                                              maxValues[deviceData.deviceID] = deviceData.value;
+                                            }
+                                          } else {
+                                            maxValues[deviceData.deviceID] = deviceData.value;
+                                          }
                                         }
                                         Map<String, dynamic> deviceConditions = {
                                           "IN": {
@@ -237,7 +249,27 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                                             for (var item in value["payload"]) {
                                               Device device = Device.fromJSON(item);
                                               devices.add(device);
+                                              colours[device.id] = device.deviceType.colour;
                                             }
+                                            Map<String, List<DeviceDataPoint>> finalDeviceDataPoints = {};
+                                            devicesDataPoints.forEach((key, value) {
+                                              String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                              finalDeviceDataPoints[deviceName] = value;
+                                            });
+                                            devicesDataPoints = finalDeviceDataPoints;
+                                            Map<String, double> finalMaxValues = {};
+                                            maxValues.forEach((key, value) {
+                                              String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                              finalMaxValues[deviceName] = value;
+                                            });
+                                            maxValues = finalMaxValues;
+                                            Map<String, int> finalColour = {};
+                                            colours.forEach((key, value) {
+                                              String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                              finalColour[deviceName] = value;
+                                            });
+                                            colours = finalColour;
+                                            devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
                                             buildChart();
                                           } else {
                                             Navigator.of(context).pop();
@@ -329,15 +361,17 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
     List<charts.Series<dynamic, DateTime>> series = [];
     devicesDataPoints.forEach((key, values) {
       values.sort((a, b) => a.timeStamp.compareTo(b.timeStamp));
-      Device thisDevice = devices.firstWhere((element) => element.id == key);
       series.add(
         charts.Series<DeviceDataPoint, DateTime>(
-          id: thisDevice.deviceType.description,
+          id: key,
           domainFn: (DeviceDataPoint deviceDataPoint, _) => deviceDataPoint.timeStamp.toLocal(),
-          measureFn: (DeviceDataPoint deviceDataPoint, _) => deviceDataPoint.value,
+          measureFn: (DeviceDataPoint deviceDataPoint, _) => viewScaled
+              ? deviceDataPoint.value < 0
+                  ? 0
+                  : deviceDataPoint.value / (maxValues[key] ?? 1)
+              : deviceDataPoint.value,
           data: values,
-          // colorFn: (_, __) => charts.MaterialPalette.gray.shade300,
-          // fillColorFn: (_, __) => charts.MaterialPalette.gray.shade300,
+          seriesColor: charts.ColorUtil.fromDartColor(Color(colours[key] ?? 0xFFFFFFFF)),
         ),
       );
     });
@@ -355,9 +389,43 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
             color: menuItemColor,
           ),
         ),
+        Row(
+          children: [
+            Container(
+              height: 60.0,
+              padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+              child: Transform.scale(
+                scale: 2.0,
+                child: Checkbox(
+                  value: viewScaled,
+                  fillColor: MaterialStateProperty.all(menuItemColor),
+                  activeColor: menuItemColor,
+                  onChanged: (newValue) {
+                    setState(() {
+                      viewScaled = !viewScaled;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 10.0,
+            ),
+            const Expanded(
+              child: Text(
+                "View Scaled",
+                style: TextStyle(
+                  color: menuItemColor,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ],
+        ),
         SizedBox(
-          width: MediaQuery.of(context).size.width - 200,
-          height: MediaQuery.of(context).size.height - 250,
+          width: MediaQuery.of(context).size.width - 50,
+          height: MediaQuery.of(context).size.height - 300,
           child: charts.TimeSeriesChart(
             buildChart(),
             animate: true,
@@ -371,9 +439,48 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
               ),
             ],
           ),
-        )
+        ),
+        const Text(
+          "Max Values",
+          style: TextStyle(
+            fontSize: 30.0,
+            color: menuItemColor,
+          ),
+        ),
+        Wrap(
+          children: wrappedWidget(),
+        ),
+        const Divider(
+          height: 30.0,
+        ),
+        const Text(
+          "Note:- Each data point is scaled against the maximum value for that device during the period.",
+          style: TextStyle(
+            fontSize: 14.0,
+            color: menuItemColor,
+          ),
+        ),
       ],
     );
+  }
+
+  List<Widget> wrappedWidget() {
+    List<Widget> widget = [];
+    maxValues.forEach((key, value) {
+      widget.add(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+          child: Text(
+            key + " " + value.toStringAsFixed(2),
+            style: const TextStyle(
+              fontSize: 20.0,
+              color: menuItemColor,
+            ),
+          ),
+        ),
+      );
+    });
+    return widget;
   }
 
   @override
