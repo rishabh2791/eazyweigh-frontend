@@ -32,6 +32,7 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
   List<DateTime> ticks = [];
   Map<String, double> maxValues = {};
   Map<String, int> colours = {};
+  late Job job;
   Map<String, List<DeviceData>> devicesData = {};
   Map<String, List<DeviceDataPoint>> devicesDataPoints = {};
   late TextEditingController factoryController, jobCodeController;
@@ -97,7 +98,7 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Batch Running Details",
+                  "Batch Run Details",
                   style: TextStyle(
                     color: formHintTextColor,
                     fontSize: 30.0,
@@ -171,7 +172,7 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                           };
                           await appStore.jobApp.list(conditions).then((value) async {
                             if (value.containsKey("status") && value["status"]) {
-                              Job job = Job.fromJSON(value["payload"][0]);
+                              job = Job.fromJSON(value["payload"][0]);
                               Map<String, dynamic> jobConditions = {
                                 "EQUALS": {
                                   "Field": "job_id",
@@ -383,7 +384,14 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Running Details for Job: " + jobCodeController.text,
+          "Running Details for Job: " + job.jobCode,
+          style: const TextStyle(
+            fontSize: 30.0,
+            color: menuItemColor,
+          ),
+        ),
+        Text(
+          "Material: " + job.material.code.toString() + " - " + job.material.description,
           style: const TextStyle(
             fontSize: 30.0,
             color: menuItemColor,
@@ -424,11 +432,16 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
           ],
         ),
         SizedBox(
-          width: MediaQuery.of(context).size.width - 50,
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height - 300,
           child: charts.TimeSeriesChart(
             buildChart(),
             animate: true,
+            domainAxis: const charts.DateTimeAxisSpec(
+              tickProviderSpec: charts.AutoDateTimeTickProviderSpec(
+                includeTime: true,
+              ),
+            ),
             behaviors: [
               charts.SeriesLegend(
                 position: charts.BehaviorPosition.start,

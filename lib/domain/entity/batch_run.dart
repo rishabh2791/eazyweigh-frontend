@@ -50,7 +50,7 @@ class BatchRun {
       createdBy: User.fromJSON(jsonObject["created_by"]),
       job: Job.fromJSON(jsonObject["job"]),
       id: jsonObject["id"],
-      endTime: DateTime.parse(jsonObject["end_time"]).toLocal(),
+      endTime: jsonObject["end_time"].toString().toUpperCase() == "NULL" ? DateTime.now().toLocal() : DateTime.parse(jsonObject["end_time"]).toLocal(),
       startTime: DateTime.parse(jsonObject["start_time"]).toLocal(),
       updatedAt: DateTime.parse(jsonObject["updated_at"]),
       updatedBy: User.fromJSON(jsonObject["updated_by"]),
