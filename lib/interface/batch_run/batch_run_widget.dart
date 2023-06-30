@@ -1,6 +1,7 @@
 import 'package:eazyweigh/interface/batch_run/create/create_widget.dart';
 import 'package:eazyweigh/interface/batch_run/by_job/batch_run_details.dart' as by_job;
 import 'package:eazyweigh/interface/batch_run/by_material/batch_run_details.dart' as by_material;
+import 'package:eazyweigh/interface/batch_run/by_material_overlapped/batch_run_details.dart' as by_material_overlapped;
 import 'package:eazyweigh/interface/common/base_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/user_action_button/user_action_button.dart';
@@ -48,7 +49,7 @@ class _BatchRunWidgetState extends State<BatchRunWidget> {
                         ),
                       );
                     },
-                    icon: Icons.get_app,
+                    icon: Icons.grid_view,
                     label: "By Job",
                     table: "batch_runs",
                     accessType: "view",
@@ -61,8 +62,21 @@ class _BatchRunWidgetState extends State<BatchRunWidget> {
                         ),
                       );
                     },
-                    icon: Icons.get_app,
+                    icon: Icons.grid_view,
                     label: "By Material",
+                    table: "batch_runs",
+                    accessType: "view",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) => const by_material_overlapped.BatchRunDetails(),
+                        ),
+                      );
+                    },
+                    icon: Icons.grid_view,
+                    label: "Overlapped",
                     table: "batch_runs",
                     accessType: "view",
                   ),

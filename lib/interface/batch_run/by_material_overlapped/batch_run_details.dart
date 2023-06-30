@@ -32,21 +32,23 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
   List<Factory> factories = [];
   List<Device> devices = [];
   List<String> deviceIDs = [];
-  Map<String, List<DateTime>> ticks = {};
-  Map<String, Map<String, double>> maxValues = {};
-  Map<String, Map<String, int>> colours = {};
   List<Job> jobs = [];
   late Mat material;
+  Map<String, Map<String, int>> ticks = {};
   Map<String, Map<String, List<DeviceData>>> devicesData = {};
-  Map<String, Map<String, List<DeviceDataPoint>>> devicesDataPoints = {};
-  late TextEditingController factoryController, skuCodeController;
-  bool viewScaled = true;
+  Map<String, Map<String, List<DeviceDataPoint>>> devicesDataPoints = {}, finalDeviceDataPoints = {};
+  late TextEditingController factoryController, skuCodeController, deviceController;
 
   @override
   void initState() {
     getFactories();
     factoryController = TextEditingController();
     skuCodeController = TextEditingController();
+    deviceController = TextEditingController();
+    deviceController.addListener(() {
+      // print(deviceController.text);
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -229,41 +231,31 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                                             if (deviceDataResponse.containsKey("status") && deviceDataResponse["status"]) {
                                               for (var item in deviceDataResponse["payload"]) {
                                                 DeviceData deviceData = DeviceData.fromJSON(item);
-                                                if (!ticks.containsKey(currentJob.jobCode)) {
-                                                  ticks[currentJob.jobCode] = [];
+                                                if (!ticks.containsKey(deviceData.deviceID)) {
+                                                  ticks[deviceData.deviceID] = {};
                                                 }
-                                                if (!ticks[currentJob.jobCode]!.contains(deviceData.createdAt)) {
-                                                  ticks[currentJob.jobCode]!.add(deviceData.createdAt);
+                                                if (!ticks[deviceData.deviceID]!.containsKey(currentJob.jobCode)) {
+                                                  ticks[deviceData.deviceID]![currentJob.jobCode] = 0;
                                                 }
+                                                ticks[deviceData.deviceID]![currentJob.jobCode] = ticks[deviceData.deviceID]![currentJob.jobCode]! + 1;
                                                 if (!deviceIDs.contains(deviceData.deviceID)) {
                                                   deviceIDs.add(deviceData.deviceID);
                                                 }
-                                                if (!devicesData.containsKey(currentJob.jobCode)) {
-                                                  devicesData[currentJob.jobCode] = {};
-                                                  devicesDataPoints[currentJob.jobCode] = {};
-                                                  colours[currentJob.jobCode] = {};
+                                                if (!devicesData.containsKey(deviceData.deviceID)) {
+                                                  devicesData[deviceData.deviceID] = {};
+                                                  devicesDataPoints[deviceData.deviceID] = {};
                                                 }
-                                                if (!devicesData[currentJob.jobCode]!.containsKey(deviceData.deviceID)) {
-                                                  devicesData[currentJob.jobCode]![deviceData.deviceID] = [];
-                                                  devicesDataPoints[currentJob.jobCode]![deviceData.deviceID] = [];
+                                                if (!devicesData[deviceData.deviceID]!.containsKey(currentJob.jobCode)) {
+                                                  devicesData[deviceData.deviceID]![currentJob.jobCode] = [];
+                                                  devicesDataPoints[deviceData.deviceID]![currentJob.jobCode] = [];
                                                 }
-                                                devicesData[currentJob.jobCode]![deviceData.deviceID]!.add(deviceData);
-                                                devicesDataPoints[currentJob.jobCode]![deviceData.deviceID]!.add(
+                                                devicesData[deviceData.deviceID]![currentJob.jobCode]!.add(deviceData);
+                                                devicesDataPoints[deviceData.deviceID]![currentJob.jobCode]!.add(
                                                   DeviceDataPoint(
                                                     timeStamp: deviceData.createdAt,
                                                     value: deviceData.value,
                                                   ),
                                                 );
-                                                if (!maxValues.containsKey(currentJob.jobCode)) {
-                                                  maxValues[currentJob.jobCode] = {};
-                                                }
-                                                if (maxValues[currentJob.jobCode]!.containsKey(deviceData.deviceID)) {
-                                                  if (deviceData.value > (maxValues[currentJob.jobCode]![deviceData.deviceID] ?? 1)) {
-                                                    maxValues[currentJob.jobCode]![deviceData.deviceID] = deviceData.value;
-                                                  }
-                                                } else {
-                                                  maxValues[currentJob.jobCode]![deviceData.deviceID] = deviceData.value;
-                                                }
                                               }
                                               Map<String, dynamic> deviceConditions = {
                                                 "IN": {
@@ -273,34 +265,21 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                                               };
                                               await appStore.deviceApp.list(deviceConditions).then((value) {
                                                 if (value.containsKey("status") && value["status"]) {
+                                                  devices = [];
                                                   for (var item in value["payload"]) {
                                                     Device device = Device.fromJSON(item);
                                                     devices.add(device);
-                                                    colours[currentJob.jobCode]![device.id] = device.deviceType.colour;
                                                   }
+                                                  devices.sort((a, b) => a.deviceType.description.compareTo(b.deviceType.description));
+                                                  deviceController.text = devices[0].id;
                                                 }
                                               }).then((value) {
-                                                if (devicesData.containsKey(currentJob.jobCode)) {
-                                                  Map<String, List<DeviceDataPoint>> finalDeviceDataPoints = {};
-                                                  devicesDataPoints[currentJob.jobCode]!.forEach((key, value) {
-                                                    String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                                    finalDeviceDataPoints[deviceName] = value;
-                                                  });
-                                                  devicesDataPoints[currentJob.jobCode] = finalDeviceDataPoints;
-                                                  Map<String, double> finalMaxValues = {};
-                                                  maxValues[currentJob.jobCode]!.forEach((key, value) {
-                                                    String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                                    finalMaxValues[deviceName] = value;
-                                                  });
-                                                  maxValues[currentJob.jobCode] = finalMaxValues;
-                                                  Map<String, int> finalColour = {};
-                                                  colours[currentJob.jobCode]!.forEach((key, value) {
-                                                    String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                                    finalColour[deviceName] = value;
-                                                  });
-                                                  colours[currentJob.jobCode] = finalColour;
-                                                  devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
-                                                }
+                                                finalDeviceDataPoints = {};
+                                                devicesDataPoints.forEach((key, value) {
+                                                  String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                                  finalDeviceDataPoints[deviceName] = value;
+                                                });
+                                                devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
                                                 setState(() {
                                                   isLoadingData = false;
                                                   isDataLoaded = true;
@@ -360,23 +339,33 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
     );
   }
 
-  List<charts.Series<dynamic, DateTime>> buildChart(String jobCode) {
-    List<charts.Series<dynamic, DateTime>> series = [];
-    var jobDevicedDataPoint = devicesDataPoints[jobCode];
-    jobDevicedDataPoint = Map.fromEntries(jobDevicedDataPoint!.entries.toList()..sort((e1, e2) => e1.key.compareTo(e2.key)));
-    jobDevicedDataPoint.forEach((key, values) {
+  List<charts.Series<dynamic, num>> buildChart(String deviceID) {
+    List<charts.Series<dynamic, num>> series = [];
+    deviceID = devices.firstWhere((element) => element.id == deviceID).deviceType.description;
+    var jobDeviceDataPoint = finalDeviceDataPoints[deviceID];
+    jobDeviceDataPoint = Map.fromEntries(jobDeviceDataPoint!.entries.toList()..sort((e1, e2) => e1.key.compareTo(e2.key)));
+    Map<String, List<DeviceDataPoint>> finalJobDeviceDataPoint = {};
+    jobDeviceDataPoint.forEach((key, values) {
+      int tick = 0;
       values.sort((a, b) => a.timeStamp.compareTo(b.timeStamp));
+      for (var value in values) {
+        if (!finalJobDeviceDataPoint.containsKey(key)) {
+          finalJobDeviceDataPoint[key] = [];
+        }
+        finalJobDeviceDataPoint[key]!.add(DeviceDataPoint(
+          timeStamp: value.timeStamp,
+          value: value.value,
+          tick: tick++,
+        ));
+      }
+    });
+    finalJobDeviceDataPoint.forEach((key, values) {
       series.add(
-        charts.Series<DeviceDataPoint, DateTime>(
+        charts.Series<DeviceDataPoint, num>(
           id: key,
-          domainFn: (DeviceDataPoint deviceDataPoint, _) => deviceDataPoint.timeStamp.toLocal(),
-          measureFn: (DeviceDataPoint deviceDataPoint, _) => viewScaled
-              ? deviceDataPoint.value < 0
-                  ? 0
-                  : deviceDataPoint.value / (maxValues[jobCode]![key] ?? 1)
-              : deviceDataPoint.value,
+          domainFn: (DeviceDataPoint deviceDataPoint, _) => deviceDataPoint.tick,
+          measureFn: (DeviceDataPoint deviceDataPoint, _) => deviceDataPoint.value,
           data: values,
-          seriesColor: charts.ColorUtil.fromDartColor(Color(colours[jobCode]![key] ?? 0xFFFFFFFF)),
         ),
       );
     });
@@ -392,98 +381,41 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
           color: menuItemColor,
         ),
       ),
-      Row(
-        children: [
-          Container(
-            height: 60.0,
-            padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-            child: Transform.scale(
-              scale: 2.0,
-              child: Checkbox(
-                value: viewScaled,
-                fillColor: MaterialStateProperty.all(menuItemColor),
-                activeColor: menuItemColor,
-                onChanged: (newValue) {
-                  setState(() {
-                    viewScaled = !viewScaled;
-                  });
-                },
-              ),
-            ),
-          ),
-          const SizedBox(
-            width: 10.0,
-          ),
-          const Expanded(
-            child: Text(
-              "View Scaled",
-              style: TextStyle(
-                color: menuItemColor,
-                fontSize: 20.0,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ],
-      ),
     ];
-    for (var job in jobs) {
-      if (devicesData.containsKey(job.jobCode)) {
-        widgets.add(
-          Text(
-            "Job# " + job.jobCode,
-            style: const TextStyle(
-              fontSize: 30.0,
-              color: menuItemColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-        widgets.add(
-          const Text(
-            "Max Values",
-            style: TextStyle(
-              fontSize: 30.0,
-              color: menuItemColor,
-            ),
-          ),
-        );
-        widgets.add(
-          Wrap(
-            children: wrappedWidget(job.jobCode),
-          ),
-        );
-        widgets.add(
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height - 300,
-            child: charts.TimeSeriesChart(
-              buildChart(job.jobCode),
-              animate: true,
-              domainAxis: const charts.DateTimeAxisSpec(
-                tickProviderSpec: charts.AutoDateTimeTickProviderSpec(
-                  includeTime: true,
-                ),
+    widgets.add(
+      DropDownWidget(
+        disabled: false,
+        hint: "Select Device",
+        controller: deviceController,
+        itemList: devices,
+      ),
+    );
+    widgets.add(
+      SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height - 300,
+        child: charts.LineChart(
+          buildChart(deviceController.text),
+          animate: true,
+          behaviors: [
+            charts.SlidingViewport(),
+            charts.PanAndZoomBehavior(),
+            charts.SeriesLegend(
+              position: charts.BehaviorPosition.top,
+              entryTextStyle: charts.TextStyleSpec(
+                color: charts.MaterialPalette.purple.shadeDefault,
+                fontSize: 16,
               ),
-              behaviors: [
-                charts.SeriesLegend(
-                  position: charts.BehaviorPosition.bottom,
-                  entryTextStyle: charts.TextStyleSpec(
-                    color: charts.MaterialPalette.purple.shadeDefault,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
             ),
-          ),
-        );
+          ],
+        ),
+      ),
+    );
 
-        widgets.add(const Divider(
-          height: 50.0,
-          color: Colors.white,
-        ));
-      }
-    }
+    widgets.add(const Divider(
+      height: 50.0,
+      color: Colors.white,
+    ));
     return widgets;
   }
 
@@ -502,27 +434,6 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
             ]
           : chartWidget(),
     );
-  }
-
-  List<Widget> wrappedWidget(String jobCode) {
-    List<Widget> widget = [];
-    Map<String, double> jobMaxValues = maxValues[jobCode]!;
-    jobMaxValues = Map.fromEntries(jobMaxValues.entries.toList()..sort((e1, e2) => e1.key.compareTo(e2.key)));
-    jobMaxValues.forEach((key, value) {
-      widget.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-          child: Text(
-            key + " " + value.toStringAsFixed(2),
-            style: const TextStyle(
-              fontSize: 20.0,
-              color: menuItemColor,
-            ),
-          ),
-        ),
-      );
-    });
-    return widget;
   }
 
   @override
@@ -545,10 +456,12 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
 }
 
 class DeviceDataPoint {
+  final int tick;
   final DateTime timeStamp;
   final double value;
 
   DeviceDataPoint({
+    this.tick = 0,
     required this.timeStamp,
     required this.value,
   });

@@ -172,151 +172,164 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                           };
                           await appStore.jobApp.list(conditions).then((value) async {
                             if (value.containsKey("status") && value["status"]) {
-                              job = Job.fromJSON(value["payload"][0]);
-                              Map<String, dynamic> jobConditions = {
-                                "EQUALS": {
-                                  "Field": "job_id",
-                                  "Value": job.id,
-                                }
-                              };
-                              await appStore.batchRunApp.list(jobConditions).then((batchResponse) async {
-                                if (batchResponse.containsKey("status") && batchResponse["status"]) {
-                                  if (batchResponse["payload"].isEmpty) {
+                              if (value["payload"].isNotEmpty) {
+                                job = Job.fromJSON(value["payload"][0]);
+                                Map<String, dynamic> jobConditions = {
+                                  "EQUALS": {
+                                    "Field": "job_id",
+                                    "Value": job.id,
+                                  }
+                                };
+                                await appStore.batchRunApp.list(jobConditions).then((batchResponse) async {
+                                  if (batchResponse.containsKey("status") && batchResponse["status"]) {
+                                    if (batchResponse["payload"].isEmpty) {
+                                      Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomDialog(
+                                            message: "Job " + jobCodeController.text + " not found.",
+                                            title: "Errors",
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      BatchRun batchRun = BatchRun.fromJSON(batchResponse["payload"][0]);
+                                      Map<String, dynamic> deviceDataConditions = {
+                                        "AND": [
+                                          {
+                                            "GREATEREQUAL": {
+                                              "Field": "created_at",
+                                              "Value": batchRun.startTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
+                                            },
+                                          },
+                                          {
+                                            "LESSEQUAL": {
+                                              "Field": "created_at",
+                                              "Value": batchRun.endTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
+                                            },
+                                          }
+                                        ]
+                                      };
+                                      await appStore.deviceDataApp.list(deviceDataConditions).then((deviceDataResponse) async {
+                                        if (deviceDataResponse.containsKey("status") && deviceDataResponse["status"]) {
+                                          for (var item in deviceDataResponse["payload"]) {
+                                            DeviceData deviceData = DeviceData.fromJSON(item);
+                                            if (!ticks.contains(deviceData.createdAt)) {
+                                              ticks.add(deviceData.createdAt);
+                                            }
+                                            if (!deviceIDs.contains(deviceData.deviceID)) {
+                                              deviceIDs.add(deviceData.deviceID);
+                                            }
+                                            if (!devicesData.containsKey(deviceData.deviceID)) {
+                                              devicesData[deviceData.deviceID] = [];
+                                              devicesDataPoints[deviceData.deviceID] = [];
+                                            }
+                                            devicesData[deviceData.deviceID]!.add(deviceData);
+                                            devicesDataPoints[deviceData.deviceID]!.add(
+                                              DeviceDataPoint(
+                                                timeStamp: deviceData.createdAt,
+                                                value: deviceData.value,
+                                              ),
+                                            );
+                                            if (maxValues.containsKey(deviceData.deviceID)) {
+                                              if (deviceData.value > (maxValues[deviceData.deviceID] ?? 1)) {
+                                                maxValues[deviceData.deviceID] = deviceData.value;
+                                              }
+                                            } else {
+                                              maxValues[deviceData.deviceID] = deviceData.value;
+                                            }
+                                          }
+                                          Map<String, dynamic> deviceConditions = {
+                                            "IN": {
+                                              "Field": "id",
+                                              "Value": deviceIDs,
+                                            }
+                                          };
+                                          await appStore.deviceApp.list(deviceConditions).then((value) {
+                                            if (value.containsKey("status") && value["status"]) {
+                                              for (var item in value["payload"]) {
+                                                Device device = Device.fromJSON(item);
+                                                devices.add(device);
+                                                colours[device.id] = device.deviceType.colour;
+                                              }
+                                              Map<String, List<DeviceDataPoint>> finalDeviceDataPoints = {};
+                                              devicesDataPoints.forEach((key, value) {
+                                                String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                                finalDeviceDataPoints[deviceName] = value;
+                                              });
+                                              devicesDataPoints = finalDeviceDataPoints;
+                                              Map<String, double> finalMaxValues = {};
+                                              maxValues.forEach((key, value) {
+                                                String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                                finalMaxValues[deviceName] = value;
+                                              });
+                                              maxValues = finalMaxValues;
+                                              Map<String, int> finalColour = {};
+                                              colours.forEach((key, value) {
+                                                String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                                finalColour[deviceName] = value;
+                                              });
+                                              colours = finalColour;
+                                              devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+                                              buildChart();
+                                            } else {
+                                              Navigator.of(context).pop();
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return CustomDialog(
+                                                    message: value["message"],
+                                                    title: "Errors",
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          }).then((value) {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              isDataLoaded = true;
+                                            });
+                                          });
+                                        } else {
+                                          Navigator.of(context).pop();
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CustomDialog(
+                                                message: deviceDataResponse["message"],
+                                                title: "Errors",
+                                              );
+                                            },
+                                          );
+                                        }
+                                      });
+                                    }
+                                  } else {
                                     Navigator.of(context).pop();
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return CustomDialog(
-                                          message: "Job " + jobCodeController.text + " not found.",
+                                          message: batchResponse["message"],
                                           title: "Errors",
                                         );
                                       },
                                     );
-                                  } else {
-                                    BatchRun batchRun = BatchRun.fromJSON(batchResponse["payload"][0]);
-                                    Map<String, dynamic> deviceDataConditions = {
-                                      "AND": [
-                                        {
-                                          "GREATEREQUAL": {
-                                            "Field": "created_at",
-                                            "Value": batchRun.startTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
-                                          },
-                                        },
-                                        {
-                                          "LESSEQUAL": {
-                                            "Field": "created_at",
-                                            "Value": batchRun.endTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
-                                          },
-                                        }
-                                      ]
-                                    };
-                                    await appStore.deviceDataApp.list(deviceDataConditions).then((deviceDataResponse) async {
-                                      if (deviceDataResponse.containsKey("status") && deviceDataResponse["status"]) {
-                                        for (var item in deviceDataResponse["payload"]) {
-                                          DeviceData deviceData = DeviceData.fromJSON(item);
-                                          if (!ticks.contains(deviceData.createdAt)) {
-                                            ticks.add(deviceData.createdAt);
-                                          }
-                                          if (!deviceIDs.contains(deviceData.deviceID)) {
-                                            deviceIDs.add(deviceData.deviceID);
-                                          }
-                                          if (!devicesData.containsKey(deviceData.deviceID)) {
-                                            devicesData[deviceData.deviceID] = [];
-                                            devicesDataPoints[deviceData.deviceID] = [];
-                                          }
-                                          devicesData[deviceData.deviceID]!.add(deviceData);
-                                          devicesDataPoints[deviceData.deviceID]!.add(
-                                            DeviceDataPoint(
-                                              timeStamp: deviceData.createdAt,
-                                              value: deviceData.value,
-                                            ),
-                                          );
-                                          if (maxValues.containsKey(deviceData.deviceID)) {
-                                            if (deviceData.value > (maxValues[deviceData.deviceID] ?? 1)) {
-                                              maxValues[deviceData.deviceID] = deviceData.value;
-                                            }
-                                          } else {
-                                            maxValues[deviceData.deviceID] = deviceData.value;
-                                          }
-                                        }
-                                        Map<String, dynamic> deviceConditions = {
-                                          "IN": {
-                                            "Field": "id",
-                                            "Value": deviceIDs,
-                                          }
-                                        };
-                                        await appStore.deviceApp.list(deviceConditions).then((value) {
-                                          if (value.containsKey("status") && value["status"]) {
-                                            for (var item in value["payload"]) {
-                                              Device device = Device.fromJSON(item);
-                                              devices.add(device);
-                                              colours[device.id] = device.deviceType.colour;
-                                            }
-                                            Map<String, List<DeviceDataPoint>> finalDeviceDataPoints = {};
-                                            devicesDataPoints.forEach((key, value) {
-                                              String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                              finalDeviceDataPoints[deviceName] = value;
-                                            });
-                                            devicesDataPoints = finalDeviceDataPoints;
-                                            Map<String, double> finalMaxValues = {};
-                                            maxValues.forEach((key, value) {
-                                              String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                              finalMaxValues[deviceName] = value;
-                                            });
-                                            maxValues = finalMaxValues;
-                                            Map<String, int> finalColour = {};
-                                            colours.forEach((key, value) {
-                                              String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                              finalColour[deviceName] = value;
-                                            });
-                                            colours = finalColour;
-                                            devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
-                                            buildChart();
-                                          } else {
-                                            Navigator.of(context).pop();
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return CustomDialog(
-                                                  message: value["message"],
-                                                  title: "Errors",
-                                                );
-                                              },
-                                            );
-                                          }
-                                        }).then((value) {
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            isDataLoaded = true;
-                                          });
-                                        });
-                                      } else {
-                                        Navigator.of(context).pop();
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return CustomDialog(
-                                              message: deviceDataResponse["message"],
-                                              title: "Errors",
-                                            );
-                                          },
-                                        );
-                                      }
-                                    });
                                   }
-                                } else {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        message: batchResponse["message"],
-                                        title: "Errors",
-                                      );
-                                    },
-                                  );
-                                }
-                              });
+                                });
+                              } else {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const CustomDialog(
+                                      message: "Job Not Found",
+                                      title: "Errors",
+                                    );
+                                  },
+                                );
+                              }
                             } else {
                               Navigator.of(context).pop();
                               showDialog(
@@ -397,6 +410,16 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
             color: menuItemColor,
           ),
         ),
+        const Text(
+          "Max Values",
+          style: TextStyle(
+            fontSize: 30.0,
+            color: menuItemColor,
+          ),
+        ),
+        Wrap(
+          children: wrappedWidget(),
+        ),
         Row(
           children: [
             Container(
@@ -444,7 +467,7 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
             ),
             behaviors: [
               charts.SeriesLegend(
-                position: charts.BehaviorPosition.start,
+                position: charts.BehaviorPosition.bottom,
                 entryTextStyle: charts.TextStyleSpec(
                   color: charts.MaterialPalette.purple.shadeDefault,
                   fontSize: 16,
@@ -453,26 +476,18 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
             ],
           ),
         ),
-        const Text(
-          "Max Values",
-          style: TextStyle(
-            fontSize: 30.0,
-            color: menuItemColor,
-          ),
-        ),
-        Wrap(
-          children: wrappedWidget(),
-        ),
         const Divider(
           height: 30.0,
         ),
-        const Text(
-          "Note:- Each data point is scaled against the maximum value for that device during the period.",
-          style: TextStyle(
-            fontSize: 14.0,
-            color: menuItemColor,
-          ),
-        ),
+        viewScaled
+            ? const Text(
+                "Note:- Each data point is scaled against the maximum value for that device during the period.",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: menuItemColor,
+                ),
+              )
+            : Container(),
       ],
     );
   }
