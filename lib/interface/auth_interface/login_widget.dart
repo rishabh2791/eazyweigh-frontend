@@ -214,11 +214,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                   const Divider(
                     color: Colors.transparent,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
                       textField(false, usernameController, "Username", false),
-                      const VerticalDivider(color: Colors.white),
+                      // const VerticalDivider(color: Colors.white),
                       textField(true, passwordController, "Password", false),
                     ],
                   ),

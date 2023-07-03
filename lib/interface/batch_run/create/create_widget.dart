@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
@@ -12,6 +14,7 @@ import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BatchRunCreateWidget extends StatefulWidget {
   const BatchRunCreateWidget({Key? key}) : super(key: key);
@@ -22,6 +25,7 @@ class BatchRunCreateWidget extends StatefulWidget {
 
 class _BatchRunCreateWidgetState extends State<BatchRunCreateWidget> {
   bool isLoadingData = true;
+  bool isScanning = false;
   List<Factory> factories = [];
   List<Vessel> vessels = [];
   late TextEditingController factoryController, vesselController, jobCodeController;
@@ -137,6 +141,25 @@ class _BatchRunCreateWidgetState extends State<BatchRunCreateWidget> {
                   itemList: vessels,
                 ),
                 textField(false, jobCodeController, "Job Code", false),
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                    elevation: MaterialStateProperty.all<double>(5.0),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isScanning = true;
+                    });
+                  },
+                  child: const Text(
+                    "Scan QR",
+                    style: TextStyle(
+                      color: formHintTextColor,
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 Row(
                   children: [
                     TextButton(
@@ -289,7 +312,32 @@ class _BatchRunCreateWidgetState extends State<BatchRunCreateWidget> {
           )
         : SuperPage(
             childWidget: buildWidget(
-              createWidget(),
+              isScanning
+                  ? SizedBox(
+                      height: MediaQuery.of(context).size.height - 200,
+                      width: MediaQuery.of(context).size.width - 50,
+                      child: MobileScanner(
+                        controller: MobileScannerController(
+                          detectionSpeed: DetectionSpeed.normal,
+                          facing: CameraFacing.back,
+                          torchEnabled: true,
+                        ),
+                        onDetect: (capture) {
+                          final List<Barcode> barcodes = capture.barcodes;
+                          // final Uint8List? image = capture.image;
+                          for (final barcode in barcodes) {
+                            debugPrint('Barcode found! ${barcode.rawValue}');
+                            Map<String, dynamic> scannerData = jsonDecode(barcode.rawValue.toString().replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\""));
+                            String jobCode = scannerData["job_code"];
+                            jobCodeController.text = jobCode;
+                          }
+                          setState(() {
+                            isScanning = false;
+                          });
+                        },
+                      ),
+                    )
+                  : createWidget(),
               context,
               "Start Batch",
               () {
