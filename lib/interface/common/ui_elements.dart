@@ -60,3 +60,23 @@ Widget crossButton() {
     ),
   );
 }
+
+Widget scanButton() {
+  return const Tooltip(
+    decoration: BoxDecoration(
+      color: foregroundColor,
+    ),
+    textStyle: TextStyle(
+      fontSize: 16.0,
+    ),
+    message: "Clear",
+    child: Padding(
+      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+      child: Icon(
+        Icons.qr_code_scanner,
+        color: backgroundColor,
+        size: 30.0,
+      ),
+    ),
+  );
+}

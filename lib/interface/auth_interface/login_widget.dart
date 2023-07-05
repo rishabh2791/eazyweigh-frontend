@@ -178,9 +178,8 @@ class _LoginWidgetState extends State<LoginWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  const Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
                       Image(
                         image: AssetImage("assets/img/wipro_logo.png"),

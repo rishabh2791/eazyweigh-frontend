@@ -8,7 +8,7 @@ import Foundation
 import audioplayers_darwin
 import connectivity_macos
 import mobile_scanner
-import network_info_plus_macos
+import network_info_plus
 import path_provider_foundation
 import shared_preferences_foundation
 

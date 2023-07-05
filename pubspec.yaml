@@ -29,20 +29,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  connectivity: ^3.0.4
-  http: ^0.13.3
-  flutter_bloc: ^7.0.0
-  shared_preferences: ^2.0.6
-  csv: ^5.0.1
-  file_picker: ^4.0.1
-  qr_flutter: ^4.1.0
-  web_socket_channel: ^2.1.0
-  f_logs: ^2.0.0
-  open_file: ^3.2.1
+  connectivity: 
+  http: 
+  flutter_bloc: 
+  shared_preferences: 
+  csv: 
+  file_picker: 
+  qr_flutter: 
+  web_socket_channel: 
+  f_logs: 
+  open_file: 
   charts_flutter:
-  syncfusion_flutter_xlsio: ^20.2.39-beta
-  audioplayers: ^4.1.0
-  network_info_plus: ^2.3.2
+  syncfusion_flutter_xlsio: 
+  audioplayers: 
+  network_info_plus: 
   mobile_scanner:
 
 

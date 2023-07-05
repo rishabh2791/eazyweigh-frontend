@@ -140,25 +140,25 @@ class _BatchRunCreateWidgetState extends State<BatchRunCreateWidget> {
                   controller: vesselController,
                   itemList: vessels,
                 ),
-                textField(false, jobCodeController, "Job Code", false),
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
-                    elevation: MaterialStateProperty.all<double>(5.0),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      isScanning = true;
-                    });
-                  },
-                  child: const Text(
-                    "Scan QR",
-                    style: TextStyle(
-                      color: formHintTextColor,
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: textField(false, jobCodeController, "Job Code", false),
                     ),
-                  ),
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(menuItemColor),
+                        elevation: MaterialStateProperty.all<double>(5.0),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isScanning = true;
+                        });
+                      },
+                      child: scanButton(),
+                    ),
+                  ],
                 ),
                 Row(
                   children: [
@@ -320,7 +320,6 @@ class _BatchRunCreateWidgetState extends State<BatchRunCreateWidget> {
                         controller: MobileScannerController(
                           detectionSpeed: DetectionSpeed.normal,
                           facing: CameraFacing.back,
-                          torchEnabled: true,
                         ),
                         onDetect: (capture) {
                           final List<Barcode> barcodes = capture.barcodes;
