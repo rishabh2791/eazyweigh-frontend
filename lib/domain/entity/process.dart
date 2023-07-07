@@ -53,6 +53,7 @@ class Process {
         steps.add(thisStep);
       }
     }
+    steps.sort((a, b) => a.sequence.compareTo(b.sequence));
     Process process = Process(
       createdAt: DateTime.parse(jsonObject["created_at"]),
       createdBy: User.fromJSON(jsonObject["created_by"]),
