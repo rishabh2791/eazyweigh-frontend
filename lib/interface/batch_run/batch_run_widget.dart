@@ -1,5 +1,6 @@
 import 'package:eazyweigh/interface/batch_run/create/create_widget.dart';
 import 'package:eazyweigh/interface/batch_run/by_job/batch_run_details.dart' as by_job;
+import 'package:eazyweigh/interface/batch_run/by_vessel/batch_run_details.dart' as by_vessel;
 import 'package:eazyweigh/interface/batch_run/by_material/batch_run_details.dart' as by_material;
 import 'package:eazyweigh/interface/batch_run/by_material_overlapped/batch_run_details.dart' as by_material_overlapped;
 import 'package:eazyweigh/interface/common/base_widget.dart';
@@ -51,6 +52,19 @@ class _BatchRunWidgetState extends State<BatchRunWidget> {
                     },
                     icon: Icons.grid_view,
                     label: "By Job",
+                    table: "batch_runs",
+                    accessType: "view",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) => const by_vessel.BatchRunDetails(),
+                        ),
+                      );
+                    },
+                    icon: Icons.grid_view,
+                    label: "By Vessel",
                     table: "batch_runs",
                     accessType: "view",
                   ),

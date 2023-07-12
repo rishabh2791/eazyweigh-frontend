@@ -1,6 +1,6 @@
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/bom_item.dart';
-import 'package:eazyweigh/domain/entity/factory.dart';
+import 'package:eazyweigh/domain/entity/factory.dart' as f;
 import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/domain/entity/process.dart';
 import 'package:eazyweigh/domain/entity/step_type.dart';
@@ -14,6 +14,7 @@ import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
 import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:f_logs/model/flog/flog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ProcessUpdateWidget extends StatefulWidget {
@@ -27,10 +28,12 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
   bool isLoadingData = true;
   bool isDataLoaded = false;
   int currentVersion = 0;
-  Map<int, dynamic> process = {};
-  List<Factory> factories = [];
+  int latestVersion = 0;
+  Map<int, Map<int, dynamic>> process = {};
+  List<f.Factory> factories = [];
   List<StepType> stepTypes = [];
   List<Mat> materials = [];
+  List<Version> versions = [];
   List<Mat> bomMaterials = [], pendingMaterials = [];
   List<BomItem> bomItems = [], pendingBOMItems = [];
   String stepTypeSelected = "";
@@ -60,7 +63,15 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
       "description": "Vacuum Pressure",
     },
   };
-  late TextEditingController factoryController, stepTypeController, descriptionController, bomQuantityController, valueController, durationController, materialController, mainMaterialController;
+  late TextEditingController factoryController,
+      versionController,
+      stepTypeController,
+      descriptionController,
+      bomQuantityController,
+      valueController,
+      durationController,
+      materialController,
+      mainMaterialController;
 
   @override
   void initState() {
@@ -72,6 +83,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
     durationController = TextEditingController();
     materialController = TextEditingController();
     mainMaterialController = TextEditingController();
+    versionController = TextEditingController();
     getFactories();
     factoryController.addListener(() {
       getData();
@@ -93,6 +105,11 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
         FLog.info(text: e.toString());
       }
     });
+    versionController.addListener(() {
+      setState(() {
+        currentVersion = int.parse(versionController.text);
+      });
+    });
     super.initState();
   }
 
@@ -112,7 +129,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
     await appStore.factoryApp.list(conditions).then((response) async {
       if (response["status"]) {
         for (var item in response["payload"]) {
-          Factory fact = Factory.fromJSON(item);
+          f.Factory fact = f.Factory.fromJSON(item);
           factories.add(fact);
         }
         setState(() {
@@ -351,7 +368,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                     "description": stepTypeSelected,
                     "value": value,
                     "duration": durationController.text.isNotEmpty ? int.parse(durationController.text) : 0,
-                    "sequence": process.length + 1,
+                    "sequence": process.isNotEmpty ? process[currentVersion]!.length + 1 : 1,
                   };
                   if (stepTypeSelected.contains("Raw Material")) {
                     currentStep["material_id"] = materialController.text;
@@ -384,7 +401,11 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                   }
                   valueController.text = "";
                   durationController.text = "";
-                  process[process.length + 1] = currentStep;
+                  if (process.isEmpty) {
+                    currentVersion += 1;
+                    process[currentVersion] = {};
+                  }
+                  process[currentVersion]![process[currentVersion]!.length + 1] = currentStep;
                   setState(() {});
                 } else {
                   showDialog(
@@ -425,7 +446,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
 
   List<Widget> currentStepWidget() {
     List<Widget> widget = [];
-    process.forEach((key, value) {
+    process[currentVersion]!.forEach((key, value) {
       StepType currentStepStype = stepTypes.firstWhere((element) => element.id == value["step_type_id"]);
       String material = value.containsKey("material_id") && value["material_id"].isNotEmpty
           ? materials.firstWhere((element) => element.id == value["material_id"]).code + " - " + materials.firstWhere((element) => element.id == value["material_id"]).description
@@ -449,7 +470,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
               TextButton(
                 onPressed: () {
                   if (value.containsKey("material_id") && value["material_id"].isNotEmpty) {
-                    Mat removedMaterial = materials.firstWhere((element) => element.id == process[key]["material_id"]);
+                    Mat removedMaterial = materials.firstWhere((element) => element.id == process[currentVersion]![key]["material_id"]);
                     try {
                       pendingMaterials.firstWhere((element) => element.id == removedMaterial.id);
                       pendingBOMItems.firstWhere((element) => element.material.id == removedMaterial.id);
@@ -462,12 +483,12 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                         (pendingBOMItems.firstWhere((element) => element.material.id == removedMaterial.id).quantity + value["value"] / 100);
                     bomQuantityController.text = (pendingBOMItems.firstWhere((element) => element.material.id == removedMaterial.id).quantity * 100).toStringAsFixed(3);
                   }
-                  process.remove(key);
+                  process[currentVersion]!.remove(key);
                   reorderProcess();
                   int sequence = int.parse(value["sequence"].toString());
-                  if (process.length > 1) {
-                    for (int i = sequence + 1; i <= process.length; i++) {
-                      process[i]["sequence"] = process[i]["sequence"] - 1;
+                  if (process[currentVersion]!.length > 1) {
+                    for (int i = sequence + 1; i <= process[currentVersion]!.length; i++) {
+                      process[currentVersion]![i]["sequence"] = process[currentVersion]![i]["sequence"] - 1;
                     }
                   }
                   setState(() {});
@@ -511,12 +532,12 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
             color: Colors.transparent,
           ),
           SizedBox(
-            height: 100 * process.length.toDouble() + 20,
+            height: 100 * process[currentVersion]!.length.toDouble() + 20,
             width: (MediaQuery.of(context).size.width - 180) / 2,
             child: ReorderableListView(
               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
               physics: const ClampingScrollPhysics(),
-              footer: process.isNotEmpty
+              footer: process[currentVersion]!.isNotEmpty
                   ? Row(
                       children: [
                         TextButton(
@@ -526,7 +547,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                           ),
                           onPressed: () async {
                             List<Map<String, dynamic>> processSteps = [];
-                            process.forEach((key, value) {
+                            process[currentVersion]!.forEach((key, value) {
                               value["created_by_username"] = currentUser.username;
                               value["updated_by_username"] = currentUser.username;
                               processSteps.add(value);
@@ -536,7 +557,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                               "steps": processSteps,
                               "created_by_username": currentUser.username,
                               "updated_by_username": currentUser.username,
-                              "version": currentVersion + 1,
+                              "version": latestVersion + 1,
                             };
                             if (pendingMaterials.isNotEmpty) {
                               showDialog(
@@ -549,31 +570,52 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                                 },
                               );
                             } else {
-                              await appStore.processApp.create(createdProcess).then((response) {
-                                if (response.containsKey("status") && response["status"]) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const CustomDialog(
-                                        message: "Process Created",
-                                        title: "Info",
-                                      );
-                                    },
-                                  );
-                                  process.clear();
-                                  setState(() {});
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const CustomDialog(
-                                        message: "Unable to create process.",
-                                        title: "Error",
-                                      );
-                                    },
-                                  );
+                              bool notExisting = true;
+                              int existingVersion = 0;
+                              process.forEach((key, value) {
+                                Map<int, dynamic> listToMaps = {for (var v in processSteps) v["sequence"]: v};
+                                if (mapEquals(value, listToMaps)) {
+                                  notExisting = notExisting & false;
+                                  existingVersion = key;
                                 }
                               });
+                              if (notExisting) {
+                                await appStore.processApp.create(createdProcess).then((response) {
+                                  if (response.containsKey("status") && response["status"]) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const CustomDialog(
+                                          message: "Process Created",
+                                          title: "Info",
+                                        );
+                                      },
+                                    );
+                                    process[currentVersion]!.clear();
+                                    setState(() {});
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const CustomDialog(
+                                          message: "Unable to create process.",
+                                          title: "Error",
+                                        );
+                                      },
+                                    );
+                                  }
+                                });
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialog(
+                                      message: "New Process Same as version: " + existingVersion.toString(),
+                                      title: "Error",
+                                    );
+                                  },
+                                );
+                              }
                             }
                           },
                           child: checkButton(),
@@ -588,7 +630,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                             elevation: MaterialStateProperty.all<double>(5.0),
                           ),
                           onPressed: () {
-                            process.clear();
+                            process[currentVersion]!.clear();
                             setState(() {});
                           },
                           child: clearButton(),
@@ -600,30 +642,30 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
               onReorder: (int start, int current) {
                 start += 1;
                 int startPos = 1;
-                int endPos = process.length;
+                int endPos = process[currentVersion]!.length;
                 if (start > current) {
-                  current = current >= process.length ? process.length : current + 1;
+                  current = current >= process[currentVersion]!.length ? process[currentVersion]!.length : current + 1;
                   startPos = current;
                   endPos = start - 1;
-                  Map<String, dynamic> movedItem = process[start];
+                  Map<String, dynamic> movedItem = process[currentVersion]![start];
                   for (int i = endPos; i >= startPos; i--) {
-                    process[i + 1] = process[i];
-                    process[i + 1]["sequence"] = i + 1;
+                    process[currentVersion]![i + 1] = process[currentVersion]![i];
+                    process[currentVersion]![i + 1]["sequence"] = i + 1;
                   }
                   movedItem["sequence"] = current;
-                  process[current] = movedItem;
+                  process[currentVersion]![current] = movedItem;
                 }
                 if (start < current) {
-                  current = current >= process.length ? process.length : current;
+                  current = current >= process[currentVersion]!.length ? process[currentVersion]!.length : current;
                   startPos = start + 1;
                   endPos = current;
-                  Map<String, dynamic> movedItem = process[start];
+                  Map<String, dynamic> movedItem = process[currentVersion]![start];
                   for (int i = startPos; i <= endPos; i++) {
-                    process[i - 1] = process[i];
-                    process[i - 1]["sequence"] = i - 1;
+                    process[currentVersion]![i - 1] = process[currentVersion]![i];
+                    process[currentVersion]![i - 1]["sequence"] = i - 1;
                   }
                   movedItem["sequence"] = current;
-                  process[current] = movedItem;
+                  process[currentVersion]![current] = movedItem;
                 }
                 setState(() {});
               },
@@ -678,22 +720,31 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
   }
 
   Future<dynamic> getProcessDetails(Map<String, dynamic> conditions) async {
+    versions = [];
     await appStore.processApp.list(conditions).then((response) async {
       if (response.containsKey("status") && response["status"]) {
         if (response["payload"].isNotEmpty) {
-          var currentProcess = Process.fromJSON(response["payload"][response["payload"].length - 1]);
-          currentVersion = currentProcess.version;
-          for (var step in currentProcess.steps) {
-            Map<String, dynamic> currentStep = {
-              "step_type_id": step.stepType.id,
-              "description": step.stepType.name,
-              "value": step.value,
-              "duration": step.duration,
-              "sequence": step.sequence,
-              "material_id": step.materialID,
-            };
-            process[process.length + 1] = currentStep;
+          for (var payload in response["payload"]) {
+            var currentProcess = Process.fromJSON(payload);
+            currentVersion = currentProcess.version;
+            versions.add(Version(id: currentVersion, version: currentVersion));
+            for (var step in currentProcess.steps) {
+              Map<String, dynamic> currentStep = {
+                "step_type_id": step.stepType.id,
+                "description": step.stepType.name,
+                "value": step.value,
+                "duration": step.duration,
+                "sequence": step.sequence,
+                "material_id": step.materialID,
+              };
+              if (!process.containsKey(currentVersion)) {
+                process[currentVersion] = {};
+              }
+              process[currentVersion]![process[currentVersion]!.length + 1] = currentStep;
+            }
           }
+          latestVersion = process.length;
+          currentVersion = latestVersion;
         } else {
           showDialog(
             context: context,
@@ -722,12 +773,12 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
   void reorderProcess() {
     Map<int, dynamic> revisedProcess = {};
     int start = 1;
-    process.forEach((key, value) {
+    process[currentVersion]!.forEach((key, value) {
       value["sequence"] = start;
       revisedProcess[start] = value;
       start += 1;
     });
-    process = revisedProcess;
+    process[currentVersion] = revisedProcess;
   }
 
   Widget creationWidget() {
@@ -794,6 +845,23 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const VerticalDivider(
+                    width: 60,
+                    color: Colors.transparent,
+                  ),
+                  const Text(
+                    "Check Other Version",
+                    style: TextStyle(
+                      color: formHintTextColor,
+                      fontSize: 30.0,
+                    ),
+                  ),
+                  DropDownWidget(
+                    disabled: false,
+                    hint: "Select Version",
+                    controller: versionController,
+                    itemList: versions,
+                  ),
                 ],
               )
             : Container(),
@@ -815,7 +883,7 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: processWidget(),
+                    child: process.isEmpty ? Container() : processWidget(),
                   ),
                 ],
               )
@@ -923,5 +991,20 @@ class _ProcessUpdateWidgetState extends State<ProcessUpdateWidget> {
               },
             ),
           );
+  }
+}
+
+class Version {
+  int id;
+  int version;
+
+  Version({
+    required this.id,
+    required this.version,
+  });
+
+  @override
+  String toString() {
+    return version.toString();
   }
 }
