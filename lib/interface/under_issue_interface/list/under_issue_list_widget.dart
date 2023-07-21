@@ -49,9 +49,9 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
   Map<String, Job> jobs = {};
   List<String> jobIDs = [];
   List<Factory> factories = [];
-  String previous = '{"action":"navigation", "data":{"type":"previous"}}';
-  String next = '{"action":"navigation", "data":{"type":"next"}}';
-  String back = '{"action":"navigation", "data":{"type":"back"}}';
+  String previous = "{'action':'navigation', 'data':{'type':'previous'}}";
+  String next = "{'action':'navigation', 'data':{'type':'next'}}";
+  String back = "{'action':'navigation','data':{'type':'back'}}";
   Map<String, List<UnderIssue>> jobMapping = {};
   Map<String, List<UnderIssue>> passedJobMapping = {};
   List<HybridUnderIssue> underIssues = [];
@@ -461,7 +461,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
       ),
     );
 
-    String jobItemData = '{"action": "selection","data": {"type": "job","job_code":"' + job.jobCode + '", "data": "' + job.id + '"}}';
+    String jobItemData = "{'action': 'selection','data': {'type': 'job','job_code':'" + job.jobCode + "', 'data': '" + job.id + "'}}";
     widgets.add(
       TextButton(
         onPressed: () {

@@ -40,7 +40,7 @@ class _DetailsWidgetState extends State<DetailsWidget> {
   List<Mat> materials = [];
   List<StepType> stepTypes = [];
   int currentIndex = 0, start = 0, end = 2;
-  String complete = '{"action":"complete"}';
+  String complete = "{'action':'complete'}";
 
   @override
   void initState() {

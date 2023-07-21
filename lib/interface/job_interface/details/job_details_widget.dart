@@ -44,10 +44,10 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
   ScrollController? scrollController;
   List<Terminal> terminals = [];
   List<UnitOfMeasurementConversion> uomConversions = [];
-  String previous = '{"action":"navigation", "data":{"type":"previous"}}';
-  String next = '{"action":"navigation", "data":{"type":"next"}}';
-  String back = '{"action":"navigation", "data":{"type":"back"}}';
-  String showItemList = '{"action":"navigation", "data":{"type":"hide_summary"}}';
+  String previous = "{'action':'navigation', 'data':{'type':'previous'}}";
+  String next = "{'action':'navigation', 'data':{'type':'next'}}";
+  String back = "{'action':'navigation','data':{'type':'back'}}";
+  String showItemList = "{'action':'navigation', 'data':{'type':'hidesummary'}}";
 
   @override
   void initState() {
@@ -181,6 +181,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   dynamic listenToScanner(String data) {
     Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
+    print(scannerData);
     switch (scannerData["action"]) {
       case "selection":
         late JobItem passedJobItem;
@@ -238,7 +239,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
           ),
         );
         break;
-      case "hide_summary":
+      case "hidesummary":
         setState(() {
           isSummaryShown = true;
         });
@@ -333,7 +334,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
       );
     }
 
-    String jobItemData = '{"action": "selection","data": {"type": "job_item", "data": "' + jobItem.id + '"}}';
+    String jobItemData = "{'action': 'selection','data': {'type': 'job_item', 'data': '" + jobItem.id + "'}}";
     widgets.add(
       TextButton(
         onPressed: () {

@@ -23,9 +23,9 @@ class OperatorHomePage extends StatefulWidget {
 
 class _OperatorHomePageState extends State<OperatorHomePage> {
   bool isLoadingPage = true;
-  String weighing = '{"action":"weighing"}';
-  String overIssue = '{"action":"over_issue"}';
-  String underIssue = '{"action":"under_issue"}';
+  String weighing = "{'action':'weighing'}";
+  String overIssue = "{'action':'over_issue'}";
+  String underIssue = "{'action':'under_issue'}";
 
   @override
   void initState() {

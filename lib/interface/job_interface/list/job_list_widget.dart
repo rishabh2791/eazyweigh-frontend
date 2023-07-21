@@ -46,9 +46,9 @@ class _JobListWidgetState extends State<JobListWidget> {
   List<Factory> factories = [];
   ScrollController? scrollController;
   Map<String, List<JobItem>> jobMapping = {};
-  String previous = '{"action":"navigation", "data":{"type":"previous"}}';
-  String next = '{"action":"navigation", "data":{"type":"next"}}';
-  String back = '{"action":"navigation", "data":{"type":"back"}}';
+  String previous = "{'action':'navigation', 'data':{'type':'previous'}}";
+  String next = "{'action':'navigation', 'data':{'type':'next'}}";
+  String back = "{'action':'navigation','data':{'type':'back'}}";
   Map<String, Job> jobsByID = {};
   late TextEditingController createdStart, createdEnd, factoryController, completeController, jobCodeStartController, jobCodeEndController;
 
@@ -454,7 +454,7 @@ class _JobListWidgetState extends State<JobListWidget> {
       );
     }
 
-    String jobItemData = '{"action": "selection","data": {"type": "job","job_code":"' + job.jobCode + '", "data": "' + job.id + '"}}';
+    String jobItemData = "{'action': 'selection','data': {'type': 'job','job_code':'" + job.jobCode + "', 'data': '" + job.id + "'}}";
     widgets.add(
       TextButton(
         onPressed: () {

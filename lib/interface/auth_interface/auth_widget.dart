@@ -16,8 +16,8 @@ class AuthWidget extends StatefulWidget {
 class _AuthWidgetState extends State<AuthWidget> {
   bool isLogin = false;
   bool isRegister = false;
-  String loginMessage = '{"action": "login"}';
-  String registerMessage = '{"action": "register"}';
+  String loginMessage = "{'action': 'login'}";
+  String registerMessage = "{'action': 'register'}";
 
   @override
   void initState() {

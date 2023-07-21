@@ -83,7 +83,7 @@ class _UserActionButtonState extends State<UserActionButton> {
 
   @override
   Widget build(BuildContext context) {
-    String qrImageViewData = '{"action":"navigation", "table":"' + widget.table + '", "access_type":"' + widget.accessType + '" }';
+    String qrImageViewData = "{'action':'navigation', 'table':'" + widget.table + "', 'access_type':'" + widget.accessType + "' }";
     return widget.showQRCode
         ? SizedBox(
             width: 200.0,

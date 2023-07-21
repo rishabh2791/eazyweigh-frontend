@@ -20,7 +20,7 @@ class _SuperPageState extends State<SuperPage> with SingleTickerProviderStateMix
   late Animation<Offset> slideAnimation;
   late ScrollController scrollController;
   late AnimationController animationController;
-  String logout = '{"action":"logout"}';
+  String logout = "{'action':'logout'}";
 
   @override
   void initState() {

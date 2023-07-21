@@ -44,9 +44,9 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
   ScrollController? scrollController;
   List<Terminal> terminals = [];
   List<UnitOfMeasurementConversion> uomConversions = [];
-  String previous = '{"action":"navigation", "data":{"type":"previous"}}';
-  String next = '{"action":"navigation", "data":{"type":"next"}}';
-  String back = '{"action":"navigation", "data":{"type":"back"}}';
+  String previous = "{'action':'navigation', 'data':{'type':'previous'}}";
+  String next = "{'action':'navigation', 'data':{'type':'next'}}";
+  String back = "{'action':'navigation','data':{'type':'back'}}";
 
   @override
   void initState() {
@@ -309,7 +309,7 @@ class _UnderIssueDetailsWidgetState extends State<UnderIssueDetailsWidget> {
       );
     }
 
-    String jobItemData = '{"action": "selection","data": {"type": "under_issue_item", "data": "' + underIssue.id + '"}}';
+    String jobItemData = "{'action': 'selection','data': {'type': 'under_issue_item', 'data': '" + underIssue.id + "'}}";
     widgets.add(
       TextButton(
         onPressed: () {

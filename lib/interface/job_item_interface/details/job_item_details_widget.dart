@@ -49,11 +49,11 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   List<Terminal> thisTerminal = [];
   double scaleFactor = 1;
   List<UnitOfMeasurementConversion> uomConversions = [];
-  String back = '{"action":"back"}';
-  String tare = '{"action":"tare"}';
-  String preComplete = '{"action":"pre_complete"}';
-  String cancel = '{"action":"cancel"}';
-  String complete = '{"action":"complete"}';
+  String back = "{'action':'back'}";
+  String tare = "{'action':'tare'}";
+  String preComplete = "{'action':'pre_complete'}";
+  String cancel = "{'action':'cancel'}";
+  String complete = "{'action':'complete'}";
   Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
   bool isPosting = false;
@@ -140,6 +140,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         }
       }
       scaleFactor = getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
+      print(scaleFactor);
     }
   }
 
@@ -247,7 +248,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "job_item_id": widget.jobItem.id,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(3)),
+          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(4)),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "start_time": startTime.toLocal().toIso8601String() + "Z",
@@ -259,7 +260,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": (currentWeight - taredWeight).toStringAsFixed(3),
+          "weight": (currentWeight - taredWeight).toStringAsFixed(4),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
@@ -459,7 +460,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
             ),
           ),
           Text(
-            requiredQty.toStringAsFixed(3) + " " + jobItem.uom.code,
+            requiredQty.toStringAsFixed(4) + " " + jobItem.uom.code,
             style: const TextStyle(
               fontSize: 30.0,
               color: Colors.white,
@@ -473,13 +474,14 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   }
 
   Widget verifiedState() {
+    JobItem jobItem = widget.jobItem;
+    double upperLimit = double.parse((jobItem.upperBound).toStringAsFixed(4));
+    requiredQty = double.parse((jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(4));
+    double lowerLimit = double.parse((jobItem.lowerBound).toStringAsFixed(4));
+
     if (isCheckingCompletion) {
       return checkCompletion();
     } else {
-      JobItem jobItem = widget.jobItem;
-      double upperLimit = double.parse(jobItem.upperBound.toStringAsFixed(3));
-      requiredQty = double.parse((jobItem.requiredWeight - jobItem.actualWeight).toStringAsFixed(3));
-      double lowerLimit = double.parse(jobItem.lowerBound.toStringAsFixed(3));
       return Column(
         children: [
           Container(
@@ -605,24 +607,25 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              (currentWeight - taredWeight).toStringAsFixed(3),
+                              (currentWeight - taredWeight).toStringAsFixed(4),
                               style: TextStyle(
                                   fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
-                                  color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit || (currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit)
+                                  color: (double.parse(((currentWeight - taredWeight) + widget.jobItem.actualWeight).toStringAsFixed(4)) > upperLimit ||
+                                          double.parse(((currentWeight - taredWeight) + widget.jobItem.actualWeight).toStringAsFixed(4)) < lowerLimit)
                                       ? Colors.red
                                       : Colors.green),
                             ),
                             Icon(
-                              (currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit
-                                  ? Icons.arrow_circle_up
-                                  : (currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit
-                                      ? Icons.arrow_circle_down
-                                      : Icons.check_circle,
-                              size: 200.0 * sizeInformation.screenSize.height / 1006,
-                              color: ((currentWeight - taredWeight) + widget.jobItem.actualWeight < lowerLimit || (currentWeight - taredWeight) + widget.jobItem.actualWeight > upperLimit)
-                                  ? Colors.red
-                                  : Colors.green,
-                            ),
+                                double.parse(((currentWeight - taredWeight) + widget.jobItem.actualWeight).toStringAsFixed(4)) < lowerLimit
+                                    ? Icons.arrow_circle_up
+                                    : double.parse(((currentWeight - taredWeight) + widget.jobItem.actualWeight).toStringAsFixed(4)) > upperLimit
+                                        ? Icons.arrow_circle_down
+                                        : Icons.check_circle,
+                                size: 200.0 * sizeInformation.screenSize.height / 1006,
+                                color: (double.parse(((currentWeight - taredWeight) + widget.jobItem.actualWeight).toStringAsFixed(4)) > upperLimit ||
+                                        double.parse(((currentWeight - taredWeight) + widget.jobItem.actualWeight).toStringAsFixed(4)) < lowerLimit)
+                                    ? Colors.red
+                                    : Colors.green),
                           ],
                         ),
                       ],

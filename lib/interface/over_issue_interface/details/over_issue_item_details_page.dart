@@ -46,11 +46,11 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
   List<Terminal> thisTerminal = [];
   double scaleFactor = 1;
   List<UnitOfMeasurementConversion> uomConversions = [];
-  String back = '{"action":"back"}';
-  String tare = '{"action":"tare"}';
-  String complete = '{"action":"complete"}';
-  String preComplete = '{"action":"pre_complete"}';
-  String cancel = '{"action":"cancel"}';
+  String back = "{'action':'back'}";
+  String tare = "{'action':'tare'}";
+  String preComplete = "{'action':'pre_complete'}";
+  String cancel = "{'action':'cancel'}";
+  String complete = "{'action':'complete'}";
   Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
 

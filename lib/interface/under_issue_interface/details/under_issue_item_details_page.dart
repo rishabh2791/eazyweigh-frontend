@@ -46,11 +46,11 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
   List<Terminal> thisTerminal = [];
   double scaleFactor = 1;
   List<UnitOfMeasurementConversion> uomConversions = [];
-  String back = '{"action":"back"}';
-  String tare = '{"action":"tare"}';
-  String preComplete = '{"action":"pre_complete"}';
-  String cancel = '{"action":"cancel"}';
-  String complete = '{"action":"complete"}';
+  String back = "{'action':'back'}";
+  String tare = "{'action':'tare'}";
+  String preComplete = "{'action':'pre_complete'}";
+  String cancel = "{'action':'cancel'}";
+  String complete = "{'action':'complete'}";
   Map<String, dynamic> scannedMaterialData = {};
   late DateTime startTime, endTime;
 
