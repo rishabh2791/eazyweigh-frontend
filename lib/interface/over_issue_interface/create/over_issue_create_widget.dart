@@ -1,6 +1,8 @@
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
+import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
+import 'package:eazyweigh/domain/entity/material.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
@@ -12,6 +14,7 @@ import 'package:eazyweigh/interface/common/text_field_widget.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:eazyweigh/interface/over_issue_interface/create/job_items_list_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class OverIssueCreateWidget extends StatefulWidget {
   const OverIssueCreateWidget({Key? key}) : super(key: key);
@@ -21,18 +24,20 @@ class OverIssueCreateWidget extends StatefulWidget {
 }
 
 class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
+  late Job runningJob;
   bool isLoadingData = true;
   bool isJobItemsLoaded = false;
   List<Factory> factories = [];
   List<JobItem> jobItems = [];
   Map<String, double> overIssueQty = {};
-  late TextEditingController factoryController, jobCodeController;
+  late TextEditingController factoryController, jobCodeController, materialCodeController;
 
   @override
   void initState() {
     getDetails();
     factoryController = TextEditingController();
     jobCodeController = TextEditingController();
+    materialCodeController = TextEditingController();
     super.initState();
   }
 
@@ -88,6 +93,150 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
       }
     }
     return null;
+  }
+
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    TextEditingController overIssueController = TextEditingController();
+    return showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Over Issue Quantity'),
+            content: Column(
+              children: [
+                TextField(
+                  controller: materialCodeController,
+                  decoration: const InputDecoration(hintText: "Over Issue Material"),
+                ),
+                TextField(
+                  controller: overIssueController,
+                  decoration: const InputDecoration(hintText: "Over Issue Quantity"),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  'Issue',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                  ),
+                ),
+                onPressed: () async {
+                  int errors = 0;
+                  var qty = overIssueController.text;
+                  var materialCode = materialCodeController.text;
+                  if (materialCode.isEmpty) {
+                    errors += 1;
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const CustomDialog(
+                          message: "Material Required",
+                          title: "Errors",
+                        );
+                      },
+                    );
+                  }
+                  if (qty == "" || qty.isEmpty) {
+                    errors += 1;
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const CustomDialog(
+                          message: "Quantity Required",
+                          title: "Errors",
+                        );
+                      },
+                    );
+                  }
+                  if (errors == 0) {
+                    Map<String, dynamic> conditions = {
+                      "EQUALS": {
+                        "Field": "code",
+                        "Value": materialCodeController.text,
+                      }
+                    };
+                    await appStore.materialApp.list(conditions).then((materialResponse) async {
+                      if (materialResponse.containsKey("status") && materialResponse["status"]) {
+                        if (materialResponse["payload"].isNotEmpty) {
+                          double weight = double.parse(overIssueController.text);
+                          Mat mat = Mat.fromJSON(materialResponse["payload"][0]);
+                          JobItem additionalJobItem = JobItem(
+                            actualWeight: 0,
+                            assigned: false,
+                            complete: false,
+                            createdAt: DateTime.now().toUtc(),
+                            createdBy: currentUser,
+                            id: const Uuid().v4(),
+                            jobID: runningJob.id,
+                            lowerBound: weight * 0.99,
+                            material: mat,
+                            requiredWeight: 0,
+                            uom: mat.uom,
+                            updatedAt: DateTime.now().toUtc(),
+                            updatedBy: currentUser,
+                            upperBound: weight * 1.01,
+                            verified: false,
+                            added: false,
+                          );
+                          Map<String, dynamic> data = {
+                            "material_id": mat.id,
+                            "job_id": runningJob.id,
+                            "unit_of_measurement_id": mat.uom.id,
+                            "created_by_username": currentUser.username,
+                            "updated_by_username": currentUser.username,
+                          };
+                          await appStore.jobItemApp.create(data).then((response) {
+                            if (response.containsKey("status") && response["status"]) {
+                              additionalJobItem.id = response["payload"]["id"];
+                              setState(() {
+                                jobItems.add(additionalJobItem);
+                                overIssueQty[additionalJobItem.id] = weight;
+                              });
+                              Navigator.of(context).pop();
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialog(
+                                    message: "Unable to add Material: " + materialCode,
+                                    title: "Errors",
+                                  );
+                                },
+                              );
+                            }
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomDialog(
+                                message: "Unable to fetch Material: " + materialCode,
+                                title: "Errors",
+                              );
+                            },
+                          );
+                        }
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialog(
+                              message: "Unable to fetch Material: " + materialCode,
+                              title: "Errors",
+                            );
+                          },
+                        );
+                      }
+                    });
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 
   Widget homeWidget() {
@@ -180,6 +329,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                           },
                         );
                       } else {
+                        runningJob = Job.fromJSON(response["payload"][0]);
                         Map<String, dynamic> conditions = {
                           "EQUALS": {
                             "Field": "job_id",
@@ -354,6 +504,26 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                     ),
                   ),
                 ],
+              )
+            : Container(),
+        isJobItemsLoaded
+            ? const Divider(
+                color: Colors.transparent,
+              )
+            : Container(),
+        isJobItemsLoaded
+            ? TextButton(
+                onPressed: () {
+                  _displayTextInputDialog(context);
+                },
+                child: const Text(
+                  "Add Another",
+                  style: TextStyle(
+                    color: formHintTextColor,
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               )
             : Container(),
         isJobItemsLoaded

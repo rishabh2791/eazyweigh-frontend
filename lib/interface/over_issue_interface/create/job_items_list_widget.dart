@@ -99,7 +99,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                         columns: [
                           DataColumn(
                             label: Text(
-                              "Selected",
+                              "Weighed Item",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: themeChanged.value ? foregroundColor : backgroundColor,
@@ -187,9 +187,6 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 40.0,
               ),
             ],
           ),

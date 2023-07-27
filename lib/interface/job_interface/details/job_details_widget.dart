@@ -181,7 +181,6 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
 
   dynamic listenToScanner(String data) {
     Map<String, dynamic> scannerData = jsonDecode(data.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
-    print(scannerData);
     switch (scannerData["action"]) {
       case "selection":
         late JobItem passedJobItem;

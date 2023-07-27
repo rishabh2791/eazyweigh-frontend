@@ -3,7 +3,7 @@ import 'package:eazyweigh/domain/entity/unit_of_measure.dart';
 import 'package:eazyweigh/domain/entity/user.dart';
 
 class JobItem {
-  final String id;
+  String id;
   final String jobID;
   final Mat material;
   final UnitOfMeasure uom;
@@ -47,7 +47,7 @@ class JobItem {
       "assigned": assigned,
       "complete": complete,
       "created_at": createdAt,
-      "created_by": createdBy,
+      "created_by": createdBy.toJSON(),
       "id": id,
       "job_id": jobID,
       "lower_bound": lowerBound,
@@ -55,7 +55,7 @@ class JobItem {
       "required_weight": requiredWeight,
       "unit_of_measure": uom.toJSON(),
       "updated_at": updatedAt,
-      "updated_by": updatedBy,
+      "updated_by": updatedBy.toJSON(),
       "upper_bound": upperBound,
       "verified": verified,
       "added": added,

@@ -107,7 +107,7 @@ class _MaterialCreateWidgetState extends State<MaterialCreateWidget> {
     String factoryID = factoryController.text;
     Map<String, dynamic> conditions = {
       "EQUALS": {
-        "Field": "company_id",
+        "Field": "factory_id",
         "Value": factoryID,
       }
     };

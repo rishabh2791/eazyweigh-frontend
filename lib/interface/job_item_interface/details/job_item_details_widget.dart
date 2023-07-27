@@ -140,7 +140,6 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
         }
       }
       scaleFactor = getScaleFactor(thisTerminal[0].uom.code, widget.jobItem.uom.code);
-      print(scaleFactor);
     }
   }
 

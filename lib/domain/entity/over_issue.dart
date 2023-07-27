@@ -52,13 +52,13 @@ class OverIssue {
 
   factory OverIssue.fromJSON(Map<String, dynamic> jsonObject) {
     OverIssue overIssue = OverIssue(
-      actual: jsonObject["actual"],
+      actual: double.parse(jsonObject["actual"].toString()),
       verified: jsonObject["verified"],
       createdAt: DateTime.parse(jsonObject["created_at"]).toLocal(),
       createdBy: User.fromJSON(jsonObject["created_by"]),
       id: jsonObject["id"],
       jobItem: JobItem.fromJSON(jsonObject["job_item"]),
-      req: jsonObject["required"],
+      req: double.parse(jsonObject["required"].toString()),
       weighed: jsonObject["weighed"],
       uom: UnitOfMeasure.fromJSON(jsonObject["unit_of_measurement"]),
       updatedAt: DateTime.parse(jsonObject["updated_at"]).toLocal(),
