@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/over_issue.dart';
@@ -101,14 +103,14 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
       case "complete":
         Map<String, dynamic> update = {
           "weighed": true,
-          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(3)),
+          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(4)),
         };
         Map<String, dynamic> printingData = {
           "job_id": widget.jobItem.jobID,
           "weigher": currentUser.firstName + " " + currentUser.lastName,
           "material_code": widget.jobItem.material.code,
           "material_description": widget.jobItem.material.description,
-          "weight": (currentWeight - taredWeight).toStringAsFixed(3),
+          "weight": (currentWeight - taredWeight).toStringAsFixed(4),
           "uom": widget.jobItem.uom.code,
           "batch": scannedMaterialData["batch"],
           "job_item_id": widget.jobItem.id,
@@ -180,31 +182,82 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
     }
   }
 
+  Future<void> playAudio() async {
+    AudioPlayer audioPlayer = AudioPlayer();
+    String audioAsset = "audio/siren.wav";
+    await audioPlayer.play(AssetSource(audioAsset));
+  }
+
   Future<dynamic> verifyMaterial(String scannerData) async {
     Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
-    if (jsonData.containsKey("code")) {
-      String matCode = jsonData["code"];
-      if (!isMaterialScanned) {
-        setState(() {
-          isMaterialScanned = true;
-        });
-      }
-      if (matCode == widget.jobItem.material.code) {
-        scannedMaterialData = jsonData;
-        setState(() {
-          isVerified = true;
+    if (jsonData.containsKey("expiry")) {
+      DateTime expiryDate = DateTime.parse(jsonData["expiry"]);
+      if (expiryDate.isBefore(DateTime.now())) {
+        await playAudio();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const CustomDialog(
+              message: "Material is Expired",
+              title: "Error",
+            );
+          },
+        ).then((value) {
+          sleep(const Duration(seconds: 3));
+          Navigator.of(context).pop();
         });
       } else {
-        Map<String, dynamic> scannedData = {
-          "job_id": widget.jobItem.jobID,
-          "actual_code": matCode,
-          "expected_code": widget.jobItem.material.code,
-          "user_username": currentUser.username,
-          "terminal_id": thisTerminal[0].id,
-        };
-        await appStore.scannedDataApp.create(scannedData).then((value) {});
+        if (jsonData.containsKey("code")) {
+          String matCode = jsonData["code"];
+          if (!isMaterialScanned) {
+            setState(() {
+              isMaterialScanned = true;
+            });
+          }
+          if (matCode == widget.jobItem.material.code) {
+            scannedMaterialData = jsonData;
+            setState(() {
+              isVerified = true;
+            });
+          } else {
+            await playAudio();
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const CustomDialog(
+                  message: "Incorrect Material",
+                  title: "Error",
+                );
+              },
+            ).then((value) {
+              sleep(const Duration(seconds: 3));
+              Navigator.of(context).pop();
+            });
+            Map<String, dynamic> scannedData = {
+              "job_id": widget.jobItem.jobID,
+              "actual_code": matCode,
+              "expected_code": widget.jobItem.material.code,
+              "user_username": currentUser.username,
+              "terminal_id": thisTerminal[0].id,
+            };
+            await appStore.scannedDataApp.create(scannedData).then((value) {});
+          }
+        }
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to read material details.",
+            title: "Error",
+          );
+        },
+      ).then((value) {
+        sleep(const Duration(seconds: 3));
+        Navigator.of(context).pop();
+      });
     }
   }
 
@@ -613,7 +666,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              (currentWeight - taredWeight).toStringAsFixed(3),
+                              (currentWeight - taredWeight).toStringAsFixed(4),
                               style: TextStyle(
                                   fontSize: 300.0 * sizeInformation.screenSize.height / 1006,
                                   color: ((currentWeight - taredWeight) > upperLimit || (currentWeight - taredWeight) < lowerLimit) ? Colors.red : Colors.green),

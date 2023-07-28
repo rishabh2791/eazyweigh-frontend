@@ -6,6 +6,7 @@ import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
+import 'package:eazyweigh/domain/entity/over_issue.dart';
 import 'package:eazyweigh/domain/entity/under_issue.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
@@ -180,37 +181,32 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                           Job thisJob = Job.fromJSON(job);
                           jobs[job["id"]] = thisJob;
                         }
+                        List<String> jobIDs = [];
                         jobMapping.forEach((key, value) async {
-                          await appStore.underIssueApp.list(key).then((underIssueReposnse) {
-                            if (underIssueReposnse.containsKey("status")) {
-                              if (underIssueReposnse["status"]) {
-                                for (var item in underIssueReposnse["payload"]) {
-                                  UnderIssue underIssue = UnderIssue.fromJSON(item);
-                                  if (!underIssue.weighed) {
-                                    jobMapping[key]!.add(underIssue);
-                                  }
+                          jobIDs.add(key);
+                        });
+                        Map<String, dynamic> conditions = {
+                          "IN": {
+                            "Field": "job_id",
+                            "Value": jobIDs,
+                          }
+                        };
+                        await appStore.underIssueApp.list(conditions).then((underIssueReposnse) {
+                          if (underIssueReposnse.containsKey("status")) {
+                            if (underIssueReposnse["status"]) {
+                              for (var item in underIssueReposnse["payload"]) {
+                                UnderIssue underIssue = UnderIssue.fromJSON(item);
+                                if (!underIssue.weighed) {
+                                  jobMapping[underIssue.jobItem.jobID]!.add(underIssue);
                                 }
-                                cleanJobMapping();
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: underIssueReposnse["message"],
-                                      title: "Error",
-                                    );
-                                  },
-                                );
-                                Future.delayed(const Duration(seconds: 3)).then((value) {
-                                  Navigator.of(context).pop();
-                                });
                               }
+                              cleanJobMapping();
                             } else {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return const CustomDialog(
-                                    message: "Unable to Connect.",
+                                  return CustomDialog(
+                                    message: underIssueReposnse["message"],
                                     title: "Error",
                                   );
                                 },
@@ -219,7 +215,20 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                                 Navigator.of(context).pop();
                               });
                             }
-                          });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CustomDialog(
+                                  message: "Unable to Connect.",
+                                  title: "Error",
+                                );
+                              },
+                            );
+                            Future.delayed(const Duration(seconds: 3)).then((value) {
+                              Navigator.of(context).pop();
+                            });
+                          }
                         });
                       } else {
                         showDialog(
@@ -755,7 +764,13 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                           if (value.containsKey("status") && value["status"]) {
                             for (var item in value["payload"]) {
                               Job job = Job.fromJSON(item);
-                              await appStore.underIssueApp.list(job.id).then((response) {
+                              Map<String, dynamic> conditions = {
+                                "EQUALS": {
+                                  "Field": "job_id",
+                                  "Value": job.id,
+                                }
+                              };
+                              await appStore.underIssueApp.list(conditions).then((response) {
                                 if (response.containsKey("status") && response["status"]) {
                                   if (response["payload"].length != 0) {
                                     for (var under in response["payload"]) {

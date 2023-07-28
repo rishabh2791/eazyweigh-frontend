@@ -94,7 +94,7 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                         columns: [
                           DataColumn(
                             label: const Text(
-                              "Selected",
+                              "Weighed Item",
                               style: TextStyle(
                                 fontSize: 20.0,
                                 color: foregroundColor,
@@ -268,14 +268,12 @@ class _DataSource extends DataTableSource {
       },
       cells: [
         DataCell(
-          Text(
-            jobItem.assigned ? true.toString().toUpperCase() : jobItem.selected.toString().toUpperCase(),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: foregroundColor,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          jobItem.assigned
+              ? const Icon(Icons.check, color: Colors.green)
+              : const Icon(
+                  Icons.stop,
+                  color: Colors.red,
+                ),
         ),
         DataCell(
           Text(

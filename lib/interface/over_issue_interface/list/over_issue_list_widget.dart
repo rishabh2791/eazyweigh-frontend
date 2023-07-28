@@ -194,37 +194,32 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                           });
                         }
                       }).then((value) async {
+                        List<String> jobIDs = [];
                         jobMapping.forEach((key, value) async {
-                          await appStore.overIssueApp.list(key).then((overIssueReposnse) {
-                            if (overIssueReposnse.containsKey("status")) {
-                              if (overIssueReposnse["status"]) {
-                                for (var item in overIssueReposnse["payload"]) {
-                                  OverIssue overIssue = OverIssue.fromJSON(item);
-                                  if (!overIssue.weighed) {
-                                    jobMapping[key]!.add(overIssue);
-                                  }
+                          jobIDs.add(key);
+                        });
+                        Map<String, dynamic> conditions = {
+                          "IN": {
+                            "Field": "job_id",
+                            "Value": jobIDs,
+                          }
+                        };
+                        await appStore.overIssueApp.list(conditions).then((overIssueReposnse) {
+                          if (overIssueReposnse.containsKey("status")) {
+                            if (overIssueReposnse["status"]) {
+                              for (var item in overIssueReposnse["payload"]) {
+                                OverIssue overIssue = OverIssue.fromJSON(item);
+                                if (!overIssue.weighed) {
+                                  jobMapping[overIssue.jobItem.jobID]!.add(overIssue);
                                 }
-                                cleanJobMapping();
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      message: overIssueReposnse["message"],
-                                      title: "Error",
-                                    );
-                                  },
-                                );
-                                Future.delayed(const Duration(seconds: 3)).then((value) {
-                                  Navigator.of(context).pop();
-                                });
                               }
+                              cleanJobMapping();
                             } else {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return const CustomDialog(
-                                    message: "Unable to Connect.",
+                                  return CustomDialog(
+                                    message: overIssueReposnse["message"],
                                     title: "Error",
                                   );
                                 },
@@ -233,7 +228,20 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                                 Navigator.of(context).pop();
                               });
                             }
-                          });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CustomDialog(
+                                  message: "Unable to Connect.",
+                                  title: "Error",
+                                );
+                              },
+                            );
+                            Future.delayed(const Duration(seconds: 3)).then((value) {
+                              Navigator.of(context).pop();
+                            });
+                          }
                         });
                       });
                     } else {}
@@ -739,7 +747,13 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                           if (value.containsKey("status") && value["status"]) {
                             for (var item in value["payload"]) {
                               Job job = Job.fromJSON(item);
-                              await appStore.overIssueApp.list(job.id).then((response) {
+                              Map<String, dynamic> conditions = {
+                                "EQUALS": {
+                                  "Field": "job_id",
+                                  "Value": job.id,
+                                }
+                              };
+                              await appStore.overIssueApp.list(conditions).then((response) {
                                 if (response.containsKey("status") && response["status"]) {
                                   if (response["payload"].length != 0) {
                                     for (var under in response["payload"]) {

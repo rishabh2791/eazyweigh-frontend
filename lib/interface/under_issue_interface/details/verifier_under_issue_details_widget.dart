@@ -72,7 +72,13 @@ class _VerifierUnderIssueDetailsWidgetState extends State<VerifierUnderIssueDeta
   }
 
   Future<void> getUnderIssueItems() async {
-    await appStore.underIssueApp.list(widget.jobID).then((response) async {
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "job_id",
+        "Value": widget.jobID,
+      }
+    };
+    await appStore.underIssueApp.list(conditions).then((response) async {
       if (response.containsKey("status")) {
         if (response["status"]) {
           for (var item in response["payload"]) {

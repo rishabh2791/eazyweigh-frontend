@@ -54,7 +54,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
     thisMonthEnd = DateTime.parse(DateTime(today.year, today.month, today.day + daysLeftInMonth, 0, 0, 0, 0, 0).toString().substring(0, 10));
     Future.wait([
       getWeekSummary(),
-      getMonthSummary(),
+      // getMonthSummary(),
     ]).then((value) {
       weekIncorrectWeighing.forEach(((key, value) {
         weekIncorrectScans += value.length;
@@ -163,31 +163,39 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
 
   Future<dynamic> getUnderIssues(List<String> jobs) async {
     List<UnderIssue> underIssues = [];
-    for (var job in jobs) {
-      await appStore.underIssueApp.list(job).then((response) async {
-        if (response.containsKey("status") && response["status"]) {
-          for (var item in response["payload"]) {
-            UnderIssue underIssue = UnderIssue.fromJSON(item);
-            underIssues.add(underIssue);
-          }
+    Map<String, dynamic> conditions = {
+      "IN": {
+        "Field": "job_id",
+        "Value": jobs,
+      }
+    };
+    await appStore.underIssueApp.list(conditions).then((response) async {
+      if (response.containsKey("status") && response["status"]) {
+        for (var item in response["payload"]) {
+          UnderIssue underIssue = UnderIssue.fromJSON(item);
+          underIssues.add(underIssue);
         }
-      });
-    }
+      }
+    });
     return underIssues;
   }
 
   Future<dynamic> getOverIssues(List<String> jobs) async {
     List<OverIssue> overIssues = [];
-    for (var job in jobs) {
-      await appStore.overIssueApp.list(job).then((response) async {
-        if (response.containsKey("status") && response["status"]) {
-          for (var item in response["payload"]) {
-            OverIssue overIssue = OverIssue.fromJSON(item);
-            overIssues.add(overIssue);
-          }
+    Map<String, dynamic> conditions = {
+      "IN": {
+        "Field": "job_id",
+        "Value": jobs,
+      }
+    };
+    await appStore.overIssueApp.list(conditions).then((response) async {
+      if (response.containsKey("status") && response["status"]) {
+        for (var item in response["payload"]) {
+          OverIssue overIssue = OverIssue.fromJSON(item);
+          overIssues.add(overIssue);
         }
-      });
-    }
+      }
+    });
     return overIssues;
   }
 

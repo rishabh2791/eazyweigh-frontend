@@ -72,7 +72,13 @@ class _VerifierOverIssueDetailsWidgetState extends State<VerifierOverIssueDetail
   }
 
   Future<void> getOverIssueItems() async {
-    await appStore.overIssueApp.list(widget.jobID).then((response) async {
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "job_id",
+        "Value": widget.jobID,
+      }
+    };
+    await appStore.overIssueApp.list(conditions).then((response) async {
       if (response.containsKey("status")) {
         if (response["status"]) {
           for (var item in response["payload"]) {

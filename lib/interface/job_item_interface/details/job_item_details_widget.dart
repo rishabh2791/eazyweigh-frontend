@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:eazyweigh/application/app_store.dart';
@@ -395,29 +396,73 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
   Future<dynamic> verifyMaterial(String scannerData) async {
     Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
-    if (jsonData.containsKey("code")) {
-      String matCode = jsonData["code"];
-      if (!isMaterialScanned) {
-        setState(() {
-          isMaterialScanned = true;
-        });
-      }
-      if (matCode == widget.jobItem.material.code) {
-        scannedMaterialData = jsonData;
-        setState(() {
-          isVerified = true;
+    if (jsonData.containsKey("expiry")) {
+      DateTime expiryDate = DateTime.parse(jsonData["expiry"]);
+      if (expiryDate.isBefore(DateTime.now())) {
+        await playAudio();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const CustomDialog(
+              message: "Material is Expired",
+              title: "Error",
+            );
+          },
+        ).then((value) {
+          sleep(const Duration(seconds: 3));
+          Navigator.of(context).pop();
         });
       } else {
-        await playAudio();
-        Map<String, dynamic> scannedData = {
-          "job_id": widget.jobItem.jobID,
-          "actual_code": matCode,
-          "expected_code": widget.jobItem.material.code,
-          "user_username": currentUser.username,
-          "terminal_id": thisTerminal[0].id,
-        };
-        await appStore.scannedDataApp.create(scannedData).then((value) {});
+        if (jsonData.containsKey("code")) {
+          String matCode = jsonData["code"];
+          if (!isMaterialScanned) {
+            setState(() {
+              isMaterialScanned = true;
+            });
+          }
+          if (matCode == widget.jobItem.material.code) {
+            scannedMaterialData = jsonData;
+            setState(() {
+              isVerified = true;
+            });
+          } else {
+            await playAudio();
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const CustomDialog(
+                  message: "Incorrect Material",
+                  title: "Error",
+                );
+              },
+            ).then((value) {
+              sleep(const Duration(seconds: 3));
+              Navigator.of(context).pop();
+            });
+            Map<String, dynamic> scannedData = {
+              "job_id": widget.jobItem.jobID,
+              "actual_code": matCode,
+              "expected_code": widget.jobItem.material.code,
+              "user_username": currentUser.username,
+              "terminal_id": thisTerminal[0].id,
+            };
+            await appStore.scannedDataApp.create(scannedData).then((value) {});
+          }
+        }
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const CustomDialog(
+            message: "Unable to read material details.",
+            title: "Error",
+          );
+        },
+      ).then((value) {
+        sleep(const Duration(seconds: 3));
+        Navigator.of(context).pop();
+      });
     }
   }
 

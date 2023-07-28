@@ -344,7 +344,13 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                                 jobItems.add(jobItem);
                                 overIssueQty[jobItem.id] = 0;
                               }
-                              await appStore.overIssueApp.list(jobItems[0].jobID).then((value) {
+                              Map<String, dynamic> conditions = {
+                                "EQUALS": {
+                                  "Field": "job_id",
+                                  "Value": jobItems[0].jobID,
+                                }
+                              };
+                              await appStore.overIssueApp.list(conditions).then((value) {
                                 if (value.containsKey("status")) {
                                   if (value["status"]) {
                                     for (var item in value["payload"]) {

@@ -140,7 +140,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                         );
                       } else {
                         Map<String, dynamic> condition = {
-                          "EQUAL": {
+                          "EQUALS": {
                             "Field": "job_id",
                             "Value": response["payload"][0]["id"],
                           }
@@ -153,7 +153,13 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                                 jobItems.add(jobItem);
                                 underIssueQty[jobItem.id] = 0;
                               }
-                              await appStore.underIssueApp.list(jobItems[0].jobID).then((value) {
+                              Map<String, dynamic> conditions = {
+                                "EQUALS": {
+                                  "Field": "job_id",
+                                  "Value": jobItems[0].jobID,
+                                }
+                              };
+                              await appStore.underIssueApp.list(conditions).then((value) {
                                 if (value.containsKey("status")) {
                                   if (value["status"]) {
                                     for (var item in value["payload"]) {

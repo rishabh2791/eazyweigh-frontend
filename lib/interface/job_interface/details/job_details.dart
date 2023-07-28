@@ -84,7 +84,13 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
 
   Future<dynamic> getJobItemOverIssues() async {
     String jobID = jobItems.first.jobID;
-    await appStore.overIssueApp.list(jobID).then(
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "job_id",
+        "Value": jobID,
+      }
+    };
+    await appStore.overIssueApp.list(conditions).then(
       (response) async {
         if (response.containsKey("status") && response["status"]) {
           for (var item in response["payload"]) {
@@ -102,7 +108,13 @@ class _FullJobDetailsWidgetState extends State<FullJobDetailsWidget> {
 
   Future<dynamic> getJobItemUnderIssues() async {
     String jobID = jobItems.first.jobID;
-    await appStore.underIssueApp.list(jobID).then(
+    Map<String, dynamic> conditions = {
+      "EQUALS": {
+        "Field": "job_id",
+        "Value": jobID,
+      }
+    };
+    await appStore.underIssueApp.list(conditions).then(
       (response) async {
         if (response.containsKey("status") && response["status"]) {
           for (var item in response["payload"]) {
