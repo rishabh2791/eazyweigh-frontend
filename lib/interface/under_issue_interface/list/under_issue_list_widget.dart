@@ -6,7 +6,6 @@ import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/job_item.dart';
 import 'package:eazyweigh/domain/entity/material.dart';
-import 'package:eazyweigh/domain/entity/over_issue.dart';
 import 'package:eazyweigh/domain/entity/under_issue.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
 import 'package:eazyweigh/infrastructure/services/navigator_services.dart';

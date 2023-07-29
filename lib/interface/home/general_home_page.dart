@@ -54,7 +54,7 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
     thisMonthEnd = DateTime.parse(DateTime(today.year, today.month, today.day + daysLeftInMonth, 0, 0, 0, 0, 0).toString().substring(0, 10));
     Future.wait([
       getWeekSummary(),
-      // getMonthSummary(),
+      getMonthSummary(),
     ]).then((value) {
       weekIncorrectWeighing.forEach(((key, value) {
         weekIncorrectScans += value.length;
