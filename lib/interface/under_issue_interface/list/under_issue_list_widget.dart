@@ -677,7 +677,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                         fontSize: 20.0,
                       ),
                     ),
-              UnderIssueList(underIssues: underIssues),
+              underIssues.isNotEmpty ? UnderIssueList(underIssues: underIssues) : Container(),
             ],
           )
         : Column(

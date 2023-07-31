@@ -163,39 +163,45 @@ class _GeneralHomeWidgetState extends State<GeneralHomeWidget> {
 
   Future<dynamic> getUnderIssues(List<String> jobs) async {
     List<UnderIssue> underIssues = [];
-    Map<String, dynamic> conditions = {
-      "IN": {
-        "Field": "job_id",
-        "Value": jobs,
-      }
-    };
-    await appStore.underIssueApp.list(conditions).then((response) async {
-      if (response.containsKey("status") && response["status"]) {
-        for (var item in response["payload"]) {
-          UnderIssue underIssue = UnderIssue.fromJSON(item);
-          underIssues.add(underIssue);
+    if (jobs.isNotEmpty) {
+      Map<String, dynamic> conditions = {
+        "IN": {
+          "Field": "job_id",
+          "Value": jobs,
         }
-      }
-    });
+      };
+      await appStore.underIssueApp.list(conditions).then((response) async {
+        if (response.containsKey("status") && response["status"]) {
+          for (var item in response["payload"]) {
+            UnderIssue underIssue = UnderIssue.fromJSON(item);
+            underIssues.add(underIssue);
+          }
+        }
+      });
+    }
+
     return underIssues;
   }
 
   Future<dynamic> getOverIssues(List<String> jobs) async {
     List<OverIssue> overIssues = [];
-    Map<String, dynamic> conditions = {
-      "IN": {
-        "Field": "job_id",
-        "Value": jobs,
-      }
-    };
-    await appStore.overIssueApp.list(conditions).then((response) async {
-      if (response.containsKey("status") && response["status"]) {
-        for (var item in response["payload"]) {
-          OverIssue overIssue = OverIssue.fromJSON(item);
-          overIssues.add(overIssue);
+    if (jobs.isNotEmpty) {
+      Map<String, dynamic> conditions = {
+        "IN": {
+          "Field": "job_id",
+          "Value": jobs,
         }
-      }
-    });
+      };
+      await appStore.overIssueApp.list(conditions).then((response) async {
+        if (response.containsKey("status") && response["status"]) {
+          for (var item in response["payload"]) {
+            OverIssue overIssue = OverIssue.fromJSON(item);
+            overIssues.add(overIssue);
+          }
+        }
+      });
+    }
+
     return overIssues;
   }
 

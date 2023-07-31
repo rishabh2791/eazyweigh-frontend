@@ -661,7 +661,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                         fontSize: 20.0,
                       ),
                     ),
-              OverIssueList(overIssues: overIssues),
+              overIssues.isNotEmpty ? OverIssueList(overIssues: overIssues) : Container(),
             ],
           )
         : Column(
