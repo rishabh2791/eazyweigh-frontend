@@ -397,21 +397,21 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("expiry")) {
-      DateTime expiryDate = DateTime.parse(jsonData["expiry"].replaceAll("/", "-"));
+      DateTime expiryDate = DateTime.parse(jsonData["expiry"].replaceAll("/", "-").replaceAll("_", "-"));
       if (expiryDate.isBefore(DateTime.now())) {
         await playAudio();
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return const CustomDialog(
-              message: "Material is Expired",
+              message: "Material has Expired",
               title: "Error",
             );
           },
         );
         Future.delayed(const Duration(seconds: 3)).then((value) {
-              Navigator.of(context).pop();
-            });
+          Navigator.of(context).pop();
+        });
       } else {
         if (jsonData.containsKey("code")) {
           String matCode = jsonData["code"];

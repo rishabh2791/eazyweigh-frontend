@@ -192,14 +192,14 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
     Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("expiry")) {
-      DateTime expiryDate = DateTime.parse(jsonData["expiry"].replaceAll("/", "-"));
+      DateTime expiryDate = DateTime.parse(jsonData["expiry"].replaceAll("/", "-").replaceAll("_", "-"));
       if (expiryDate.isBefore(DateTime.now())) {
         await playAudio();
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return const CustomDialog(
-              message: "Material is Expired",
+              message: "Material has Expired",
               title: "Error",
             );
           },
