@@ -397,7 +397,7 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
     Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("expiry")) {
-      DateTime expiryDate = DateTime.parse(jsonData["expiry"]);
+      DateTime expiryDate = DateTime.parse(jsonData["expiry"].replaceAll("/", "-"));
       if (expiryDate.isBefore(DateTime.now())) {
         await playAudio();
         showDialog(
@@ -408,10 +408,10 @@ class _JobItemDetailsWidgetState extends State<JobItemDetailsWidget> {
               title: "Error",
             );
           },
-        ).then((value) {
-          sleep(const Duration(seconds: 3));
-          Navigator.of(context).pop();
-        });
+        );
+        Future.delayed(const Duration(seconds: 3)).then((value) {
+              Navigator.of(context).pop();
+            });
       } else {
         if (jsonData.containsKey("code")) {
           String matCode = jsonData["code"];
