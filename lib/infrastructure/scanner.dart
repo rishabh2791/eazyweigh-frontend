@@ -65,7 +65,7 @@ class ScannerListener extends ChangeNotifier {
 
   void _keyBoardCallback(RawKeyEvent keyEvent) {
     if (keyEvent.logicalKey.keyId > 255 && keyEvent.data.logicalKey != LogicalKeyboardKey.enter) return;
-    if (keyEvent is RawKeyUpEvent) {
+    if (keyEvent is RawKeyDownEvent) {
       if (keyEvent.data is RawKeyEventDataAndroid) {
         _controller.sink.add(String.fromCharCode(((keyEvent.data) as RawKeyEventDataAndroid).codePoint));
       } else if (keyEvent.data is RawKeyEventDataFuchsia) {

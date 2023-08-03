@@ -195,19 +195,19 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
     Map<String, dynamic> jsonData = jsonDecode(scannerData.replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\"").replaceAll("-", "_"));
 
     if (jsonData.containsKey("expiry")) {
-      DateTime expiryDate = DateTime.parse(jsonData["expiry"]);
+      DateTime expiryDate = DateTime.parse(jsonData["expiry"].replaceAll("/", "-").replaceAll("_", "-"));
       if (expiryDate.isBefore(DateTime.now())) {
         await playAudio();
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return const CustomDialog(
-              message: "Material is Expired",
+              message: "Material has Expired",
               title: "Error",
             );
           },
-        ).then((value) {
-          sleep(const Duration(seconds: 3));
+        );
+        Future.delayed(const Duration(seconds: 3)).then((value) {
           Navigator.of(context).pop();
         });
       } else {
