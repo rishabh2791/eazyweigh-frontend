@@ -117,7 +117,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
           "job_code": widget.jobCode,
           "over_issue_id": widget.overIssue.id,
         };
-        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .998).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.002 * requiredQty).toStringAsFixed(4))) {
+        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .99).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.01 * requiredQty).toStringAsFixed(4))) {
           await appStore.overIssueApp.update(widget.overIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
@@ -125,6 +125,9 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
               setState(() {
                 widget.jobItem.actualWeight += double.parse((currentWeight - taredWeight).toStringAsFixed(4));
                 requiredQty = double.parse((requiredQty - (currentWeight - taredWeight)).toStringAsFixed(4));
+                if (double.parse(requiredQty.toStringAsFixed(3)) == 0) {
+                  widget.jobItem.complete = true;
+                }
                 currentWeight = 0;
               });
               Navigator.of(context).pop();
@@ -599,7 +602,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
                     width: MediaQuery.of(context).size.width / 3 - 50,
                     child: Center(
                       child: QrImageView(
-                        data: complete,
+                        data: preComplete,
                         size: 200.0 * MediaQuery.of(context).size.width / 1920,
                         backgroundColor: Colors.white,
                       ),

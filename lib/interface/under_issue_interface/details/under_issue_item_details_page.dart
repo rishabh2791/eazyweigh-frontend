@@ -117,14 +117,16 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
           "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
-        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .999).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.001 * requiredQty).toStringAsFixed(4))) {
+        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .99).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.01 * requiredQty).toStringAsFixed(4))) {
           await appStore.underIssueApp.update(widget.underIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
               setState(() {
                 widget.jobItem.actualWeight += double.parse((currentWeight - taredWeight).toStringAsFixed(4));
-                widget.jobItem.complete = true;
                 requiredQty = double.parse((requiredQty - (currentWeight - taredWeight)).toStringAsFixed(4));
+                if (double.parse(requiredQty.toStringAsFixed(3)) == 0) {
+                  widget.jobItem.complete = true;
+                }
                 currentWeight = 0;
               });
               Navigator.of(context).pop();
