@@ -418,7 +418,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                   });
                 }
               },
-              child: checkButton(),
+              child: genericButton(Icons.get_app, "Get Details"),
             ),
             const VerticalDivider(
               color: Colors.transparent,
@@ -490,7 +490,7 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                   }
                 });
               },
-              child: clearButton(),
+              child: checkButton(),
             ),
           ],
         ),

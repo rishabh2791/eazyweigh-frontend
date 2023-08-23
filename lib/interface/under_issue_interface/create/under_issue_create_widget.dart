@@ -227,7 +227,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                   });
                 }
               },
-              child: checkButton(),
+              child: genericButton(Icons.get_app, "Get Details"),
             ),
             const VerticalDivider(),
             TextButton(
@@ -297,7 +297,7 @@ class _UnderIssueCreateWidgetState extends State<UnderIssueCreateWidget> {
                   }
                 });
               },
-              child: clearButton(),
+              child: checkButton(),
             ),
           ],
         ),

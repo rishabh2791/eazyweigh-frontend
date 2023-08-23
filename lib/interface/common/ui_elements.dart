@@ -1,82 +1,38 @@
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
-Widget checkButton() {
-  return const Tooltip(
-    decoration: BoxDecoration(
+Widget genericButton(IconData icon, String msg) {
+  return Tooltip(
+    decoration: const BoxDecoration(
       color: foregroundColor,
     ),
-    textStyle: TextStyle(
+    textStyle: const TextStyle(
       fontSize: 16.0,
     ),
-    message: "OK",
+    message: msg,
     child: Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
       child: Icon(
-        Icons.check,
+        icon,
         color: backgroundColor,
         size: 30.0,
       ),
     ),
   );
+}
+
+Widget checkButton() {
+  return genericButton(Icons.check, "OK");
 }
 
 Widget clearButton() {
-  return const Tooltip(
-    decoration: BoxDecoration(
-      color: foregroundColor,
-    ),
-    textStyle: TextStyle(
-      fontSize: 16.0,
-    ),
-    message: "Clear",
-    child: Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-      child: Icon(
-        Icons.clear_all,
-        color: backgroundColor,
-        size: 30.0,
-      ),
-    ),
-  );
+  return genericButton(Icons.clear_all, "Clear");
 }
 
 Widget crossButton() {
-  return const Tooltip(
-    decoration: BoxDecoration(
-      color: foregroundColor,
-    ),
-    textStyle: TextStyle(
-      fontSize: 16.0,
-    ),
-    message: "Clear",
-    child: Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-      child: Icon(
-        Icons.cancel_presentation,
-        color: backgroundColor,
-        size: 30.0,
-      ),
-    ),
-  );
+  return genericButton(Icons.cancel_presentation, "Close");
 }
 
 Widget scanButton() {
-  return const Tooltip(
-    decoration: BoxDecoration(
-      color: foregroundColor,
-    ),
-    textStyle: TextStyle(
-      fontSize: 16.0,
-    ),
-    message: "Clear",
-    child: Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-      child: Icon(
-        Icons.qr_code_scanner,
-        color: backgroundColor,
-        size: 30.0,
-      ),
-    ),
-  );
+  return genericButton(Icons.qr_code_scanner, "Scan");
 }
