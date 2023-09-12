@@ -354,7 +354,8 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                                 if (value.containsKey("status")) {
                                   if (value["status"]) {
                                     for (var item in value["payload"]) {
-                                      overIssueQty[item["job_item_id"]] = double.parse(item["actual"].toString()) - double.parse(item["required"].toString());
+                                      jobItems.firstWhere((element) => element.id == item["job_item_id"]).actualWeight = double.parse(item["actual"].toString());
+                                      overIssueQty[item["job_item_id"]] = 0;
                                     }
                                     Navigator.of(context).pop();
                                     setState(() {
@@ -440,13 +441,16 @@ class _OverIssueCreateWidgetState extends State<OverIssueCreateWidget> {
                 overIssueQty.forEach((key, value) {
                   if (value != 0) {
                     JobItem jobItem = getJobItem(key);
+                    var actual = jobItem.actualWeight == 0 ? jobItem.requiredWeight + value : jobItem.actualWeight + value;
                     var overIssue = {
                       "job_item_id": key,
                       "unit_of_measurement_id": jobItem.uom.id,
                       "required": jobItem.requiredWeight,
-                      "actual": jobItem.actualWeight == 0 ? jobItem.requiredWeight + value : jobItem.actualWeight + value,
+                      "actual": actual,
                     };
-                    overIssued.add(overIssue);
+                    if (value != 0) {
+                      overIssued.add(overIssue);
+                    }
                   }
                 });
                 await appStore.overIssueApp.createMultiple(overIssued).then((response) {

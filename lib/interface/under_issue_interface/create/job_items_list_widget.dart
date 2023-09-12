@@ -164,6 +164,24 @@ class _JobItemsListWidgetState extends State<JobItemsListWidget> {
                               onSortColum(columnIndex, ascending);
                             },
                           ),
+                          DataColumn(
+                            label: const Text(
+                              "Actual Quantity",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: foregroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
                           const DataColumn(
                             label: Text(
                               "Under Issue Qty",
@@ -298,6 +316,16 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             jobItem.requiredWeight.toString(),
+            style: const TextStyle(
+              fontSize: 16.0,
+              color: foregroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            jobItem.actualWeight.toString(),
             style: const TextStyle(
               fontSize: 16.0,
               color: foregroundColor,

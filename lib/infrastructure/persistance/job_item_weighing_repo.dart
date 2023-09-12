@@ -30,4 +30,11 @@ class JobItemWeighingRepo implements JobItemWeighingRepository {
     var response = await networkAPIProvider.post(url, conditions, TokenType.accessToken);
     return response;
   }
+
+  @override
+  Future<Map<String, dynamic>> materials(String matID) async {
+    String url = "job_item_weight/material/" + matID + "/";
+    var response = await networkAPIProvider.get(url, TokenType.accessToken);
+    return response;
+  }
 }

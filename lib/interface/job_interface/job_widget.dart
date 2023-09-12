@@ -7,6 +7,7 @@ import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:eazyweigh/interface/job_interface/update/job_update_widget.dart';
 import 'package:eazyweigh/interface/job_interface/weighing/batch_details.dart';
 import 'package:eazyweigh/interface/job_interface/weighing/job_weighing_widget.dart';
+import 'package:eazyweigh/interface/job_interface/weighing/material_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +35,7 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const JobCreateWidget(),
+                          builder: (BuildContext context) => const JobCreateWidget(),
                         ),
                       );
                     },
@@ -48,8 +48,7 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const FullJobDetailsWidget(),
+                          builder: (BuildContext context) => const FullJobDetailsWidget(),
                         ),
                       );
                     },
@@ -62,8 +61,7 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const JobUpdateWidget(),
+                          builder: (BuildContext context) => const JobUpdateWidget(),
                         ),
                       );
                     },
@@ -76,8 +74,7 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const JobListWidget(),
+                          builder: (BuildContext context) => const JobListWidget(),
                         ),
                       );
                     },
@@ -90,8 +87,7 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const JobWeighingWidget(),
+                          builder: (BuildContext context) => const JobWeighingWidget(),
                         ),
                       );
                     },
@@ -104,13 +100,25 @@ class _JobWidgetState extends State<JobWidget> {
                     callback: () {
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(
-                          builder: (BuildContext context) =>
-                              const WeighingBatchDetailsWidget(),
+                          builder: (BuildContext context) => const WeighingBatchDetailsWidget(),
                         ),
                       );
                     },
                     icon: Icons.list,
                     label: "Batch",
+                    table: "jobs",
+                    accessType: "view",
+                  ),
+                  UserActionButton(
+                    callback: () {
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) => const MaterialWeighingDetailsWidget(),
+                        ),
+                      );
+                    },
+                    icon: Icons.list,
+                    label: "Material",
                     table: "jobs",
                     accessType: "view",
                   ),

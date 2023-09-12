@@ -24,6 +24,11 @@ class JobItemWeighingApp implements JobItemWeighingAppInterface {
   Future<Map<String, dynamic>> details(Map<String, dynamic> conditions) async {
     return jobItemWeighingRepository.details(conditions);
   }
+
+  @override
+  Future<Map<String, dynamic>> materials(String matID) async {
+    return jobItemWeighingRepository.materials(matID);
+  }
 }
 
 abstract class JobItemWeighingAppInterface {
@@ -31,4 +36,5 @@ abstract class JobItemWeighingAppInterface {
   Future<Map<String, dynamic>> list(String jobItemID);
   Future<Map<String, dynamic>> update(String jobItemWeighingID, Map<String, dynamic> update);
   Future<Map<String, dynamic>> details(Map<String, dynamic> conditions);
+  Future<Map<String, dynamic>> materials(String matID);
 }
