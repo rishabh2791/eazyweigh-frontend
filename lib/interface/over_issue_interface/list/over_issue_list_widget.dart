@@ -489,7 +489,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
-          eyeStyle: const QrEyeStyle(color: Colors.black),
+          foregroundColor: Colors.black,
         ),
       ),
     );
@@ -559,7 +559,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: start == 0 ? backgroundColor : Colors.black),
+                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
             start == 0
@@ -592,7 +592,7 @@ class _OverIssueListWidgetState extends State<OverIssueListWidget> {
                 data: next,
                 size: 150,
                 backgroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: (end == jobMapping.length - 1 || jobMapping.length < 3) ? backgroundColor : Colors.black),
+                foregroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
             (end == jobMapping.length - 1 || jobMapping.length < 3)

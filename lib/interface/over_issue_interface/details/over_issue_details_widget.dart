@@ -327,7 +327,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
-          eyeStyle: const QrEyeStyle(color: Colors.black),
+          foregroundColor: Colors.black,
         ),
       ),
     );
@@ -401,7 +401,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: start == 0 ? Colors.transparent : Colors.black),
+                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
             start == 0
@@ -434,7 +434,7 @@ class _OverIssueDetailsWidgetState extends State<OverIssueDetailsWidget> {
                 data: next,
                 size: 150,
                 backgroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.black),
+                foregroundColor: (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
             (end == widget.overIssueItems.length - 1 || widget.overIssueItems.length < 3)

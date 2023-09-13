@@ -471,7 +471,6 @@ class _JobListWidgetState extends State<JobListWidget> {
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: job.complete ? backgroundColor : Colors.green,
-          eyeStyle: QrEyeStyle(color: job.complete ? backgroundColor : Colors.black),
         ),
       ),
     );
@@ -541,7 +540,7 @@ class _JobListWidgetState extends State<JobListWidget> {
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: start == 0 ? backgroundColor : Colors.black),
+                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
             start == 0
@@ -574,7 +573,6 @@ class _JobListWidgetState extends State<JobListWidget> {
                 data: next,
                 size: 150,
                 backgroundColor: (end == jobMapping.length - 1 || jobMapping.length < 3) ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: (end == jobMapping.length - 1 || jobMapping.length < 3) ? backgroundColor : Colors.black),
               ),
             ),
             (end == jobMapping.length - 1 || jobMapping.length < 3)

@@ -483,7 +483,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: Colors.green,
-          eyeStyle: const QrEyeStyle(color: Colors.black),
+          foregroundColor: Colors.black,
         ),
       ),
     );
@@ -553,7 +553,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: start == 0 ? backgroundColor : Colors.black),
+                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
             start == 0
@@ -586,7 +586,7 @@ class _UnderIssueListWidgetState extends State<UnderIssueListWidget> {
                 data: next,
                 size: 150,
                 backgroundColor: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? backgroundColor : Colors.black),
+                foregroundColor: (end == passedJobMapping.length - 1 || passedJobMapping.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
             (end == passedJobMapping.length - 1 || passedJobMapping.length < 3)

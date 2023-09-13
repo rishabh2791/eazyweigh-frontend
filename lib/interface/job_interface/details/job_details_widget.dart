@@ -351,7 +351,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
           data: jobItemData,
           size: 250.0 * sizeInfo.screenSize.width / 1920,
           backgroundColor: isComplete ? Colors.transparent : Colors.green,
-          eyeStyle: QrEyeStyle(color: isComplete ? Colors.transparent : Colors.black),
+          foregroundColor: isComplete ? Colors.transparent : Colors.black,
         ),
       ),
     );
@@ -528,7 +528,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                 data: previous,
                 size: 150,
                 backgroundColor: start == 0 ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: start == 0 ? Colors.transparent : Colors.black),
+                foregroundColor: start == 0 ? Colors.transparent : Colors.black,
               ),
             ),
             start == 0
@@ -561,7 +561,7 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                 data: next,
                 size: 150,
                 backgroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.red,
-                eyeStyle: QrEyeStyle(color: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.black),
+                foregroundColor: (end == widget.jobItems.length - 1 || widget.jobItems.length < 3) ? Colors.transparent : Colors.black,
               ),
             ),
             (end == widget.jobItems.length - 1 || widget.jobItems.length < 3)
