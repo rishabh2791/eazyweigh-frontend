@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:eazyweigh/application/app_store.dart';
@@ -26,6 +27,7 @@ import 'package:eazyweigh/interface/job_interface/job_widget.dart';
 import 'package:eazyweigh/interface/job_interface/list/jobs_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class JobListWidget extends StatefulWidget {
@@ -647,11 +649,46 @@ class _JobListWidgetState extends State<JobListWidget> {
             ),
           ),
           const Divider(),
-          QrImageView(
-            data: back,
-            size: 250,
-            backgroundColor: Colors.green,
-          ),
+          Platform.isAndroid
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height - 200,
+                  width: MediaQuery.of(context).size.width - 50,
+                  child: MobileScanner(
+                    controller: MobileScannerController(
+                      detectionSpeed: DetectionSpeed.normal,
+                      facing: CameraFacing.back,
+                    ),
+                    onDetect: (capture) {
+                      final List<Barcode> barcodes = capture.barcodes;
+                      // final Uint8List? image = capture.image;
+                      for (final barcode in barcodes) {
+                        debugPrint('Barcode found! ${barcode.rawValue}');
+                        Map<String, dynamic> scannerData = jsonDecode(barcode.rawValue.toString().replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\""));
+                        if (scannerData.containsKey("job_code")) {
+                          String jobCode = scannerData["job_code"];
+                          navigationService.pushReplacement(
+                            CupertinoPageRoute(
+                              builder: (BuildContext context) => VerifierJobDetailsWidget(
+                                jobCode: jobCode,
+                              ),
+                            ),
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const CustomDialog(
+                                message: "Invalid Job to Verify",
+                                title: "Error",
+                              );
+                            },
+                          );
+                        }
+                      }
+                    },
+                  ),
+                )
+              : Container(),
         ],
       ),
     );

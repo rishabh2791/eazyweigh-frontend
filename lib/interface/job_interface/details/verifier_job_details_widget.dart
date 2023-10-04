@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:eazyweigh/application/app_store.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
@@ -18,6 +19,7 @@ import 'package:eazyweigh/interface/job_interface/details/job_items_list_widget.
 import 'package:eazyweigh/interface/job_interface/list/job_list_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class VerifierJobDetailsWidget extends StatefulWidget {
   final String jobCode;
@@ -165,33 +167,37 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
         default:
       }
     } else {
-      if (scannerData.containsKey("job_item_weighing_id")) {
-        await appStore.jobWeighingApp.update(scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
-          updateJobItems(scannerData["job_item_id"], scannerData["job_item_weighing_id"]);
-          if (checkAllItemsVerified()) {
-            Map<String, dynamic> printingData = {
-              "job_code": widget.jobCode,
-              "job_id": job.id,
-              "verifier": currentUser.firstName + " " + currentUser.lastName,
-              "material_code": job.material.code,
-              "material_description": job.material.description,
-            };
-            printingService.printVerificationLabel(printingData);
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return const CustomDialog(
-                  message: "All Items Verified.",
-                  title: "Info",
-                );
-              },
-            );
-            Future.delayed(const Duration(seconds: 3)).then((value) {
-              Navigator.of(context).pop();
-            });
-          }
-        });
-      }
+      checkScan(scannerData);
+    }
+  }
+
+  void checkScan(Map<String, dynamic> scannerData) async {
+    if (scannerData.containsKey("job_item_weighing_id")) {
+      await appStore.jobWeighingApp.update(scannerData["job_item_weighing_id"].toString().replaceAll("_", "-"), {"verified": true}).then((response) async {
+        updateJobItems(scannerData["job_item_id"], scannerData["job_item_weighing_id"]);
+        if (checkAllItemsVerified()) {
+          Map<String, dynamic> printingData = {
+            "job_code": widget.jobCode,
+            "job_id": job.id,
+            "verifier": currentUser.firstName + " " + currentUser.lastName,
+            "material_code": job.material.code,
+            "material_description": job.material.description,
+          };
+          printingService.printVerificationLabel(printingData);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const CustomDialog(
+                message: "All Items Verified.",
+                title: "Info",
+              );
+            },
+          );
+          Future.delayed(const Duration(seconds: 3)).then((value) {
+            Navigator.of(context).pop();
+          });
+        }
+      });
     }
   }
 
@@ -217,6 +223,27 @@ class _VerifierJobDetailsWidgetState extends State<VerifierJobDetailsWidget> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        Platform.isAndroid
+            ? SizedBox(
+                height: 300,
+                width: 300,
+                child: MobileScanner(
+                  controller: MobileScannerController(
+                    detectionSpeed: DetectionSpeed.normal,
+                    facing: CameraFacing.back,
+                  ),
+                  onDetect: (capture) {
+                    final List<Barcode> barcodes = capture.barcodes;
+                    // final Uint8List? image = capture.image;
+                    for (final barcode in barcodes) {
+                      debugPrint('Barcode found! ${barcode.rawValue}');
+                      Map<String, dynamic> scannerData = jsonDecode(barcode.rawValue.toString().replaceAll(";", ":").replaceAll("[", "{").replaceAll("]", "}").replaceAll("'", "\""));
+                      checkScan(scannerData);
+                    }
+                  },
+                ),
+              )
+            : Container(),
         jobItems.isEmpty
             ? const Center(
                 child: Text(
