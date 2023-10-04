@@ -103,7 +103,7 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
       case "complete":
         Map<String, dynamic> update = {
           "weighed": true,
-          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(4)),
+          "weight": widget.jobItem.actualWeight - double.parse((currentWeight - taredWeight).toStringAsFixed(4)),
         };
         Map<String, dynamic> printingData = {
           "job_id": widget.jobItem.jobID,
@@ -117,14 +117,15 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
           "job_code": widget.jobCode,
           "under_issue_id": widget.underIssue.id,
         };
-        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .99).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.01 * requiredQty).toStringAsFixed(4))) {
+        if (double.parse((currentWeight - taredWeight).toStringAsFixed(4)) > 0 &&
+            double.parse((currentWeight - taredWeight).toStringAsFixed(4)) <= double.parse((1.01 * requiredQty).toStringAsFixed(4))) {
           await appStore.underIssueApp.update(widget.underIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
               setState(() {
-                widget.jobItem.actualWeight += double.parse((currentWeight - taredWeight).toStringAsFixed(4));
+                widget.jobItem.actualWeight -= double.parse((currentWeight - taredWeight).toStringAsFixed(4));
                 requiredQty = double.parse((requiredQty - (currentWeight - taredWeight)).toStringAsFixed(4));
-                if (double.parse(requiredQty.toStringAsFixed(3)) == 0) {
+                if (double.parse(requiredQty.toStringAsFixed(4)) == 0) {
                   widget.jobItem.complete = true;
                 }
                 currentWeight = 0;

@@ -103,7 +103,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
       case "complete":
         Map<String, dynamic> update = {
           "weighed": true,
-          "weight": double.parse((currentWeight - taredWeight).toStringAsFixed(4)),
+          "weight": widget.jobItem.actualWeight + double.parse((currentWeight - taredWeight).toStringAsFixed(4)),
         };
         Map<String, dynamic> printingData = {
           "job_id": widget.jobItem.jobID,
@@ -117,7 +117,8 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
           "job_code": widget.jobCode,
           "over_issue_id": widget.overIssue.id,
         };
-        if ((currentWeight - taredWeight) >= double.parse((requiredQty * .99).toStringAsFixed(4)) && (currentWeight - taredWeight) <= double.parse((1.01 * requiredQty).toStringAsFixed(4))) {
+        if (double.parse((currentWeight - taredWeight).toStringAsFixed(4)) > 0 &&
+            double.parse((currentWeight - taredWeight).toStringAsFixed(4)) <= double.parse((1.01 * requiredQty).toStringAsFixed(4))) {
           await appStore.overIssueApp.update(widget.overIssue.id, update).then((value) async {
             if (value["status"]) {
               printingService.printJobItemLabel(printingData);
@@ -125,7 +126,7 @@ class _OverIssueItemDetailsWidgetState extends State<OverIssueItemDetailsWidget>
               setState(() {
                 widget.jobItem.actualWeight += double.parse((currentWeight - taredWeight).toStringAsFixed(4));
                 requiredQty = double.parse((requiredQty - (currentWeight - taredWeight)).toStringAsFixed(4));
-                if (double.parse(requiredQty.toStringAsFixed(3)) == 0) {
+                if (double.parse(requiredQty.toStringAsFixed(4)) == 0) {
                   widget.jobItem.complete = true;
                 }
                 currentWeight = 0;

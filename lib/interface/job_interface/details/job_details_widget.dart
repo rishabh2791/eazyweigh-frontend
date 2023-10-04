@@ -600,8 +600,13 @@ class _JobDetailsWidgetState extends State<JobDetailsWidget> {
                             ? Row(
                                 children: getJobItems(screenSizeInfo),
                               )
-                            : Wrap(
-                                children: getJobSummary(screenSizeInfo),
+                            : SizedBox(
+                                height: MediaQuery.of(context).size.height - 404,
+                                child: SingleChildScrollView(
+                                  child: Wrap(
+                                    children: getJobSummary(screenSizeInfo),
+                                  ),
+                                ),
                               ),
                     getJobItems(screenSizeInfo).isEmpty
                         ? const Image(
