@@ -9,6 +9,7 @@ import 'package:eazyweigh/domain/entity/under_issue.dart';
 import 'package:eazyweigh/domain/entity/unit_of_measure_conversion.dart';
 import 'package:eazyweigh/infrastructure/printing_service.dart';
 import 'package:eazyweigh/infrastructure/scanner.dart';
+import 'package:eazyweigh/infrastructure/services/navigator_services.dart';
 import 'package:eazyweigh/infrastructure/socket_utility.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/common/base_widget.dart';
@@ -16,7 +17,9 @@ import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_menu_widget.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/home/operator_home_page.dart';
 import 'package:f_logs/model/flog/flog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -130,7 +133,11 @@ class _UnderIssueItemDetailsWidgetState extends State<UnderIssueItemDetailsWidge
                 }
                 currentWeight = 0;
               });
-              Navigator.of(context).pop();
+              navigationService.push(
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => const OperatorHomePage(),
+                ),
+              );
             } else {
               showDialog(
                 context: context,
