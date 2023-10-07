@@ -11,6 +11,13 @@ class BatchRunRepo implements BatchRunRepository {
   }
 
   @override
+  Future<Map<String, dynamic>> createSuper(Map<String, dynamic> batch) async {
+    String url = "batchrun/create_super/";
+    var response = await networkAPIProvider.post(url, batch, TokenType.accessToken);
+    return response;
+  }
+
+  @override
   Future<Map<String, dynamic>> getBatch(String id) async {
     String url = "batchrun/" + id + "/";
     var response = await networkAPIProvider.get(url, TokenType.accessToken);

@@ -6,6 +6,7 @@ import 'package:eazyweigh/domain/entity/factory.dart';
 import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
+import 'package:eazyweigh/interface/batch_run/text_symbol_renderer.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
 import 'package:eazyweigh/interface/common/drop_down_widget.dart';
@@ -37,6 +38,7 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
   Map<String, List<DeviceDataPoint>> devicesDataPoints = {};
   late TextEditingController factoryController, jobCodeController;
   bool viewScaled = true;
+  String value = "";
 
   @override
   void initState() {
@@ -473,6 +475,17 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                   fontSize: 16,
                 ),
               ),
+              charts.LinePointHighlighter(
+                symbolRenderer: TextSymbolRenderer(() => value),
+              ),
+            ],
+            selectionModels: [
+              charts.SelectionModelConfig(changedListener: (charts.SelectionModel model) {
+                if (model.hasDatumSelection) {
+                  value =
+                      model.selectedSeries[0].domainFn(model.selectedDatum[0].index).toString().substring(0, 16) + " - " + model.selectedSeries[0].measureFn(model.selectedDatum[0].index).toString();
+                }
+              })
             ],
           ),
         ),

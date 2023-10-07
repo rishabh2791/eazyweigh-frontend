@@ -1,20 +1,18 @@
-import 'dart:math';
-
 import 'package:eazyweigh/application/app_store.dart';
-import 'package:eazyweigh/domain/entity/batch_run.dart';
 import 'package:eazyweigh/domain/entity/device.dart';
 import 'package:eazyweigh/domain/entity/device_data.dart';
 import 'package:eazyweigh/domain/entity/factory.dart';
-import 'package:eazyweigh/domain/entity/job.dart';
 import 'package:eazyweigh/domain/entity/vessel.dart';
 import 'package:eazyweigh/infrastructure/utilities/constants.dart';
 import 'package:eazyweigh/infrastructure/utilities/variables.dart';
 import 'package:eazyweigh/interface/batch_run/text_symbol_renderer.dart';
 import 'package:eazyweigh/interface/common/build_widget.dart';
 import 'package:eazyweigh/interface/common/custom_dialog.dart';
+import 'package:eazyweigh/interface/common/date_picker/date_picker.dart';
 import 'package:eazyweigh/interface/common/drop_down_widget.dart';
 import 'package:eazyweigh/interface/common/loader.dart';
 import 'package:eazyweigh/interface/common/super_widget/super_widget.dart';
+import 'package:eazyweigh/interface/common/time_picker/time_picker.dart';
 import 'package:eazyweigh/interface/common/ui_elements.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -36,10 +34,9 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
   List<DateTime> ticks = [];
   Map<String, double> maxValues = {};
   Map<String, int> colours = {};
-  late Job job;
   Map<String, List<DeviceData>> devicesData = {};
   Map<String, List<DeviceDataPoint>> devicesDataPoints = {};
-  late TextEditingController factoryController, vesselController;
+  late TextEditingController factoryController, vesselController, startDateController, startTimeController, endDateController, endTimeController;
   bool viewScaled = true;
   String value = "";
 
@@ -48,6 +45,10 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
     getFactories();
     factoryController = TextEditingController();
     vesselController = TextEditingController();
+    startDateController = TextEditingController();
+    startTimeController = TextEditingController();
+    endDateController = TextEditingController();
+    endTimeController = TextEditingController();
     factoryController.addListener(() {
       getVessels();
     });
@@ -158,6 +159,26 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                         controller: vesselController,
                         itemList: vessels,
                       ),
+                DatePickerWidget(
+                  dateController: startDateController,
+                  hintText: "Start Date",
+                  labelText: "Start Date",
+                ),
+                TimePickerWidget(
+                  dateController: startTimeController,
+                  hintText: "Start Time",
+                  labelText: "Start Time",
+                ),
+                DatePickerWidget(
+                  dateController: endDateController,
+                  hintText: "End Date",
+                  labelText: "End Date",
+                ),
+                TimePickerWidget(
+                  dateController: endTimeController,
+                  hintText: "End Time",
+                  labelText: "End Time",
+                ),
                 Row(
                   children: [
                     TextButton(
@@ -167,6 +188,10 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                       ),
                       onPressed: () async {
                         var vesselID = vesselController.text;
+                        var startDate = startDateController.text;
+                        var startTime = startTimeController.text;
+                        var endDate = endDateController.text;
+                        var endTime = endTimeController.text;
 
                         String errors = "";
 
@@ -176,6 +201,22 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
 
                         if (vesselID.isEmpty) {
                           errors += "Vessel Selection Missing.\n";
+                        }
+
+                        if (startDate.isEmpty) {
+                          errors += "Start Date Missing.\n";
+                        }
+
+                        if (startTime.isEmpty) {
+                          errors += "Start Time Missing.\n";
+                        }
+
+                        if (endDate.isEmpty) {
+                          errors += "End Time Missing.\n";
+                        }
+
+                        if (endTime.isEmpty) {
+                          errors += "End Time Missing.\n";
                         }
 
                         if (errors.isNotEmpty) {
@@ -189,136 +230,129 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                             },
                           );
                         } else {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return loader(context);
-                            },
-                          );
+                          var time = ((startTime).split("(")[1]).split(")")[0];
+                          int hours = int.parse(time.split(":")[0].toString());
+                          int minutes = int.parse(time.split(":")[1].toString());
+                          var startDateTime =
+                              DateTime(int.parse(startDate.split("-")[0].toString()), int.parse(startDate.split("-")[1].toString()), int.parse(startDate.split("-")[2].toString()), hours, minutes);
 
-                          Map<String, dynamic> conditions = {
-                            "EQUALS": {
-                              "Field": "vessel_id",
-                              "Value": vesselID,
-                            }
-                          };
+                          time = ((endTime).split("(")[1]).split(")")[0];
+                          hours = int.parse(time.split(":")[0].toString());
+                          minutes = int.parse(time.split(":")[1].toString());
+                          var endDateTime =
+                              DateTime(int.parse(endDate.split("-")[0].toString()), int.parse(endDate.split("-")[1].toString()), int.parse(endDate.split("-")[2].toString()), hours, minutes);
 
-                          await appStore.batchRunApp.list(conditions).then((batchResponse) async {
-                            if (batchResponse.containsKey("status") && batchResponse["status"]) {
-                              if (batchResponse["payload"].isEmpty) {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const CustomDialog(
-                                      message: "No Running Job Found on vessel.",
-                                      title: "Errors",
-                                    );
-                                  },
+                          if (startDateTime.difference(endDateTime).inSeconds > 0) {
+                            errors += "Start Date & Time can not be later than End Date & Time.";
+                          }
+
+                          if (errors.isNotEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialog(
+                                  message: errors,
+                                  title: "Errors",
                                 );
-                              } else {
-                                List<String> deviceIDs = [];
-                                await appStore.deviceApp.list(conditions).then((deviceResponse) async {
-                                  if (deviceResponse.containsKey("status") && deviceResponse["status"]) {
-                                    for (var item in deviceResponse["payload"]) {
-                                      Device device = Device.fromJSON(item);
-                                      devices.add(device);
-                                      deviceIDs.add(device.id);
-                                      colours[device.id] = device.deviceType.colour;
+                              },
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return loader(context);
+                              },
+                            );
+
+                            Map<String, dynamic> conditions = {
+                              "EQUALS": {
+                                "Field": "vessel_id",
+                                "Value": vesselID,
+                              }
+                            };
+
+                            List<String> deviceIDs = [];
+                            await appStore.deviceApp.list(conditions).then((deviceResponse) async {
+                              if (deviceResponse.containsKey("status") && deviceResponse["status"]) {
+                                for (var item in deviceResponse["payload"]) {
+                                  Device device = Device.fromJSON(item);
+                                  devices.add(device);
+                                  deviceIDs.add(device.id);
+                                  colours[device.id] = device.deviceType.colour;
+                                }
+
+                                Map<String, dynamic> deviceDataConditions = {
+                                  "AND": [
+                                    {
+                                      "IN": {
+                                        "Field": "device_id",
+                                        "Value": deviceIDs,
+                                      },
+                                    },
+                                    {
+                                      "GREATEREQUAL": {
+                                        "Field": "created_at",
+                                        "Value": startDateTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
+                                      },
+                                    },
+                                    {
+                                      "LESSEQUAL": {
+                                        "Field": "created_at",
+                                        "Value": endDateTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
+                                      },
                                     }
-                                    List<BatchRun> batchRuns = [];
-                                    for (var item in batchResponse["payload"]) {
-                                      BatchRun batchRun = BatchRun.fromJSON(item);
-                                      batchRuns.add(batchRun);
-                                    }
-                                    batchRuns.sort((a, b) => b.startTime.compareTo(a.startTime));
-                                    BatchRun runningBatch = batchRuns[0];
-                                    job = runningBatch.job;
-                                    Map<String, dynamic> deviceDataConditions = {
-                                      "AND": [
-                                        {
-                                          "IN": {
-                                            "Field": "device_id",
-                                            "Value": deviceIDs,
-                                          },
-                                        },
-                                        {
-                                          "GREATEREQUAL": {
-                                            "Field": "created_at",
-                                            "Value": runningBatch.startTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
-                                          },
-                                        },
-                                        {
-                                          "LESSEQUAL": {
-                                            "Field": "created_at",
-                                            "Value": runningBatch.endTime.toUtc().toIso8601String().toString().split(".")[0] + "Z",
-                                          },
-                                        }
-                                      ]
-                                    };
-                                    await appStore.deviceDataApp.list(deviceDataConditions).then((deviceDataResponse) async {
-                                      if (deviceDataResponse.containsKey("status") && deviceDataResponse["status"]) {
-                                        for (var item in deviceDataResponse["payload"]) {
-                                          DeviceData deviceData = DeviceData.fromJSON(item);
-                                          if (!ticks.contains(deviceData.createdAt)) {
-                                            ticks.add(deviceData.createdAt);
-                                          }
-                                          if (!devicesData.containsKey(deviceData.deviceID)) {
-                                            devicesData[deviceData.deviceID] = [];
-                                            devicesDataPoints[deviceData.deviceID] = [];
-                                          }
-                                          devicesData[deviceData.deviceID]!.add(deviceData);
-                                          devicesDataPoints[deviceData.deviceID]!.add(
-                                            DeviceDataPoint(
-                                              timeStamp: deviceData.createdAt,
-                                              value: deviceData.value,
-                                            ),
-                                          );
-                                          if (maxValues.containsKey(deviceData.deviceID)) {
-                                            if (deviceData.value > (maxValues[deviceData.deviceID] ?? 1)) {
-                                              maxValues[deviceData.deviceID] = deviceData.value;
-                                            }
-                                          } else {
-                                            maxValues[deviceData.deviceID] = deviceData.value;
-                                          }
-                                        }
-                                        Map<String, List<DeviceDataPoint>> finalDeviceDataPoints = {};
-                                        devicesDataPoints.forEach((key, value) {
-                                          String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                          finalDeviceDataPoints[deviceName] = value;
-                                        });
-                                        devicesDataPoints = finalDeviceDataPoints;
-                                        Map<String, double> finalMaxValues = {};
-                                        maxValues.forEach((key, value) {
-                                          String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                          finalMaxValues[deviceName] = value;
-                                        });
-                                        maxValues = finalMaxValues;
-                                        Map<String, int> finalColour = {};
-                                        colours.forEach((key, value) {
-                                          String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
-                                          finalColour[deviceName] = value;
-                                        });
-                                        colours = finalColour;
-                                        devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
-                                        buildChart();
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          isDataLoaded = true;
-                                        });
-                                      } else {
-                                        Navigator.of(context).pop();
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return CustomDialog(
-                                              message: deviceDataResponse["message"],
-                                              title: "Errors",
-                                            );
-                                          },
-                                        );
+                                  ]
+                                };
+                                await appStore.deviceDataApp.list(deviceDataConditions).then((deviceDataResponse) async {
+                                  if (deviceDataResponse.containsKey("status") && deviceDataResponse["status"]) {
+                                    for (var item in deviceDataResponse["payload"]) {
+                                      DeviceData deviceData = DeviceData.fromJSON(item);
+                                      if (!ticks.contains(deviceData.createdAt)) {
+                                        ticks.add(deviceData.createdAt);
                                       }
+                                      if (!devicesData.containsKey(deviceData.deviceID)) {
+                                        devicesData[deviceData.deviceID] = [];
+                                        devicesDataPoints[deviceData.deviceID] = [];
+                                      }
+                                      devicesData[deviceData.deviceID]!.add(deviceData);
+                                      devicesDataPoints[deviceData.deviceID]!.add(
+                                        DeviceDataPoint(
+                                          timeStamp: deviceData.createdAt,
+                                          value: deviceData.value,
+                                        ),
+                                      );
+                                      if (maxValues.containsKey(deviceData.deviceID)) {
+                                        if (deviceData.value > (maxValues[deviceData.deviceID] ?? 1)) {
+                                          maxValues[deviceData.deviceID] = deviceData.value;
+                                        }
+                                      } else {
+                                        maxValues[deviceData.deviceID] = deviceData.value;
+                                      }
+                                    }
+                                    Map<String, List<DeviceDataPoint>> finalDeviceDataPoints = {};
+                                    devicesDataPoints.forEach((key, value) {
+                                      String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                      finalDeviceDataPoints[deviceName] = value;
+                                    });
+                                    devicesDataPoints = finalDeviceDataPoints;
+                                    Map<String, double> finalMaxValues = {};
+                                    maxValues.forEach((key, value) {
+                                      String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                      finalMaxValues[deviceName] = value;
+                                    });
+                                    maxValues = finalMaxValues;
+                                    Map<String, int> finalColour = {};
+                                    colours.forEach((key, value) {
+                                      String deviceName = devices.firstWhere((element) => element.id == key).deviceType.description;
+                                      finalColour[deviceName] = value;
+                                    });
+                                    colours = finalColour;
+                                    devicesDataPoints = Map.fromEntries(devicesDataPoints.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+                                    buildChart();
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      isDataLoaded = true;
                                     });
                                   } else {
                                     Navigator.of(context).pop();
@@ -326,27 +360,27 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return CustomDialog(
-                                          message: deviceResponse["message"],
+                                          message: deviceDataResponse["message"],
                                           title: "Errors",
                                         );
                                       },
                                     );
                                   }
                                 });
+                              } else {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialog(
+                                      message: deviceResponse["message"],
+                                      title: "Errors",
+                                    );
+                                  },
+                                );
                               }
-                            } else {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialog(
-                                    message: batchResponse["message"],
-                                    title: "Errors",
-                                  );
-                                },
-                              );
-                            }
-                          });
+                            });
+                          }
                         }
                       },
                       child: checkButton(),
@@ -400,20 +434,6 @@ class _BatchRunDetailsState extends State<BatchRunDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Running Details for Job: " + job.jobCode,
-          style: const TextStyle(
-            fontSize: 30.0,
-            color: menuItemColor,
-          ),
-        ),
-        Text(
-          "Material: " + job.material.code.toString() + " - " + job.material.description,
-          style: const TextStyle(
-            fontSize: 30.0,
-            color: menuItemColor,
-          ),
-        ),
         const Text(
           "Max Values",
           style: TextStyle(
