@@ -129,6 +129,24 @@ class _DeviceListState extends State<DeviceList> {
                           ),
                           DataColumn(
                             label: Text(
+                              "Device ID",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: themeChanged.value ? foregroundColor : backgroundColor,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            onSort: (columnIndex, ascending) {
+                              setState(() {
+                                sort = !sort;
+                                sortingColumnIndex = columnIndex;
+                              });
+                              onSortColum(columnIndex, ascending);
+                            },
+                          ),
+                          DataColumn(
+                            label: Text(
                               "Device Description",
                               style: TextStyle(
                                 fontSize: 20.0,
@@ -323,6 +341,16 @@ class _DataSource extends DataTableSource {
         DataCell(
           Text(
             device.vessel.name,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: themeChanged.value ? foregroundColor : backgroundColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            device.id,
             style: TextStyle(
               fontSize: 16.0,
               color: themeChanged.value ? foregroundColor : backgroundColor,
